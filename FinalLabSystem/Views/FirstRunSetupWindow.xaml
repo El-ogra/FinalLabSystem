@@ -1,0 +1,13 @@
+<Window x:Class="FinalLabSystem.Views.FirstRunSetupWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="FinalLab — First Run Setup"
+        Width="460"
+        Height="640"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="SingleBorderWindow">
+    <Grid>
+        <ContentControl x:Name="SetupHost" />
+    </Grid>
+</Window>

@@ -10,4 +10,7 @@ public interface IAuthService
     Task<bool> HasPermissionAsync(int staffId, string permissionCode);
     Task UpdateLastLoginAsync(int staffId);
     Task<Staff> CreateUserAsync(Staff staff, List<int> permissionIds);
+
+    Task<bool> HasAnyAdministratorAsync();
+    Task<Staff> CreateInitialAdministratorAsync(string username, string password, string? displayName = null);
 }
