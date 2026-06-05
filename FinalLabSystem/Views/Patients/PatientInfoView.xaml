@@ -28,11 +28,11 @@
 
             <Label Grid.Row="0" Grid.Column="0" Content="كود المريض" VerticalAlignment="Center" Margin="0,3"/>
             <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding PatientCode, Mode=OneWay}" IsReadOnly="True" Background="#F5F5F5" Margin="0,3" Height="26"/>
-            <Label Grid.Row="0" Grid.Column="2" Content="اللقب" VerticalAlignment="Center" Margin="8,3,0,3"/>
-            <ComboBox Grid.Row="0" Grid.Column="3" ItemsSource="{Binding TitleSuggestions}" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" IsEditable="True" Margin="0,3" Height="26"/>
 
-            <Label Grid.Row="1" Grid.Column="0" Content="اسم المريض" VerticalAlignment="Center" Margin="0,3"/>
-            <TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding FullNameAr, UpdateSourceTrigger=PropertyChanged}" Margin="0,3" Height="26"/>
+            <Label Grid.Row="1" Grid.Column="0" Content="اللقب" VerticalAlignment="Center" Margin="0,3"/>
+            <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding TitleSuggestions}" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" IsEditable="True" Margin="0,3" Height="26"/>
+            <Label Grid.Row="1" Grid.Column="2" Content="اسم المريض" VerticalAlignment="Center" Margin="8,3,0,3"/>
+            <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding FullNameAr, UpdateSourceTrigger=PropertyChanged}" Margin="0,3" Height="26"/>
 
             <Label Grid.Row="2" Grid.Column="0" Content="الجنس" VerticalAlignment="Center" Margin="0,3"/>
             <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Margin="0,3" VerticalAlignment="Center">
@@ -40,7 +40,7 @@
                 <RadioButton Content="أنثى" GroupName="Sex" IsChecked="{Binding IsFemale}" Margin="0,0,12,0"/>
                 <RadioButton Content="غير محدد" GroupName="Sex" IsChecked="{Binding IsUnknownSex}"/>
             </StackPanel>
-            <Label Grid.Row="2" Grid.Column="2" Content="نوع المريض" VerticalAlignment="Center" Margin="8,3,0,3"/>
+            <Label Grid.Row="2" Grid.Column="2" Content="نوع الحساب" VerticalAlignment="Center" Margin="8,3,0,3"/>
             <StackPanel Grid.Row="2" Grid.Column="3" Orientation="Horizontal" Margin="0,3" VerticalAlignment="Center">
                 <ComboBox ItemsSource="{Binding PatientTypes}" SelectedItem="{Binding PatientType}" Width="120" Height="26"/>
                 <CheckBox Content="VIP" IsChecked="{Binding IsVip}" Margin="8,0,0,0" VerticalAlignment="Center"/>
@@ -64,7 +64,7 @@
             <Label Grid.Row="5" Grid.Column="0" Content="العنوان" VerticalAlignment="Center" Margin="0,3"/>
             <TextBox Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding Address}" Margin="0,3" Height="26"/>
 
-            <Label Grid.Row="6" Grid.Column="0" Content="البريد" VerticalAlignment="Center" Margin="0,3"/>
+            <Label Grid.Row="6" Grid.Column="0" Content="البريد الإلكتروني" VerticalAlignment="Center" Margin="0,3"/>
             <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding Email}" Margin="0,3" Height="26"/>
             <Label Grid.Row="6" Grid.Column="2" Content="الرقم القومي" VerticalAlignment="Center" Margin="8,3,0,3"/>
             <TextBox Grid.Row="6" Grid.Column="3" Text="{Binding NationalId}" Margin="0,3" Height="26"/>

@@ -19,7 +19,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <Label Grid.Row="0" Grid.Column="0" Content="لقب التحويل" VerticalAlignment="Center" Margin="0,3"/>
+            <Label Grid.Row="0" Grid.Column="0" Content="اللقب" VerticalAlignment="Center" Margin="0,3"/>
             <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding ReferralTitles}" Text="{Binding ReferralTitle, UpdateSourceTrigger=PropertyChanged}" IsEditable="True" Width="80" HorizontalAlignment="Right" Margin="0,3" Height="26"/>
             <Label Grid.Row="0" Grid.Column="2" Content="جهة التحويل" VerticalAlignment="Center" Margin="8,3,0,3"/>
             <ComboBox Grid.Row="0" Grid.Column="3" ItemsSource="{Binding ReferralSuggestions}" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedReferral}" DisplayMemberPath="SourceName" IsEditable="True" Margin="0,3" Height="26"/>

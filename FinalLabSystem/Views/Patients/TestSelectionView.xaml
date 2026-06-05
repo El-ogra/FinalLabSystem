@@ -1,7 +1,7 @@
 <UserControl x:Class="FinalLabSystem.Views.Patients.TestSelectionView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Grid Background="White" Margin="4">
+    <Grid Background="White" Margin="4" FlowDirection="LeftToRight">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -30,18 +30,24 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <Label Grid.Row="0" Content="التحاليل المتاحة" FontWeight="Bold" Margin="4,2"/>
-                <ListView Grid.Row="1"
-                          ItemsSource="{Binding AvailableTests}"
-                          SelectedItem="{Binding SelectedAvailableTest}"
-                          VirtualizingPanel.IsVirtualizing="True"
-                          MouseDoubleClick="AvailableTests_OnMouseDoubleClick">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn Header="التحليل" DisplayMemberBinding="{Binding Name}"/>
-                        </GridView>
-                    </ListView.View>
-                </ListView>
+                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="4,2" FlowDirection="RightToLeft">
+                    <Label Content="التحاليل المختارة" FontWeight="Bold" Padding="0"/>
+                    <Label Content="{Binding SelectedTestsCount, Mode=OneWay}" ContentStringFormat="({0})" Padding="6,0,0,0"/>
+                </StackPanel>
+                <DataGrid Grid.Row="1"
+                          ItemsSource="{Binding SelectedTests}"
+                          SelectedItem="{Binding SelectedTest}"
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="False"
+                          IsReadOnly="True"
+                          FlowDirection="RightToLeft">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="الكود" Binding="{Binding Code}" Width="60"/>
+                        <DataGridTextColumn Header="التحليل" Binding="{Binding Name}" Width="*"/>
+                        <DataGridTextColumn Header="السعر" Binding="{Binding Price}" Width="70"/>
+                        <DataGridTextColumn Header="العينة" Binding="{Binding SampleType}" Width="60"/>
+                    </DataGrid.Columns>
+                </DataGrid>
             </Grid>
 
             <GridSplitter Grid.Column="1"
@@ -55,30 +61,35 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="4,2">
-                    <Label Content="التحاليل المختارة" FontWeight="Bold" Padding="0"/>
-                    <Label Content="{Binding SelectedTestsCount, Mode=OneWay}" ContentStringFormat="({0})" Padding="6,0,0,0"/>
-                </StackPanel>
-                <DataGrid Grid.Row="1"
-                          ItemsSource="{Binding SelectedTests}"
-                          SelectedItem="{Binding SelectedTest}"
-                          AutoGenerateColumns="False"
-                          CanUserAddRows="False"
-                          IsReadOnly="True">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="الكود" Binding="{Binding Code}" Width="60"/>
-                        <DataGridTextColumn Header="التحليل" Binding="{Binding Name}" Width="*"/>
-                        <DataGridTextColumn Header="السعر" Binding="{Binding Price}" Width="70"/>
-                        <DataGridTextColumn Header="العينة" Binding="{Binding SampleType}" Width="60"/>
-                    </DataGrid.Columns>
-                </DataGrid>
+                <Label Grid.Row="0" Content="التحاليل المتاحة" FontWeight="Bold" Margin="4,2" FlowDirection="RightToLeft"/>
+                <ListView Grid.Row="1"
+                          ItemsSource="{Binding AvailableTests}"
+                          SelectedItem="{Binding SelectedAvailableTest}"
+                          VirtualizingPanel.IsVirtualizing="True"
+                          MouseDoubleClick="AvailableTests_OnMouseDoubleClick"
+                          FlowDirection="RightToLeft">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="التحليل" DisplayMemberBinding="{Binding Name}"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
             </Grid>
         </Grid>
 
-        <DockPanel Grid.Row="3" Margin="4">
-            <Button Content="Add select test" Command="{Binding AddTestCommand}" DockPanel.Dock="Left" Width="130" Height="32"/>
-            <Button Content="All" Command="{Binding RemoveAllCommand}" DockPanel.Dock="Right" Width="90" Height="32"/>
-            <Button Content="Delete" Command="{Binding RemoveTestCommand}" DockPanel.Dock="Right" Width="90" Height="32" Margin="4,0"/>
-        </DockPanel>
+        <Grid Grid.Row="3" Margin="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="4"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="All" Command="{Binding RemoveAllCommand}" Width="90" Height="32"/>
+                <Button Content="Delete" Command="{Binding RemoveTestCommand}" Width="90" Height="32" Margin="4,0,0,0"/>
+            </StackPanel>
+
+            <Button Grid.Column="2" Content="Add select test" Command="{Binding AddTestCommand}" HorizontalAlignment="Left" Width="130" Height="32"/>
+        </Grid>
     </Grid>
 </UserControl>
