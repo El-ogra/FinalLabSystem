@@ -1,0 +1,144 @@
+<Window x:Class="FinalLabSystem.Views.Settings.NormalRangesWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="{Binding Title}"
+        Height="720"
+        Width="1100"
+        WindowStartupLocation="CenterOwner"
+        FlowDirection="RightToLeft">
+    <Window.Resources>
+        <Style x:Key="ActionButtonStyle" TargetType="Button">
+            <Setter Property="Height" Value="34"/>
+            <Setter Property="MinWidth" Value="92"/>
+            <Setter Property="Margin" Value="4"/>
+            <Setter Property="Background" Value="#A8E000"/>
+            <Setter Property="Foreground" Value="#001A20"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Height" Value="28"/>
+            <Setter Property="Margin" Value="4"/>
+            <Setter Property="Padding" Value="6,2"/>
+        </Style>
+    </Window.Resources>
+    <Grid Background="#F5F7FA" Margin="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="45*"/>
+            <ColumnDefinition Width="55*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Row="0" Grid.Column="0" Margin="0,0,6,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="38*"/>
+                <RowDefinition Height="62*"/>
+            </Grid.RowDefinitions>
+            <Border Grid.Row="0" Background="White" BorderBrush="#CFD8DC" BorderThickness="1" Padding="8" Margin="0,0,0,6">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Left">
+                        <Button Content="Add" Command="{Binding List.AddComponentCommand}" Style="{StaticResource ActionButtonStyle}"/>
+                        <Button Content="Delete" Command="{Binding List.DeleteComponentCommand}" Style="{StaticResource ActionButtonStyle}"/>
+                    </StackPanel>
+                    <ListBox ItemsSource="{Binding List.Components}" SelectedItem="{Binding List.SelectedComponent}" DisplayMemberPath="ComponentNameEn"/>
+                </DockPanel>
+            </Border>
+            <Border Grid.Row="1" Background="White" BorderBrush="#CFD8DC" BorderThickness="1" Padding="8">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Left">
+                        <Button Content="Add" Command="{Binding List.AddRangeCommand}" Style="{StaticResource ActionButtonStyle}"/>
+                        <Button Content="Edit" Command="{Binding List.EditRangeCommand}" Style="{StaticResource ActionButtonStyle}"/>
+                        <Button Content="Delete" Command="{Binding List.DeleteRangeCommand}" Style="{StaticResource ActionButtonStyle}"/>
+                    </StackPanel>
+                    <DataGrid ItemsSource="{Binding List.RangesForSelectedComponent}"
+                              SelectedItem="{Binding List.SelectedRange}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              CanUserAddRows="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Sex" Binding="{Binding Sex}" Width="60"/>
+                            <DataGridTextColumn Header="AgeFrom" Binding="{Binding AgeFromDays}" Width="80"/>
+                            <DataGridTextColumn Header="AgeTo" Binding="{Binding AgeToDays}" Width="80"/>
+                            <DataGridTextColumn Header="Description" Binding="{Binding AgeDescription}" Width="110"/>
+                            <DataGridTextColumn Header="Fasting" Binding="{Binding FastingState}" Width="70"/>
+                            <DataGridTextColumn Header="LowNormal" Binding="{Binding LowNormal}" Width="80"/>
+                            <DataGridTextColumn Header="HighNormal" Binding="{Binding HighNormal}" Width="80"/>
+                            <DataGridTextColumn Header="LowCritical" Binding="{Binding LowCritical}" Width="80"/>
+                            <DataGridTextColumn Header="HighCritical" Binding="{Binding HighCritical}" Width="80"/>
+                            <DataGridTextColumn Header="Text" Binding="{Binding NormalRangeText}" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </DockPanel>
+            </Border>
+        </Grid>
+
+        <Border Grid.Row="0" Grid.Column="1" Background="White" BorderBrush="#CFD8DC" BorderThickness="1" Padding="12" Margin="6,0,0,0">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <TextBlock Text="Sex" FontWeight="Bold" Foreground="#123A42"/>
+                    <WrapPanel>
+                        <RadioButton Content="M" IsChecked="{Binding Detail.IsSexMale}" Margin="8"/>
+                        <RadioButton Content="F" IsChecked="{Binding Detail.IsSexFemale}" Margin="8"/>
+                        <RadioButton Content="Both" IsChecked="{Binding Detail.IsSexBoth}" Margin="8"/>
+                    </WrapPanel>
+                    <UniformGrid Columns="3">
+                        <StackPanel>
+                            <TextBlock Text="Age From Days"/>
+                            <TextBox Text="{Binding Detail.AgeFromDays, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel>
+                            <TextBlock Text="Age To Days"/>
+                            <TextBox Text="{Binding Detail.AgeToDays, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel>
+                            <TextBlock Text="Age Description"/>
+                            <TextBox Text="{Binding Detail.AgeDescription, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                    </UniformGrid>
+                    <TextBlock Text="Fasting State" FontWeight="Bold" Foreground="#123A42" Margin="0,10,0,0"/>
+                    <WrapPanel>
+                        <RadioButton Content="Any" IsChecked="{Binding Detail.IsFastingAny}" Margin="8"/>
+                        <RadioButton Content="Fasting" IsChecked="{Binding Detail.IsFasting}" Margin="8"/>
+                        <CheckBox Content="Applies To Pregnant" IsChecked="{Binding Detail.AppliesToPregnant}" Margin="8"/>
+                    </WrapPanel>
+                    <UniformGrid Columns="2">
+                        <StackPanel>
+                            <TextBlock Text="Low Normal"/>
+                            <TextBox Text="{Binding Detail.LowNormal, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel>
+                            <TextBlock Text="High Normal"/>
+                            <TextBox Text="{Binding Detail.HighNormal, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel>
+                            <TextBlock Text="Low Critical"/>
+                            <TextBox Text="{Binding Detail.LowCritical, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel>
+                            <TextBlock Text="High Critical"/>
+                            <TextBox Text="{Binding Detail.HighCritical, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel>
+                            <TextBlock Text="Unit"/>
+                            <TextBox Text="{Binding Detail.Unit, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                    </UniformGrid>
+                    <TextBlock Text="Normal Range Text"/>
+                    <TextBox Text="{Binding Detail.NormalRangeText, UpdateSourceTrigger=PropertyChanged}" Height="72" AcceptsReturn="True" TextWrapping="Wrap"/>
+                    <TextBlock Text="Range Note"/>
+                    <TextBox Text="{Binding Detail.RangeNote, UpdateSourceTrigger=PropertyChanged}" Height="72" AcceptsReturn="True" TextWrapping="Wrap"/>
+                    <Button Content="Apply" Command="{Binding Detail.ApplyCommand}" Style="{StaticResource ActionButtonStyle}" HorizontalAlignment="Left"/>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <Border Grid.Row="1" Grid.ColumnSpan="2" Background="#123A42" BorderBrush="#0A252C" BorderThickness="3" Padding="5" Margin="0,8,0,0">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Content="Save All" Command="{Binding SaveAllCommand}" Style="{StaticResource ActionButtonStyle}" Background="#8BC34A"/>
+                <Button Content="Close" Command="{Binding CloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" Style="{StaticResource ActionButtonStyle}"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

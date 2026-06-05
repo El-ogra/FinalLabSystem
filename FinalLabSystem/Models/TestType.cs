@@ -37,6 +37,36 @@ public partial class TestType
 
     public string? Notes { get; set; }
 
+    public string? ReportNameLine1 { get; set; }
+
+    public string? ReportNameLine2 { get; set; }
+
+    public string? BillNameLine1 { get; set; }
+
+    public string? BillNameLine2 { get; set; }
+
+    public string? HistoryName { get; set; }
+
+    public string? CollectionNotes { get; set; }
+
+    public bool IsRoutineTest { get; set; }
+
+    public bool SeeReport { get; set; }
+
+    public bool PrintWithOther { get; set; }
+
+    public bool AddWithGroup { get; set; }
+
+    public bool IsMainTest { get; set; }
+
+    public bool IsSendOutside { get; set; }
+
+    public string? OutsideLabName { get; set; }
+
+    public decimal? OutsideCostPrice { get; set; }
+
+    public string? PatientQuestion { get; set; }
+
     public virtual TestGroup Group { get; set; } = null!;
 
     public virtual ICollection<ReportCommentTemplate> ReportCommentTemplates { get; set; } = new List<ReportCommentTemplate>();
@@ -48,4 +78,6 @@ public partial class TestType
     public virtual ICollection<VisitTest> VisitTests { get; set; } = new List<VisitTest>();
 
     public virtual ICollection<TestProfileItem> TestProfileItems { get; set; } = new List<TestProfileItem>();
+
+    public virtual ICollection<TestTypeSampleTube> TestTypeSampleTubes { get; set; } = new List<TestTypeSampleTube>();
 }

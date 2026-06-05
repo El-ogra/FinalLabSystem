@@ -2,6 +2,7 @@ using System.Windows.Input;
 using FinalLabSystem.Infrastructure;
 using FinalLabSystem.Infrastructure.Navigation;
 using FinalLabSystem.ViewModels.Patients;
+using FinalLabSystem.ViewModels.Settings;
 
 namespace FinalLabSystem.ViewModels;
 
@@ -14,10 +15,12 @@ public sealed class MainViewModel : ViewModelBase
     {
         _navigationService = navigationService;
         ShowPatientsMenuCommand = new RelayCommand(_ => ShowPatientsMenu());
+        ShowSystemSettingsMenuCommand = new RelayCommand(_ => ShowSystemSettingsMenu());
         NavigateToAddEditPatientCommand = new RelayCommand(_ => _navigationService.OpenTaskWindow<PatientRegistrationViewModel>());
         NavigateToTestResultsCommand = new RelayCommand(_ => _navigationService.OpenTaskWindow<TestResultsViewModel>());
         NavigateToDeliveryCommand = new RelayCommand(_ => _navigationService.OpenTaskWindow<DeliveryViewModel>());
         NavigateToSearchCommand = new RelayCommand(_ => _navigationService.OpenTaskWindow<PatientSearchViewModel>());
+        NavigateToTestDataCommand = new RelayCommand(_ => _navigationService.OpenTaskWindow<TestDataManagementViewModel>());
     }
 
     public object? CurrentView
@@ -28,6 +31,8 @@ public sealed class MainViewModel : ViewModelBase
 
     public ICommand ShowPatientsMenuCommand { get; }
 
+    public ICommand ShowSystemSettingsMenuCommand { get; }
+
     public ICommand NavigateToAddEditPatientCommand { get; }
 
     public ICommand NavigateToTestResultsCommand { get; }
@@ -36,6 +41,8 @@ public sealed class MainViewModel : ViewModelBase
 
     public ICommand NavigateToSearchCommand { get; }
 
+    public ICommand NavigateToTestDataCommand { get; }
+
     private void ShowPatientsMenu()
     {
         CurrentView = new PatientsMenuViewModel(
@@ -43,6 +50,11 @@ public sealed class MainViewModel : ViewModelBase
             NavigateToTestResultsCommand,
             NavigateToDeliveryCommand,
             NavigateToSearchCommand);
+    }
+
+    private void ShowSystemSettingsMenu()
+    {
+        CurrentView = new SystemSettingsMenuViewModel(NavigateToTestDataCommand);
     }
 }
 

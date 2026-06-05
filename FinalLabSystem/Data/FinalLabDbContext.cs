@@ -68,6 +68,8 @@ public partial class FinalLabDbContext : DbContext
 
     public virtual DbSet<TestTypePrice> TestTypePrices { get; set; }
 
+    public virtual DbSet<TestTypeSampleTube> TestTypeSampleTubes { get; set; }
+
     public virtual DbSet<TestWorkflow> TestWorkflows { get; set; }
 
     public virtual DbSet<VOutstandingBalance> VOutstandingBalances { get; set; }
@@ -1137,6 +1139,54 @@ public partial class FinalLabDbContext : DbContext
             entity.Property(e => e.TypeNameEn)
                 .HasMaxLength(150)
                 .HasColumnName("type_name_en");
+            entity.Property(e => e.ReportNameLine1)
+                .HasMaxLength(200)
+                .HasColumnName("report_name_line1");
+            entity.Property(e => e.ReportNameLine2)
+                .HasMaxLength(200)
+                .HasColumnName("report_name_line2");
+            entity.Property(e => e.BillNameLine1)
+                .HasMaxLength(200)
+                .HasColumnName("bill_name_line1");
+            entity.Property(e => e.BillNameLine2)
+                .HasMaxLength(200)
+                .HasColumnName("bill_name_line2");
+            entity.Property(e => e.HistoryName)
+                .HasMaxLength(100)
+                .HasColumnName("history_name");
+            entity.Property(e => e.CollectionNotes)
+                .HasMaxLength(1000)
+                .HasColumnName("collection_notes");
+            entity.Property(e => e.IsRoutineTest)
+                .HasDefaultValue(false)
+                .HasColumnName("is_routine_test");
+            entity.Property(e => e.SeeReport)
+                .HasDefaultValue(false)
+                .HasColumnName("see_report");
+            entity.Property(e => e.PrintWithOther)
+                .HasDefaultValue(true)
+                .HasColumnName("print_with_other");
+            entity.Property(e => e.AddWithGroup)
+                .HasDefaultValue(true)
+                .HasColumnName("add_with_group");
+            entity.Property(e => e.IsMainTest)
+                .HasDefaultValue(false)
+                .HasColumnName("is_main_test");
+            entity.Property(e => e.IsSendOutside)
+                .HasDefaultValue(false)
+                .HasColumnName("is_send_outside");
+            entity.Property(e => e.OutsideLabName)
+                .HasMaxLength(200)
+                .HasColumnName("outside_lab_name");
+            entity.Property(e => e.OutsideCostPrice)
+                .HasColumnType("decimal(18, 2)")
+                .HasColumnName("outside_cost_price");
+            entity.Property(e => e.PatientQuestion)
+                .HasMaxLength(500)
+                .HasColumnName("patient_question");
+
+            entity.HasIndex(e => e.BillNameLine1, "IX_TestType_BillNameLine1");
+            entity.HasIndex(e => e.HistoryName, "IX_TestType_HistoryName");
 
             entity.HasOne(d => d.Group).WithMany(p => p.TestTypes)
                 .HasForeignKey(d => d.GroupId)
@@ -1166,6 +1216,44 @@ public partial class FinalLabDbContext : DbContext
                 .HasForeignKey(d => d.TesttypeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_TestTypePrice_Type");
+        });
+
+        modelBuilder.Entity<TestTypeSampleTube>(entity =>
+        {
+            entity.HasKey(e => e.TestTypeTubeId).HasName("PK_TestTypeSampleTube");
+
+            entity.ToTable("TestTypeSampleTube");
+
+            entity.HasIndex(e => new { e.TestTypeId, e.SortOrder }, "IX_TestTypeSampleTube_TestType_Sort");
+
+            entity.Property(e => e.TestTypeTubeId).HasColumnName("testtype_tube_id");
+            entity.Property(e => e.TestTypeId).HasColumnName("testtype_id");
+            entity.Property(e => e.TubeType)
+                .HasMaxLength(50)
+                .HasColumnName("tube_type");
+            entity.Property(e => e.TubeColor)
+                .HasMaxLength(30)
+                .HasColumnName("tube_color");
+            entity.Property(e => e.SampleType)
+                .HasMaxLength(50)
+                .HasColumnName("sample_type");
+            entity.Property(e => e.Quantity)
+                .HasDefaultValue(1)
+                .HasColumnName("quantity");
+            entity.Property(e => e.SortOrder)
+                .HasDefaultValue((short)0)
+                .HasColumnName("sort_order");
+            entity.Property(e => e.IsActive)
+                .HasDefaultValue(true)
+                .HasColumnName("is_active");
+            entity.Property(e => e.Notes)
+                .HasMaxLength(500)
+                .HasColumnName("notes");
+
+            entity.HasOne(d => d.Testtype).WithMany(p => p.TestTypeSampleTubes)
+                .HasForeignKey(d => d.TestTypeId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_TestTypeSampleTube_TestType");
         });
 
         modelBuilder.Entity<TestWorkflow>(entity =>

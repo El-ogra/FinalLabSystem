@@ -6,8 +6,10 @@ using FinalLabSystem.Services.Implementations;
 using FinalLabSystem.Services.Interfaces;
 using FinalLabSystem.ViewModels;
 using FinalLabSystem.ViewModels.Patients;
+using FinalLabSystem.ViewModels.Settings;
 using FinalLabSystem.Views;
 using FinalLabSystem.Views.Patients;
+using FinalLabSystem.Views.Settings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
@@ -31,6 +33,8 @@ public partial class App : Application
         navigation.RegisterWindow<TestResultsViewModel, TestResultsWindow>();
         navigation.RegisterWindow<DeliveryViewModel, DeliveryWindow>();
         navigation.RegisterWindow<PatientSearchViewModel, PatientSearchWindow>();
+        navigation.RegisterWindow<TestDataManagementViewModel, TestDataManagementWindow>();
+        navigation.RegisterWindow<NormalRangeWindowViewModel, NormalRangesWindow>();
 
         bool hasAdmin;
         using (var scope = ServiceProvider.CreateScope())
@@ -93,5 +97,14 @@ public partial class App : Application
         services.AddTransient<BarcodeDialog>();
         services.AddTransient<ReceiptDialog>();
         services.AddTransient<TodayPatientsDialog>();
+
+        services.AddTransient<TestDataManagementViewModel>();
+        services.AddTransient<TestListViewModel>();
+        services.AddTransient<TestDetailViewModel>();
+        services.AddTransient<NormalRangeWindowViewModel>();
+        services.AddTransient<NormalRangeListViewModel>();
+        services.AddTransient<NormalRangeDetailViewModel>();
+        services.AddTransient<TestDataManagementWindow>();
+        services.AddTransient<NormalRangesWindow>();
     }
 }

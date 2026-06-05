@@ -60,6 +60,8 @@ public sealed class ReceiptDialogViewModel : ViewModelBase
                     TestTypeId = vt.TesttypeId,
                     TestCode = vt.Testtype.TypeCode,
                     TestName = vt.Testtype.TypeNameAr ?? vt.Testtype.TypeNameEn,
+                    BillNameLine1 = vt.Testtype.BillNameLine1,
+                    BillNameLine2 = vt.Testtype.BillNameLine2,
                     Price = Convert.ToDecimal(vt.PriceCharged),
                     SampleType = vt.Testtype.SampleType
                 })
@@ -92,8 +94,8 @@ public sealed class ReceiptDialogViewModel : ViewModelBase
 
         var group = new TableRowGroup();
         group.Rows.Add(CreateRow("التحليل", "السعر", true));
-        foreach (var test in dto.SelectedTests)
-            group.Rows.Add(CreateRow(test.TestName, test.Price.ToString("N2"), false));
+        foreach (var row in BuildReceiptRows(dto.SelectedTests))
+            group.Rows.Add(CreateRow(row.Name, row.Price.ToString("N2"), false, row.SubLine));
 
         table.RowGroups.Add(group);
         document.Blocks.Add(table);
@@ -139,10 +141,39 @@ public sealed class ReceiptDialogViewModel : ViewModelBase
         document.Blocks.Add(new Paragraph(new Run($"المتبقي: {dto.BalanceDue:N2}")));
     }
 
-    private static TableRow CreateRow(string first, string second, bool isHeader)
+    private static IEnumerable<(string Name, string? SubLine, decimal Price)> BuildReceiptRows(IEnumerable<SelectedTestDto> tests)
+    {
+        var materialized = tests.ToList();
+        foreach (var group in materialized
+                     .Where(t => !string.IsNullOrWhiteSpace(t.BillNameLine1))
+                     .GroupBy(t => t.BillNameLine1!.Trim()))
+        {
+            yield return (
+                group.Key,
+                group.Select(t => t.BillNameLine2).FirstOrDefault(v => !string.IsNullOrWhiteSpace(v)),
+                group.Sum(t => t.Price));
+        }
+
+        foreach (var test in materialized.Where(t => string.IsNullOrWhiteSpace(t.BillNameLine1)))
+            yield return (test.TestName, null, test.Price);
+    }
+
+    private static TableRow CreateRow(string first, string second, bool isHeader, string? subLine = null)
     {
         var row = new TableRow();
-        row.Cells.Add(new TableCell(new Paragraph(new Run(first)))
+        var firstParagraph = new Paragraph();
+        firstParagraph.Inlines.Add(new Run(first));
+        if (!string.IsNullOrWhiteSpace(subLine))
+        {
+            firstParagraph.Inlines.Add(new LineBreak());
+            firstParagraph.Inlines.Add(new Run(subLine)
+            {
+                FontSize = 11,
+                Foreground = System.Windows.Media.Brushes.DimGray
+            });
+        }
+
+        row.Cells.Add(new TableCell(firstParagraph)
         {
             FontWeight = isHeader ? FontWeights.Bold : FontWeights.Normal,
             BorderBrush = System.Windows.Media.Brushes.LightGray,
