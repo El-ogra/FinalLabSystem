@@ -21,6 +21,42 @@ public partial class Visit
 
     public short? FastingHours { get; set; }
 
+    public bool TakenOutsideLab { get; set; }
+
+    public bool OutsideUrine { get; set; }
+
+    public bool OutsideStool { get; set; }
+
+    public bool OutsideBlood { get; set; }
+
+    public bool OutsideSemen { get; set; }
+
+    public bool OutsideCsf { get; set; }
+
+    public bool HasDiabetes { get; set; }
+
+    public bool HasAnemia { get; set; }
+
+    public bool HasBleedingDisorder { get; set; }
+
+    public bool HasThyroid { get; set; }
+
+    public bool HasJointDisease { get; set; }
+
+    public bool HasViralInfection { get; set; }
+
+    public bool OnAnticoagulant { get; set; }
+
+    public bool HasHypertension { get; set; }
+
+    public bool HasLiverDisease { get; set; }
+
+    public bool HasKidneyDisease { get; set; }
+
+    public bool HasLupus { get; set; }
+
+    public bool HadXrayContrast { get; set; }
+
     public int? ReferralId { get; set; }
 
     public int? CompanyId { get; set; }

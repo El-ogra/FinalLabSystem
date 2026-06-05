@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using FinalLabSystem.Infrastructure;
 using FinalLabSystem.Models;
+using FinalLabSystem.Models.DTOs;
 using FinalLabSystem.Services.Interfaces;
 
 namespace FinalLabSystem.ViewModels.Patients;
@@ -188,6 +189,42 @@ public sealed class PatientInfoViewModel : ViewModelBase
         Email = patient.Email;
         NationalId = patient.NationalId;
         Notes = patient.Notes;
+    }
+
+    public void LoadPatient(VisitFullDto dto)
+    {
+        PatientCode = dto.PatientCode;
+        Title = dto.Title;
+        FullNameAr = dto.FullNameAr;
+        Sex = string.IsNullOrWhiteSpace(dto.Sex) ? "U" : dto.Sex;
+        PatientType = string.IsNullOrWhiteSpace(dto.PatientType) ? "Individual" : dto.PatientType;
+        IsVip = dto.IsVip;
+        ApproxAge = dto.ApproxAge;
+        ApproxAgeUnit = string.IsNullOrWhiteSpace(dto.ApproxAgeUnit) ? "Years" : dto.ApproxAgeUnit;
+        Phone = dto.Phone;
+        Phone2 = dto.Phone2;
+        Address = dto.Address;
+        Email = dto.Email;
+        NationalId = dto.NationalId;
+        Notes = dto.Notes;
+    }
+
+    public void ClearAllFields()
+    {
+        PatientCode = string.Empty;
+        Title = null;
+        FullNameAr = string.Empty;
+        Sex = "U";
+        PatientType = "Individual";
+        IsVip = false;
+        ApproxAge = null;
+        ApproxAgeUnit = "Years";
+        Phone = null;
+        Phone2 = null;
+        Address = null;
+        Email = null;
+        NationalId = null;
+        Notes = null;
     }
 
     public Patient ToPatient()

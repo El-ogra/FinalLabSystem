@@ -6,18 +6,19 @@
         FlowDirection="RightToLeft">
     <StackPanel Margin="18">
         <TextBlock Text="نوع القالب" FontWeight="Bold" Margin="0,0,0,8"/>
-        <StackPanel Orientation="Horizontal">
-            <RadioButton Content="مفصّل" GroupName="Template" IsChecked="True" Margin="0,0,16,0"/>
-            <RadioButton Content="مختصر" GroupName="Template"/>
-        </StackPanel>
+        <ComboBox ItemsSource="{Binding Templates}"
+                  SelectedItem="{Binding SelectedTemplate, Mode=TwoWay}"
+                  Height="32"
+                  Width="160"
+                  HorizontalAlignment="Right"/>
         <Border BorderBrush="#CFD8DC" BorderThickness="1" Padding="12" Margin="0,16,0,16">
             <StackPanel>
-                <TextBlock Text="{Binding VisitData.PatientName, TargetNullValue=لا توجد زيارة محملة}" FontSize="16" FontWeight="SemiBold"/>
-                <TextBlock Text="{Binding VisitData.VisitCode}" Margin="0,6,0,0"/>
+                <TextBlock Text="{Binding VisitData.FullNameAr, TargetNullValue=لا توجد زيارة محملة}" FontSize="16" FontWeight="SemiBold"/>
+                <TextBlock Text="{Binding VisitData.PatientCode}" Margin="0,6,0,0"/>
                 <TextBlock Text="{Binding VisitData.Subtotal, StringFormat=الإجمالي: {0:N2}}" Margin="0,6,0,0"/>
-                <TextBlock Text="{Binding VisitData.Discount, StringFormat=الخصم: {0:N2}}" Margin="0,6,0,0"/>
-                <TextBlock Text="{Binding VisitData.Paid, StringFormat=المدفوع: {0:N2}}" Margin="0,6,0,0"/>
-                <TextBlock Text="{Binding VisitData.Balance, StringFormat=المتبقي: {0:N2}}" Margin="0,6,0,0"/>
+                <TextBlock Text="{Binding VisitData.DiscountAmount, StringFormat=الخصم: {0:N2}}" Margin="0,6,0,0"/>
+                <TextBlock Text="{Binding VisitData.TotalPaid, StringFormat=المدفوع: {0:N2}}" Margin="0,6,0,0"/>
+                <TextBlock Text="{Binding VisitData.BalanceDue, StringFormat=المتبقي: {0:N2}}" Margin="0,6,0,0"/>
             </StackPanel>
         </Border>
         <Button Content="معاينة وطباعة" Command="{Binding PreviewAndPrintCommand}" Height="38" Width="150" HorizontalAlignment="Left"/>

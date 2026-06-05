@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using FinalLabSystem.Infrastructure;
 using FinalLabSystem.Models;
+using FinalLabSystem.Models.DTOs;
 using FinalLabSystem.Services.Interfaces;
 
 namespace FinalLabSystem.ViewModels.Patients;
@@ -94,9 +95,38 @@ public sealed class TestSelectionViewModel : ViewModelBase
                 testType.TesttypeId,
                 testType.TypeCode,
                 testType.TypeNameAr ?? testType.TypeNameEn,
-                Convert.ToDecimal(visitTest.PriceCharged)));
+                Convert.ToDecimal(visitTest.PriceCharged),
+                testType.SampleType));
         }
 
+        OnPropertyChanged(nameof(SelectedTestsCount));
+        TestsChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void LoadSelectedTests(IEnumerable<SelectedTestDto> selectedTests)
+    {
+        SelectedTests.Clear();
+        foreach (var test in selectedTests)
+        {
+            SelectedTests.Add(new SelectedTestItem(
+                test.TestTypeId,
+                test.TestCode,
+                test.TestName,
+                test.Price,
+                test.SampleType));
+        }
+
+        OnPropertyChanged(nameof(SelectedTestsCount));
+        TestsChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void ClearAll()
+    {
+        SelectedTests.Clear();
+        SelectedAvailableTest = null;
+        SelectedTest = null;
+        SearchText = null;
+        ActiveFilter = "RoutineTests";
         OnPropertyChanged(nameof(SelectedTestsCount));
         TestsChanged?.Invoke(this, EventArgs.Empty);
     }
@@ -178,7 +208,7 @@ public sealed class TestSelectionViewModel : ViewModelBase
         if (test is null || SelectedTests.Any(selected => selected.TestTypeId == test.TestTypeId))
             return;
 
-        SelectedTests.Add(new SelectedTestItem(test.TestTypeId, test.Code, test.Name, test.Price));
+        SelectedTests.Add(new SelectedTestItem(test.TestTypeId, test.Code, test.Name, test.Price, test.SampleType));
         OnPropertyChanged(nameof(SelectedTestsCount));
         TestsChanged?.Invoke(this, EventArgs.Empty);
     }
@@ -212,4 +242,4 @@ public sealed record TestDisplayItem(
     string CategoryName,
     string FilterKind);
 
-public sealed record SelectedTestItem(int TestTypeId, string Code, string Name, decimal Price);
+public sealed record SelectedTestItem(int TestTypeId, string Code, string Name, decimal Price, string? SampleType);

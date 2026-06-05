@@ -1,15 +1,18 @@
 using System.Collections.ObjectModel;
 using System.Windows;
+using System.Windows.Documents;
 using System.Windows.Input;
 using FinalLabSystem.Infrastructure;
 using FinalLabSystem.Models;
+using FinalLabSystem.Models.DTOs;
+using FinalLabSystem.Views.Patients;
 
 namespace FinalLabSystem.ViewModels.Patients;
 
 public sealed class ReceiptDialogViewModel : ViewModelBase
 {
     private string _selectedTemplate = "Detailed";
-    private ReceiptVisitData? _visitData;
+    private VisitFullDto? _visitData;
 
     public ReceiptDialogViewModel()
     {
@@ -25,7 +28,7 @@ public sealed class ReceiptDialogViewModel : ViewModelBase
         set => SetProperty(ref _selectedTemplate, string.IsNullOrWhiteSpace(value) ? "Detailed" : value);
     }
 
-    public ReceiptVisitData? VisitData
+    public VisitFullDto? VisitData
     {
         get => _visitData;
         set => SetProperty(ref _visitData, value);
@@ -33,18 +36,35 @@ public sealed class ReceiptDialogViewModel : ViewModelBase
 
     public ICommand PreviewAndPrintCommand { get; }
 
+    public void Initialize(VisitFullDto dto)
+    {
+        VisitData = dto;
+    }
+
     public void LoadVisit(Visit visit)
     {
-        VisitData = new ReceiptVisitData(
-            visit.VisitCode,
-            visit.Patient.FullNameAr,
-            Convert.ToDecimal(visit.Subtotal),
-            Convert.ToDecimal(visit.DiscountAmount),
-            Convert.ToDecimal(visit.TotalPaid),
-            Convert.ToDecimal(visit.BalanceDue),
-            visit.VisitTests
-                .Select(vt => new ReceiptTestLine(vt.Testtype.TypeNameAr ?? vt.Testtype.TypeNameEn, Convert.ToDecimal(vt.PriceCharged)))
-                .ToList());
+        VisitData = new VisitFullDto
+        {
+            VisitId = visit.VisitId,
+            PatientCode = visit.Patient.PatientCode,
+            FullNameAr = visit.Patient.FullNameAr,
+            EntryDate = visit.VisitDate,
+            Subtotal = Convert.ToDecimal(visit.Subtotal),
+            DiscountAmount = Convert.ToDecimal(visit.DiscountAmount),
+            TotalAfterDiscount = Convert.ToDecimal(visit.TotalAfterDiscount),
+            TotalPaid = Convert.ToDecimal(visit.TotalPaid),
+            BalanceDue = Convert.ToDecimal(visit.BalanceDue),
+            SelectedTests = visit.VisitTests
+                .Select(vt => new SelectedTestDto
+                {
+                    TestTypeId = vt.TesttypeId,
+                    TestCode = vt.Testtype.TypeCode,
+                    TestName = vt.Testtype.TypeNameAr ?? vt.Testtype.TypeNameEn,
+                    Price = Convert.ToDecimal(vt.PriceCharged),
+                    SampleType = vt.Testtype.SampleType
+                })
+                .ToList()
+        };
     }
 
     private void PreviewAndPrint()
@@ -52,25 +72,90 @@ public sealed class ReceiptDialogViewModel : ViewModelBase
         if (VisitData is null)
             return;
 
-        var details = SelectedTemplate == "Detailed"
-            ? string.Join(Environment.NewLine, VisitData.Tests.Select(test => $"{test.Name}: {test.Price:N2}"))
-            : "قالب مختصر";
+        var document = SelectedTemplate == "Summary"
+            ? CreateSummaryDocument(VisitData)
+            : CreateDetailedDocument(VisitData);
 
-        MessageBox.Show(
-            $"{VisitData.PatientName}{Environment.NewLine}{details}{Environment.NewLine}الإجمالي: {VisitData.Subtotal:N2}{Environment.NewLine}الخصم: {VisitData.Discount:N2}{Environment.NewLine}المدفوع: {VisitData.Paid:N2}{Environment.NewLine}المتبقي: {VisitData.Balance:N2}",
-            "معاينة الإيصال",
-            MessageBoxButton.OK,
-            MessageBoxImage.Information);
+        var preview = new PrintPreviewWindow(document)
+        {
+            Owner = Application.Current.Windows.OfType<Window>().FirstOrDefault(window => window.IsActive)
+        };
+        preview.ShowDialog();
+    }
+
+    private static FlowDocument CreateDetailedDocument(VisitFullDto dto)
+    {
+        var document = CreateBaseDocument(dto, "إيصال مفصل");
+        var table = new Table();
+        table.Columns.Add(new TableColumn { Width = new GridLength(1, GridUnitType.Star) });
+        table.Columns.Add(new TableColumn { Width = new GridLength(120) });
+
+        var group = new TableRowGroup();
+        group.Rows.Add(CreateRow("التحليل", "السعر", true));
+        foreach (var test in dto.SelectedTests)
+            group.Rows.Add(CreateRow(test.TestName, test.Price.ToString("N2"), false));
+
+        table.RowGroups.Add(group);
+        document.Blocks.Add(table);
+        AddFinancialLines(document, dto);
+        return document;
+    }
+
+    private static FlowDocument CreateSummaryDocument(VisitFullDto dto)
+    {
+        var document = CreateBaseDocument(dto, "إيصال مختصر");
+        AddFinancialLines(document, dto);
+        return document;
+    }
+
+    private static FlowDocument CreateBaseDocument(VisitFullDto dto, string title)
+    {
+        var document = new FlowDocument
+        {
+            FlowDirection = FlowDirection.RightToLeft,
+            FontFamily = new System.Windows.Media.FontFamily("Segoe UI"),
+            FontSize = 14,
+            PagePadding = new Thickness(32)
+        };
+
+        document.Blocks.Add(new Paragraph(new Run(title))
+        {
+            FontSize = 20,
+            FontWeight = FontWeights.Bold,
+            TextAlignment = TextAlignment.Center
+        });
+        document.Blocks.Add(new Paragraph(new Run($"اسم المريض: {dto.FullNameAr}")));
+        document.Blocks.Add(new Paragraph(new Run($"كود المريض: {dto.PatientCode}")));
+        document.Blocks.Add(new Paragraph(new Run($"تاريخ الزيارة: {dto.EntryDate:yyyy-MM-dd HH:mm}")));
+        return document;
+    }
+
+    private static void AddFinancialLines(FlowDocument document, VisitFullDto dto)
+    {
+        document.Blocks.Add(new Paragraph(new Run($"الإجمالي: {dto.Subtotal:N2}")));
+        document.Blocks.Add(new Paragraph(new Run($"الخصم: {dto.DiscountAmount:N2}")));
+        document.Blocks.Add(new Paragraph(new Run($"المجموع بعد الخصم: {dto.TotalAfterDiscount:N2}")));
+        document.Blocks.Add(new Paragraph(new Run($"المدفوع: {dto.TotalPaid:N2}")));
+        document.Blocks.Add(new Paragraph(new Run($"المتبقي: {dto.BalanceDue:N2}")));
+    }
+
+    private static TableRow CreateRow(string first, string second, bool isHeader)
+    {
+        var row = new TableRow();
+        row.Cells.Add(new TableCell(new Paragraph(new Run(first)))
+        {
+            FontWeight = isHeader ? FontWeights.Bold : FontWeights.Normal,
+            BorderBrush = System.Windows.Media.Brushes.LightGray,
+            BorderThickness = new Thickness(0, 0, 0, 1),
+            Padding = new Thickness(4)
+        });
+        row.Cells.Add(new TableCell(new Paragraph(new Run(second)))
+        {
+            FontWeight = isHeader ? FontWeights.Bold : FontWeights.Normal,
+            BorderBrush = System.Windows.Media.Brushes.LightGray,
+            BorderThickness = new Thickness(0, 0, 0, 1),
+            Padding = new Thickness(4)
+        });
+        return row;
     }
 }
-
-public sealed record ReceiptVisitData(
-    string VisitCode,
-    string PatientName,
-    decimal Subtotal,
-    decimal Discount,
-    decimal Paid,
-    decimal Balance,
-    IReadOnlyList<ReceiptTestLine> Tests);
-
-public sealed record ReceiptTestLine(string Name, decimal Price);

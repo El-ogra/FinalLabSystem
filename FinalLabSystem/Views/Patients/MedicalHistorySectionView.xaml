@@ -82,11 +82,11 @@
                 <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource HistoryLabelStyle}">
                     <TextBlock Text="مريض بفقر الدم" Style="{StaticResource HistoryTextStyle}"/>
                 </Border>
-                <CheckBox Grid.Row="0" Grid.Column="1" Style="{StaticResource HistoryCheckBoxStyle}"/>
+                <CheckBox Grid.Row="0" Grid.Column="1" IsChecked="{Binding HasAnemia}" Style="{StaticResource HistoryCheckBoxStyle}"/>
                 <Border Grid.Row="0" Grid.Column="2" Style="{StaticResource HistoryQuestionStyle}">
                     <TextBlock Text="هل يؤخذ علاج للسكر" Style="{StaticResource HistoryQuestionTextStyle}"/>
                 </Border>
-                <CheckBox Grid.Row="0" Grid.Column="3" Style="{StaticResource HistoryCheckBoxStyle}"/>
+                <CheckBox Grid.Row="0" Grid.Column="3" IsChecked="{Binding HasDiabetes}" Style="{StaticResource HistoryCheckBoxStyle}"/>
                 <Border Grid.Row="0" Grid.Column="4" Style="{StaticResource HistoryQuestionStyle}">
                     <TextBlock Text="عدد ساعات الصيام" Style="{StaticResource HistoryQuestionTextStyle}"/>
                 </Border>
@@ -99,37 +99,37 @@
                 <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource HistoryLabelStyle}">
                     <TextBlock Text="مريض بالتهاب المفاصل" Style="{StaticResource HistoryTextStyle}"/>
                 </Border>
-                <CheckBox Grid.Row="1" Grid.Column="1" Style="{StaticResource HistoryCheckBoxStyle}"/>
+                <CheckBox Grid.Row="1" Grid.Column="1" IsChecked="{Binding HasJointDisease}" Style="{StaticResource HistoryCheckBoxStyle}"/>
                 <Border Grid.Row="1" Grid.Column="2" Style="{StaticResource HistoryQuestionStyle}">
                     <TextBlock Text="هل يؤخذ علاج للغدد" Style="{StaticResource HistoryQuestionTextStyle}"/>
                 </Border>
-                <CheckBox Grid.Row="1" Grid.Column="3" Style="{StaticResource HistoryCheckBoxStyle}"/>
+                <CheckBox Grid.Row="1" Grid.Column="3" IsChecked="{Binding HasThyroid}" Style="{StaticResource HistoryCheckBoxStyle}"/>
                 <Border Grid.Row="1" Grid.Column="4" Style="{StaticResource HistoryQuestionStyle}">
                     <TextBlock Text="هل يؤخذ علاج لسيولة الدم" Style="{StaticResource HistoryQuestionTextStyle}"/>
                 </Border>
-                <CheckBox Grid.Row="1" Grid.Column="5" Style="{StaticResource HistoryCheckBoxStyle}"/>
+                <CheckBox Grid.Row="1" Grid.Column="5" IsChecked="{Binding HasBleedingDisorder}" Style="{StaticResource HistoryCheckBoxStyle}"/>
 
                 <Border Grid.Row="2" Grid.Column="0" Style="{StaticResource HistoryLabelStyle}">
                     <TextBlock Text="مريض بضغط الدم" Style="{StaticResource HistoryTextStyle}"/>
                 </Border>
-                <CheckBox Grid.Row="2" Grid.Column="1" Style="{StaticResource HistoryCheckBoxStyle}"/>
+                <CheckBox Grid.Row="2" Grid.Column="1" IsChecked="{Binding HasHypertension}" Style="{StaticResource HistoryCheckBoxStyle}"/>
                 <Border Grid.Row="2" Grid.Column="2" Style="{StaticResource HistoryQuestionStyle}">
                     <TextBlock Text="هل يؤخذ مضاد حيوي" Style="{StaticResource HistoryQuestionTextStyle}"/>
                 </Border>
-                <CheckBox Grid.Row="2" Grid.Column="3" Style="{StaticResource HistoryCheckBoxStyle}"/>
+                <CheckBox Grid.Row="2" Grid.Column="3" IsChecked="{Binding OnAnticoagulant}" Style="{StaticResource HistoryCheckBoxStyle}"/>
                 <Border Grid.Row="2" Grid.Column="4" Style="{StaticResource HistoryQuestionStyle}">
                     <TextBlock Text="هل يؤخذ علاج للفيروسات" Style="{StaticResource HistoryQuestionTextStyle}"/>
                 </Border>
-                <CheckBox Grid.Row="2" Grid.Column="5" Style="{StaticResource HistoryCheckBoxStyle}"/>
+                <CheckBox Grid.Row="2" Grid.Column="5" IsChecked="{Binding HasViralInfection}" Style="{StaticResource HistoryCheckBoxStyle}"/>
 
                 <Border Grid.Row="3" Grid.Column="0" Style="{StaticResource HistoryLabelStyle}">
                     <TextBlock Text="مريض بالفشل كلوي" Style="{StaticResource HistoryTextStyle}"/>
                 </Border>
-                <CheckBox Grid.Row="3" Grid.Column="1" Style="{StaticResource HistoryCheckBoxStyle}"/>
+                <CheckBox Grid.Row="3" Grid.Column="1" IsChecked="{Binding HasKidneyDisease}" Style="{StaticResource HistoryCheckBoxStyle}"/>
                 <Border Grid.Row="3" Grid.Column="2" Style="{StaticResource HistoryQuestionStyle}">
                     <TextBlock Text="هل يؤخذ علاج للكبد" Style="{StaticResource HistoryQuestionTextStyle}"/>
                 </Border>
-                <CheckBox Grid.Row="3" Grid.Column="3" Style="{StaticResource HistoryCheckBoxStyle}"/>
+                <CheckBox Grid.Row="3" Grid.Column="3" IsChecked="{Binding HasLiverDisease}" Style="{StaticResource HistoryCheckBoxStyle}"/>
                 <Border Grid.Row="3" Grid.Column="4" Style="{StaticResource HistoryQuestionStyle}">
                     <TextBlock Text="للسيدات هل يوجد حمل" Style="{StaticResource HistoryQuestionTextStyle}"/>
                 </Border>
@@ -138,11 +138,11 @@
                 <Border Grid.Row="4" Grid.Column="0" Style="{StaticResource HistoryLabelStyle}">
                     <TextBlock Text="مريض بالذئبة الحمراء" Style="{StaticResource HistoryTextStyle}"/>
                 </Border>
-                <CheckBox Grid.Row="4" Grid.Column="1" Style="{StaticResource HistoryCheckBoxStyle}"/>
+                <CheckBox Grid.Row="4" Grid.Column="1" IsChecked="{Binding HasLupus}" Style="{StaticResource HistoryCheckBoxStyle}"/>
                 <Border Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="3" Style="{StaticResource HistoryQuestionStyle}">
                     <TextBlock Text="هل تم عمل اشاعة بالصبغة او بالموجات الصوتية خلال يومين" Style="{StaticResource HistoryQuestionTextStyle}"/>
                 </Border>
-                <CheckBox Grid.Row="4" Grid.Column="5" Style="{StaticResource HistoryCheckBoxStyle}"/>
+                <CheckBox Grid.Row="4" Grid.Column="5" IsChecked="{Binding HadXrayContrast}" Style="{StaticResource HistoryCheckBoxStyle}"/>
 
                 <TextBox Grid.Row="5"
                          Grid.Column="0"

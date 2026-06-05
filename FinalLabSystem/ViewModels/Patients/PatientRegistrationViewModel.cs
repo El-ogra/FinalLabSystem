@@ -1,10 +1,14 @@
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
 using FinalLabSystem.Infrastructure;
 using FinalLabSystem.Infrastructure.Navigation;
 using FinalLabSystem.Infrastructure.Session;
 using FinalLabSystem.Models;
+using FinalLabSystem.Models.DTOs;
 using FinalLabSystem.Services.Interfaces;
+using FinalLabSystem.Views.Patients;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FinalLabSystem.ViewModels.Patients;
 
@@ -44,6 +48,7 @@ public sealed class PatientRegistrationViewModel : ViewModelBase
         _sampleTrackingService = sampleTrackingService;
         _navigationService = navigationService;
         _currentUserSession = currentUserSession;
+        TodayPatients = new ObservableCollection<TodayPatientDto>();
 
         TestSelection.TestsChanged += (_, _) =>
         {
@@ -53,10 +58,10 @@ public sealed class PatientRegistrationViewModel : ViewModelBase
 
         AddNewCommand = new AsyncRelayCommand(AddNewAsync);
         SaveCommand = new AsyncRelayCommand(SaveAsync);
-        EditCommand = new RelayCommand(_ => IsEditMode = true);
-        DeleteCommand = new RelayCommand(_ => MessageBox.Show("الحذف يحتاج اختيار مريض محفوظ وسياسة حذف نهائية.", "حذف", MessageBoxButton.OK, MessageBoxImage.Information));
+        EditCommand = new AsyncRelayCommand(EditAsync);
+        DeleteCommand = new AsyncRelayCommand(DeleteAsync, () => CurrentVisitId > 0);
         BarcodeCommand = new AsyncRelayCommand(BarcodeAsync, () => CurrentVisitId > 0);
-        ReceiptCommand = new RelayCommand(_ => MessageBox.Show("الإيصال متاح بعد اكتمال قالب الطباعة النهائي.", "الإيصال", MessageBoxButton.OK, MessageBoxImage.Information), _ => CurrentVisitId > 0);
+        ReceiptCommand = new AsyncRelayCommand(ReceiptAsync, () => CurrentVisitId > 0);
         ReturnToMainCommand = new RelayCommand(_ => ReturnToMain());
         LoadTodayPatientsCommand = new AsyncRelayCommand(LoadTodayPatientsAsync);
         _ = AddNewAsync();
@@ -72,6 +77,8 @@ public sealed class PatientRegistrationViewModel : ViewModelBase
 
     public FinancialViewModel Financial { get; }
 
+    public ObservableCollection<TodayPatientDto> TodayPatients { get; }
+
     public int CurrentPatientId
     {
         get => _currentPatientId;
@@ -81,7 +88,14 @@ public sealed class PatientRegistrationViewModel : ViewModelBase
     public int CurrentVisitId
     {
         get => _currentVisitId;
-        private set => SetProperty(ref _currentVisitId, value);
+        private set
+        {
+            if (SetProperty(ref _currentVisitId, value))
+            {
+                Financial.SetCurrentVisitId(value);
+                CommandManager.InvalidateRequerySuggested();
+            }
+        }
     }
 
     public bool IsEditMode
@@ -139,16 +153,12 @@ public sealed class PatientRegistrationViewModel : ViewModelBase
         IsEditMode = false;
         EntryDate = DateTime.Now;
         ExpectedReady = DateTime.Now.AddDays(1);
-        PatientInfo.LoadPatient(new Patient
-        {
-            PatientCode = string.Empty,
-            FullNameAr = string.Empty,
-            Sex = "U",
-            PatientType = "Individual",
-            CreatedAt = DateTime.UtcNow
-        });
+        PatientInfo.ClearAllFields();
+        Referral.ClearAllFields();
+        MedicalHistory.ClearAllFields();
+        TestSelection.ClearAll();
+        Financial.ClearAllFields();
         await PatientInfo.GenerateCodeAsync();
-        Financial.LoadFinancials(0, 0, 0, 0);
         HasUnsavedChanges = false;
     }
 
@@ -175,13 +185,31 @@ public sealed class PatientRegistrationViewModel : ViewModelBase
         var visit = new Visit
         {
             VisitId = CurrentVisitId,
-            VisitCode = CurrentVisitId == 0 ? await _visitService.GenerateVisitCodeAsync() : $"V{CurrentVisitId}",
+            VisitCode = PatientInfo.PatientCode,
             PatientId = CurrentPatientId,
             VisitDate = EntryDate,
             ExpectedReady = ExpectedReady,
             IsPregnant = MedicalHistory.IsPregnant,
             IsFasting = MedicalHistory.IsFasting,
             FastingHours = MedicalHistory.FastingHours,
+            TakenOutsideLab = MedicalHistory.TakenOutsideLab,
+            OutsideUrine = MedicalHistory.OutsideUrine,
+            OutsideStool = MedicalHistory.OutsideStool,
+            OutsideBlood = MedicalHistory.OutsideBlood,
+            OutsideSemen = MedicalHistory.OutsideSemen,
+            OutsideCsf = MedicalHistory.OutsideCsf,
+            HasDiabetes = MedicalHistory.HasDiabetes,
+            HasAnemia = MedicalHistory.HasAnemia,
+            HasBleedingDisorder = MedicalHistory.HasBleedingDisorder,
+            HasThyroid = MedicalHistory.HasThyroid,
+            HasJointDisease = MedicalHistory.HasJointDisease,
+            HasViralInfection = MedicalHistory.HasViralInfection,
+            OnAnticoagulant = MedicalHistory.OnAnticoagulant,
+            HasHypertension = MedicalHistory.HasHypertension,
+            HasLiverDisease = MedicalHistory.HasLiverDisease,
+            HasKidneyDisease = MedicalHistory.HasKidneyDisease,
+            HasLupus = MedicalHistory.HasLupus,
+            HadXrayContrast = MedicalHistory.HadXrayContrast,
             ReferralId = Referral.SelectedReferral?.ReferralId,
             Subtotal = Convert.ToDouble(Financial.Subtotal),
             DiscountAmount = Convert.ToDouble(Financial.DiscountAmount),
@@ -209,21 +237,86 @@ public sealed class PatientRegistrationViewModel : ViewModelBase
 
         CurrentPatientId = savedVisit.PatientId;
         CurrentVisitId = savedVisit.VisitId;
+        Financial.SetCurrentVisitId(savedVisit.VisitId);
+        IsEditMode = true;
         HasUnsavedChanges = false;
         MessageBox.Show("تم حفظ بيانات المريض والزيارة.", "حفظ", MessageBoxButton.OK, MessageBoxImage.Information);
+    }
+
+    private async Task EditAsync()
+    {
+        await LoadTodayPatientsAsync();
+
+        var dialog = new TodayPatientsDialog(TodayPatients)
+        {
+            Owner = Application.Current.Windows.OfType<Window>().FirstOrDefault(window => window.IsActive)
+        };
+
+        if (dialog.ShowDialog() == true && dialog.SelectedPatient is not null)
+            await LoadVisitForEditAsync(dialog.SelectedPatient.VisitId);
+    }
+
+    public async Task LoadVisitForEditAsync(int visitId)
+    {
+        var dto = await _visitService.GetVisitFullDataAsync(visitId);
+        CurrentPatientId = dto.PatientId;
+        CurrentVisitId = dto.VisitId;
+        EntryDate = dto.EntryDate;
+        ExpectedReady = dto.ExpectedReady;
+        PatientInfo.LoadPatient(dto);
+        Referral.LoadFromDto(dto);
+        MedicalHistory.LoadFromVisit(dto);
+        TestSelection.LoadSelectedTests(dto.SelectedTests);
+        Financial.LoadFromDto(dto);
+        IsEditMode = true;
+        HasUnsavedChanges = false;
+    }
+
+    private async Task DeleteAsync()
+    {
+        if (CurrentVisitId <= 0)
+            return;
+
+        var result = MessageBox.Show("هل تريد حذف الزيارة الحالية؟", "حذف", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+        if (result != MessageBoxResult.Yes)
+            return;
+
+        var deleted = await _visitService.CancelVisitAsync(CurrentVisitId);
+        if (deleted)
+            await AddNewAsync();
     }
 
     private async Task BarcodeAsync()
     {
         var staffId = _currentUserSession.CurrentUser?.StaffId ?? 1;
         await _sampleTrackingService.GenerateBarcodesForVisitAsync(CurrentVisitId, staffId);
-        MessageBox.Show("تم تجهيز باركود الأنابيب للزيارة الحالية.", "الباركود", MessageBoxButton.OK, MessageBoxImage.Information);
+        var viewModel = App.ServiceProvider.GetRequiredService<BarcodeDialogViewModel>();
+        await viewModel.LoadTubesAsync(CurrentVisitId);
+        var dialog = new BarcodeDialog(viewModel)
+        {
+            Owner = Application.Current.Windows.OfType<Window>().FirstOrDefault(window => window.IsActive)
+        };
+        dialog.ShowDialog();
+    }
+
+    private async Task ReceiptAsync()
+    {
+        var dto = await _visitService.GetVisitFullDataAsync(CurrentVisitId);
+        var viewModel = App.ServiceProvider.GetRequiredService<ReceiptDialogViewModel>();
+        viewModel.Initialize(dto);
+        var dialog = new ReceiptDialog(viewModel)
+        {
+            Owner = Application.Current.Windows.OfType<Window>().FirstOrDefault(window => window.IsActive)
+        };
+        dialog.ShowDialog();
     }
 
     private async Task LoadTodayPatientsAsync()
     {
-        var visits = await _patientService.GetTodayPatientsAsync();
-        MessageBox.Show($"عدد زيارات اليوم: {visits.Count}", "مرضى اليوم", MessageBoxButton.OK, MessageBoxImage.Information);
+        var patients = await _visitService.GetTodayPatientListAsync();
+        TodayPatients.Clear();
+        foreach (var patient in patients)
+            TodayPatients.Add(patient);
     }
 
     private void ReturnToMain()

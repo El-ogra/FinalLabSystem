@@ -1465,6 +1465,78 @@ public partial class FinalLabDbContext : DbContext
             entity.Property(e => e.IsFasting).HasColumnName("is_fasting");
             entity.Property(e => e.FastingHours).HasColumnName("fasting_hours");
             entity.Property(e => e.IsPregnant).HasColumnName("is_pregnant");
+            entity.Property(e => e.TakenOutsideLab)
+                .HasColumnType("bit")
+                .HasDefaultValue(false)
+                .HasColumnName("taken_outside_lab");
+            entity.Property(e => e.OutsideUrine)
+                .HasColumnType("bit")
+                .HasDefaultValue(false)
+                .HasColumnName("outside_urine");
+            entity.Property(e => e.OutsideStool)
+                .HasColumnType("bit")
+                .HasDefaultValue(false)
+                .HasColumnName("outside_stool");
+            entity.Property(e => e.OutsideBlood)
+                .HasColumnType("bit")
+                .HasDefaultValue(false)
+                .HasColumnName("outside_blood");
+            entity.Property(e => e.OutsideSemen)
+                .HasColumnType("bit")
+                .HasDefaultValue(false)
+                .HasColumnName("outside_semen");
+            entity.Property(e => e.OutsideCsf)
+                .HasColumnType("bit")
+                .HasDefaultValue(false)
+                .HasColumnName("outside_csf");
+            entity.Property(e => e.HasDiabetes)
+                .HasColumnType("bit")
+                .HasDefaultValue(false)
+                .HasColumnName("has_diabetes");
+            entity.Property(e => e.HasAnemia)
+                .HasColumnType("bit")
+                .HasDefaultValue(false)
+                .HasColumnName("has_anemia");
+            entity.Property(e => e.HasBleedingDisorder)
+                .HasColumnType("bit")
+                .HasDefaultValue(false)
+                .HasColumnName("has_bleeding_disorder");
+            entity.Property(e => e.HasThyroid)
+                .HasColumnType("bit")
+                .HasDefaultValue(false)
+                .HasColumnName("has_thyroid");
+            entity.Property(e => e.HasJointDisease)
+                .HasColumnType("bit")
+                .HasDefaultValue(false)
+                .HasColumnName("has_joint_disease");
+            entity.Property(e => e.HasViralInfection)
+                .HasColumnType("bit")
+                .HasDefaultValue(false)
+                .HasColumnName("has_viral_infection");
+            entity.Property(e => e.OnAnticoagulant)
+                .HasColumnType("bit")
+                .HasDefaultValue(false)
+                .HasColumnName("on_anticoagulant");
+            entity.Property(e => e.HasHypertension)
+                .HasColumnType("bit")
+                .HasDefaultValue(false)
+                .HasColumnName("has_hypertension");
+            entity.Property(e => e.HasLiverDisease)
+                .HasColumnType("bit")
+                .HasDefaultValue(false)
+                .HasColumnName("has_liver_disease");
+            entity.Property(e => e.HasKidneyDisease)
+                .HasColumnType("bit")
+                .HasDefaultValue(false)
+                .HasColumnName("has_kidney_disease");
+            entity.Property(e => e.HasLupus)
+                .HasColumnType("bit")
+                .HasDefaultValue(false)
+                .HasColumnName("has_lupus");
+            entity.Property(e => e.HadXrayContrast)
+                .HasColumnType("bit")
+                .HasDefaultValue(false)
+                .HasColumnName("had_xray_contrast");
             entity.Property(e => e.Notes).HasColumnName("notes");
             entity.Property(e => e.PatientId).HasColumnName("patient_id");
             entity.Property(e => e.PaymentStatus)

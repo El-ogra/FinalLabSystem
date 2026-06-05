@@ -92,5 +92,6 @@ public partial class App : Application
         services.AddTransient<PatientSearchWindow>();
         services.AddTransient<BarcodeDialog>();
         services.AddTransient<ReceiptDialog>();
+        services.AddTransient<TodayPatientsDialog>();
     }
 }

@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using FinalLabSystem.Infrastructure;
 using FinalLabSystem.Models;
+using FinalLabSystem.Models.DTOs;
 using FinalLabSystem.Services.Interfaces;
 
 namespace FinalLabSystem.ViewModels.Patients;
@@ -77,6 +78,36 @@ public sealed class ReferralViewModel : ViewModelBase
         SearchText = referral.SourceName;
         ReferralAddress = referral.Address;
         SelectedReferral = referral;
+    }
+
+    public void LoadFromDto(VisitFullDto dto)
+    {
+        ReferralTitle = dto.ReferralTitle;
+        SearchText = dto.ReferralName;
+        ReferralAddress = dto.ReferralAddress;
+        SelectedReferral = dto.ReferralId.HasValue
+            ? new ReferralSource
+            {
+                ReferralId = dto.ReferralId.Value,
+                SourceType = "DOCTOR",
+                Title = dto.ReferralTitle,
+                SourceName = string.IsNullOrWhiteSpace(dto.ReferralName) ? "Referral Source" : dto.ReferralName,
+                Address = dto.ReferralAddress,
+                IsActive = true
+            }
+            : null;
+        ShouldSaveReferral = false;
+        PrintReferralOnReport = false;
+    }
+
+    public void ClearAllFields()
+    {
+        ReferralTitle = null;
+        SearchText = null;
+        SelectedReferral = null;
+        ShouldSaveReferral = false;
+        PrintReferralOnReport = false;
+        ReferralAddress = null;
     }
 
     public ReferralSource ToReferralSource()

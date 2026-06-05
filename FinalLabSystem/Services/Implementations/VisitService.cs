@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FinalLabSystem.Data;
 using FinalLabSystem.Models;
+using FinalLabSystem.Models.DTOs;
 using FinalLabSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -186,13 +187,13 @@ public class VisitService : IVisitService
                 _context.PatientMedicalHistories.Add(history);
             }
 
+            var oldPayments = await _context.Payments
+                .Where(p => p.VisitId == visit.VisitId)
+                .ToListAsync();
+            _context.Payments.RemoveRange(oldPayments);
+
             if (amountPaid > 0)
             {
-                var oldPayments = await _context.Payments
-                    .Where(p => p.VisitId == visit.VisitId)
-                    .ToListAsync();
-                _context.Payments.RemoveRange(oldPayments);
-
                 _context.Payments.Add(new Payment
                 {
                     VisitId = visit.VisitId,
@@ -209,6 +210,142 @@ public class VisitService : IVisitService
             await transaction.CommitAsync();
 
             return (await GetVisitSummaryAsync(visit.VisitId))!;
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
+    }
+
+    public async Task<VisitFullDto> GetVisitFullDataAsync(int visitId)
+    {
+        var visit = await _context.Visits
+            .Include(v => v.Patient)
+            .Include(v => v.Referral)
+            .Include(v => v.Payments)
+            .Include(v => v.VisitTests)
+                .ThenInclude(vt => vt.Testtype)
+            .FirstOrDefaultAsync(v => v.VisitId == visitId);
+
+        if (visit is null)
+            throw new InvalidOperationException($"Visit with ID {visitId} not found.");
+
+        var totalPaid = visit.Payments.Sum(payment => payment.Amount);
+        var balanceDue = Math.Max(0, visit.TotalAfterDiscount - totalPaid);
+
+        return new VisitFullDto
+        {
+            PatientId = visit.PatientId,
+            VisitId = visit.VisitId,
+            PatientCode = visit.Patient.PatientCode,
+            FullNameAr = visit.Patient.FullNameAr,
+            Title = visit.Patient.Title,
+            Sex = string.IsNullOrWhiteSpace(visit.Patient.Sex) ? "U" : visit.Patient.Sex,
+            PatientType = string.IsNullOrWhiteSpace(visit.Patient.PatientType) ? "Individual" : visit.Patient.PatientType,
+            IsVip = visit.Patient.IsVip,
+            ApproxAge = visit.Patient.ApproxAge,
+            ApproxAgeUnit = string.IsNullOrWhiteSpace(visit.Patient.ApproxAgeUnit) ? "Years" : visit.Patient.ApproxAgeUnit,
+            Phone = visit.Patient.Phone,
+            Phone2 = visit.Patient.Phone2,
+            Address = visit.Patient.Address,
+            Email = visit.Patient.Email,
+            NationalId = visit.Patient.NationalId,
+            Notes = visit.Patient.Notes,
+            EntryDate = visit.VisitDate,
+            ExpectedReady = visit.ExpectedReady,
+            ReferralId = visit.ReferralId,
+            ReferralTitle = visit.Referral?.Title,
+            ReferralName = visit.Referral?.SourceName,
+            ReferralAddress = visit.Referral?.Address,
+            IsFasting = visit.IsFasting,
+            FastingHours = visit.FastingHours,
+            IsPregnant = visit.IsPregnant,
+            VisitNotes = visit.Notes,
+            TakenOutsideLab = visit.TakenOutsideLab,
+            OutsideUrine = visit.OutsideUrine,
+            OutsideStool = visit.OutsideStool,
+            OutsideBlood = visit.OutsideBlood,
+            OutsideSemen = visit.OutsideSemen,
+            OutsideCsf = visit.OutsideCsf,
+            HasDiabetes = visit.HasDiabetes,
+            HasAnemia = visit.HasAnemia,
+            HasBleedingDisorder = visit.HasBleedingDisorder,
+            HasThyroid = visit.HasThyroid,
+            HasJointDisease = visit.HasJointDisease,
+            HasViralInfection = visit.HasViralInfection,
+            OnAnticoagulant = visit.OnAnticoagulant,
+            HasHypertension = visit.HasHypertension,
+            HasLiverDisease = visit.HasLiverDisease,
+            HasKidneyDisease = visit.HasKidneyDisease,
+            HasLupus = visit.HasLupus,
+            HadXrayContrast = visit.HadXrayContrast,
+            SelectedTests = visit.VisitTests
+                .OrderBy(vt => vt.VisitTestId)
+                .Select(vt => new SelectedTestDto
+                {
+                    TestTypeId = vt.TesttypeId,
+                    TestCode = vt.Testtype.TypeCode,
+                    TestName = vt.Testtype.TypeNameAr ?? vt.Testtype.TypeNameEn,
+                    Price = Convert.ToDecimal(vt.PriceCharged),
+                    SampleType = vt.Testtype.SampleType
+                })
+                .ToList(),
+            Subtotal = Convert.ToDecimal(visit.Subtotal),
+            DiscountAmount = Convert.ToDecimal(visit.DiscountAmount),
+            DiscountPercent = Convert.ToDecimal(visit.DiscountPercent),
+            TotalAfterDiscount = Convert.ToDecimal(visit.TotalAfterDiscount),
+            TotalPaid = Convert.ToDecimal(totalPaid),
+            BalanceDue = Convert.ToDecimal(balanceDue),
+            PaymentStatus = string.IsNullOrWhiteSpace(visit.PaymentStatus) ? "PENDING" : visit.PaymentStatus
+        };
+    }
+
+    public async Task<List<TodayPatientDto>> GetTodayPatientListAsync()
+    {
+        var today = DateTime.Today;
+        var tomorrow = today.AddDays(1);
+
+        return await _context.Visits
+            .Include(v => v.Patient)
+            .Where(v => v.VisitDate >= today && v.VisitDate < tomorrow)
+            .OrderByDescending(v => v.CreatedAt)
+            .ThenByDescending(v => v.VisitId)
+            .Select(v => new TodayPatientDto
+            {
+                PatientId = v.PatientId,
+                VisitId = v.VisitId,
+                PatientCode = v.Patient.PatientCode,
+                FullNameAr = v.Patient.FullNameAr
+            })
+            .ToListAsync();
+    }
+
+    public async Task<bool> CancelVisitAsync(int visitId)
+    {
+        using var transaction = await _context.Database.BeginTransactionAsync();
+
+        try
+        {
+            var visit = await _context.Visits
+                .Include(v => v.VisitTests)
+                .Include(v => v.Payments)
+                .Include(v => v.SampleTubes)
+                .Include(v => v.VisitCharges)
+                .FirstOrDefaultAsync(v => v.VisitId == visitId);
+
+            if (visit is null)
+                return false;
+
+            _context.VisitTests.RemoveRange(visit.VisitTests);
+            _context.Payments.RemoveRange(visit.Payments);
+            _context.SampleTubes.RemoveRange(visit.SampleTubes);
+            _context.VisitCharges.RemoveRange(visit.VisitCharges);
+            _context.Visits.Remove(visit);
+
+            await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
+            return true;
         }
         catch
         {

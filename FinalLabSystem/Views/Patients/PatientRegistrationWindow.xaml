@@ -7,6 +7,9 @@
         Width="1280"
         WindowStartupLocation="CenterScreen"
         FlowDirection="RightToLeft">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+    </Window.Resources>
     <Grid Background="#F5F7FA" Margin="8">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="55*"/>
@@ -127,16 +130,29 @@
                                    FontSize="13"
                                    VerticalAlignment="Center"/>
                     </Border>
-                    <CheckBox Margin="0,0,3,0" VerticalAlignment="Center"/>
-                    <TextBlock Text="Urine" Background="#FFE47A" Foreground="#3B3200" FontWeight="Bold" Padding="6,2" Margin="0,0,5,0"/>
-                    <CheckBox Margin="0,0,3,0" VerticalAlignment="Center"/>
-                    <TextBlock Text="Stool" Background="#FFE47A" Foreground="#3B3200" FontWeight="Bold" Padding="6,2" Margin="0,0,5,0"/>
-                    <CheckBox Margin="0,0,3,0" VerticalAlignment="Center"/>
-                    <TextBlock Text="Blood" Background="#FFE47A" Foreground="#C71919" FontWeight="Bold" Padding="6,2" Margin="0,0,5,0"/>
-                    <CheckBox Margin="0,0,3,0" VerticalAlignment="Center"/>
-                    <TextBlock Text="Semen" Background="#FFE47A" Foreground="#3B3200" FontWeight="Bold" Padding="6,2" Margin="0,0,5,0"/>
-                    <CheckBox Margin="0,0,3,0" VerticalAlignment="Center"/>
-                    <TextBlock Text="CSF" Background="#FFE47A" Foreground="#3B3200" FontWeight="Bold" Padding="6,2"/>
+                    <CheckBox IsChecked="{Binding MedicalHistory.TakenOutsideLab}"
+                              Margin="0,0,3,0"
+                              VerticalAlignment="Center"/>
+                    <TextBlock Text="Urine" Background="#FFE47A" Foreground="#3B3200" FontWeight="Bold" Padding="6,2" Margin="0,0,5,0"
+                               Visibility="{Binding MedicalHistory.TakenOutsideLab, Converter={StaticResource BoolToVis}}"/>
+                    <CheckBox IsChecked="{Binding MedicalHistory.OutsideUrine}" Margin="0,0,3,0" VerticalAlignment="Center"
+                              Visibility="{Binding MedicalHistory.TakenOutsideLab, Converter={StaticResource BoolToVis}}"/>
+                    <TextBlock Text="Stool" Background="#FFE47A" Foreground="#3B3200" FontWeight="Bold" Padding="6,2" Margin="0,0,5,0"
+                               Visibility="{Binding MedicalHistory.TakenOutsideLab, Converter={StaticResource BoolToVis}}"/>
+                    <CheckBox IsChecked="{Binding MedicalHistory.OutsideStool}" Margin="0,0,3,0" VerticalAlignment="Center"
+                              Visibility="{Binding MedicalHistory.TakenOutsideLab, Converter={StaticResource BoolToVis}}"/>
+                    <TextBlock Text="Blood" Background="#FFE47A" Foreground="#C71919" FontWeight="Bold" Padding="6,2" Margin="0,0,5,0"
+                               Visibility="{Binding MedicalHistory.TakenOutsideLab, Converter={StaticResource BoolToVis}}"/>
+                    <CheckBox IsChecked="{Binding MedicalHistory.OutsideBlood}" Margin="0,0,3,0" VerticalAlignment="Center"
+                              Visibility="{Binding MedicalHistory.TakenOutsideLab, Converter={StaticResource BoolToVis}}"/>
+                    <TextBlock Text="Semen" Background="#FFE47A" Foreground="#3B3200" FontWeight="Bold" Padding="6,2" Margin="0,0,5,0"
+                               Visibility="{Binding MedicalHistory.TakenOutsideLab, Converter={StaticResource BoolToVis}}"/>
+                    <CheckBox IsChecked="{Binding MedicalHistory.OutsideSemen}" Margin="0,0,3,0" VerticalAlignment="Center"
+                              Visibility="{Binding MedicalHistory.TakenOutsideLab, Converter={StaticResource BoolToVis}}"/>
+                    <TextBlock Text="CSF" Background="#FFE47A" Foreground="#3B3200" FontWeight="Bold" Padding="6,2"
+                               Visibility="{Binding MedicalHistory.TakenOutsideLab, Converter={StaticResource BoolToVis}}"/>
+                    <CheckBox IsChecked="{Binding MedicalHistory.OutsideCsf}" Margin="3,0,0,0" VerticalAlignment="Center"
+                              Visibility="{Binding MedicalHistory.TakenOutsideLab, Converter={StaticResource BoolToVis}}"/>
                 </StackPanel>
             </Border>
             <patients:FinancialSectionView Grid.Row="2" DataContext="{Binding Financial}" Margin="4,0,4,0"/>

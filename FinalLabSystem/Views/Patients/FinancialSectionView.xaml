@@ -147,6 +147,7 @@
                 <Button Grid.Row="3"
                         Grid.Column="2"
                         Content="خالص"
+                        Command="{Binding ClearanceCommand}"
                         Style="{StaticResource FinanceButtonStyle}"/>
                 <TextBox Grid.Row="3"
                          Grid.Column="3"

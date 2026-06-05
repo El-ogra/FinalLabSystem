@@ -2769,6 +2769,72 @@ namespace FinalLabSystem.Migrations
                         .HasColumnType("smallint")
                         .HasColumnName("fasting_hours");
 
+                    b.Property<bool>("HadXrayContrast")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("had_xray_contrast");
+
+                    b.Property<bool>("HasAnemia")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("has_anemia");
+
+                    b.Property<bool>("HasBleedingDisorder")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("has_bleeding_disorder");
+
+                    b.Property<bool>("HasDiabetes")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("has_diabetes");
+
+                    b.Property<bool>("HasHypertension")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("has_hypertension");
+
+                    b.Property<bool>("HasJointDisease")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("has_joint_disease");
+
+                    b.Property<bool>("HasKidneyDisease")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("has_kidney_disease");
+
+                    b.Property<bool>("HasLiverDisease")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("has_liver_disease");
+
+                    b.Property<bool>("HasLupus")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("has_lupus");
+
+                    b.Property<bool>("HasThyroid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("has_thyroid");
+
+                    b.Property<bool>("HasViralInfection")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("has_viral_infection");
+
                     b.Property<bool>("IsPregnant")
                         .HasColumnType("bit")
                         .HasColumnName("is_pregnant");
@@ -2776,6 +2842,42 @@ namespace FinalLabSystem.Migrations
                     b.Property<string>("Notes")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("notes");
+
+                    b.Property<bool>("OnAnticoagulant")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("on_anticoagulant");
+
+                    b.Property<bool>("OutsideBlood")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("outside_blood");
+
+                    b.Property<bool>("OutsideCsf")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("outside_csf");
+
+                    b.Property<bool>("OutsideSemen")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("outside_semen");
+
+                    b.Property<bool>("OutsideStool")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("outside_stool");
+
+                    b.Property<bool>("OutsideUrine")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("outside_urine");
 
                     b.Property<int>("PatientId")
                         .HasColumnType("int")
@@ -2804,6 +2906,12 @@ namespace FinalLabSystem.Migrations
                     b.Property<double>("Subtotal")
                         .HasColumnType("float")
                         .HasColumnName("subtotal");
+
+                    b.Property<bool>("TakenOutsideLab")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("taken_outside_lab");
 
                     b.Property<double>("TotalAfterDiscount")
                         .HasColumnType("float")

@@ -63,6 +63,8 @@ public class SampleTrackingService : ISampleTrackingService
     public async Task<List<SampleTube>> GetTubesForVisitAsync(int visitId)
     {
         return await _context.SampleTubes
+            .Include(t => t.Visit)
+                .ThenInclude(v => v.Patient)
             .Include(t => t.VisitTests)
                 .ThenInclude(vt => vt.Testtype)
             .Where(t => t.VisitId == visitId)
