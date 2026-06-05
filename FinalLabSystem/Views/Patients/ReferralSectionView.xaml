@@ -52,24 +52,24 @@
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1.7*"/>
-                    <ColumnDefinition Width="0.8*"/>
-                    <ColumnDefinition Width="1.25*"/>
-                    <ColumnDefinition Width="0.85*"/>
+                    <ColumnDefinition Width="0.92*"/>
+                    <ColumnDefinition Width="1.35*"/>
+                    <ColumnDefinition Width="0.92*"/>
                 </Grid.ColumnDefinitions>
 
-                <ComboBox Grid.Row="0" Grid.Column="0" ItemsSource="{Binding ReferralSuggestions}" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedReferral}" DisplayMemberPath="SourceName" IsEditable="True" Style="{StaticResource ReferralComboStyle}"/>
-                <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding ReferralTitles}" Text="{Binding ReferralTitle, UpdateSourceTrigger=PropertyChanged}" IsEditable="True" Style="{StaticResource ReferralComboStyle}"/>
-                <Label Grid.Row="0" Grid.Column="2" Content="الطبيب المعالج" Style="{StaticResource ReferralLabelStyle}"/>
+                <ComboBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{Binding ReferralSuggestions}" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedReferral}" DisplayMemberPath="SourceName" IsEditable="True" Style="{StaticResource ReferralComboStyle}"/>
+                <ComboBox Grid.Row="0" Grid.Column="2" ItemsSource="{Binding ReferralTitles}" Text="{Binding ReferralTitle, UpdateSourceTrigger=PropertyChanged}" IsEditable="True" Style="{StaticResource ReferralComboStyle}"/>
+                <Label Grid.Row="0" Grid.Column="3" Content="الطبيب المعالج" Style="{StaticResource ReferralLabelStyle}"/>
 
-                <ComboBox Grid.Row="1" Grid.Column="0" ItemsSource="{Binding ReferralSuggestions}" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedReferral}" DisplayMemberPath="SourceName" IsEditable="True" Style="{StaticResource ReferralComboStyle}"/>
-                <Label Grid.Row="1" Grid.Column="2" Content="جهة الإحالة" Style="{StaticResource ReferralLabelStyle}"/>
+                <ComboBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" ItemsSource="{Binding ReferralSuggestions}" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedReferral}" DisplayMemberPath="SourceName" IsEditable="True" Style="{StaticResource ReferralComboStyle}"/>
+                <Label Grid.Row="1" Grid.Column="3" Content="جهة الإحالة" Style="{StaticResource ReferralLabelStyle}"/>
 
-                <TextBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding ReferralAddress}" Style="{StaticResource ReferralInputStyle}"/>
-                <Label Grid.Row="2" Grid.Column="2" Content="العنوان" Style="{StaticResource ReferralBlueLabelStyle}"/>
-                <StackPanel Grid.Row="2" Grid.Column="3" Orientation="Vertical" FlowDirection="RightToLeft" VerticalAlignment="Center">
-                    <CheckBox Content="حفظ جهة التحويل" IsChecked="{Binding ShouldSaveReferral}" Foreground="White" Margin="3,0"/>
-                    <CheckBox Content="طباعة جهة التحويل" IsChecked="{Binding PrintReferralOnReport}" Foreground="White" Margin="3,2,3,0"/>
+                <TextBox Grid.Row="2" Grid.Column="0" Text="{Binding ReferralAddress}" Style="{StaticResource ReferralInputStyle}"/>
+                <StackPanel Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Orientation="Horizontal" FlowDirection="RightToLeft" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                    <CheckBox Content="حفظ جهة التحويل" IsChecked="{Binding ShouldSaveReferral}" Foreground="White" Margin="6,0"/>
+                    <CheckBox Content="طباعة جهة التحويل" IsChecked="{Binding PrintReferralOnReport}" Foreground="White" Margin="6,0"/>
                 </StackPanel>
+                <Label Grid.Row="2" Grid.Column="3" Content="العنوان" Style="{StaticResource ReferralBlueLabelStyle}"/>
             </Grid>
         </Border>
     </Border>
