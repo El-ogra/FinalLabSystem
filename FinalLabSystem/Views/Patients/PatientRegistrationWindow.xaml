@@ -61,9 +61,43 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <patients:TestSelectionView Grid.Row="0" DataContext="{Binding TestSelection}"/>
-            <patients:FinancialSectionView Grid.Row="1" DataContext="{Binding Financial}" Margin="4,0,4,0"/>
+            <Border Grid.Row="1"
+                    Background="#123A42"
+                    BorderBrush="#0A252C"
+                    BorderThickness="3"
+                    Padding="4"
+                    Margin="4,0,4,4"
+                    FlowDirection="LeftToRight">
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center">
+                    <Border Background="#F58220"
+                            BorderBrush="#F4A300"
+                            BorderThickness="2"
+                            Padding="8,2"
+                            Margin="0,0,6,0">
+                        <TextBlock Text="Taken outside lab"
+                                   Foreground="White"
+                                   FontWeight="Bold"
+                                   FontSize="13"
+                                   VerticalAlignment="Center"/>
+                    </Border>
+                    <CheckBox Margin="0,0,3,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="Urine" Background="#FFE47A" Foreground="#3B3200" FontWeight="Bold" Padding="6,2" Margin="0,0,5,0"/>
+                    <CheckBox Margin="0,0,3,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="Stool" Background="#FFE47A" Foreground="#3B3200" FontWeight="Bold" Padding="6,2" Margin="0,0,5,0"/>
+                    <CheckBox Margin="0,0,3,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="Blood" Background="#FFE47A" Foreground="#C71919" FontWeight="Bold" Padding="6,2" Margin="0,0,5,0"/>
+                    <CheckBox Margin="0,0,3,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="Semen" Background="#FFE47A" Foreground="#3B3200" FontWeight="Bold" Padding="6,2" Margin="0,0,5,0"/>
+                    <CheckBox Margin="0,0,3,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="CSF" Background="#FFE47A" Foreground="#3B3200" FontWeight="Bold" Padding="6,2"/>
+                </StackPanel>
+            </Border>
+            <patients:FinancialSectionView Grid.Row="2" DataContext="{Binding Financial}" Margin="4,0,4,0"/>
         </Grid>
 
         <Border Grid.Row="2"

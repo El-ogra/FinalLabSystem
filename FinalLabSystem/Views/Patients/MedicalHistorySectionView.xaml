@@ -1,37 +1,173 @@
 <UserControl x:Class="FinalLabSystem.Views.Patients.MedicalHistorySectionView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <UserControl.Resources>
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-    </UserControl.Resources>
+    <Border Background="#123A42"
+            BorderBrush="#0A252C"
+            BorderThickness="3"
+            Padding="4"
+            Margin="4"
+            FlowDirection="LeftToRight">
+        <Border Background="#1D6F6A"
+                BorderBrush="#0C3940"
+                BorderThickness="2"
+                Padding="6">
+            <Grid>
+                <Grid.Resources>
+                    <Style x:Key="HistoryLabelStyle" TargetType="Border">
+                        <Setter Property="Background" Value="#A8E000"/>
+                        <Setter Property="BorderBrush" Value="#0C3940"/>
+                        <Setter Property="BorderThickness" Value="2"/>
+                        <Setter Property="Margin" Value="3"/>
+                        <Setter Property="Height" Value="27"/>
+                    </Style>
+                    <Style x:Key="HistoryQuestionStyle" TargetType="Border">
+                        <Setter Property="Background" Value="#36B86D"/>
+                        <Setter Property="BorderBrush" Value="#0C3940"/>
+                        <Setter Property="BorderThickness" Value="2"/>
+                        <Setter Property="Margin" Value="3"/>
+                        <Setter Property="Height" Value="27"/>
+                    </Style>
+                    <Style x:Key="HistoryTextStyle" TargetType="TextBlock">
+                        <Setter Property="Foreground" Value="#3B3200"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="FontSize" Value="12"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                        <Setter Property="TextAlignment" Value="Center"/>
+                        <Setter Property="FlowDirection" Value="RightToLeft"/>
+                    </Style>
+                    <Style x:Key="HistoryQuestionTextStyle" TargetType="TextBlock" BasedOn="{StaticResource HistoryTextStyle}">
+                        <Setter Property="Foreground" Value="White"/>
+                    </Style>
+                    <Style x:Key="HistoryCheckBoxStyle" TargetType="CheckBox">
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                        <Setter Property="Margin" Value="3"/>
+                        <Setter Property="LayoutTransform">
+                            <Setter.Value>
+                                <ScaleTransform ScaleX="1.05" ScaleY="1.05"/>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                    <Style x:Key="HistoryInputStyle" TargetType="TextBox">
+                        <Setter Property="Height" Value="24"/>
+                        <Setter Property="Margin" Value="3"/>
+                        <Setter Property="Background" Value="#FFF8DC"/>
+                        <Setter Property="BorderBrush" Value="#879999"/>
+                        <Setter Property="BorderThickness" Value="1"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                    </Style>
+                </Grid.Resources>
 
-    <Border Background="White"
-            BorderBrush="#CCCCCC"
-            BorderThickness="1"
-            CornerRadius="4"
-            Padding="8"
-            Margin="4">
-        <StackPanel Orientation="Vertical">
-            <WrapPanel Orientation="Horizontal" Margin="0,0,0,6">
-                <CheckBox Content="صائم" IsChecked="{Binding IsFasting}" VerticalAlignment="Center"/>
-                <StackPanel Orientation="Horizontal" Visibility="{Binding IsFasting, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="8,0,0,0">
-                    <Label Content="ساعات الصيام" VerticalAlignment="Center" Padding="0"/>
-                    <TextBox Text="{Binding FastingHours}" Width="50" Height="24" Margin="6,0,0,0"/>
-                </StackPanel>
-                <CheckBox Content="حامل" IsChecked="{Binding IsPregnant}" Margin="12,0,0,0" VerticalAlignment="Center"/>
-            </WrapPanel>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.1*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="1.45*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="1.45*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="0.58*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-            <Label Content="نوع العينة (للعرض فقط)" Padding="0" Margin="0,0,0,3"/>
-            <WrapPanel Orientation="Horizontal" Margin="0,0,0,6">
-                <ToggleButton Content="Blood" Margin="2" Padding="6,2"/>
-                <ToggleButton Content="Urine" Margin="2" Padding="6,2"/>
-                <ToggleButton Content="Stool" Margin="2" Padding="6,2"/>
-                <ToggleButton Content="Semen" Margin="2" Padding="6,2"/>
-                <ToggleButton Content="CSF" Margin="2" Padding="6,2"/>
-            </WrapPanel>
+                <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource HistoryLabelStyle}">
+                    <TextBlock Text="مريض بفقر الدم" Style="{StaticResource HistoryTextStyle}"/>
+                </Border>
+                <CheckBox Grid.Row="0" Grid.Column="1" Style="{StaticResource HistoryCheckBoxStyle}"/>
+                <Border Grid.Row="0" Grid.Column="2" Style="{StaticResource HistoryQuestionStyle}">
+                    <TextBlock Text="هل يؤخذ علاج للسكر" Style="{StaticResource HistoryQuestionTextStyle}"/>
+                </Border>
+                <CheckBox Grid.Row="0" Grid.Column="3" Style="{StaticResource HistoryCheckBoxStyle}"/>
+                <Border Grid.Row="0" Grid.Column="4" Style="{StaticResource HistoryQuestionStyle}">
+                    <TextBlock Text="عدد ساعات الصيام" Style="{StaticResource HistoryQuestionTextStyle}"/>
+                </Border>
+                <TextBox Grid.Row="0" Grid.Column="5" Text="{Binding FastingHours}" Style="{StaticResource HistoryInputStyle}"/>
+                <Border Grid.Row="0" Grid.Column="6" Style="{StaticResource HistoryLabelStyle}">
+                    <TextBlock Text="صائم" Style="{StaticResource HistoryTextStyle}"/>
+                </Border>
+                <CheckBox Grid.Row="0" Grid.Column="7" IsChecked="{Binding IsFasting}" Style="{StaticResource HistoryCheckBoxStyle}"/>
 
-            <Label Content="ملاحظات الزيارة" Padding="0" Margin="0,0,0,3"/>
-            <TextBox Text="{Binding VisitNotes}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="40" MaxHeight="70"/>
-        </StackPanel>
+                <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource HistoryLabelStyle}">
+                    <TextBlock Text="مريض بالتهاب المفاصل" Style="{StaticResource HistoryTextStyle}"/>
+                </Border>
+                <CheckBox Grid.Row="1" Grid.Column="1" Style="{StaticResource HistoryCheckBoxStyle}"/>
+                <Border Grid.Row="1" Grid.Column="2" Style="{StaticResource HistoryQuestionStyle}">
+                    <TextBlock Text="هل يؤخذ علاج للغدد" Style="{StaticResource HistoryQuestionTextStyle}"/>
+                </Border>
+                <CheckBox Grid.Row="1" Grid.Column="3" Style="{StaticResource HistoryCheckBoxStyle}"/>
+                <Border Grid.Row="1" Grid.Column="4" Style="{StaticResource HistoryQuestionStyle}">
+                    <TextBlock Text="هل يؤخذ علاج لسيولة الدم" Style="{StaticResource HistoryQuestionTextStyle}"/>
+                </Border>
+                <CheckBox Grid.Row="1" Grid.Column="5" Style="{StaticResource HistoryCheckBoxStyle}"/>
+
+                <Border Grid.Row="2" Grid.Column="0" Style="{StaticResource HistoryLabelStyle}">
+                    <TextBlock Text="مريض بضغط الدم" Style="{StaticResource HistoryTextStyle}"/>
+                </Border>
+                <CheckBox Grid.Row="2" Grid.Column="1" Style="{StaticResource HistoryCheckBoxStyle}"/>
+                <Border Grid.Row="2" Grid.Column="2" Style="{StaticResource HistoryQuestionStyle}">
+                    <TextBlock Text="هل يؤخذ مضاد حيوي" Style="{StaticResource HistoryQuestionTextStyle}"/>
+                </Border>
+                <CheckBox Grid.Row="2" Grid.Column="3" Style="{StaticResource HistoryCheckBoxStyle}"/>
+                <Border Grid.Row="2" Grid.Column="4" Style="{StaticResource HistoryQuestionStyle}">
+                    <TextBlock Text="هل يؤخذ علاج للفيروسات" Style="{StaticResource HistoryQuestionTextStyle}"/>
+                </Border>
+                <CheckBox Grid.Row="2" Grid.Column="5" Style="{StaticResource HistoryCheckBoxStyle}"/>
+
+                <Border Grid.Row="3" Grid.Column="0" Style="{StaticResource HistoryLabelStyle}">
+                    <TextBlock Text="مريض بالفشل كلوي" Style="{StaticResource HistoryTextStyle}"/>
+                </Border>
+                <CheckBox Grid.Row="3" Grid.Column="1" Style="{StaticResource HistoryCheckBoxStyle}"/>
+                <Border Grid.Row="3" Grid.Column="2" Style="{StaticResource HistoryQuestionStyle}">
+                    <TextBlock Text="هل يؤخذ علاج للكبد" Style="{StaticResource HistoryQuestionTextStyle}"/>
+                </Border>
+                <CheckBox Grid.Row="3" Grid.Column="3" Style="{StaticResource HistoryCheckBoxStyle}"/>
+                <Border Grid.Row="3" Grid.Column="4" Style="{StaticResource HistoryQuestionStyle}">
+                    <TextBlock Text="للسيدات هل يوجد حمل" Style="{StaticResource HistoryQuestionTextStyle}"/>
+                </Border>
+                <CheckBox Grid.Row="3" Grid.Column="5" IsChecked="{Binding IsPregnant}" Style="{StaticResource HistoryCheckBoxStyle}"/>
+
+                <Border Grid.Row="4" Grid.Column="0" Style="{StaticResource HistoryLabelStyle}">
+                    <TextBlock Text="مريض بالذئبة الحمراء" Style="{StaticResource HistoryTextStyle}"/>
+                </Border>
+                <CheckBox Grid.Row="4" Grid.Column="1" Style="{StaticResource HistoryCheckBoxStyle}"/>
+                <Border Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="3" Style="{StaticResource HistoryQuestionStyle}">
+                    <TextBlock Text="هل تم عمل اشاعة بالصبغة او بالموجات الصوتية خلال يومين" Style="{StaticResource HistoryQuestionTextStyle}"/>
+                </Border>
+                <CheckBox Grid.Row="4" Grid.Column="5" Style="{StaticResource HistoryCheckBoxStyle}"/>
+
+                <TextBox Grid.Row="5"
+                         Grid.Column="0"
+                         Grid.ColumnSpan="6"
+                         Text="{Binding VisitNotes}"
+                         AcceptsReturn="True"
+                         TextWrapping="Wrap"
+                         Background="#FFF8DC"
+                         BorderBrush="#879999"
+                         BorderThickness="1"
+                         MinHeight="30"
+                         Margin="3"/>
+                <Label Grid.Row="5"
+                       Grid.Column="6"
+                       Grid.ColumnSpan="2"
+                       Content="ملاحظات"
+                       Background="#F5A400"
+                       Foreground="White"
+                       FontWeight="Bold"
+                       HorizontalContentAlignment="Center"
+                       VerticalContentAlignment="Center"
+                       Margin="3"
+                       Height="30"
+                       FlowDirection="RightToLeft"/>
+            </Grid>
+        </Border>
     </Border>
 </UserControl>
