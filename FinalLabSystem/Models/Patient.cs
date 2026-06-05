@@ -37,6 +37,10 @@ public partial class Patient
 
     public string? Notes { get; set; }
 
+    public bool IsVip { get; set; }
+
+    public string PatientType { get; set; } = "Individual";
+
     public DateTime CreatedAt { get; set; }
 
     public int? CreatedBy { get; set; }

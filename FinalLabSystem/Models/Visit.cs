@@ -19,6 +19,8 @@ public partial class Visit
 
     public bool IsFasting { get; set; }
 
+    public short? FastingHours { get; set; }
+
     public int? ReferralId { get; set; }
 
     public int? CompanyId { get; set; }

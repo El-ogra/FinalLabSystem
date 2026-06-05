@@ -20,6 +20,10 @@ public class SampleTrackingService : ISampleTrackingService
 
     public async Task<List<SampleTube>> GenerateBarcodesForVisitAsync(int visitId, int staffId)
     {
+        var existing = await GetTubesForVisitAsync(visitId);
+        if (existing.Count > 0)
+            return existing;
+
         var visitTests = await _context.VisitTests
             .Include(vt => vt.Testtype)
             .Where(vt => vt.VisitId == visitId)
@@ -37,7 +41,9 @@ public class SampleTrackingService : ISampleTrackingService
                 VisitId = visitId,
                 TubeType = group.Key.DefaultTubeType!,
                 TubeColor = group.Key.DefaultTubeColor,
-                BarcodeValue = $"TUBE-{visitId}-{Guid.NewGuid():N}"
+                BarcodeValue = $"TUBE-{visitId}-{Guid.NewGuid():N}",
+                PrintedAt = DateTime.UtcNow,
+                PrintedBy = staffId
             };
 
             _context.SampleTubes.Add(tube);
@@ -52,6 +58,16 @@ public class SampleTrackingService : ISampleTrackingService
 
         await _context.SaveChangesAsync();
         return tubes;
+    }
+
+    public async Task<List<SampleTube>> GetTubesForVisitAsync(int visitId)
+    {
+        return await _context.SampleTubes
+            .Include(t => t.VisitTests)
+                .ThenInclude(vt => vt.Testtype)
+            .Where(t => t.VisitId == visitId)
+            .OrderBy(t => t.TubeId)
+            .ToListAsync();
     }
 
     public async Task UpdateTestStageAsync(int visitTestId, string newStage, int staffId)

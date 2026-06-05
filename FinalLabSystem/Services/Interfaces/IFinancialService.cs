@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using FinalLabSystem.Models;
 
@@ -7,4 +8,7 @@ public interface IFinancialService
 {
     Task RecordPatientPaymentAsync(Payment payment);
     Task ApplyDiscountAsync(int visitId, double discount, int staffId);
+    Task ApplyFullPaymentAsync(int visitId, int staffId);
+    Task RevertPaymentAsync(int visitId);
+    Task<decimal> CalculateSubtotalAsync(List<int> testTypeIds, int? schemeId);
 }

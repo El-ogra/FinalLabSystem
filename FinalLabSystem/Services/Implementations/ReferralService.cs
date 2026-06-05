@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FinalLabSystem.Data;
@@ -36,5 +37,38 @@ public class ReferralService : IReferralService
 
         referral.SchemeId = schemeId;
         await _context.SaveChangesAsync();
+    }
+
+    public async Task<List<ReferralSource>> SearchReferralSourcesAsync(string term)
+    {
+        if (string.IsNullOrWhiteSpace(term))
+            return await GetAllReferralSourcesAsync();
+
+        return await _context.ReferralSources
+            .Where(r => r.IsActive
+                && (r.SourceName.Contains(term)
+                    || (r.Title != null && r.Title.Contains(term))
+                    || (r.Phone != null && r.Phone.Contains(term))))
+            .OrderBy(r => r.SourceName)
+            .Take(25)
+            .ToListAsync();
+    }
+
+    public async Task<List<ReferralSource>> GetAllReferralSourcesAsync()
+    {
+        return await _context.ReferralSources
+            .Where(r => r.IsActive)
+            .OrderBy(r => r.SourceName)
+            .ToListAsync();
+    }
+
+    public async Task<List<string>> GetReferralTitlesAsync()
+    {
+        return await _context.ReferralSources
+            .Where(r => r.Title != null && r.Title != "")
+            .Select(r => r.Title!)
+            .Distinct()
+            .OrderBy(t => t)
+            .ToListAsync();
     }
 }

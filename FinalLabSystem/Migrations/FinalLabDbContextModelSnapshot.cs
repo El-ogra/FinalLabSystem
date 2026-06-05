@@ -994,6 +994,20 @@ namespace FinalLabSystem.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("notes");
 
+                    b.Property<bool>("IsVip")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_vip");
+
+                    b.Property<string>("PatientType")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasDefaultValue("Individual")
+                        .HasColumnName("patient_type");
+
                     b.Property<string>("PatientCode")
                         .IsRequired()
                         .HasMaxLength(30)
@@ -2750,6 +2764,10 @@ namespace FinalLabSystem.Migrations
                     b.Property<bool>("IsFasting")
                         .HasColumnType("bit")
                         .HasColumnName("is_fasting");
+
+                    b.Property<short?>("FastingHours")
+                        .HasColumnType("smallint")
+                        .HasColumnName("fasting_hours");
 
                     b.Property<bool>("IsPregnant")
                         .HasColumnType("bit")

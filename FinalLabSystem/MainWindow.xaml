@@ -1,12 +1,53 @@
-﻿<Window x:Class="FinalLabSystem.MainWindow"
+<Window x:Class="FinalLabSystem.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:FinalLabSystem"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        xmlns:vm="clr-namespace:FinalLabSystem.ViewModels"
+        Title="FinalLab" Height="720" Width="1100"
+        WindowStartupLocation="CenterScreen"
+        FlowDirection="RightToLeft">
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type vm:PatientsMenuViewModel}">
+            <Grid Background="#F5F7FA">
+                <UniformGrid Rows="2" Columns="2"
+                             Width="760"
+                             Height="360"
+                             HorizontalAlignment="Center"
+                             VerticalAlignment="Center">
+                    <Button Content="إضافة وتعديل بيانات المرضى"
+                            Command="{Binding NavigateToAddEditPatientCommand}"
+                            Margin="12" FontSize="22" FontWeight="SemiBold"
+                            Background="#1976D2" Foreground="White"/>
+                    <Button Content="إدخال نتائج التحاليل"
+                            Command="{Binding NavigateToTestResultsCommand}"
+                            Margin="12" FontSize="22" FontWeight="SemiBold"
+                            Background="#455A64" Foreground="White"/>
+                    <Button Content="تسليم نتائج التحاليل"
+                            Command="{Binding NavigateToDeliveryCommand}"
+                            Margin="12" FontSize="22" FontWeight="SemiBold"
+                            Background="#2E7D32" Foreground="White"/>
+                    <Button Content="البحث عن المريض"
+                            Command="{Binding NavigateToSearchCommand}"
+                            Margin="12" FontSize="22" FontWeight="SemiBold"
+                            Background="#6A1B9A" Foreground="White"/>
+                </UniformGrid>
+            </Grid>
+        </DataTemplate>
+    </Window.Resources>
 
-    </Grid>
+    <DockPanel Background="#F5F7FA">
+        <ToolBarTray DockPanel.Dock="Top" Background="#263238">
+            <ToolBar Background="#263238">
+                <Button Content="المرضى"
+                        Command="{Binding ShowPatientsMenuCommand}"
+                        Padding="22,8"
+                        Margin="4"
+                        FontSize="15"
+                        FontWeight="SemiBold"
+                        Background="#1976D2"
+                        Foreground="White"/>
+            </ToolBar>
+        </ToolBarTray>
+
+        <ContentControl Content="{Binding CurrentView}"/>
+    </DockPanel>
 </Window>

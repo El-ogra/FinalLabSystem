@@ -534,6 +534,13 @@ public partial class FinalLabDbContext : DbContext
                 .HasMaxLength(20)
                 .HasColumnName("national_id");
             entity.Property(e => e.Notes).HasColumnName("notes");
+            entity.Property(e => e.IsVip)
+                .HasDefaultValue(false)
+                .HasColumnName("is_vip");
+            entity.Property(e => e.PatientType)
+                .HasMaxLength(20)
+                .HasDefaultValue("Individual")
+                .HasColumnName("patient_type");
             entity.Property(e => e.PatientCode)
                 .HasMaxLength(30)
                 .HasColumnName("patient_code");
@@ -1456,6 +1463,7 @@ public partial class FinalLabDbContext : DbContext
                 .HasPrecision(0)
                 .HasColumnName("expected_ready");
             entity.Property(e => e.IsFasting).HasColumnName("is_fasting");
+            entity.Property(e => e.FastingHours).HasColumnName("fasting_hours");
             entity.Property(e => e.IsPregnant).HasColumnName("is_pregnant");
             entity.Property(e => e.Notes).HasColumnName("notes");
             entity.Property(e => e.PatientId).HasColumnName("patient_id");

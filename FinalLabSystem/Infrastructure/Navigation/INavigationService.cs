@@ -10,6 +10,10 @@ public interface INavigationService
 
     void OpenTaskWindow<TViewModel>() where TViewModel : class;
 
+    void RegisterWindow<TViewModel, TWindow>()
+        where TViewModel : class
+        where TWindow : System.Windows.Window;
+
     void ReturnToMain();
 
     void Shutdown();

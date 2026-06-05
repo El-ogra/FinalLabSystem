@@ -5,7 +5,9 @@ using FinalLabSystem.Infrastructure.Settings;
 using FinalLabSystem.Services.Implementations;
 using FinalLabSystem.Services.Interfaces;
 using FinalLabSystem.ViewModels;
+using FinalLabSystem.ViewModels.Patients;
 using FinalLabSystem.Views;
+using FinalLabSystem.Views.Patients;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
@@ -25,6 +27,10 @@ public partial class App : Application
         ServiceProvider = services.BuildServiceProvider();
 
         var navigation = ServiceProvider.GetRequiredService<INavigationService>();
+        navigation.RegisterWindow<PatientRegistrationViewModel, PatientRegistrationWindow>();
+        navigation.RegisterWindow<TestResultsViewModel, TestResultsWindow>();
+        navigation.RegisterWindow<DeliveryViewModel, DeliveryWindow>();
+        navigation.RegisterWindow<PatientSearchViewModel, PatientSearchWindow>();
 
         bool hasAdmin;
         using (var scope = ServiceProvider.CreateScope())
@@ -46,6 +52,12 @@ public partial class App : Application
                 "Server=.\\SQLEXPRESS;Database=FinalLab;Trusted_Connection=True;TrustServerCertificate=True;"));
 
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IPatientService, PatientService>();
+        services.AddScoped<IReferralService, ReferralService>();
+        services.AddScoped<IVisitService, VisitService>();
+        services.AddScoped<IFinancialService, FinancialService>();
+        services.AddScoped<ITestCatalogService, TestCatalogService>();
+        services.AddScoped<ISampleTrackingService, SampleTrackingService>();
 
         services.AddSingleton<IUserSettingsService, JsonUserSettingsService>();
         services.AddSingleton<ICurrentUserSession, CurrentUserSession>();
@@ -59,6 +71,26 @@ public partial class App : Application
         services.AddTransient<FirstRunSetupView>();
         services.AddTransient<FirstRunSetupWindow>();
 
+        services.AddTransient<MainViewModel>();
         services.AddTransient<MainWindow>();
+
+        services.AddTransient<PatientRegistrationViewModel>();
+        services.AddTransient<PatientInfoViewModel>();
+        services.AddTransient<ReferralViewModel>();
+        services.AddTransient<MedicalHistoryViewModel>();
+        services.AddTransient<TestSelectionViewModel>();
+        services.AddTransient<FinancialViewModel>();
+        services.AddTransient<BarcodeDialogViewModel>();
+        services.AddTransient<ReceiptDialogViewModel>();
+        services.AddTransient<TestResultsViewModel>();
+        services.AddTransient<DeliveryViewModel>();
+        services.AddTransient<PatientSearchViewModel>();
+
+        services.AddTransient<PatientRegistrationWindow>();
+        services.AddTransient<TestResultsWindow>();
+        services.AddTransient<DeliveryWindow>();
+        services.AddTransient<PatientSearchWindow>();
+        services.AddTransient<BarcodeDialog>();
+        services.AddTransient<ReceiptDialog>();
     }
 }
