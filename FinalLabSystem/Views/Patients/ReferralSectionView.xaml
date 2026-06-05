@@ -1,35 +1,76 @@
 <UserControl x:Class="FinalLabSystem.Views.Patients.ReferralSectionView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Border Background="White"
-            BorderBrush="#CCCCCC"
-            BorderThickness="1"
-            CornerRadius="4"
-            Padding="8"
-            Margin="4">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" MinWidth="90"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto" MinWidth="90"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+    <Border Background="#123A42"
+            BorderBrush="#0A252C"
+            BorderThickness="3"
+            Padding="4"
+            Margin="4"
+            FlowDirection="LeftToRight">
+        <Border Background="#0B4F78"
+                BorderBrush="#0A252C"
+                BorderThickness="1"
+                Padding="6">
+            <Grid>
+                <Grid.Resources>
+                    <Style x:Key="ReferralInputStyle" TargetType="TextBox">
+                        <Setter Property="Height" Value="24"/>
+                        <Setter Property="Margin" Value="3"/>
+                        <Setter Property="Background" Value="#FFF8DC"/>
+                        <Setter Property="BorderBrush" Value="#0A252C"/>
+                        <Setter Property="BorderThickness" Value="1"/>
+                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                    </Style>
+                    <Style x:Key="ReferralComboStyle" TargetType="ComboBox">
+                        <Setter Property="Height" Value="24"/>
+                        <Setter Property="Margin" Value="3"/>
+                        <Setter Property="Background" Value="#FFF8DC"/>
+                        <Setter Property="BorderBrush" Value="#0A252C"/>
+                        <Setter Property="BorderThickness" Value="1"/>
+                    </Style>
+                    <Style x:Key="ReferralLabelStyle" TargetType="Label">
+                        <Setter Property="Height" Value="24"/>
+                        <Setter Property="Margin" Value="3"/>
+                        <Setter Property="Padding" Value="6,1"/>
+                        <Setter Property="Background" Value="#7CCB19"/>
+                        <Setter Property="Foreground" Value="#1A2600"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                        <Setter Property="FlowDirection" Value="RightToLeft"/>
+                    </Style>
+                    <Style x:Key="ReferralBlueLabelStyle" TargetType="Label" BasedOn="{StaticResource ReferralLabelStyle}">
+                        <Setter Property="Background" Value="#1E79B8"/>
+                        <Setter Property="Foreground" Value="White"/>
+                    </Style>
+                </Grid.Resources>
 
-            <Label Grid.Row="0" Grid.Column="0" Content="اللقب" VerticalAlignment="Center" Margin="0,3"/>
-            <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding ReferralTitles}" Text="{Binding ReferralTitle, UpdateSourceTrigger=PropertyChanged}" IsEditable="True" Width="80" HorizontalAlignment="Right" Margin="0,3" Height="26"/>
-            <Label Grid.Row="0" Grid.Column="2" Content="جهة التحويل" VerticalAlignment="Center" Margin="8,3,0,3"/>
-            <ComboBox Grid.Row="0" Grid.Column="3" ItemsSource="{Binding ReferralSuggestions}" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedReferral}" DisplayMemberPath="SourceName" IsEditable="True" Margin="0,3" Height="26"/>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.7*"/>
+                    <ColumnDefinition Width="0.8*"/>
+                    <ColumnDefinition Width="1.25*"/>
+                    <ColumnDefinition Width="0.85*"/>
+                </Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0,3" VerticalAlignment="Center">
-                <CheckBox Content="حفظ جهة التحويل" IsChecked="{Binding ShouldSaveReferral}" VerticalAlignment="Center"/>
-                <CheckBox Content="طباعة جهة التحويل" IsChecked="{Binding PrintReferralOnReport}" Margin="12,0,0,0" VerticalAlignment="Center"/>
-            </StackPanel>
-            <Label Grid.Row="1" Grid.Column="2" Content="العنوان" VerticalAlignment="Center" Margin="8,3,0,3"/>
-            <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding ReferralAddress}" Margin="0,3" Height="26"/>
-        </Grid>
+                <ComboBox Grid.Row="0" Grid.Column="0" ItemsSource="{Binding ReferralSuggestions}" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedReferral}" DisplayMemberPath="SourceName" IsEditable="True" Style="{StaticResource ReferralComboStyle}"/>
+                <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding ReferralTitles}" Text="{Binding ReferralTitle, UpdateSourceTrigger=PropertyChanged}" IsEditable="True" Style="{StaticResource ReferralComboStyle}"/>
+                <Label Grid.Row="0" Grid.Column="2" Content="الطبيب المعالج" Style="{StaticResource ReferralLabelStyle}"/>
+
+                <ComboBox Grid.Row="1" Grid.Column="0" ItemsSource="{Binding ReferralSuggestions}" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedReferral}" DisplayMemberPath="SourceName" IsEditable="True" Style="{StaticResource ReferralComboStyle}"/>
+                <Label Grid.Row="1" Grid.Column="2" Content="جهة الإحالة" Style="{StaticResource ReferralLabelStyle}"/>
+
+                <TextBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding ReferralAddress}" Style="{StaticResource ReferralInputStyle}"/>
+                <Label Grid.Row="2" Grid.Column="2" Content="العنوان" Style="{StaticResource ReferralBlueLabelStyle}"/>
+                <StackPanel Grid.Row="2" Grid.Column="3" Orientation="Vertical" FlowDirection="RightToLeft" VerticalAlignment="Center">
+                    <CheckBox Content="حفظ جهة التحويل" IsChecked="{Binding ShouldSaveReferral}" Foreground="White" Margin="3,0"/>
+                    <CheckBox Content="طباعة جهة التحويل" IsChecked="{Binding PrintReferralOnReport}" Foreground="White" Margin="3,2,3,0"/>
+                </StackPanel>
+            </Grid>
+        </Border>
     </Border>
 </UserControl>

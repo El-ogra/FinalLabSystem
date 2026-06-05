@@ -1,76 +1,113 @@
 <UserControl x:Class="FinalLabSystem.Views.Patients.PatientInfoView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:sys="clr-namespace:System;assembly=mscorlib">
-    <Border Background="White"
-            BorderBrush="#CCCCCC"
-            BorderThickness="1"
-            CornerRadius="4"
-            Padding="8"
-            Margin="4">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" MinWidth="80"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto" MinWidth="80"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Border Background="#123A42"
+            BorderBrush="#0A252C"
+            BorderThickness="3"
+            Padding="4"
+            Margin="4"
+            FlowDirection="LeftToRight">
+        <Border Background="#0B4F78"
+                BorderBrush="#0A252C"
+                BorderThickness="1"
+                Padding="6">
+            <Grid>
+                <Grid.Resources>
+                    <Style x:Key="InfoInputStyle" TargetType="TextBox">
+                        <Setter Property="Height" Value="24"/>
+                        <Setter Property="Margin" Value="3"/>
+                        <Setter Property="Background" Value="#FFF8DC"/>
+                        <Setter Property="BorderBrush" Value="#0A252C"/>
+                        <Setter Property="BorderThickness" Value="1"/>
+                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                    </Style>
+                    <Style x:Key="InfoComboStyle" TargetType="ComboBox">
+                        <Setter Property="Height" Value="24"/>
+                        <Setter Property="Margin" Value="3"/>
+                        <Setter Property="Background" Value="#FFF8DC"/>
+                        <Setter Property="BorderBrush" Value="#0A252C"/>
+                        <Setter Property="BorderThickness" Value="1"/>
+                    </Style>
+                    <Style x:Key="RedLabelStyle" TargetType="Label">
+                        <Setter Property="Height" Value="24"/>
+                        <Setter Property="Margin" Value="3"/>
+                        <Setter Property="Padding" Value="6,1"/>
+                        <Setter Property="Background" Value="#C71919"/>
+                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                        <Setter Property="FlowDirection" Value="RightToLeft"/>
+                    </Style>
+                    <Style x:Key="BlueLabelStyle" TargetType="Label" BasedOn="{StaticResource RedLabelStyle}">
+                        <Setter Property="Background" Value="#1E79B8"/>
+                    </Style>
+                    <Style x:Key="TinyBlueLabelStyle" TargetType="Label" BasedOn="{StaticResource RedLabelStyle}">
+                        <Setter Property="Background" Value="#1E79B8"/>
+                        <Setter Property="FontSize" Value="11"/>
+                    </Style>
+                </Grid.Resources>
 
-            <Label Grid.Row="0" Grid.Column="0" Content="كود المريض" VerticalAlignment="Center" Margin="0,3"/>
-            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding PatientCode, Mode=OneWay}" IsReadOnly="True" Background="#F5F5F5" Margin="0,3" Height="26"/>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.15*"/>
+                    <ColumnDefinition Width="0.75*"/>
+                    <ColumnDefinition Width="0.7*"/>
+                    <ColumnDefinition Width="1.1*"/>
+                    <ColumnDefinition Width="0.7*"/>
+                    <ColumnDefinition Width="0.75*"/>
+                    <ColumnDefinition Width="0.55*"/>
+                </Grid.ColumnDefinitions>
 
-            <Label Grid.Row="1" Grid.Column="0" Content="اللقب" VerticalAlignment="Center" Margin="0,3"/>
-            <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding TitleSuggestions}" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" IsEditable="True" Margin="0,3" Height="26"/>
-            <Label Grid.Row="1" Grid.Column="2" Content="اسم المريض" VerticalAlignment="Center" Margin="8,3,0,3"/>
-            <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding FullNameAr, UpdateSourceTrigger=PropertyChanged}" Margin="0,3" Height="26"/>
+                <TextBox Grid.Row="0" Grid.Column="0" Text="{Binding PatientCode, Mode=OneWay}" IsReadOnly="True" Style="{StaticResource InfoInputStyle}"/>
+                <Label Grid.Row="0" Grid.Column="1" Content="كود المريض" Style="{StaticResource RedLabelStyle}"/>
+                <TextBox Grid.Row="0" Grid.Column="2" Text="{Binding DataContext.CurrentVisitId, RelativeSource={RelativeSource AncestorType=Window}, Mode=OneWay}" IsReadOnly="True" Style="{StaticResource InfoInputStyle}"/>
+                <Label Grid.Row="0" Grid.Column="3" Content="Lab. ID" Style="{StaticResource BlueLabelStyle}"/>
+                <CheckBox Grid.Row="0" Grid.Column="4" IsChecked="{Binding IsVip}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="3"/>
+                <Label Grid.Row="0" Grid.Column="5" Content="VIP" Style="{StaticResource BlueLabelStyle}"/>
 
-            <Label Grid.Row="2" Grid.Column="0" Content="الجنس" VerticalAlignment="Center" Margin="0,3"/>
-            <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Margin="0,3" VerticalAlignment="Center">
-                <RadioButton Content="ذكر" GroupName="Sex" IsChecked="{Binding IsMale}" Margin="0,0,12,0"/>
-                <RadioButton Content="أنثى" GroupName="Sex" IsChecked="{Binding IsFemale}" Margin="0,0,12,0"/>
-                <RadioButton Content="غير محدد" GroupName="Sex" IsChecked="{Binding IsUnknownSex}"/>
-            </StackPanel>
-            <Label Grid.Row="2" Grid.Column="2" Content="نوع الحساب" VerticalAlignment="Center" Margin="8,3,0,3"/>
-            <StackPanel Grid.Row="2" Grid.Column="3" Orientation="Horizontal" Margin="0,3" VerticalAlignment="Center">
-                <ComboBox ItemsSource="{Binding PatientTypes}" SelectedItem="{Binding PatientType}" Width="120" Height="26"/>
-                <CheckBox Content="VIP" IsChecked="{Binding IsVip}" Margin="8,0,0,0" VerticalAlignment="Center"/>
-            </StackPanel>
+                <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" FlowDirection="LeftToRight" VerticalAlignment="Center" Margin="3">
+                    <RadioButton Content="Male" GroupName="Sex" IsChecked="{Binding IsMale}" Foreground="White" Margin="0,0,8,0"/>
+                    <RadioButton Content="Female" GroupName="Sex" IsChecked="{Binding IsFemale}" Foreground="White"/>
+                </StackPanel>
+                <TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding FullNameAr, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource InfoInputStyle}"/>
+                <ComboBox Grid.Row="1" Grid.Column="3" ItemsSource="{Binding TitleSuggestions}" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" IsEditable="True" Style="{StaticResource InfoComboStyle}"/>
+                <Label Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="2" Content="اسم المريض" Style="{StaticResource RedLabelStyle}"/>
 
-            <Label Grid.Row="3" Grid.Column="0" Content="العمر" VerticalAlignment="Center" Margin="0,3"/>
-            <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" Margin="0,3" VerticalAlignment="Center">
-                <TextBox Text="{Binding ApproxAge, UpdateSourceTrigger=PropertyChanged}" Width="60" Height="26"/>
-                <ComboBox SelectedValue="{Binding ApproxAgeUnit}" SelectedValuePath="Content" Width="80" Height="26" Margin="6,0,0,0">
+                <TextBox Grid.Row="2" Grid.Column="0" Text="{Binding ApproxAge, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource InfoInputStyle}"/>
+                <ComboBox Grid.Row="2" Grid.Column="1" SelectedValue="{Binding ApproxAgeUnit}" SelectedValuePath="Content" Style="{StaticResource InfoComboStyle}">
                     <ComboBoxItem Content="سنة"/>
                     <ComboBoxItem Content="شهر"/>
                     <ComboBoxItem Content="يوم"/>
                 </ComboBox>
-            </StackPanel>
+                <Label Grid.Row="2" Grid.Column="2" Content="العمر" Style="{StaticResource BlueLabelStyle}"/>
+                <ComboBox Grid.Row="2" Grid.Column="3" ItemsSource="{Binding PatientTypes}" SelectedItem="{Binding PatientType}" Style="{StaticResource InfoComboStyle}"/>
+                <Label Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="2" Content="نوع الحساب" Style="{StaticResource BlueLabelStyle}"/>
 
-            <Label Grid.Row="4" Grid.Column="0" Content="الهاتف" VerticalAlignment="Center" Margin="0,3"/>
-            <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Phone}" Margin="0,3" Height="26"/>
-            <Label Grid.Row="4" Grid.Column="2" Content="هاتف 2" VerticalAlignment="Center" Margin="8,3,0,3"/>
-            <TextBox Grid.Row="4" Grid.Column="3" Text="{Binding Phone2}" Margin="0,3" Height="26"/>
+                <TextBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Phone2}" Style="{StaticResource InfoInputStyle}"/>
+                <Label Grid.Row="3" Grid.Column="2" Content="هاتف 2" Style="{StaticResource BlueLabelStyle}"/>
+                <TextBox Grid.Row="3" Grid.Column="3" Text="{Binding Phone}" Style="{StaticResource InfoInputStyle}"/>
+                <Label Grid.Row="3" Grid.Column="4" Grid.ColumnSpan="2" Content="الهاتف" Style="{StaticResource BlueLabelStyle}"/>
 
-            <Label Grid.Row="5" Grid.Column="0" Content="العنوان" VerticalAlignment="Center" Margin="0,3"/>
-            <TextBox Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding Address}" Margin="0,3" Height="26"/>
+                <TextBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" Text="{Binding Address}" Style="{StaticResource InfoInputStyle}"/>
+                <Label Grid.Row="4" Grid.Column="4" Grid.ColumnSpan="2" Content="عنوان المريض" Style="{StaticResource BlueLabelStyle}"/>
 
-            <Label Grid.Row="6" Grid.Column="0" Content="البريد الإلكتروني" VerticalAlignment="Center" Margin="0,3"/>
-            <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding Email}" Margin="0,3" Height="26"/>
-            <Label Grid.Row="6" Grid.Column="2" Content="الرقم القومي" VerticalAlignment="Center" Margin="8,3,0,3"/>
-            <TextBox Grid.Row="6" Grid.Column="3" Text="{Binding NationalId}" Margin="0,3" Height="26"/>
+                <TextBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding NationalId}" Style="{StaticResource InfoInputStyle}"/>
+                <Label Grid.Row="5" Grid.Column="2" Content="الرقم القومي" Style="{StaticResource BlueLabelStyle}"/>
+                <TextBox Grid.Row="5" Grid.Column="3" Text="{Binding Email}" Style="{StaticResource InfoInputStyle}"/>
+                <Label Grid.Row="5" Grid.Column="4" Grid.ColumnSpan="2" Content="البريد الإلكتروني" Style="{StaticResource TinyBlueLabelStyle}"/>
 
-            <Label Grid.Row="7" Grid.Column="0" Content="ملاحظات" VerticalAlignment="Top" Margin="0,3"/>
-            <TextBox Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding Notes}" TextWrapping="Wrap" AcceptsReturn="True" MinHeight="50" Margin="0,3"/>
-        </Grid>
+                <TextBox Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="4" Text="{Binding Notes}" TextWrapping="Wrap" AcceptsReturn="True" MinHeight="34" Style="{StaticResource InfoInputStyle}"/>
+                <Label Grid.Row="6" Grid.Column="4" Grid.ColumnSpan="2" Content="ملاحظات" Style="{StaticResource BlueLabelStyle}"/>
+            </Grid>
+        </Border>
     </Border>
 </UserControl>
