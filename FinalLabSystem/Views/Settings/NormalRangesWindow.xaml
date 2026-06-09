@@ -1,191 +1,286 @@
 <Window x:Class="FinalLabSystem.Views.Settings.NormalRangesWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:shared="clr-namespace:FinalLabSystem.Views.Shared"
         Title="{Binding Title}"
-        Height="720"
-        Width="1100"
-        WindowStartupLocation="CenterOwner"
-        FlowDirection="RightToLeft">
+        Height="780"
+        Width="1200"
+        WindowStartupLocation="CenterOwner">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>
         <Style x:Key="ActionButtonStyle" TargetType="Button">
-            <Setter Property="Height" Value="34"/>
-            <Setter Property="MinWidth" Value="92"/>
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="MinWidth" Value="100"/>
             <Setter Property="Margin" Value="4"/>
-            <Setter Property="Background" Value="#A8E000"/>
-            <Setter Property="Foreground" Value="#001A20"/>
+            <Setter Property="Background" Value="#1E88E5"/>
+            <Setter Property="Foreground" Value="White"/>
             <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Padding" Value="12,4"/>
         </Style>
-        <Style TargetType="TextBox">
+        <Style x:Key="SectionLabel" TargetType="TextBlock">
+            <Setter Property="Background" Value="#1565C0"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="Margin" Value="0,0,0,6"/>
+        </Style>
+        <Style x:Key="FieldLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Foreground" Value="#333"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="MinWidth" Value="70"/>
+        </Style>
+        <Style x:Key="FieldTextBox" TargetType="TextBox">
             <Setter Property="Height" Value="28"/>
-            <Setter Property="Margin" Value="4"/>
-            <Setter Property="Padding" Value="6,2"/>
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="Padding" Value="4,2"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="FieldComboBox" TargetType="ComboBox">
+            <Setter Property="Height" Value="28"/>
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
         </Style>
     </Window.Resources>
-    <Grid Background="#F5F7FA" Margin="8">
+
+    <Grid Background="#E3F2FD" Margin="0">
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="3*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="45*"/>
-            <ColumnDefinition Width="55*"/>
-        </Grid.ColumnDefinitions>
 
-        <Grid Grid.Row="0" Grid.Column="0" Margin="0,0,6,0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="38*"/>
-                <RowDefinition Height="62*"/>
-            </Grid.RowDefinitions>
-            <Border Grid.Row="0" Background="White" BorderBrush="#CFD8DC" BorderThickness="1" Padding="8" Margin="0,0,0,6">
-                <DockPanel>
-                    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Left">
-                        <Button Content="Add" Command="{Binding List.AddComponentCommand}" Style="{StaticResource ActionButtonStyle}"/>
-                        <Button Content="Delete" Command="{Binding List.DeleteComponentCommand}" Style="{StaticResource ActionButtonStyle}"/>
-                    </StackPanel>
-                    <ListBox ItemsSource="{Binding List.Components}" SelectedItem="{Binding List.SelectedComponent}" DisplayMemberPath="ComponentNameEn"/>
-                </DockPanel>
-            </Border>
-            <Border Grid.Row="1" Background="White" BorderBrush="#CFD8DC" BorderThickness="1" Padding="8">
-                <DockPanel>
-                    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Left">
-                        <Button Content="Add" Command="{Binding List.AddRangeCommand}" Style="{StaticResource ActionButtonStyle}"/>
-
-                        <Button Content="Delete" Command="{Binding List.DeleteRangeCommand}" Style="{StaticResource ActionButtonStyle}"/>
-                    </StackPanel>
-                    <DataGrid ItemsSource="{Binding List.RangesForSelectedComponent}"
-                              SelectedItem="{Binding List.SelectedRange}"
-                              AutoGenerateColumns="False"
-                              IsReadOnly="True"
-                              CanUserAddRows="False">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Sex" Binding="{Binding Sex}" Width="60"/>
-                            <DataGridTextColumn Header="AgeFrom" Binding="{Binding AgeFromDays}" Width="80"/>
-                            <DataGridTextColumn Header="AgeTo" Binding="{Binding AgeToDays}" Width="80"/>
-                            <DataGridTextColumn Header="Description" Binding="{Binding AgeDescription}" Width="110"/>
-                            <DataGridTextColumn Header="Fasting" Binding="{Binding FastingState}" Width="70"/>
-                            <DataGridTextColumn Header="LowNormal" Binding="{Binding LowNormal}" Width="80"/>
-                            <DataGridTextColumn Header="HighNormal" Binding="{Binding HighNormal}" Width="80"/>
-                            <DataGridTextColumn Header="LowCritical" Binding="{Binding LowCritical}" Width="80"/>
-                            <DataGridTextColumn Header="HighCritical" Binding="{Binding HighCritical}" Width="80"/>
-                            <DataGridTextColumn Header="Text" Binding="{Binding NormalRangeText}" Width="*"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </DockPanel>
-            </Border>
-        </Grid>
-
-        <Border Grid.Row="0" Grid.Column="1" Background="White" BorderBrush="#CFD8DC" BorderThickness="1" Padding="12" Margin="6,0,0,0">
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
-                <StackPanel>
-                    <shared:SpecialCharsBar Margin="0,0,0,8"/>
-                    <TextBlock Text="Sex" FontWeight="Bold" Foreground="#123A42"/>
-                    <WrapPanel>
-                        <RadioButton Content="M" IsChecked="{Binding Detail.IsSexMale}" Margin="8"/>
-                        <RadioButton Content="F" IsChecked="{Binding Detail.IsSexFemale}" Margin="8"/>
-                        <RadioButton Content="Both" IsChecked="{Binding Detail.IsSexBoth}" Margin="8"/>
-                    </WrapPanel>
-                    <UniformGrid Columns="4">
-                        <StackPanel>
-                            <TextBlock Text="من العمر"/>
-                            <TextBox Text="{Binding Detail.AgeFromDays, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
-                        <StackPanel>
-                            <TextBlock Text="إلى"/>
-                            <TextBox Text="{Binding Detail.AgeToDays, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
-                        <StackPanel>
-                            <TextBlock Text="الوحدة"/>
-                            <ComboBox ItemsSource="{Binding Detail.AgeUnitOptions}"
-                                      SelectedItem="{Binding Detail.AgeUnit, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
-                        <StackPanel>
-                            <TextBlock Text="Age Description"/>
-                            <TextBox Text="{Binding Detail.AgeDescription, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
-                    </UniformGrid>
-                    <TextBlock Text="Fasting State" FontWeight="Bold" Foreground="#123A42" Margin="0,10,0,0"/>
-                    <WrapPanel>
-                        <RadioButton Content="Any" IsChecked="{Binding Detail.IsFastingAny}" Margin="8"/>
-                        <RadioButton Content="Fasting" IsChecked="{Binding Detail.IsFasting}" Margin="8"/>
-                        <CheckBox Content="للحوامل فقط (For Pregnancy Only)" IsChecked="{Binding Detail.ForPregnantOnly}" Margin="8"/>
-                    </WrapPanel>
-                    <UniformGrid Columns="2">
-                        <StackPanel>
-                            <TextBlock Text="Low Normal"/>
-                            <TextBox Text="{Binding Detail.LowNormal, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
-                        <StackPanel>
-                            <TextBlock Text="High Normal"/>
-                            <TextBox Text="{Binding Detail.HighNormal, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
-                        <StackPanel>
-                            <TextBlock Text="Low Critical"/>
-                            <TextBox Text="{Binding Detail.LowCritical, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
-                        <StackPanel>
-                            <TextBlock Text="High Critical"/>
-                            <TextBox Text="{Binding Detail.HighCritical, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
-                        <StackPanel>
-                            <TextBlock Text="Unit"/>
-                            <TextBox Text="{Binding Detail.Unit, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
-                    </UniformGrid>
-                    <TextBlock Text="Flags" FontWeight="Bold" Foreground="#123A42" Margin="0,10,0,0"/>
-                    <UniformGrid Columns="2">
-                        <StackPanel>
-                            <TextBlock Text="علامة منخفض (Low Flag)"/>
-                            <TextBox Text="{Binding Detail.LowFlag, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
-                        <StackPanel>
-                            <TextBlock Text="علامة مرتفع (High Flag)"/>
-                            <TextBox Text="{Binding Detail.HighFlag, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
-                    </UniformGrid>
-                    <TextBlock Text="Comments" FontWeight="Bold" Foreground="#123A42" Margin="0,10,0,0"/>
-                    <UniformGrid Columns="2">
-                        <StackPanel>
-                            <TextBlock Text="تعليق منخفض (Low Comment)"/>
-                            <TextBox Text="{Binding Detail.LowComment, UpdateSourceTrigger=PropertyChanged}" Height="50" AcceptsReturn="True" TextWrapping="Wrap"/>
-                        </StackPanel>
-                        <StackPanel>
-                            <TextBlock Text="تعليق مرتفع (High Comment)"/>
-                            <TextBox Text="{Binding Detail.HighComment, UpdateSourceTrigger=PropertyChanged}" Height="50" AcceptsReturn="True" TextWrapping="Wrap"/>
-                        </StackPanel>
-                    </UniformGrid>
-                    <TextBlock Text="Critical" FontWeight="Bold" Foreground="#123A42" Margin="0,10,0,0"/>
-                    <UniformGrid Columns="3">
-                        <StackPanel>
-                            <TextBlock Text="نص المدى الحرج"/>
-                            <TextBox Text="{Binding Detail.CriticalRangeText, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
-                        <StackPanel>
-                            <TextBlock Text="علامة حرجة"/>
-                            <TextBox Text="{Binding Detail.CriticalFlag, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
-                        <StackPanel>
-                            <TextBlock Text="تعليق حرج"/>
-                            <TextBox Text="{Binding Detail.CriticalComment, UpdateSourceTrigger=PropertyChanged}" Height="50" AcceptsReturn="True" TextWrapping="Wrap"/>
-                        </StackPanel>
-                    </UniformGrid>
-                    <TextBlock Text="Normal Range Text"/>
-                    <TextBox Text="{Binding Detail.NormalRangeText, UpdateSourceTrigger=PropertyChanged}" Height="72" AcceptsReturn="True" TextWrapping="Wrap"/>
-                    <TextBlock Text="Range Note"/>
-                    <TextBox Text="{Binding Detail.RangeNote, UpdateSourceTrigger=PropertyChanged}" Height="72" AcceptsReturn="True" TextWrapping="Wrap"/>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,8,0,0">
-                        <Button Content="حفظ" Command="{Binding Detail.SaveCommand}" Style="{StaticResource ActionButtonStyle}" Background="#8BC34A"/>
-                        <Button Content="إلغاء" Command="{Binding Detail.CancelCommand}" Style="{StaticResource ActionButtonStyle}"/>
-                    </StackPanel>
+        <!-- Row 0: Header -->
+        <Border Grid.Row="0" Background="White" BorderBrush="#B0BEC5" BorderThickness="1" Padding="12,6" Margin="6,6,6,0">
+            <Grid FlowDirection="LeftToRight">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="Test Name" FontWeight="Bold" FontSize="13" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <Border Background="#8B0000" Padding="16,4" CornerRadius="2">
+                        <TextBlock Text="{Binding ParentTest.TypeNameEn}" Foreground="White" FontWeight="Bold" FontSize="13"/>
+                    </Border>
                 </StackPanel>
-            </ScrollViewer>
+                <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center"
+                           Foreground="#C62828" FontWeight="Bold" FontSize="13"
+                           Text="{Binding ReferenceCount, StringFormat='Number Of References = {0} Reference'}"/>
+            </Grid>
         </Border>
 
-        <Border Grid.Row="1" Grid.ColumnSpan="2" Background="#123A42" BorderBrush="#0A252C" BorderThickness="3" Padding="5" Margin="0,8,0,0">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Content="عودة للتحاليل" Command="{Binding BackToTestsCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" Style="{StaticResource ActionButtonStyle}"/>
-                <Button Content="إغلاق" Command="{Binding CloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" Style="{StaticResource ActionButtonStyle}"/>
+        <!-- Row 1: DataGrid (full width) -->
+        <Border Grid.Row="1" Background="White" BorderBrush="#B0BEC5" BorderThickness="1" Padding="6" Margin="6,4,6,0">
+            <DataGrid FlowDirection="LeftToRight"
+                      ItemsSource="{Binding List.RangesForSelectedComponent}"
+                      SelectedItem="{Binding List.SelectedRange}"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      CanUserAddRows="False"
+                      GridLinesVisibility="Horizontal"
+                      HeadersVisibility="Column"
+                      AlternatingRowBackground="#F5F7FA"
+                      BorderThickness="0">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Gender" Binding="{Binding Sex}" Width="70"/>
+                    <DataGridTextColumn Header="From" Binding="{Binding AgeFromDays}" Width="60"/>
+                    <DataGridTextColumn Header="To" Binding="{Binding AgeToDays}" Width="60"/>
+                    <DataGridTextColumn Header="Age unit" Binding="{Binding AgeUnit}" Width="80"/>
+                    <DataGridTextColumn Header="Reference range" Binding="{Binding NormalRangeText}" Width="*"/>
+                    <DataGridTextColumn Header="low limit" Binding="{Binding LowNormal}" Width="70"/>
+                    <DataGridTextColumn Header="high limit" Binding="{Binding HighNormal}" Width="70"/>
+                    <DataGridTextColumn Header="Test unit" Binding="{Binding Unit}" Width="80"/>
+                    <DataGridTextColumn Header="Low flag" Binding="{Binding LowFlag}" Width="70"/>
+                    <DataGridTextColumn Header="High flag" Binding="{Binding HighFlag}" Width="70"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+
+        <!-- Row 2: Reference Setting Form (full width) -->
+        <Border Grid.Row="2" Background="White" BorderBrush="#B0BEC5" BorderThickness="1" Margin="6,4,6,0">
+            <DockPanel>
+                <Border DockPanel.Dock="Top" Background="#1565C0" Padding="10,6">
+                    <TextBlock Text="Reference Setting" FontWeight="Bold" FontSize="14" Foreground="White"/>
+                </Border>
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="12,8">
+                    <StackPanel FlowDirection="LeftToRight">
+
+                    <!-- Top row: Range for + Sex + Age -->
+                    <Grid Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Range for -->
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,20,0">
+                            <Border Background="#1565C0" Padding="8,4" CornerRadius="2" HorizontalAlignment="Left">
+                                <TextBlock Text="Range for" Foreground="White" FontWeight="Bold"/>
+                            </Border>
+                            <WrapPanel Margin="0,6,0,0">
+                                <RadioButton Content="For all" IsChecked="{Binding Detail.IsRangeForAll}" Margin="8,0" VerticalAlignment="Center"/>
+                                <RadioButton Content="By sex and age" IsChecked="{Binding Detail.IsRangeForSexAndAge}" Margin="8,0" VerticalAlignment="Center"/>
+                                <RadioButton Content="By sex only" IsChecked="{Binding Detail.IsRangeForSexOnly}" Margin="8,0" VerticalAlignment="Center"/>
+                                <RadioButton Content="By age only" IsChecked="{Binding Detail.IsRangeForAgeOnly}" Margin="8,0" VerticalAlignment="Center"/>
+                            </WrapPanel>
+                        </StackPanel>
+
+                        <!-- Sex + Age -->
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <WrapPanel Margin="0,0,0,6">
+                                <RadioButton Content="Male" IsChecked="{Binding Detail.IsSexMale}" Margin="12,0" VerticalAlignment="Center"/>
+                                <RadioButton Content="Female" IsChecked="{Binding Detail.IsSexFemale}" Margin="12,0" VerticalAlignment="Center"/>
+                            </WrapPanel>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="Age from" Style="{StaticResource FieldLabel}" Margin="0,0,4,0"/>
+                                <TextBox Text="{Binding Detail.AgeFromDays, UpdateSourceTrigger=PropertyChanged}"
+                                         Style="{StaticResource FieldTextBox}" Width="60"/>
+                                <TextBlock Text="to" Style="{StaticResource FieldLabel}" Margin="8,0,4,0"/>
+                                <TextBox Text="{Binding Detail.AgeToDays, UpdateSourceTrigger=PropertyChanged}"
+                                         Style="{StaticResource FieldTextBox}" Width="60"/>
+                                <TextBlock Text="Age unit" Style="{StaticResource FieldLabel}" Margin="8,0,4,0"/>
+                                <ComboBox Style="{StaticResource FieldComboBox}" Width="90"
+                                          ItemsSource="{Binding Detail.AgeUnitOptions}"
+                                          SelectedItem="{Binding Detail.AgeUnit, UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Middle row: Reference range + Limits/Flags -->
+                    <Grid Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Reference range textarea -->
+                        <StackPanel Grid.Column="0" VerticalAlignment="Top" Margin="0,0,12,0">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                                <Border Background="#C62828" Padding="8,4" CornerRadius="2">
+                                    <TextBlock Text="Reference range" Foreground="White" FontWeight="Bold"/>
+                                </Border>
+                                <Border Background="#8B0000" Padding="8,4" CornerRadius="2" Margin="4,0,0,0">
+                                    <TextBlock Text="القيمة المرجعية" Foreground="White" FontWeight="Bold"/>
+                                </Border>
+                            </StackPanel>
+                            <TextBox Text="{Binding Detail.NormalRangeText, UpdateSourceTrigger=PropertyChanged}"
+                                     Height="100" AcceptsReturn="True" TextWrapping="Wrap"
+                                     VerticalScrollBarVisibility="Auto"/>
+                        </StackPanel>
+
+                        <!-- Limits + Flags + Unit + Pregnant -->
+                        <StackPanel Grid.Column="1" Width="380">
+                            <Grid Margin="0,0,0,4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="Low limit" Style="{StaticResource FieldLabel}" Width="70"/>
+                                <TextBox Grid.Column="1" Text="{Binding Detail.LowNormal, UpdateSourceTrigger=PropertyChanged}"
+                                         Style="{StaticResource FieldTextBox}"/>
+                                <TextBlock Grid.Column="2" Text="High limit" Style="{StaticResource FieldLabel}" Width="70" Margin="8,0,0,0"/>
+                                <TextBox Grid.Column="3" Text="{Binding Detail.HighNormal, UpdateSourceTrigger=PropertyChanged}"
+                                         Style="{StaticResource FieldTextBox}"/>
+                            </Grid>
+                            <Grid Margin="0,0,0,4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="Low flag" Style="{StaticResource FieldLabel}" Width="70"/>
+                                <ComboBox Grid.Column="1" Style="{StaticResource FieldComboBox}"
+                                          IsEditable="True"
+                                          Text="{Binding Detail.LowFlag, UpdateSourceTrigger=PropertyChanged}">
+                                    <ComboBoxItem Content="L"/>
+                                    <ComboBoxItem Content="LL"/>
+                                    <ComboBoxItem Content="Low"/>
+                                </ComboBox>
+                                <TextBlock Grid.Column="2" Text="High flag" Style="{StaticResource FieldLabel}" Width="70" Margin="8,0,0,0"/>
+                                <ComboBox Grid.Column="3" Style="{StaticResource FieldComboBox}"
+                                          IsEditable="True"
+                                          Text="{Binding Detail.HighFlag, UpdateSourceTrigger=PropertyChanged}">
+                                    <ComboBoxItem Content="H"/>
+                                    <ComboBoxItem Content="HH"/>
+                                    <ComboBoxItem Content="High"/>
+                                </ComboBox>
+                            </Grid>
+                            <Grid Margin="0,0,0,4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="Test unit" Style="{StaticResource FieldLabel}" Width="70"/>
+                                <ComboBox Grid.Column="1" Style="{StaticResource FieldComboBox}"
+                                          IsEditable="True"
+                                          Text="{Binding Detail.Unit, UpdateSourceTrigger=PropertyChanged}">
+                                    <ComboBoxItem Content="sec"/>
+                                    <ComboBoxItem Content="mg/dL"/>
+                                    <ComboBoxItem Content="mmol/L"/>
+                                    <ComboBoxItem Content="g/dL"/>
+                                    <ComboBoxItem Content="U/L"/>
+                                    <ComboBoxItem Content="IU/L"/>
+                                    <ComboBoxItem Content="%"/>
+                                    <ComboBoxItem Content="fl"/>
+                                    <ComboBoxItem Content="pg"/>
+                                </ComboBox>
+                                <CheckBox Grid.Column="2" Content="For pregnant only" IsChecked="{Binding Detail.ForPregnantOnly}" Margin="8,0" VerticalAlignment="Center"/>
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Low comment -->
+                    <Grid Margin="0,0,0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Column="0" Background="#1565C0" Padding="8,4" VerticalAlignment="Top">
+                            <TextBlock Text="Low comment" Foreground="White" FontWeight="Bold"/>
+                        </Border>
+                        <TextBox Grid.Column="1"
+                                 Text="{Binding Detail.LowComment, UpdateSourceTrigger=PropertyChanged}"
+                                 Height="50" AcceptsReturn="True" TextWrapping="Wrap"
+                                 VerticalScrollBarVisibility="Auto" Margin="4,0,0,0"
+                                 Background="#F0F0F0"/>
+                    </Grid>
+
+                    <!-- High comment -->
+                    <Grid Margin="0,0,0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Column="0" Background="#1565C0" Padding="8,4" VerticalAlignment="Top">
+                            <TextBlock Text="High comment" Foreground="White" FontWeight="Bold"/>
+                        </Border>
+                        <TextBox Grid.Column="1"
+                                 Text="{Binding Detail.HighComment, UpdateSourceTrigger=PropertyChanged}"
+                                 Height="50" AcceptsReturn="True" TextWrapping="Wrap"
+                                 VerticalScrollBarVisibility="Auto" Margin="4,0,0,0"
+                                 Background="#F0F0F0"/>
+                    </Grid>
+                </StackPanel>
+            </ScrollViewer>
+        </DockPanel>
+    </Border>
+
+        <!-- Row 3: Bottom Button Bar -->
+        <Border Grid.Row="3" Background="#1565C0" BorderBrush="#0D47A1" BorderThickness="3" Padding="5" Margin="6,4,6,6">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" FlowDirection="RightToLeft">
+                <Button Content="قائمة التحاليل" Command="{Binding BackToTestsCommand}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
+                        Style="{StaticResource ActionButtonStyle}"/>
+                <Button Content="حذف" Command="{Binding DeleteRangeCommand}"
+                        Style="{StaticResource ActionButtonStyle}"/>
+                <Button Content="تراجع" Command="{Binding CancelCommand}"
+                        Style="{StaticResource ActionButtonStyle}"/>
+                <Button Content="حفظ" Command="{Binding SaveCommand}"
+                        Style="{StaticResource ActionButtonStyle}" Background="#4CAF50"/>
+                <Button Content="تعديل" Style="{StaticResource ActionButtonStyle}"/>
+                <Button Content="إضافة مدى" Command="{Binding AddRangeCommand}"
+                        Style="{StaticResource ActionButtonStyle}"/>
             </StackPanel>
         </Border>
     </Grid>

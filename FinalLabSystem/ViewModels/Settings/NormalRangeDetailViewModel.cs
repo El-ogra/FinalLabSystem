@@ -54,6 +54,10 @@ public sealed class NormalRangeDetailViewModel : ViewModelBase
                 MarkDirty();
                 OnPropertyChanged(nameof(IsSexEnabled));
                 OnPropertyChanged(nameof(IsAgeEnabled));
+                OnPropertyChanged(nameof(IsRangeForAll));
+                OnPropertyChanged(nameof(IsRangeForSexAndAge));
+                OnPropertyChanged(nameof(IsRangeForSexOnly));
+                OnPropertyChanged(nameof(IsRangeForAgeOnly));
             }
         }
     }
@@ -61,6 +65,30 @@ public sealed class NormalRangeDetailViewModel : ViewModelBase
     public bool IsSexEnabled => RangeFor != NormalRangeFor.Both;
 
     public bool IsAgeEnabled => RangeFor == NormalRangeFor.Both;
+
+    public bool IsRangeForAll
+    {
+        get => RangeFor == NormalRangeFor.Both;
+        set { if (value) RangeFor = NormalRangeFor.Both; }
+    }
+
+    public bool IsRangeForSexAndAge
+    {
+        get => RangeFor == NormalRangeFor.Female;
+        set { if (value) RangeFor = NormalRangeFor.Female; }
+    }
+
+    public bool IsRangeForSexOnly
+    {
+        get => RangeFor == NormalRangeFor.Male;
+        set { if (value) RangeFor = NormalRangeFor.Male; }
+    }
+
+    public bool IsRangeForAgeOnly
+    {
+        get => RangeFor == NormalRangeFor.Both;
+        set { if (value) RangeFor = NormalRangeFor.Both; }
+    }
 
     public RangeSex Sex
     {
@@ -305,6 +333,10 @@ public sealed class NormalRangeDetailViewModel : ViewModelBase
         OnPropertyChanged(nameof(RangeFor));
         OnPropertyChanged(nameof(IsSexEnabled));
         OnPropertyChanged(nameof(IsAgeEnabled));
+        OnPropertyChanged(nameof(IsRangeForAll));
+        OnPropertyChanged(nameof(IsRangeForSexAndAge));
+        OnPropertyChanged(nameof(IsRangeForSexOnly));
+        OnPropertyChanged(nameof(IsRangeForAgeOnly));
         OnPropertyChanged(nameof(Sex));
         OnPropertyChanged(nameof(ForPregnantOnly));
         OnPropertyChanged(nameof(AgeFromDays));

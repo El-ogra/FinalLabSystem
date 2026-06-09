@@ -10,6 +10,7 @@ public sealed class NormalRangeWindowViewModel : ViewModelBase
     private readonly ITestCatalogService _testCatalogService;
     private TestType? _parentTest;
     private string _title = "القيم الطبيعية";
+    private int _referenceCount;
     private ICommand? _backToTestsCommand;
 
     public NormalRangeWindowViewModel(
@@ -25,6 +26,10 @@ public sealed class NormalRangeWindowViewModel : ViewModelBase
             if (parameter is System.Windows.Window window)
                 window.Close();
         });
+        List.RangesChanged += (_, _) =>
+        {
+            ReferenceCount = List.RangesForSelectedComponent.Count;
+        };
     }
 
     public NormalRangeListViewModel List { get; }
@@ -43,6 +48,12 @@ public sealed class NormalRangeWindowViewModel : ViewModelBase
         private set => SetProperty(ref _title, value);
     }
 
+    public int ReferenceCount
+    {
+        get => _referenceCount;
+        private set => SetProperty(ref _referenceCount, value);
+    }
+
     public ICommand CloseCommand { get; }
 
     public ICommand BackToTestsCommand => _backToTestsCommand ??= new RelayCommand(parameter =>
@@ -50,6 +61,14 @@ public sealed class NormalRangeWindowViewModel : ViewModelBase
         if (parameter is System.Windows.Window window)
             window.Close();
     });
+
+    public ICommand AddRangeCommand => List.AddRangeCommand;
+
+    public ICommand DeleteRangeCommand => List.DeleteRangeCommand;
+
+    public ICommand SaveCommand => Detail.SaveCommand;
+
+    public ICommand CancelCommand => Detail.CancelCommand;
 
     public async Task InitializeAsync(TestType parentTest)
     {
@@ -71,5 +90,6 @@ public sealed class NormalRangeWindowViewModel : ViewModelBase
         }
 
         List.LoadComponents(components);
+        ReferenceCount = List.RangesForSelectedComponent.Count;
     }
 }

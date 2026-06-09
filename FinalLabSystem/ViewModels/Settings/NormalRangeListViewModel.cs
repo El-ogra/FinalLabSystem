@@ -24,6 +24,8 @@ public sealed class NormalRangeListViewModel : ViewModelBase
         DeleteRangeCommand = new AsyncRelayCommand(DeleteRangeAsync, () => SelectedRange is not null);
     }
 
+    public event EventHandler? RangesChanged;
+
     public ObservableCollection<TestComponent> Components { get; } = new();
 
     public ObservableCollection<NormalRange> RangesForSelectedComponent { get; } = new();
@@ -130,6 +132,7 @@ public sealed class NormalRangeListViewModel : ViewModelBase
         };
         RangesForSelectedComponent.Add(range);
         SelectedRange = range;
+        RangesChanged?.Invoke(this, EventArgs.Empty);
     }
 
     private async Task DeleteRangeAsync()
@@ -146,6 +149,7 @@ public sealed class NormalRangeListViewModel : ViewModelBase
 
         RangesForSelectedComponent.Remove(SelectedRange);
         SelectedRange = RangesForSelectedComponent.FirstOrDefault();
+        RangesChanged?.Invoke(this, EventArgs.Empty);
     }
 
     private async Task RefreshRangesAsync()
@@ -166,6 +170,7 @@ public sealed class NormalRangeListViewModel : ViewModelBase
         }
 
         SelectedRange = RangesForSelectedComponent.FirstOrDefault();
+        RangesChanged?.Invoke(this, EventArgs.Empty);
     }
 
     private static TestComponent CloneComponent(TestComponent component)
