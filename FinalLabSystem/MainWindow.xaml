@@ -45,6 +45,10 @@
                             Command="{Binding NavigateToTestDataCommand}"
                             Margin="12" FontSize="22" FontWeight="SemiBold"
                             Background="#00838F" Foreground="White"/>
+                    <Button Content="إدارة الفئات والمجموعات"
+                            Command="{Binding NavigateToCategoriesGroupsCommand}"
+                            Margin="12" FontSize="22" FontWeight="SemiBold"
+                            Background="#00838F" Foreground="White"/>
                 </UniformGrid>
             </Grid>
         </DataTemplate>

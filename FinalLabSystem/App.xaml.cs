@@ -35,6 +35,7 @@ public partial class App : Application
         navigation.RegisterWindow<PatientSearchViewModel, PatientSearchWindow>();
         navigation.RegisterWindow<TestDataManagementViewModel, TestDataManagementWindow>();
         navigation.RegisterWindow<NormalRangeWindowViewModel, NormalRangesWindow>();
+        navigation.RegisterWindow<CategoriesGroupsViewModel, CategoriesGroupsWindow>();
 
         bool hasAdmin;
         using (var scope = ServiceProvider.CreateScope())
@@ -53,7 +54,9 @@ public partial class App : Application
     {
         services.AddDbContext<FinalLabDbContext>(options =>
             options.UseSqlServer(
-                "Server=.\\SQLEXPRESS;Database=FinalLab;Trusted_Connection=True;TrustServerCertificate=True;"));
+                "Server=.\\SQLEXPRESS;Database=FinalLab;Trusted_Connection=True;TrustServerCertificate=True;"),
+            ServiceLifetime.Transient,
+            ServiceLifetime.Transient);
 
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IPatientService, PatientService>();
@@ -104,7 +107,13 @@ public partial class App : Application
         services.AddTransient<NormalRangeWindowViewModel>();
         services.AddTransient<NormalRangeListViewModel>();
         services.AddTransient<NormalRangeDetailViewModel>();
+        services.AddTransient<CategoriesGroupsViewModel>();
+        services.AddTransient<CategoryListViewModel>();
+        services.AddTransient<CategoryDetailViewModel>();
+        services.AddTransient<GroupListViewModel>();
+        services.AddTransient<GroupDetailViewModel>();
         services.AddTransient<TestDataManagementWindow>();
         services.AddTransient<NormalRangesWindow>();
+        services.AddTransient<CategoriesGroupsWindow>();
     }
 }

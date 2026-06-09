@@ -36,4 +36,15 @@ public interface ITestCatalogService
     Task<int> AddRangeAsync(NormalRange range);
     Task UpdateRangeAsync(NormalRange range);
     Task DeleteRangeAsync(int rangeId);
+
+    Task<TestCategory?> GetCategoryByIdAsync(int categoryId);
+    Task<TestCategory> CreateCategoryAsync(TestCategory category);
+    Task<TestCategory> UpdateCategoryAsync(TestCategory category);
+    Task DeleteCategoryAsync(int categoryId);
+
+    Task<TestGroup?> GetGroupByIdAsync(int groupId);
+    Task<TestGroup> CreateGroupAsync(TestGroup group);
+    Task<TestGroup> UpdateGroupAsync(TestGroup group);
+    Task DeleteGroupAsync(int groupId);
+    Task<List<TestGroup>> GetGroupsByCategoryIdAsync(int categoryId);
 }

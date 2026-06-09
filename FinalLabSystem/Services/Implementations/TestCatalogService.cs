@@ -329,6 +329,76 @@ public class TestCatalogService : ITestCatalogService
         await _context.SaveChangesAsync();
     }
 
+    public async Task<TestCategory?> GetCategoryByIdAsync(int categoryId)
+    {
+        return await _context.TestCategories.FindAsync(categoryId);
+    }
+
+    public async Task<TestCategory> CreateCategoryAsync(TestCategory category)
+    {
+        _context.TestCategories.Add(category);
+        await _context.SaveChangesAsync();
+        return category;
+    }
+
+    public async Task<TestCategory> UpdateCategoryAsync(TestCategory category)
+    {
+        _context.TestCategories.Update(category);
+        await _context.SaveChangesAsync();
+        return category;
+    }
+
+    public async Task DeleteCategoryAsync(int categoryId)
+    {
+        var category = await _context.TestCategories.FindAsync(categoryId);
+        if (category is null) return;
+
+        var hasGroups = await _context.TestGroups.AnyAsync(g => g.CategoryId == categoryId);
+        if (hasGroups)
+        {
+            throw new InvalidOperationException("لا يمكن حذف هذه الفئة لأنها تحتوي على مجموعات");
+        }
+
+        _context.TestCategories.Remove(category);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<TestGroup?> GetGroupByIdAsync(int groupId)
+    {
+        return await _context.TestGroups.FindAsync(groupId);
+    }
+
+    public async Task<TestGroup> CreateGroupAsync(TestGroup group)
+    {
+        _context.TestGroups.Add(group);
+        await _context.SaveChangesAsync();
+        return group;
+    }
+
+    public async Task<TestGroup> UpdateGroupAsync(TestGroup group)
+    {
+        _context.TestGroups.Update(group);
+        await _context.SaveChangesAsync();
+        return group;
+    }
+
+    public async Task DeleteGroupAsync(int groupId)
+    {
+        var group = await _context.TestGroups.FindAsync(groupId);
+        if (group is null) return;
+
+        _context.TestGroups.Remove(group);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<List<TestGroup>> GetGroupsByCategoryIdAsync(int categoryId)
+    {
+        return await _context.TestGroups
+            .Where(g => g.CategoryId == categoryId)
+            .OrderBy(g => g.SortOrder)
+            .ToListAsync();
+    }
+
     private async Task<(int PatientSchemeId, int LabToLabSchemeId)> ResolveSchemeIdsAsync()
     {
         var schemes = await _context.PriceSchemes
