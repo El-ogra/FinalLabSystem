@@ -122,32 +122,10 @@
                               CanUserAddRows="False"
                               IsReadOnly="True"
                               Background="#3B5B55"
-                              Foreground="#FFFFFF"
-                              RowBackground="#3B5B55"
-                              AlternatingRowBackground="#2E4A44"
+                              Foreground="#FFF8DC"
                               BorderBrush="#0A252C"
                               BorderThickness="1"
                               FlowDirection="RightToLeft">
-                        <DataGrid.Resources>
-                            <Style TargetType="DataGridCell">
-                                <Setter Property="Background" Value="Transparent"/>
-                                <Setter Property="Foreground" Value="#FFFFFF"/>
-                                <Style.Triggers>
-                                    <Trigger Property="IsSelected" Value="True">
-                                        <Setter Property="Background" Value="#1A6EA8"/>
-                                        <Setter Property="Foreground" Value="#FFFFFF"/>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                            <Style TargetType="DataGridRow">
-                                <Style.Triggers>
-                                    <Trigger Property="IsSelected" Value="True">
-                                        <Setter Property="Background" Value="#1A6EA8"/>
-                                        <Setter Property="Foreground" Value="#FFFFFF"/>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </DataGrid.Resources>
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="الكود" Binding="{Binding Code}" Width="60"/>
                             <DataGridTextColumn Header="التحليل" Binding="{Binding Name}" Width="*"/>
