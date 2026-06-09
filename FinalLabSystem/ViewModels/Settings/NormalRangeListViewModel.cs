@@ -18,11 +18,9 @@ public sealed class NormalRangeListViewModel : ViewModelBase
     {
         _testCatalogService = testCatalogService;
         _detail = detail;
-        _detail.RangeApplied += OnRangeApplied;
         AddComponentCommand = new RelayCommand(_ => AddComponent());
         DeleteComponentCommand = new AsyncRelayCommand(DeleteComponentAsync, () => SelectedComponent is not null);
         AddRangeCommand = new RelayCommand(_ => AddRange(), _ => SelectedComponent is not null);
-        EditRangeCommand = new RelayCommand(_ => EditRange(), _ => SelectedRange is not null);
         DeleteRangeCommand = new AsyncRelayCommand(DeleteRangeAsync, () => SelectedRange is not null);
     }
 
@@ -56,8 +54,6 @@ public sealed class NormalRangeListViewModel : ViewModelBase
 
     public ICommand AddRangeCommand { get; }
 
-    public ICommand EditRangeCommand { get; }
-
     public ICommand DeleteRangeCommand { get; }
 
     public void LoadComponents(IEnumerable<TestComponent> components)
@@ -88,10 +84,7 @@ public sealed class NormalRangeListViewModel : ViewModelBase
             if (SelectedComponent is not null)
                 range.ComponentId = SelectedComponent.ComponentId;
 
-            if (range.RangeId == 0)
-                range.RangeId = await _testCatalogService.AddRangeAsync(range);
-            else
-                await _testCatalogService.UpdateRangeAsync(range);
+            await _testCatalogService.SaveRangeAsync(range);
         }
     }
 
@@ -139,15 +132,13 @@ public sealed class NormalRangeListViewModel : ViewModelBase
         SelectedRange = range;
     }
 
-    private void EditRange()
-    {
-        if (SelectedRange is not null)
-            _detail.Load(SelectedRange, SelectedComponent?.Unit);
-    }
-
     private async Task DeleteRangeAsync()
     {
         if (SelectedRange is null)
+            return;
+
+        var result = MessageBox.Show("هل أنت متأكد من حذف هذا النطاق؟", "تأكيد", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+        if (result != MessageBoxResult.Yes)
             return;
 
         if (SelectedRange.RangeId > 0)
@@ -175,29 +166,6 @@ public sealed class NormalRangeListViewModel : ViewModelBase
         }
 
         SelectedRange = RangesForSelectedComponent.FirstOrDefault();
-        _detail.Unit = SelectedComponent.Unit;
-    }
-
-    private void OnRangeApplied(object? sender, NormalRange applied)
-    {
-        if (SelectedComponent is null)
-            return;
-
-        SelectedComponent.Unit = _detail.Unit;
-        applied.ComponentId = SelectedComponent.ComponentId;
-        if (SelectedRange is null)
-        {
-            RangesForSelectedComponent.Add(applied);
-            SelectedRange = applied;
-            return;
-        }
-
-        var index = RangesForSelectedComponent.IndexOf(SelectedRange);
-        if (index >= 0)
-        {
-            RangesForSelectedComponent[index] = applied;
-            SelectedRange = applied;
-        }
     }
 
     private static TestComponent CloneComponent(TestComponent component)

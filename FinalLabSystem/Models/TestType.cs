@@ -69,6 +69,10 @@ public partial class TestType
 
     public string? PatientQuestion { get; set; }
 
+    public string? ReferenceType { get; set; }
+
+    public string? BarcodeName { get; set; }
+
     public virtual TestGroup Group { get; set; } = null!;
 
     public virtual CollectionType? CollectionType { get; set; }

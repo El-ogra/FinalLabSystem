@@ -6,19 +6,14 @@ using FinalLabSystem.Services.Interfaces;
 
 namespace FinalLabSystem.ViewModels.Settings;
 
-public enum SearchMode
-{
-    Code,
-    Group,
-    Name
-}
-
 public sealed class TestListViewModel : ViewModelBase
 {
     private readonly ITestCatalogService _testCatalogService;
-    private SearchMode _searchMode = SearchMode.Name;
-    private string _searchText = string.Empty;
+    private string _searchTestName = string.Empty;
+    private string _searchGroupName = string.Empty;
+    private string _searchTestId = string.Empty;
     private TestRowViewModel? _selectedTest;
+    private ICommand? _searchCommand;
 
     public TestListViewModel(ITestCatalogService testCatalogService)
     {
@@ -32,24 +27,32 @@ public sealed class TestListViewModel : ViewModelBase
 
     public ObservableCollection<TestRowViewModel> FilteredTests { get; } = new();
 
-    public Array SearchModes => Enum.GetValues(typeof(SearchMode));
-
-    public SearchMode SearchMode
+    public string SearchTestName
     {
-        get => _searchMode;
+        get => _searchTestName;
         set
         {
-            if (SetProperty(ref _searchMode, value))
+            if (SetProperty(ref _searchTestName, value ?? string.Empty))
                 ApplyFilter();
         }
     }
 
-    public string SearchText
+    public string SearchGroupName
     {
-        get => _searchText;
+        get => _searchGroupName;
         set
         {
-            if (SetProperty(ref _searchText, value ?? string.Empty))
+            if (SetProperty(ref _searchGroupName, value ?? string.Empty))
+                ApplyFilter();
+        }
+    }
+
+    public string SearchTestId
+    {
+        get => _searchTestId;
+        set
+        {
+            if (SetProperty(ref _searchTestId, value ?? string.Empty))
                 ApplyFilter();
         }
     }
@@ -66,6 +69,8 @@ public sealed class TestListViewModel : ViewModelBase
 
     public ICommand RefreshCommand { get; }
 
+    public ICommand SearchCommand => _searchCommand ??= new RelayCommand(_ => ApplyFilter());
+
     public async Task RefreshAsync()
     {
         var tests = await _testCatalogService.GetAllTestTypesAsync();
@@ -78,32 +83,21 @@ public sealed class TestListViewModel : ViewModelBase
 
     public void ApplyFilter()
     {
-        var query = SearchText.Trim();
-        IEnumerable<TestRowViewModel> rows = string.IsNullOrWhiteSpace(query)
-            ? AllTests
-            : AllTests.Where(row => Matches(row, query)).ToList();
+        IEnumerable<TestRowViewModel> rows = AllTests;
+
+        if (!string.IsNullOrWhiteSpace(SearchTestName))
+            rows = rows.Where(row => row.TypeNameEn.Contains(SearchTestName, StringComparison.OrdinalIgnoreCase)
+                                  || (row.TypeNameAr?.Contains(SearchTestName, StringComparison.OrdinalIgnoreCase) ?? false));
+
+        if (!string.IsNullOrWhiteSpace(SearchGroupName))
+            rows = rows.Where(row => row.GroupNameEn.Contains(SearchGroupName, StringComparison.OrdinalIgnoreCase)
+                                  || row.GroupNameAr.Contains(SearchGroupName, StringComparison.OrdinalIgnoreCase));
+
+        if (!string.IsNullOrWhiteSpace(SearchTestId))
+            rows = rows.Where(row => row.TypeCode.Contains(SearchTestId, StringComparison.OrdinalIgnoreCase));
 
         FilteredTests.Clear();
         foreach (var row in rows)
             FilteredTests.Add(row);
     }
-
-    private bool Matches(TestRowViewModel row, string query)
-    {
-        return SearchMode switch
-        {
-            SearchMode.Code => string.Equals(row.TypeCode, query, StringComparison.OrdinalIgnoreCase),
-            SearchMode.Group => Contains(row.GroupNameAr, query) || Contains(row.GroupNameEn, query),
-            SearchMode.Name => StartsWith(row.TypeNameAr, query) || StartsWith(row.TypeNameEn, query),
-            _ => true
-        };
-    }
-
-    private static bool Contains(string? source, string query)
-        => !string.IsNullOrWhiteSpace(source)
-           && source.Contains(query, StringComparison.OrdinalIgnoreCase);
-
-    private static bool StartsWith(string? source, string query)
-        => !string.IsNullOrWhiteSpace(source)
-           && source.StartsWith(query, StringComparison.OrdinalIgnoreCase);
 }

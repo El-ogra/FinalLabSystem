@@ -10,12 +10,4 @@ public partial class TestDataManagementWindow : Window
         InitializeComponent();
         DataContext = viewModel;
     }
-
-    private void AdvancedTubeButton_Click(object sender, RoutedEventArgs e)
-    {
-        bool isVisible = AdvancedTubeGrid.Visibility == Visibility.Visible;
-        AdvancedTubeGrid.Visibility = isVisible ? Visibility.Collapsed : Visibility.Visible;
-        AdvancedTubeButtons.Visibility = AdvancedTubeGrid.Visibility;
-        AdvancedTubeButton.Content = isVisible ? "متقدم" : "بسيط";
-    }
 }

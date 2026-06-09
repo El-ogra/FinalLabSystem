@@ -1,32 +1,36 @@
+using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using FinalLabSystem.Infrastructure;
 using FinalLabSystem.Models;
+using FinalLabSystem.Services.Interfaces;
 
 namespace FinalLabSystem.ViewModels.Settings;
 
+public enum NormalRangeFor { Female, Male, Both }
+
+public enum RangeSex { M, F, B }
+
 public sealed class NormalRangeDetailViewModel : ViewModelBase
 {
+    private readonly ITestCatalogService _testCatalogService;
     private NormalRange _editableRange = CreateEmptyRange();
     private bool _isDirty;
-    private string? _unit;
-    private string? _ageUnit;
-    private string? _lowFlag;
-    private string? _highFlag;
-    private string? _lowComment;
-    private string? _highComment;
-    private string? _criticalRangeText;
-    private string? _criticalFlag;
-    private string? _criticalComment;
+    private NormalRange? _lastLoadedRange;
+    private string? _lastLoadedUnit;
+    private NormalRangeFor _rangeFor;
+    private RangeSex _sex;
+    private bool _forPregnantOnly;
+    private ICommand? _saveCommand;
+    private ICommand? _cancelCommand;
 
     public string[] AgeUnitOptions { get; } = new[] { "Days", "Months", "Years" };
 
-    public NormalRangeDetailViewModel()
+    public NormalRangeDetailViewModel(ITestCatalogService testCatalogService)
     {
-        ApplyCommand = new RelayCommand(_ => Apply(), _ => EditableRange.ComponentId >= 0);
+        _testCatalogService = testCatalogService;
     }
-
-    public event EventHandler<NormalRange>? RangeApplied;
 
     public NormalRange EditableRange
     {
@@ -40,10 +44,42 @@ public sealed class NormalRangeDetailViewModel : ViewModelBase
         private set => SetProperty(ref _isDirty, value);
     }
 
-    public string Sex
+    public NormalRangeFor RangeFor
     {
-        get => EditableRange.Sex;
-        set => SetRangeProperty(EditableRange.Sex, value, v => EditableRange.Sex = v);
+        get => _rangeFor;
+        set
+        {
+            if (SetProperty(ref _rangeFor, value))
+            {
+                MarkDirty();
+                OnPropertyChanged(nameof(IsSexEnabled));
+                OnPropertyChanged(nameof(IsAgeEnabled));
+            }
+        }
+    }
+
+    public bool IsSexEnabled => RangeFor != NormalRangeFor.Both;
+
+    public bool IsAgeEnabled => RangeFor == NormalRangeFor.Both;
+
+    public RangeSex Sex
+    {
+        get => _sex;
+        set
+        {
+            if (SetProperty(ref _sex, value))
+                MarkDirty();
+        }
+    }
+
+    public bool ForPregnantOnly
+    {
+        get => _forPregnantOnly;
+        set
+        {
+            if (SetProperty(ref _forPregnantOnly, value))
+                MarkDirty();
+        }
     }
 
     public int AgeFromDays
@@ -68,12 +104,6 @@ public sealed class NormalRangeDetailViewModel : ViewModelBase
     {
         get => EditableRange.FastingState;
         set => SetRangeProperty(EditableRange.FastingState, value, v => EditableRange.FastingState = v);
-    }
-
-    public bool? AppliesToPregnant
-    {
-        get => EditableRange.AppliesToPregnant;
-        set => SetRangeProperty(EditableRange.AppliesToPregnant, value, v => EditableRange.AppliesToPregnant = v);
     }
 
     public double? LowNormal
@@ -114,110 +144,68 @@ public sealed class NormalRangeDetailViewModel : ViewModelBase
 
     public string? AgeUnit
     {
-        get => _ageUnit;
-        set
-        {
-            if (SetProperty(ref _ageUnit, value))
-                IsDirty = true;
-        }
+        get => EditableRange.AgeUnit;
+        set => SetRangeProperty(EditableRange.AgeUnit, value, v => EditableRange.AgeUnit = v);
     }
 
     public string? LowFlag
     {
-        get => _lowFlag;
-        set
-        {
-            if (SetProperty(ref _lowFlag, value))
-                IsDirty = true;
-        }
+        get => EditableRange.LowFlag;
+        set => SetRangeProperty(EditableRange.LowFlag, value, v => EditableRange.LowFlag = v);
     }
 
     public string? HighFlag
     {
-        get => _highFlag;
-        set
-        {
-            if (SetProperty(ref _highFlag, value))
-                IsDirty = true;
-        }
+        get => EditableRange.HighFlag;
+        set => SetRangeProperty(EditableRange.HighFlag, value, v => EditableRange.HighFlag = v);
     }
 
     public string? LowComment
     {
-        get => _lowComment;
-        set
-        {
-            if (SetProperty(ref _lowComment, value))
-                IsDirty = true;
-        }
+        get => EditableRange.LowComment;
+        set => SetRangeProperty(EditableRange.LowComment, value, v => EditableRange.LowComment = v);
     }
 
     public string? HighComment
     {
-        get => _highComment;
-        set
-        {
-            if (SetProperty(ref _highComment, value))
-                IsDirty = true;
-        }
+        get => EditableRange.HighComment;
+        set => SetRangeProperty(EditableRange.HighComment, value, v => EditableRange.HighComment = v);
     }
 
     public string? CriticalRangeText
     {
-        get => _criticalRangeText;
-        set
-        {
-            if (SetProperty(ref _criticalRangeText, value))
-                IsDirty = true;
-        }
+        get => EditableRange.CriticalRangeText;
+        set => SetRangeProperty(EditableRange.CriticalRangeText, value, v => EditableRange.CriticalRangeText = v);
     }
 
     public string? CriticalFlag
     {
-        get => _criticalFlag;
-        set
-        {
-            if (SetProperty(ref _criticalFlag, value))
-                IsDirty = true;
-        }
+        get => EditableRange.CriticalFlag;
+        set => SetRangeProperty(EditableRange.CriticalFlag, value, v => EditableRange.CriticalFlag = v);
     }
 
     public string? CriticalComment
     {
-        get => _criticalComment;
-        set
-        {
-            if (SetProperty(ref _criticalComment, value))
-                IsDirty = true;
-        }
-    }
-
-    public string? Unit
-    {
-        get => _unit;
-        set
-        {
-            if (SetProperty(ref _unit, value))
-                IsDirty = true;
-        }
+        get => EditableRange.CriticalComment;
+        set => SetRangeProperty(EditableRange.CriticalComment, value, v => EditableRange.CriticalComment = v);
     }
 
     public bool IsSexMale
     {
-        get => Sex == "M";
-        set { if (value) Sex = "M"; }
+        get => Sex == RangeSex.M;
+        set { if (value) Sex = RangeSex.M; }
     }
 
     public bool IsSexFemale
     {
-        get => Sex == "F";
-        set { if (value) Sex = "F"; }
+        get => Sex == RangeSex.F;
+        set { if (value) Sex = RangeSex.F; }
     }
 
     public bool IsSexBoth
     {
-        get => Sex == "Both";
-        set { if (value) Sex = "Both"; }
+        get => Sex == RangeSex.B;
+        set { if (value) Sex = RangeSex.B; }
     }
 
     public bool IsFastingAny
@@ -232,25 +220,38 @@ public sealed class NormalRangeDetailViewModel : ViewModelBase
         set { if (value) FastingState = "Fasting"; }
     }
 
-    public ICommand ApplyCommand { get; }
+    public ICommand SaveCommand => _saveCommand ??= new RelayCommand(async _ => await SaveAsync(), _ => IsDirty);
+
+    public ICommand CancelCommand => _cancelCommand ??= new RelayCommand(_ => Cancel());
 
     public void Load(NormalRange? range, string? unit)
     {
+        _lastLoadedRange = range is null ? null : CloneRange(range);
+        _lastLoadedUnit = unit;
+
         EditableRange = range is null ? CreateEmptyRange() : CloneRange(range);
-        Unit = unit;
-        AgeUnit = range?.AgeUnit;
-        LowFlag = range?.LowFlag;
-        HighFlag = range?.HighFlag;
-        LowComment = range?.LowComment;
-        HighComment = range?.HighComment;
-        CriticalRangeText = range?.CriticalRangeText;
-        CriticalFlag = range?.CriticalFlag;
-        CriticalComment = range?.CriticalComment;
+
+        Sex = EditableRange.Sex switch
+        {
+            "M" => RangeSex.M,
+            "F" => RangeSex.F,
+            _ => RangeSex.B
+        };
+
+        RangeFor = EditableRange.Sex switch
+        {
+            "M" => NormalRangeFor.Male,
+            "F" => NormalRangeFor.Female,
+            _ => NormalRangeFor.Both
+        };
+
+        ForPregnantOnly = EditableRange.ForPregnantOnly ?? false;
+
         RaiseAllChanged();
         IsDirty = false;
     }
 
-    private void Apply()
+    private async Task SaveAsync()
     {
         if (LowNormal.HasValue && HighNormal.HasValue && LowNormal.Value > HighNormal.Value)
         {
@@ -264,17 +265,29 @@ public sealed class NormalRangeDetailViewModel : ViewModelBase
             return;
         }
 
-        EditableRange.AgeUnit = AgeUnit;
-        EditableRange.LowFlag = LowFlag;
-        EditableRange.HighFlag = HighFlag;
-        EditableRange.LowComment = LowComment;
-        EditableRange.HighComment = HighComment;
-        EditableRange.CriticalRangeText = CriticalRangeText;
-        EditableRange.CriticalFlag = CriticalFlag;
-        EditableRange.CriticalComment = CriticalComment;
+        EditableRange.Sex = Sex switch
+        {
+            RangeSex.M => "M",
+            RangeSex.F => "F",
+            RangeSex.B => "Both",
+            _ => "Both"
+        };
+        EditableRange.ForPregnantOnly = ForPregnantOnly;
 
-        RangeApplied?.Invoke(this, CloneRange(EditableRange));
+        var saved = await _testCatalogService.SaveRangeAsync(EditableRange);
+        _lastLoadedRange = CloneRange(saved);
         IsDirty = false;
+    }
+
+    private void Cancel()
+    {
+        if (_lastLoadedRange is not null)
+            Load(_lastLoadedRange, _lastLoadedUnit);
+    }
+
+    private void MarkDirty()
+    {
+        IsDirty = true;
     }
 
     private void SetRangeProperty<T>(T oldValue, T newValue, Action<T> assign)
@@ -289,12 +302,15 @@ public sealed class NormalRangeDetailViewModel : ViewModelBase
 
     private void RaiseAllChanged()
     {
+        OnPropertyChanged(nameof(RangeFor));
+        OnPropertyChanged(nameof(IsSexEnabled));
+        OnPropertyChanged(nameof(IsAgeEnabled));
         OnPropertyChanged(nameof(Sex));
+        OnPropertyChanged(nameof(ForPregnantOnly));
         OnPropertyChanged(nameof(AgeFromDays));
         OnPropertyChanged(nameof(AgeToDays));
         OnPropertyChanged(nameof(AgeDescription));
         OnPropertyChanged(nameof(FastingState));
-        OnPropertyChanged(nameof(AppliesToPregnant));
         OnPropertyChanged(nameof(LowNormal));
         OnPropertyChanged(nameof(HighNormal));
         OnPropertyChanged(nameof(LowCritical));
@@ -338,7 +354,7 @@ public sealed class NormalRangeDetailViewModel : ViewModelBase
             AgeFromDays = range.AgeFromDays,
             AgeToDays = range.AgeToDays,
             AgeDescription = range.AgeDescription,
-            AppliesToPregnant = range.AppliesToPregnant,
+            ForPregnantOnly = range.ForPregnantOnly,
             AgeUnit = range.AgeUnit,
             LowFlag = range.LowFlag,
             HighFlag = range.HighFlag,

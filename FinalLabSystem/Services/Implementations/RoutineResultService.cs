@@ -80,7 +80,7 @@ public class RoutineResultService : IRoutineResultService
                         (nr.Sex == "B" || nr.Sex == patient.Sex) &&
                         patientAgeInDays >= nr.AgeFromDays &&
                         patientAgeInDays <= nr.AgeToDays &&
-                        (!nr.AppliesToPregnant.HasValue || nr.AppliesToPregnant.Value == isPregnant))
+                        (!nr.ForPregnantOnly.HasValue || nr.ForPregnantOnly.Value == isPregnant))
                     .OrderBy(nr => nr.RangeId)
                     .FirstOrDefault();
 

@@ -1,7 +1,6 @@
 <Window x:Class="FinalLabSystem.Views.Settings.TestDataManagementWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:shared="clr-namespace:FinalLabSystem.Views.Shared"
         Title="بيانات التحاليل"
         Height="860"
         Width="1320"
@@ -13,25 +12,33 @@
             <Setter Property="Height" Value="36"/>
             <Setter Property="MinWidth" Value="102"/>
             <Setter Property="Margin" Value="4"/>
-            <Setter Property="Background" Value="#A8E000"/>
-            <Setter Property="Foreground" Value="#001A20"/>
+            <Setter Property="Background" Value="#1E88E5"/>
+            <Setter Property="Foreground" Value="White"/>
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="Padding" Value="12,4"/>
         </Style>
         <Style x:Key="SectionHeaderStyle" TargetType="TextBlock">
             <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Foreground" Value="#123A42"/>
+            <Setter Property="Foreground" Value="#1565C0"/>
             <Setter Property="FontSize" Value="15"/>
             <Setter Property="Margin" Value="0,10,0,6"/>
         </Style>
-        <Style TargetType="TextBox">
-            <Setter Property="Height" Value="28"/>
-            <Setter Property="Margin" Value="4"/>
-            <Setter Property="Padding" Value="6,2"/>
+        <Style x:Key="FieldLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Foreground" Value="#333"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="MinWidth" Value="90"/>
         </Style>
-        <Style TargetType="ComboBox">
+        <Style x:Key="FieldTextBox" TargetType="TextBox">
             <Setter Property="Height" Value="28"/>
-            <Setter Property="Margin" Value="4"/>
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="Padding" Value="4,2"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="FieldComboBox" TargetType="ComboBox">
+            <Setter Property="Height" Value="28"/>
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
         </Style>
         <Style TargetType="CheckBox">
             <Setter Property="Margin" Value="8,4"/>
@@ -39,262 +46,307 @@
         </Style>
     </Window.Resources>
 
-    <Grid Background="#F5F7FA" Margin="8">
+    <Grid Background="#E8EEF4" Margin="0">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="40*"/>
-            <ColumnDefinition Width="60*"/>
-        </Grid.ColumnDefinitions>
 
-        <Border Grid.Row="0" Grid.Column="0" Background="White" BorderBrush="#CFD8DC" BorderThickness="1" Padding="8" Margin="0,0,6,0">
+        <!-- Row 0: Search Bar -->
+        <Border Grid.Row="0" Background="#1565C0" Padding="12,8">
             <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <DockPanel Grid.Row="0" LastChildFill="True" Margin="0,0,0,8">
-                    <ComboBox DockPanel.Dock="Right"
-                              Width="110"
-                              ItemsSource="{Binding TestList.SearchModes}"
-                              SelectedItem="{Binding TestList.SearchMode}"/>
-                    <TextBox Text="{Binding TestList.SearchText, UpdateSourceTrigger=PropertyChanged}"
-                             ToolTip="بحث"/>
-                </DockPanel>
-                <DataGrid Grid.Row="1"
-                          ItemsSource="{Binding TestList.FilteredTests}"
-                          SelectedItem="{Binding TestList.SelectedTest}"
-                          AutoGenerateColumns="False"
-                          IsReadOnly="True"
-                          SelectionMode="Single"
-                          HeadersVisibility="Column"
-                          CanUserAddRows="False">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Arrange#" Binding="{Binding SortOrder}" Width="60"/>
-                        <DataGridTextColumn Header="Group" Binding="{Binding GroupNameAr}" Width="140"/>
-                        <DataGridTextColumn Header="Code" Binding="{Binding TypeCode}" Width="80"/>
-                        <DataGridTextColumn Header="Test Name" Binding="{Binding DisplayName}" Width="*"/>
-                        <DataGridTextColumn Header="Patient Price" Binding="{Binding PatientPrice, StringFormat=N2}" Width="90"/>
-                        <DataGridTextColumn Header="Lab-to-Lab" Binding="{Binding LabToLabPrice, StringFormat=N2}" Width="90"/>
-                        <DataGridTextColumn Header="Tubes" Binding="{Binding TubeCount}" Width="60"/>
-                    </DataGrid.Columns>
-                </DataGrid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="Search by test name" Foreground="White" FontWeight="Bold" FontSize="12" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                    <TextBox x:Name="SearchTestNameBox" Width="160" Height="26" Margin="0,0,16,0"
+                             Text="{Binding TestList.SearchTestName, UpdateSourceTrigger=PropertyChanged}"
+                             VerticalContentAlignment="Center"/>
+                    <TextBlock Text="By group name" Foreground="White" FontWeight="Bold" FontSize="12" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                    <TextBox x:Name="SearchGroupNameBox" Width="160" Height="26" Margin="0,0,16,0"
+                             Text="{Binding TestList.SearchGroupName, UpdateSourceTrigger=PropertyChanged}"
+                             VerticalContentAlignment="Center"/>
+                    <TextBlock Text="By test ID" Foreground="White" FontWeight="Bold" FontSize="12" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                    <TextBox x:Name="SearchTestIdBox" Width="160" Height="26"
+                             Text="{Binding TestList.SearchTestId, UpdateSourceTrigger=PropertyChanged}"
+                             VerticalContentAlignment="Center"/>
+                </StackPanel>
+                <TextBlock Grid.Column="2" VerticalAlignment="Center"
+                           Foreground="White" FontWeight="Bold" FontSize="13"
+                           Text="{Binding TestList.FilteredTests.Count, StringFormat='Number Of Tests = {0} Tests'}"/>
             </Grid>
         </Border>
 
-        <Border Grid.Row="0" Grid.Column="1" Background="White" BorderBrush="#CFD8DC" BorderThickness="1" Padding="10" Margin="6,0,0,0">
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
-                <StackPanel>
-                    <shared:SpecialCharsBar Margin="0,0,0,8"/>
-                    <TextBlock Text="Identity" Style="{StaticResource SectionHeaderStyle}"/>
-                    <UniformGrid Columns="3">
-                        <StackPanel>
-                            <TextBlock Text="Code"/>
-                            <TextBox Text="{Binding TestDetail.TypeCode, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
-                        <StackPanel>
-                            <TextBlock Text="Test Name"/>
-                            <TextBox Text="{Binding TestDetail.TypeNameEn, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
-                        <StackPanel>
-                            <TextBlock Text="Arabic Name"/>
-                            <TextBox Text="{Binding TestDetail.TypeNameAr, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
-                        <StackPanel>
-                            <TextBlock Text="History Name"/>
-                            <TextBox Text="{Binding TestDetail.HistoryName, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
-                    </UniformGrid>
-                    <Separator/>
-
-                    <TextBlock Text="Report Names" Style="{StaticResource SectionHeaderStyle}"/>
-                    <UniformGrid Columns="2">
-                        <StackPanel>
-                            <TextBlock Text="Line 1"/>
-                            <TextBox Text="{Binding TestDetail.ReportNameLine1, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
-                        <StackPanel>
-                            <TextBlock Text="Line 2"/>
-                            <TextBox Text="{Binding TestDetail.ReportNameLine2, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
-                    </UniformGrid>
-                    <Separator/>
-
-                    <TextBlock Text="Bill Names" Style="{StaticResource SectionHeaderStyle}"/>
-                    <UniformGrid Columns="2">
-                        <StackPanel>
-                            <TextBlock Text="Line 1"/>
-                            <TextBox Text="{Binding TestDetail.BillNameLine1, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
-                        <StackPanel>
-                            <TextBlock Text="Line 2"/>
-                            <TextBox Text="{Binding TestDetail.BillNameLine2, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
-                    </UniformGrid>
-                    <Separator/>
-
-                    <TextBlock Text="Classification" Style="{StaticResource SectionHeaderStyle}"/>
-                    <UniformGrid Columns="3">
-                        <StackPanel>
-                            <TextBlock Text="Group"/>
-                            <ComboBox ItemsSource="{Binding TestDetail.Groups}"
-                                      DisplayMemberPath="GroupNameAr"
-                                      SelectedValuePath="GroupId"
-                                      SelectedValue="{Binding TestDetail.GroupId, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
-                        <StackPanel>
-                            <TextBlock Text="Arrange#"/>
-                            <TextBox Text="{Binding TestDetail.SortOrder, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
-                        <StackPanel>
-                            <TextBlock Text="Test Time Hours"/>
-                            <TextBox Text="{Binding TestDetail.TurnaroundHours, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
-                    </UniformGrid>
-                    <Separator/>
-
-                    <TextBlock Text="Workflow Flags" Style="{StaticResource SectionHeaderStyle}"/>
-                    <WrapPanel>
-                        <CheckBox Content="Is Routine Test" IsChecked="{Binding TestDetail.IsRoutineTest}"/>
-                        <CheckBox Content="See Report" IsChecked="{Binding TestDetail.SeeReport}"/>
-                        <CheckBox Content="Print With Other" IsChecked="{Binding TestDetail.PrintWithOther}"/>
-                        <CheckBox Content="Add With Group" IsChecked="{Binding TestDetail.AddWithGroup}"/>
-                        <CheckBox Content="Is Main Test" IsChecked="{Binding TestDetail.IsMainTest}"/>
-                    </WrapPanel>
-                    <Separator/>
-
-                    <TextBlock Text="Collection" Style="{StaticResource SectionHeaderStyle}"/>
-                    <UniformGrid Columns="2">
-                        <StackPanel>
-                            <TextBlock Text="Collection Type"/>
-                            <ComboBox ItemsSource="{Binding TestDetail.CollectionTypes}"
-                                      DisplayMemberPath="TypeNameAr"
-                                      SelectedValuePath="CollectionTypeId"
-                                      SelectedValue="{Binding TestDetail.SelectedCollectionTypeId, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
-                    </UniformGrid>
-                    <TextBlock Text="Notes" Style="{StaticResource SectionHeaderStyle}"/>
-                    <TextBlock Text="Collection Notes"/>
-                    <TextBox Text="{Binding TestDetail.CollectionNotes, UpdateSourceTrigger=PropertyChanged}" Height="58" AcceptsReturn="True" TextWrapping="Wrap"/>
-                    <TextBlock Text="Notes"/>
-                    <TextBox Text="{Binding TestDetail.Notes, UpdateSourceTrigger=PropertyChanged}" Height="58" AcceptsReturn="True" TextWrapping="Wrap"/>
-                    <Separator/>
-
-                    <TextBlock Text="Pricing" Style="{StaticResource SectionHeaderStyle}"/>
-                    <UniformGrid Columns="2">
-                        <StackPanel>
-                            <TextBlock Text="Patient Price"/>
-                            <TextBox Text="{Binding TestDetail.PatientPrice, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
-                        <StackPanel>
-                            <TextBlock Text="Lab-to-Lab Price"/>
-                            <TextBox Text="{Binding TestDetail.LabToLabPrice, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
-                    </UniformGrid>
-                    <Separator/>
-
-                    <TextBlock Text="Zone C - Sample Tubes" Style="{StaticResource SectionHeaderStyle}"/>
-                    <UniformGrid Columns="3" x:Name="SimplifiedTubePanel">
-                        <StackPanel>
-                            <TextBlock Text="أنبوبة 1"/>
-                            <ComboBox x:Name="Tube1Combo" SelectedIndex="0">
-                                <ComboBoxItem>Serum</ComboBoxItem>
-                                <ComboBoxItem>Serum Fasting</ComboBoxItem>
-                                <ComboBoxItem>EDTA Blood</ComboBoxItem>
-                                <ComboBoxItem>Citrate Plasma</ComboBoxItem>
-                                <ComboBoxItem>Urine</ComboBoxItem>
-                                <ComboBoxItem>Stool</ComboBoxItem>
-                                <ComboBoxItem>Whole Blood</ComboBoxItem>
-                                <ComboBoxItem>Heparin Plasma</ComboBoxItem>
-                                <ComboBoxItem>CSF</ComboBoxItem>
-                            </ComboBox>
-                        </StackPanel>
-                        <StackPanel>
-                            <TextBlock Text="أنبوبة 2"/>
-                            <ComboBox x:Name="Tube2Combo" SelectedIndex="-1">
-                                <ComboBoxItem>Serum</ComboBoxItem>
-                                <ComboBoxItem>Serum Fasting</ComboBoxItem>
-                                <ComboBoxItem>EDTA Blood</ComboBoxItem>
-                                <ComboBoxItem>Citrate Plasma</ComboBoxItem>
-                                <ComboBoxItem>Urine</ComboBoxItem>
-                                <ComboBoxItem>Stool</ComboBoxItem>
-                                <ComboBoxItem>Whole Blood</ComboBoxItem>
-                                <ComboBoxItem>Heparin Plasma</ComboBoxItem>
-                                <ComboBoxItem>CSF</ComboBoxItem>
-                            </ComboBox>
-                        </StackPanel>
-                        <StackPanel>
-                            <TextBlock Text="أنبوبة 3"/>
-                            <ComboBox x:Name="Tube3Combo" SelectedIndex="-1">
-                                <ComboBoxItem>Serum</ComboBoxItem>
-                                <ComboBoxItem>Serum Fasting</ComboBoxItem>
-                                <ComboBoxItem>EDTA Blood</ComboBoxItem>
-                                <ComboBoxItem>Citrate Plasma</ComboBoxItem>
-                                <ComboBoxItem>Urine</ComboBoxItem>
-                                <ComboBoxItem>Stool</ComboBoxItem>
-                                <ComboBoxItem>Whole Blood</ComboBoxItem>
-                                <ComboBoxItem>Heparin Plasma</ComboBoxItem>
-                                <ComboBoxItem>CSF</ComboBoxItem>
-                            </ComboBox>
-                        </StackPanel>
-                    </UniformGrid>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="4,4,4,8">
-                        <Button Content="متقدم" x:Name="AdvancedTubeButton" Style="{StaticResource ActionButtonStyle}" Click="AdvancedTubeButton_Click"/>
-                    </StackPanel>
-                    <DataGrid ItemsSource="{Binding TestDetail.Tubes}"
-                              SelectedItem="{Binding TestDetail.SelectedTube}"
-                              AutoGenerateColumns="False"
-                              CanUserAddRows="False"
-                              Height="155"
-                              x:Name="AdvancedTubeGrid"
-                              Visibility="Collapsed">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Sort" Binding="{Binding SortOrder, UpdateSourceTrigger=PropertyChanged}" Width="55"/>
-                            <DataGridTextColumn Header="Tube Type" Binding="{Binding TubeType, UpdateSourceTrigger=PropertyChanged}" Width="120"/>
-                            <DataGridTextColumn Header="Tube Color" Binding="{Binding TubeColor, UpdateSourceTrigger=PropertyChanged}" Width="100"/>
-                            <DataGridTextColumn Header="Sample Type" Binding="{Binding SampleType, UpdateSourceTrigger=PropertyChanged}" Width="120"/>
-                            <DataGridTextColumn Header="Qty" Binding="{Binding Quantity, UpdateSourceTrigger=PropertyChanged}" Width="55"/>
-                            <DataGridCheckBoxColumn Header="Active" Binding="{Binding IsActive, UpdateSourceTrigger=PropertyChanged}" Width="70"/>
-                            <DataGridTextColumn Header="Notes" Binding="{Binding Notes, UpdateSourceTrigger=PropertyChanged}" Width="*"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Visibility="Collapsed" x:Name="AdvancedTubeButtons">
-                        <Button Content="Add" Command="{Binding TestDetail.AddTubeCommand}" Style="{StaticResource ActionButtonStyle}"/>
-                        <Button Content="Edit" Command="{Binding TestDetail.EditTubeCommand}" Style="{StaticResource ActionButtonStyle}"/>
-                        <Button Content="Delete" Command="{Binding TestDetail.DeleteTubeCommand}" Style="{StaticResource ActionButtonStyle}"/>
-                    </StackPanel>
-                    <Separator/>
-
-                    <TextBlock Text="Zone D - Outside Lab" Style="{StaticResource SectionHeaderStyle}"/>
-                    <CheckBox Content="Is Send Outside" IsChecked="{Binding TestDetail.IsSendOutside}"/>
-                    <UniformGrid Columns="2">
-                        <StackPanel>
-                            <TextBlock Text="Outside Lab Name"/>
-                            <TextBox Text="{Binding TestDetail.OutsideLabName, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding TestDetail.IsOutsideFieldsEnabled}"/>
-                        </StackPanel>
-                        <StackPanel>
-                            <TextBlock Text="Outside Cost Price"/>
-                            <TextBox Text="{Binding TestDetail.OutsideCostPrice, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding TestDetail.IsOutsideFieldsEnabled}"/>
-                        </StackPanel>
-                    </UniformGrid>
-                    <Separator/>
-
-                    <TextBlock Text="Zone E - Patient Question" Style="{StaticResource SectionHeaderStyle}"/>
-                    <TextBox Text="{Binding TestDetail.PatientQuestion, UpdateSourceTrigger=PropertyChanged}" Height="70" AcceptsReturn="True" TextWrapping="Wrap"/>
-                    <Button Content="القيم الطبيعية" Command="{Binding TestDetail.OpenNormalRangesCommand}" Style="{StaticResource ActionButtonStyle}" HorizontalAlignment="Left" Margin="4,12,4,4"/>
-                </StackPanel>
-            </ScrollViewer>
+        <!-- Row 1: DataGrid -->
+        <Border Grid.Row="1" Background="White" BorderBrush="#B0BEC5" BorderThickness="1" Margin="4,4,4,0">
+            <DataGrid x:Name="TestsDataGrid"
+                      ItemsSource="{Binding TestList.FilteredTests}"
+                      SelectedItem="{Binding TestList.SelectedTest}"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      SelectionMode="Single"
+                      HeadersVisibility="Column"
+                      CanUserAddRows="False"
+                      GridLinesVisibility="Horizontal"
+                      BorderThickness="0"
+                      Background="White"
+                      AlternatingRowBackground="#F5F7FA">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ID" Binding="{Binding TesttypeId}" Width="50"/>
+                    <DataGridTextColumn Header="Arrange" Binding="{Binding SortOrder}" Width="65"/>
+                    <DataGridTextColumn Header="Group Name" Binding="{Binding GroupNameAr}" Width="150"/>
+                    <DataGridTextColumn Header="Test Name" Binding="{Binding TypeNameEn}" Width="*"/>
+                    <DataGridTextColumn Header="Pat. P" Binding="{Binding PatientPrice, StringFormat=N2}" Width="70"/>
+                    <DataGridTextColumn Header="Lab P" Binding="{Binding LabToLabPrice, StringFormat=N2}" Width="70"/>
+                    <DataGridTextColumn Header="Out Lab Name" Binding="{Binding OutsideLabName}" Width="120"/>
+                    <DataGridTextColumn Header="Out P" Binding="{Binding OutsideCostPrice, StringFormat=N2}" Width="65"/>
+                    <DataGridTextColumn Header="Barcode" Binding="{Binding Barcode}" Width="100"/>
+                </DataGrid.Columns>
+            </DataGrid>
         </Border>
 
-        <Border Grid.Row="1" Grid.ColumnSpan="2" Background="#123A42" BorderBrush="#0A252C" BorderThickness="3" Padding="5" Margin="0,8,0,0">
+        <!-- Row 2: Test Information Header -->
+        <Border Grid.Row="2" Background="#1565C0" Padding="12,6" Margin="4,4,4,0">
+            <TextBlock Text="Test Information" Foreground="White" FontWeight="Bold" FontSize="14"/>
+        </Border>
+
+        <!-- Row 3: Test Information Content -->
+        <Border Grid.Row="3" Background="White" BorderBrush="#B0BEC5" BorderThickness="1" Padding="12,8" Margin="4,0,4,0">
+            <Grid FlowDirection="LeftToRight">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Left Column: Basic Fields -->
+                <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                    <!-- Test Name + Test Code -->
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="Test Name" Style="{StaticResource FieldLabel}" Width="95"/>
+                        <TextBox Grid.Column="1" Text="{Binding TestDetail.TypeNameEn, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource FieldTextBox}"/>
+                        <TextBlock Grid.Column="2" Text="Test Code" Style="{StaticResource FieldLabel}" Width="80"/>
+                        <TextBox Grid.Column="3" Text="{Binding TestDetail.TypeCode, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource FieldTextBox}"/>
+                    </Grid>
+
+                    <!-- Report Name -->
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="Report Name" Style="{StaticResource FieldLabel}" Width="95"/>
+                        <TextBox Grid.Column="1" Text="{Binding TestDetail.ReportNameLine1, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource FieldTextBox}"/>
+                    </Grid>
+
+                    <!-- Bill Name -->
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="Bill Name" Style="{StaticResource FieldLabel}" Width="95"/>
+                        <TextBox Grid.Column="1" Text="{Binding TestDetail.BillNameLine1, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource FieldTextBox}"/>
+                    </Grid>
+
+                    <!-- History Name -->
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="History Name" Style="{StaticResource FieldLabel}" Width="95"/>
+                        <TextBox Grid.Column="1" Text="{Binding TestDetail.HistoryName, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource FieldTextBox}"/>
+                    </Grid>
+
+                    <!-- Arabic Name -->
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="Arabic Name" Style="{StaticResource FieldLabel}" Width="95"/>
+                        <TextBox Grid.Column="1" Text="{Binding TestDetail.TypeNameAr, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource FieldTextBox}"/>
+                    </Grid>
+
+                    <!-- Group Name -->
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="Group Name" Style="{StaticResource FieldLabel}" Width="95"/>
+                        <ComboBox Grid.Column="1" Style="{StaticResource FieldComboBox}"
+                                  ItemsSource="{Binding TestDetail.Groups}"
+                                  DisplayMemberPath="GroupNameAr"
+                                  SelectedValuePath="GroupId"
+                                  SelectedValue="{Binding TestDetail.GroupId, UpdateSourceTrigger=PropertyChanged}"/>
+                    </Grid>
+
+                    <!-- Collection -->
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="Collection" Style="{StaticResource FieldLabel}" Width="95"/>
+                        <ComboBox Grid.Column="1" Style="{StaticResource FieldComboBox}"
+                                  ItemsSource="{Binding TestDetail.CollectionTypes}"
+                                  DisplayMemberPath="TypeNameAr"
+                                  SelectedValuePath="CollectionTypeId"
+                                  SelectedValue="{Binding TestDetail.SelectedCollectionTypeId, UpdateSourceTrigger=PropertyChanged}"/>
+                    </Grid>
+
+                    <!-- Checkboxes -->
+                    <StackPanel Margin="0,8,0,0">
+                        <WrapPanel>
+                            <CheckBox Content="See Report" IsChecked="{Binding TestDetail.SeeReport}" Margin="0,0,12,0"/>
+                            <CheckBox Content="Print with other" IsChecked="{Binding TestDetail.PrintWithOther}" Margin="0,0,12,0"/>
+                            <CheckBox Content="Add with group" IsChecked="{Binding TestDetail.AddWithGroup}" Margin="0,0,12,0"/>
+                            <CheckBox Content="Main test" IsChecked="{Binding TestDetail.IsMainTest}"/>
+                        </WrapPanel>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Right Column: Barcode, Outside Lab, Patient Question -->
+                <StackPanel Grid.Column="1">
+                    <!-- Barcode Section -->
+                    <Border BorderBrush="#1565C0" BorderThickness="1" Padding="8" Margin="0,0,0,8" CornerRadius="4">
+                        <StackPanel>
+                            <TextBlock Text="Barcode" FontWeight="Bold" Foreground="#1565C0" FontSize="13" Margin="0,0,0,4"/>
+                            <Grid Margin="0,2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="Name" Style="{StaticResource FieldLabel}" Width="55"/>
+                                <TextBox Grid.Column="1" Text="{Binding TestDetail.BarcodeName, UpdateSourceTrigger=PropertyChanged}"
+                                         Style="{StaticResource FieldTextBox}"/>
+                                <TextBlock Grid.Column="2" Text="Tube 2" Style="{StaticResource FieldLabel}" Width="55"/>
+                                <ComboBox Grid.Column="3" Style="{StaticResource FieldComboBox}"
+                                          ItemsSource="{Binding TestDetail.AvailableTubeTypes}"
+                                          SelectedItem="{Binding TestDetail.Tube2}"/>
+                            </Grid>
+                            <Grid Margin="0,2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="Tube 1" Style="{StaticResource FieldLabel}" Width="55"/>
+                                <ComboBox Grid.Column="1" Style="{StaticResource FieldComboBox}"
+                                          ItemsSource="{Binding TestDetail.AvailableTubeTypes}"
+                                          SelectedItem="{Binding TestDetail.Tube1}"/>
+                                <TextBlock Grid.Column="2" Text="Tube 3" Style="{StaticResource FieldLabel}" Width="55"/>
+                                <ComboBox Grid.Column="3" Style="{StaticResource FieldComboBox}"
+                                          ItemsSource="{Binding TestDetail.AvailableTubeTypes}"
+                                          SelectedItem="{Binding TestDetail.Tube3}"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Sent outside Lab -->
+                    <CheckBox Content="Sent outside Lab." IsChecked="{Binding TestDetail.IsSendOutside}" Margin="0,4,0,4"/>
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="Lab Name" Style="{StaticResource FieldLabel}" Width="75"/>
+                        <TextBox Grid.Column="1" Text="{Binding TestDetail.OutsideLabName, UpdateSourceTrigger=PropertyChanged}"
+                                 IsEnabled="{Binding TestDetail.IsOutsideFieldsEnabled}"
+                                 Style="{StaticResource FieldTextBox}"/>
+                        <TextBlock Grid.Column="2" Text="Cost price" Style="{StaticResource FieldLabel}" Width="70"/>
+                        <TextBox Grid.Column="3" Text="{Binding TestDetail.OutsideCostPrice, UpdateSourceTrigger=PropertyChanged}"
+                                 IsEnabled="{Binding TestDetail.IsOutsideFieldsEnabled}"
+                                 Style="{StaticResource FieldTextBox}"/>
+                    </Grid>
+
+                    <!-- Patient Question -->
+                    <CheckBox Content="Patient Question" Margin="0,8,0,4"/>
+                    <TextBox Text="{Binding TestDetail.PatientQuestion, UpdateSourceTrigger=PropertyChanged}"
+                             Height="75" AcceptsReturn="True" TextWrapping="Wrap"
+                             VerticalScrollBarVisibility="Auto" Margin="2"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Row 3b: Bottom row of Test Information (prices, timing) -->
+        <Border Grid.Row="4" Background="White" BorderBrush="#B0BEC5" BorderThickness="1" Padding="10,6" Margin="4,0,4,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="80"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="120"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="100"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="Test time (Day)" Style="{StaticResource FieldLabel}" Width="95"/>
+                <TextBox Grid.Column="1" Text="{Binding TestDetail.TurnaroundHours, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{StaticResource FieldTextBox}" Width="80"/>
+                <TextBlock Grid.Column="2" Text="Arrange No" Style="{StaticResource FieldLabel}" Width="80"/>
+                <TextBox Grid.Column="3" Text="{Binding TestDetail.SortOrder, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{StaticResource FieldTextBox}" Width="60"/>
+                <TextBlock Grid.Column="4" Text="Reference type" Style="{StaticResource FieldLabel}" Width="95"/>
+                <ComboBox Grid.Column="5" Style="{StaticResource FieldComboBox}" Width="120"
+                          IsEditable="True"
+                          Text="{Binding TestDetail.ReferenceType, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBlock Grid.Column="6" Text="Patient price" Style="{StaticResource FieldLabel}" Width="85" Foreground="#C62828" FontWeight="Bold"/>
+                <TextBox Grid.Column="7" Text="{Binding TestDetail.PatientPrice, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{StaticResource FieldTextBox}" Width="100" FontWeight="Bold"/>
+                <TextBlock Grid.Column="8" Text="Lab to lab price" Style="{StaticResource FieldLabel}" Width="95" Foreground="#C62828" FontWeight="Bold"/>
+                <TextBox Grid.Column="9" Text="{Binding TestDetail.LabToLabPrice, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{StaticResource FieldTextBox}" Width="100" FontWeight="Bold"/>
+            </Grid>
+        </Border>
+
+        <!-- Row 5: Bottom Button Bar -->
+        <Border Grid.Row="5" Background="#1565C0" BorderBrush="#0D47A1" BorderThickness="3" Padding="5" Margin="0,6,0,0">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Content="جديد" Command="{Binding NewCommand}" Style="{StaticResource ActionButtonStyle}"/>
-                <Button Content="حفظ" Command="{Binding SaveCommand}" Style="{StaticResource ActionButtonStyle}" Background="#8BC34A"/>
-                <Button Content="حذف" Command="{Binding DeleteCommand}" Style="{StaticResource ActionButtonStyle}"/>
-                <Button Content="تحديث" Command="{Binding TestList.RefreshCommand}" Style="{StaticResource ActionButtonStyle}"/>
-                <Button Content="إغلاق" Command="{Binding CloseCommand}" Style="{StaticResource ActionButtonStyle}"/>
+                <Button Content="إضافة تحليل" Command="{Binding AddCommand}"
+                        Style="{StaticResource ActionButtonStyle}"
+                        Visibility="{Binding IsBrowsing, Converter={StaticResource BoolToVis}}"/>
+                <Button Content="تعديل" Command="{Binding EditCommand}"
+                        Style="{StaticResource ActionButtonStyle}"
+                        Visibility="{Binding IsBrowsing, Converter={StaticResource BoolToVis}}"/>
+                <Button Content="حفظ" Command="{Binding SaveCommand}"
+                        Style="{StaticResource ActionButtonStyle}" Background="#4CAF50"/>
+                <Button Content="تراجع" Command="{Binding CancelCommand}"
+                        Style="{StaticResource ActionButtonStyle}"/>
+                <Button Content="حذف" Command="{Binding DeleteCommand}"
+                        Style="{StaticResource ActionButtonStyle}"/>
+                <Button Content="القيم المرجعية" Command="{Binding TestDetail.OpenNormalRangesCommand}"
+                        Style="{StaticResource ActionButtonStyle}"/>
+                <Button Content="القائمة الرئيسية" Command="{Binding CloseCommand}"
+                        Style="{StaticResource ActionButtonStyle}"/>
             </StackPanel>
         </Border>
     </Grid>

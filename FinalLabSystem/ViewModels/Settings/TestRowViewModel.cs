@@ -6,9 +6,16 @@ namespace FinalLabSystem.ViewModels.Settings;
 
 public sealed class TestRowViewModel : ViewModelBase
 {
+    private string _outsideLabName = string.Empty;
+    private decimal? _outsideCostPrice;
+    private string _barcode = string.Empty;
+
     public TestRowViewModel(TestType testType)
     {
         TestType = testType;
+        _outsideLabName = testType.OutsideLabName ?? string.Empty;
+        _outsideCostPrice = testType.OutsideCostPrice;
+        _barcode = testType.BarcodeName ?? string.Empty;
     }
 
     public TestType TestType { get; }
@@ -36,4 +43,22 @@ public sealed class TestRowViewModel : ViewModelBase
         .FirstOrDefault(p => p.Scheme.SchemeName == "Lab-to-Lab Price")?.Price ?? 0d;
 
     public int TubeCount => TestType.TestTypeSampleTubes.Count(t => t.IsActive);
+
+    public string OutsideLabName
+    {
+        get => _outsideLabName;
+        set => SetProperty(ref _outsideLabName, value ?? string.Empty);
+    }
+
+    public decimal? OutsideCostPrice
+    {
+        get => _outsideCostPrice;
+        set => SetProperty(ref _outsideCostPrice, value);
+    }
+
+    public string Barcode
+    {
+        get => _barcode;
+        set => SetProperty(ref _barcode, value ?? string.Empty);
+    }
 }

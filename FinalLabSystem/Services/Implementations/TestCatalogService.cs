@@ -95,35 +95,46 @@ public class TestCatalogService : ITestCatalogService
     {
         if (entity is null) throw new ArgumentNullException(nameof(entity));
 
-        _context.TestTypes.Add(entity);
-        await _context.SaveChangesAsync();
+        await using var transaction = await _context.Database.BeginTransactionAsync();
 
-        var (patientSchemeId, labToLabSchemeId) = await ResolveSchemeIdsAsync();
+        try
+        {
+            _context.TestTypes.Add(entity);
+            await _context.SaveChangesAsync();
 
-        _context.TestTypePrices.Add(new TestTypePrice
-        {
-            TesttypeId = entity.TesttypeId,
-            SchemeId = patientSchemeId,
-            Price = patientPrice,
-        });
-        _context.TestTypePrices.Add(new TestTypePrice
-        {
-            TesttypeId = entity.TesttypeId,
-            SchemeId = labToLabSchemeId,
-            Price = labToLabPrice,
-        });
+            var (patientSchemeId, labToLabSchemeId) = await ResolveSchemeIdsAsync();
 
-        if (tubes is not null)
-        {
-            foreach (var tube in tubes)
+            _context.TestTypePrices.Add(new TestTypePrice
             {
-                tube.TestTypeId = entity.TesttypeId;
-                _context.TestTypeSampleTubes.Add(tube);
-            }
-        }
+                TesttypeId = entity.TesttypeId,
+                SchemeId = patientSchemeId,
+                Price = patientPrice,
+            });
+            _context.TestTypePrices.Add(new TestTypePrice
+            {
+                TesttypeId = entity.TesttypeId,
+                SchemeId = labToLabSchemeId,
+                Price = labToLabPrice,
+            });
 
-        await _context.SaveChangesAsync();
-        return entity.TesttypeId;
+            if (tubes is not null)
+            {
+                foreach (var tube in tubes)
+                {
+                    tube.TestTypeId = entity.TesttypeId;
+                    _context.TestTypeSampleTubes.Add(tube);
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
+            return entity.TesttypeId;
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 
     public async Task UpdateTestTypeAsync(
@@ -292,6 +303,12 @@ public class TestCatalogService : ITestCatalogService
     {
         if (range is null) throw new ArgumentNullException(nameof(range));
 
+        if (range.AgeUnit is not null)
+        {
+            range.AgeFromDays = ConvertAgeToDays(range.AgeFromDays, range.AgeUnit);
+            range.AgeToDays = ConvertAgeToDays(range.AgeToDays, range.AgeUnit);
+        }
+
         _context.NormalRanges.Add(range);
         await _context.SaveChangesAsync();
         return range.RangeId;
@@ -304,12 +321,18 @@ public class TestCatalogService : ITestCatalogService
         var existing = await _context.NormalRanges.FirstOrDefaultAsync(r => r.RangeId == range.RangeId)
             ?? throw new InvalidOperationException($"NormalRange {range.RangeId} not found.");
 
+        if (range.AgeUnit is not null)
+        {
+            range.AgeFromDays = ConvertAgeToDays(range.AgeFromDays, range.AgeUnit);
+            range.AgeToDays = ConvertAgeToDays(range.AgeToDays, range.AgeUnit);
+        }
+
         existing.ComponentId = range.ComponentId;
         existing.Sex = range.Sex;
         existing.AgeFromDays = range.AgeFromDays;
         existing.AgeToDays = range.AgeToDays;
         existing.AgeDescription = range.AgeDescription;
-        existing.AppliesToPregnant = range.AppliesToPregnant;
+        existing.ForPregnantOnly = range.ForPregnantOnly;
         existing.AgeUnit = range.AgeUnit;
         existing.LowFlag = range.LowFlag;
         existing.HighFlag = range.HighFlag;
@@ -396,6 +419,12 @@ public class TestCatalogService : ITestCatalogService
         var group = await _context.TestGroups.FindAsync(groupId);
         if (group is null) return;
 
+        var hasTestTypes = await _context.TestTypes.AnyAsync(tt => tt.GroupId == groupId);
+        if (hasTestTypes)
+        {
+            throw new InvalidOperationException("لا يمكن حذف هذه المجموعة لوجود تحاليل مرتبطة بها");
+        }
+
         _context.TestGroups.Remove(group);
         await _context.SaveChangesAsync();
     }
@@ -470,5 +499,79 @@ public class TestCatalogService : ITestCatalogService
             ?? throw new InvalidOperationException($"PriceScheme '{LabToLabSchemeName}' not found. Run migrations.");
 
         return (patient.SchemeId, lab.SchemeId);
+    }
+
+    private static int ConvertAgeToDays(int ageValue, string? ageUnit)
+    {
+        return ageUnit switch
+        {
+            "Years" => ageValue * 365,
+            "Months" => ageValue * 30,
+            "Days" => ageValue,
+            _ => ageValue
+        };
+    }
+
+    public async Task<NormalRange> SaveRangeAsync(NormalRange range)
+    {
+        if (range is null) throw new ArgumentNullException(nameof(range));
+
+        if (range.AgeUnit is not null)
+        {
+            range.AgeFromDays = ConvertAgeToDays(range.AgeFromDays, range.AgeUnit);
+            range.AgeToDays = ConvertAgeToDays(range.AgeToDays, range.AgeUnit);
+        }
+
+        if (range.RangeId == 0)
+        {
+            _context.NormalRanges.Add(range);
+        }
+        else
+        {
+            var existing = await _context.NormalRanges
+                .FirstOrDefaultAsync(r => r.RangeId == range.RangeId)
+                ?? throw new InvalidOperationException($"NormalRange {range.RangeId} not found.");
+
+            existing.ComponentId = range.ComponentId;
+            existing.Sex = range.Sex;
+            existing.AgeFromDays = range.AgeFromDays;
+            existing.AgeToDays = range.AgeToDays;
+            existing.AgeFromValue = range.AgeFromValue;
+            existing.AgeToValue = range.AgeToValue;
+            existing.AgeDescription = range.AgeDescription;
+            existing.ForPregnantOnly = range.ForPregnantOnly;
+            existing.AgeUnit = range.AgeUnit;
+            existing.LowFlag = range.LowFlag;
+            existing.HighFlag = range.HighFlag;
+            existing.LowComment = range.LowComment;
+            existing.HighComment = range.HighComment;
+            existing.CriticalRangeText = range.CriticalRangeText;
+            existing.CriticalFlag = range.CriticalFlag;
+            existing.CriticalComment = range.CriticalComment;
+            existing.FastingState = range.FastingState;
+            existing.LowNormal = range.LowNormal;
+            existing.HighNormal = range.HighNormal;
+            existing.LowCritical = range.LowCritical;
+            existing.HighCritical = range.HighCritical;
+            existing.NormalRangeText = range.NormalRangeText;
+            existing.RangeNote = range.RangeNote;
+
+            range = existing;
+        }
+
+        await _context.SaveChangesAsync();
+        return range;
+    }
+
+    public async Task<List<NormalRange>> GetRangesForTestTypeAsync(int testTypeId)
+    {
+        return await _context.NormalRanges
+            .AsNoTracking()
+            .Where(r => r.Component.TesttypeId == testTypeId)
+            .Include(r => r.Component)
+            .OrderBy(r => r.Component.SortOrder)
+            .ThenBy(r => r.Sex)
+            .ThenBy(r => r.AgeFromDays)
+            .ToListAsync();
     }
 }

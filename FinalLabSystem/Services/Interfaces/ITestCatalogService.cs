@@ -36,6 +36,8 @@ public interface ITestCatalogService
     Task<int> AddRangeAsync(NormalRange range);
     Task UpdateRangeAsync(NormalRange range);
     Task DeleteRangeAsync(int rangeId);
+    Task<NormalRange> SaveRangeAsync(NormalRange range);
+    Task<List<NormalRange>> GetRangesForTestTypeAsync(int testTypeId);
 
     Task<TestCategory?> GetCategoryByIdAsync(int categoryId);
     Task<TestCategory> CreateCategoryAsync(TestCategory category);

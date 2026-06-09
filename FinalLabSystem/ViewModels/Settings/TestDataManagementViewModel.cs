@@ -12,6 +12,11 @@ public sealed class TestDataManagementViewModel : ViewModelBase
 {
     private readonly ITestCatalogService _testCatalogService;
     private readonly INavigationService _navigationService;
+    private bool _isAdding;
+    private bool _isEditing;
+    private bool _isBrowsing = true;
+    private ICommand? _editCommand;
+    private ICommand? _cancelCommand;
 
     public TestDataManagementViewModel(
         TestListViewModel testList,
@@ -24,9 +29,9 @@ public sealed class TestDataManagementViewModel : ViewModelBase
         _testCatalogService = testCatalogService;
         _navigationService = navigationService;
 
-        NewCommand = new RelayCommand(_ => New());
-        SaveCommand = new AsyncRelayCommand(SaveAsync, () => TestDetail.IsDirty);
-        DeleteCommand = new AsyncRelayCommand(DeleteAsync, () => TestDetail.TesttypeId > 0);
+        AddCommand = new RelayCommand(_ => Add(), _ => IsBrowsing);
+        SaveCommand = new AsyncRelayCommand(SaveAsync, () => (IsAdding || IsEditing) && TestDetail.IsDirty);
+        DeleteCommand = new AsyncRelayCommand(DeleteAsync, () => IsBrowsing && TestDetail.TesttypeId > 0);
         CloseCommand = new RelayCommand(_ => _navigationService.ReturnToMain());
 
         TestList.SelectedTestChanged += OnSelectedTestChanged;
@@ -39,13 +44,35 @@ public sealed class TestDataManagementViewModel : ViewModelBase
 
     public TestDetailViewModel TestDetail { get; }
 
-    public ICommand NewCommand { get; }
+    public ICommand AddCommand { get; }
 
     public ICommand SaveCommand { get; }
 
     public ICommand DeleteCommand { get; }
 
     public ICommand CloseCommand { get; }
+
+    public ICommand EditCommand => _editCommand ??= new RelayCommand(_ => Edit(), _ => IsBrowsing && TestList.SelectedTest is not null);
+
+    public ICommand CancelCommand => _cancelCommand ??= new RelayCommand(_ => Cancel());
+
+    public bool IsAdding
+    {
+        get => _isAdding;
+        set => SetProperty(ref _isAdding, value);
+    }
+
+    public bool IsEditing
+    {
+        get => _isEditing;
+        set => SetProperty(ref _isEditing, value);
+    }
+
+    public bool IsBrowsing
+    {
+        get => _isBrowsing;
+        set => SetProperty(ref _isBrowsing, value);
+    }
 
     private async Task InitializeAsync()
     {
@@ -54,10 +81,32 @@ public sealed class TestDataManagementViewModel : ViewModelBase
         TestDetail.StartNew(TestList.AllTests.ToList());
     }
 
-    private void New()
+    private void Add()
     {
         TestList.SelectedTest = null;
         TestDetail.StartNew(TestList.AllTests.ToList());
+        IsAdding = true;
+        IsBrowsing = false;
+        IsEditing = false;
+    }
+
+    private void Edit()
+    {
+        if (TestList.SelectedTest is null)
+            return;
+
+        TestDetail.SaveBaseline();
+        IsEditing = true;
+        IsBrowsing = false;
+        IsAdding = false;
+    }
+
+    private void Cancel()
+    {
+        TestDetail.CancelChanges();
+        IsBrowsing = true;
+        IsAdding = false;
+        IsEditing = false;
     }
 
     private async Task SaveAsync()
@@ -86,6 +135,9 @@ public sealed class TestDataManagementViewModel : ViewModelBase
         }
 
         await TestList.RefreshAsync();
+        IsBrowsing = true;
+        IsAdding = false;
+        IsEditing = false;
     }
 
     private async Task DeleteAsync()
@@ -100,6 +152,9 @@ public sealed class TestDataManagementViewModel : ViewModelBase
         await _testCatalogService.DeleteTestTypeAsync(TestDetail.TesttypeId);
         await TestList.RefreshAsync();
         TestDetail.StartNew(TestList.AllTests.ToList());
+        IsBrowsing = true;
+        IsAdding = false;
+        IsEditing = false;
     }
 
     private async void OnSelectedTestChanged(object? sender, TestRowViewModel? row)

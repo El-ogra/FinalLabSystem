@@ -10,6 +10,7 @@ public sealed class NormalRangeWindowViewModel : ViewModelBase
     private readonly ITestCatalogService _testCatalogService;
     private TestType? _parentTest;
     private string _title = "القيم الطبيعية";
+    private ICommand? _backToTestsCommand;
 
     public NormalRangeWindowViewModel(
         NormalRangeListViewModel list,
@@ -19,7 +20,6 @@ public sealed class NormalRangeWindowViewModel : ViewModelBase
         List = list;
         Detail = detail;
         _testCatalogService = testCatalogService;
-        SaveAllCommand = new AsyncRelayCommand(SaveAllAsync);
         CloseCommand = new RelayCommand(parameter =>
         {
             if (parameter is System.Windows.Window window)
@@ -43,9 +43,13 @@ public sealed class NormalRangeWindowViewModel : ViewModelBase
         private set => SetProperty(ref _title, value);
     }
 
-    public ICommand SaveAllCommand { get; }
-
     public ICommand CloseCommand { get; }
+
+    public ICommand BackToTestsCommand => _backToTestsCommand ??= new RelayCommand(parameter =>
+    {
+        if (parameter is System.Windows.Window window)
+            window.Close();
+    });
 
     public async Task InitializeAsync(TestType parentTest)
     {
@@ -67,10 +71,5 @@ public sealed class NormalRangeWindowViewModel : ViewModelBase
         }
 
         List.LoadComponents(components);
-    }
-
-    private async Task SaveAllAsync()
-    {
-        await List.SaveAllAsync();
     }
 }

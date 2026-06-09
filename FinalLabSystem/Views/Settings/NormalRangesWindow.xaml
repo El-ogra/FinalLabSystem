@@ -8,6 +8,7 @@
         WindowStartupLocation="CenterOwner"
         FlowDirection="RightToLeft">
     <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
         <Style x:Key="ActionButtonStyle" TargetType="Button">
             <Setter Property="Height" Value="34"/>
             <Setter Property="MinWidth" Value="92"/>
@@ -50,7 +51,7 @@
                 <DockPanel>
                     <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Left">
                         <Button Content="Add" Command="{Binding List.AddRangeCommand}" Style="{StaticResource ActionButtonStyle}"/>
-                        <Button Content="Edit" Command="{Binding List.EditRangeCommand}" Style="{StaticResource ActionButtonStyle}"/>
+
                         <Button Content="Delete" Command="{Binding List.DeleteRangeCommand}" Style="{StaticResource ActionButtonStyle}"/>
                     </StackPanel>
                     <DataGrid ItemsSource="{Binding List.RangesForSelectedComponent}"
@@ -108,7 +109,7 @@
                     <WrapPanel>
                         <RadioButton Content="Any" IsChecked="{Binding Detail.IsFastingAny}" Margin="8"/>
                         <RadioButton Content="Fasting" IsChecked="{Binding Detail.IsFasting}" Margin="8"/>
-                        <CheckBox Content="للحوامل فقط (For Pregnancy Only)" IsChecked="{Binding Detail.AppliesToPregnant}" Margin="8"/>
+                        <CheckBox Content="للحوامل فقط (For Pregnancy Only)" IsChecked="{Binding Detail.ForPregnantOnly}" Margin="8"/>
                     </WrapPanel>
                     <UniformGrid Columns="2">
                         <StackPanel>
@@ -173,15 +174,18 @@
                     <TextBox Text="{Binding Detail.NormalRangeText, UpdateSourceTrigger=PropertyChanged}" Height="72" AcceptsReturn="True" TextWrapping="Wrap"/>
                     <TextBlock Text="Range Note"/>
                     <TextBox Text="{Binding Detail.RangeNote, UpdateSourceTrigger=PropertyChanged}" Height="72" AcceptsReturn="True" TextWrapping="Wrap"/>
-                    <Button Content="Apply" Command="{Binding Detail.ApplyCommand}" Style="{StaticResource ActionButtonStyle}" HorizontalAlignment="Left"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,8,0,0">
+                        <Button Content="حفظ" Command="{Binding Detail.SaveCommand}" Style="{StaticResource ActionButtonStyle}" Background="#8BC34A"/>
+                        <Button Content="إلغاء" Command="{Binding Detail.CancelCommand}" Style="{StaticResource ActionButtonStyle}"/>
+                    </StackPanel>
                 </StackPanel>
             </ScrollViewer>
         </Border>
 
         <Border Grid.Row="1" Grid.ColumnSpan="2" Background="#123A42" BorderBrush="#0A252C" BorderThickness="3" Padding="5" Margin="0,8,0,0">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Content="Save All" Command="{Binding SaveAllCommand}" Style="{StaticResource ActionButtonStyle}" Background="#8BC34A"/>
-                <Button Content="Close" Command="{Binding CloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" Style="{StaticResource ActionButtonStyle}"/>
+                <Button Content="عودة للتحاليل" Command="{Binding BackToTestsCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" Style="{StaticResource ActionButtonStyle}"/>
+                <Button Content="إغلاق" Command="{Binding CloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" Style="{StaticResource ActionButtonStyle}"/>
             </StackPanel>
         </Border>
     </Grid>

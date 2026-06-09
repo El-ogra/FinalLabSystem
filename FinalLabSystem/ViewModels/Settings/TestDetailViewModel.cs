@@ -1,6 +1,4 @@
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -18,17 +16,23 @@ public sealed class TestDetailViewModel : ViewModelBase
     private double _patientPrice;
     private double _labToLabPrice;
     private string? _validationMessage;
-    private TestTypeSampleTubeRowViewModel? _selectedTube;
     private int? _selectedCollectionTypeId;
+    private string? _referenceType;
+    private string _tube1 = string.Empty;
+    private string _tube2 = string.Empty;
+    private string _tube3 = string.Empty;
+    private string? _barcodeName;
+
+    private string? _baselineTube1;
+    private string? _baselineTube2;
+    private string? _baselineTube3;
+    private string? _baselineReferenceType;
+    private string? _baselineBarcodeName;
 
     public TestDetailViewModel(ITestCatalogService testCatalogService)
     {
         _testCatalogService = testCatalogService;
-        AddTubeCommand = new RelayCommand(_ => AddTube());
-        EditTubeCommand = new RelayCommand(_ => MarkDirty(), _ => SelectedTube is not null);
-        DeleteTubeCommand = new RelayCommand(_ => DeleteTube(), _ => SelectedTube is not null);
         OpenNormalRangesCommand = new RelayCommand(_ => OpenNormalRangesRequested?.Invoke(this, EventArgs.Empty), _ => EditableTest.TesttypeId > 0);
-        Tubes.CollectionChanged += OnTubesCollectionChanged;
     }
 
     public event EventHandler? DirtyStateChanged;
@@ -42,7 +46,12 @@ public sealed class TestDetailViewModel : ViewModelBase
     public int? SelectedCollectionTypeId
     {
         get => _selectedCollectionTypeId;
-        set => SetProperty(ref _selectedCollectionTypeId, value);
+        set
+        {
+            if (SetProperty(ref _selectedCollectionTypeId, value))
+                MarkEntityDirty();
+            OnPropertyChanged(nameof(SelectedCollectionType));
+        }
     }
 
     public CollectionType? SelectedCollectionType
@@ -50,7 +59,17 @@ public sealed class TestDetailViewModel : ViewModelBase
         get => CollectionTypes.FirstOrDefault(ct => ct.CollectionTypeId == _selectedCollectionTypeId);
     }
 
-    public ObservableCollection<TestTypeSampleTubeRowViewModel> Tubes { get; } = new();
+    public string? ReferenceType { get => _referenceType; set => SetProperty(ref _referenceType, value); }
+
+    public string Tube1 { get => _tube1; set => SetProperty(ref _tube1, value); }
+
+    public string Tube2 { get => _tube2; set => SetProperty(ref _tube2, value); }
+
+    public string Tube3 { get => _tube3; set => SetProperty(ref _tube3, value); }
+
+    public List<string> AvailableTubeTypes { get; } = new() { "Serum", "Plasma", "EDTA Blood", "Citrate Blood", "Urine", "CSF", "Other" };
+
+    public string? BarcodeName { get => _barcodeName; set => SetProperty(ref _barcodeName, value); }
 
     public IReadOnlyList<TestRowViewModel> AllTests { get; private set; } = Array.Empty<TestRowViewModel>();
 
@@ -74,12 +93,6 @@ public sealed class TestDetailViewModel : ViewModelBase
     {
         get => _validationMessage;
         private set => SetProperty(ref _validationMessage, value);
-    }
-
-    public TestTypeSampleTubeRowViewModel? SelectedTube
-    {
-        get => _selectedTube;
-        set => SetProperty(ref _selectedTube, value);
     }
 
     public int TesttypeId => EditableTest.TesttypeId;
@@ -168,7 +181,7 @@ public sealed class TestDetailViewModel : ViewModelBase
         set
         {
             if (SetProperty(ref _patientPrice, value))
-                MarkDirty();
+                MarkEntityDirty();
         }
     }
 
@@ -178,7 +191,7 @@ public sealed class TestDetailViewModel : ViewModelBase
         set
         {
             if (SetProperty(ref _labToLabPrice, value))
-                MarkDirty();
+                MarkEntityDirty();
         }
     }
 
@@ -242,12 +255,6 @@ public sealed class TestDetailViewModel : ViewModelBase
         set => SetTestProperty(EditableTest.PatientQuestion, value, v => EditableTest.PatientQuestion = v);
     }
 
-    public ICommand AddTubeCommand { get; }
-
-    public ICommand EditTubeCommand { get; }
-
-    public ICommand DeleteTubeCommand { get; }
-
     public ICommand OpenNormalRangesCommand { get; }
 
     public async Task InitializeLookupsAsync()
@@ -272,10 +279,14 @@ public sealed class TestDetailViewModel : ViewModelBase
         SelectedCollectionTypeId = test.CollectionTypeId;
         PatientPrice = test.TestTypePrices.FirstOrDefault(p => p.Scheme.SchemeName == "Patient Price")?.Price ?? test.DefaultPrice;
         LabToLabPrice = test.TestTypePrices.FirstOrDefault(p => p.Scheme.SchemeName == "Lab-to-Lab Price")?.Price ?? 0d;
-        Tubes.Clear();
-        foreach (var tube in test.TestTypeSampleTubes.OrderBy(t => t.SortOrder))
-            Tubes.Add(new TestTypeSampleTubeRowViewModel(tube));
+        var tubes = test.TestTypeSampleTubes.OrderBy(t => t.SortOrder).ToList();
+        Tube1 = tubes.ElementAtOrDefault(0)?.SampleType ?? string.Empty;
+        Tube2 = tubes.ElementAtOrDefault(1)?.SampleType ?? string.Empty;
+        Tube3 = tubes.ElementAtOrDefault(2)?.SampleType ?? string.Empty;
+        ReferenceType = test.ReferenceType;
+        BarcodeName = test.BarcodeName;
 
+        SaveBaseline();
         RaiseAllFieldsChanged();
         IsDirty = false;
     }
@@ -287,7 +298,11 @@ public sealed class TestDetailViewModel : ViewModelBase
         SelectedCollectionTypeId = null;
         PatientPrice = 0d;
         LabToLabPrice = 0d;
-        Tubes.Clear();
+        Tube1 = string.Empty;
+        Tube2 = string.Empty;
+        Tube3 = string.Empty;
+        ReferenceType = null;
+        BarcodeName = null;
         RaiseAllFieldsChanged();
         IsDirty = true;
     }
@@ -332,63 +347,53 @@ public sealed class TestDetailViewModel : ViewModelBase
         EditableTest.OutsideLabName = IsSendOutside ? NullIfWhiteSpace(OutsideLabName) : null;
         EditableTest.OutsideCostPrice = IsSendOutside ? OutsideCostPrice : null;
         EditableTest.PatientQuestion = NullIfWhiteSpace(PatientQuestion);
+        EditableTest.ReferenceType = ReferenceType;
+        EditableTest.BarcodeName = BarcodeName;
         EditableTest.DefaultPrice = PatientPrice;
         EditableTest.IsActive = true;
         return EditableTest;
     }
 
     public IReadOnlyList<TestTypeSampleTube> BuildTubes()
-        => Tubes.Select(t => t.ToEntity()).ToList();
+    {
+        var result = new List<TestTypeSampleTube>();
+        short sortOrder = 1;
+
+        if (!string.IsNullOrWhiteSpace(Tube1))
+            result.Add(new TestTypeSampleTube { TestTypeId = EditableTest.TesttypeId, SampleType = Tube1, Quantity = 1, SortOrder = sortOrder++, IsActive = true, TubeType = "Default" });
+
+        if (!string.IsNullOrWhiteSpace(Tube2))
+            result.Add(new TestTypeSampleTube { TestTypeId = EditableTest.TesttypeId, SampleType = Tube2, Quantity = 1, SortOrder = sortOrder++, IsActive = true, TubeType = "Default" });
+
+        if (!string.IsNullOrWhiteSpace(Tube3))
+            result.Add(new TestTypeSampleTube { TestTypeId = EditableTest.TesttypeId, SampleType = Tube3, Quantity = 1, SortOrder = sortOrder++, IsActive = true, TubeType = "Default" });
+
+        return result;
+    }
 
     public void AcceptChanges()
     {
         IsDirty = false;
+        SaveBaseline();
     }
 
-    private void AddTube()
+    public void SaveBaseline()
     {
-        var nextSort = Tubes.Count == 0 ? (short)1 : (short)(Tubes.Max(t => t.SortOrder) + 1);
-        var row = new TestTypeSampleTubeRowViewModel
-        {
-            TestTypeId = EditableTest.TesttypeId,
-            TubeType = "Default",
-            Quantity = 1,
-            SortOrder = nextSort,
-            IsActive = true
-        };
-        Tubes.Add(row);
-        SelectedTube = row;
-        MarkDirty();
+        _baselineTube1 = Tube1;
+        _baselineTube2 = Tube2;
+        _baselineTube3 = Tube3;
+        _baselineReferenceType = ReferenceType;
+        _baselineBarcodeName = BarcodeName;
     }
 
-    private void OnTubesCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    public void CancelChanges()
     {
-        if (e.OldItems is not null)
-        {
-            foreach (TestTypeSampleTubeRowViewModel row in e.OldItems)
-                row.PropertyChanged -= OnTubePropertyChanged;
-        }
-
-        if (e.NewItems is not null)
-        {
-            foreach (TestTypeSampleTubeRowViewModel row in e.NewItems)
-                row.PropertyChanged += OnTubePropertyChanged;
-        }
-    }
-
-    private void OnTubePropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        MarkDirty();
-    }
-
-    private void DeleteTube()
-    {
-        if (SelectedTube is null)
-            return;
-
-        Tubes.Remove(SelectedTube);
-        SelectedTube = null;
-        MarkDirty();
+        Tube1 = _baselineTube1 ?? string.Empty;
+        Tube2 = _baselineTube2 ?? string.Empty;
+        Tube3 = _baselineTube3 ?? string.Empty;
+        ReferenceType = _baselineReferenceType;
+        BarcodeName = _baselineBarcodeName;
+        IsDirty = false;
     }
 
     private bool Fail(string message)
@@ -405,10 +410,10 @@ public sealed class TestDetailViewModel : ViewModelBase
 
         assign(newValue);
         OnPropertyChanged(propertyName);
-        MarkDirty();
+        MarkEntityDirty();
     }
 
-    private void MarkDirty()
+    private void MarkEntityDirty()
     {
         IsDirty = true;
     }
@@ -443,6 +448,11 @@ public sealed class TestDetailViewModel : ViewModelBase
         OnPropertyChanged(nameof(OutsideLabName));
         OnPropertyChanged(nameof(OutsideCostPrice));
         OnPropertyChanged(nameof(PatientQuestion));
+        OnPropertyChanged(nameof(Tube1));
+        OnPropertyChanged(nameof(Tube2));
+        OnPropertyChanged(nameof(Tube3));
+        OnPropertyChanged(nameof(ReferenceType));
+        OnPropertyChanged(nameof(BarcodeName));
     }
 
     private static TestType CreateEmptyTest()

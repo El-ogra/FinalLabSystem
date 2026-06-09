@@ -433,7 +433,9 @@ public partial class FinalLabDbContext : DbContext
             entity.Property(e => e.AgeToDays)
                 .HasDefaultValue(36500)
                 .HasColumnName("age_to_days");
-            entity.Property(e => e.AppliesToPregnant).HasColumnName("applies_to_pregnant");
+            entity.Property(e => e.AgeFromValue).HasColumnName("age_from_value");
+            entity.Property(e => e.AgeToValue).HasColumnName("age_to_value");
+            entity.Property(e => e.ForPregnantOnly).HasColumnName("for_pregnant_only");
             entity.Property(e => e.AgeUnit)
                 .HasMaxLength(10)
                 .HasColumnName("age_unit");
@@ -482,7 +484,7 @@ public partial class FinalLabDbContext : DbContext
 
             entity.HasOne(d => d.Component).WithMany(p => p.NormalRanges)
                 .HasForeignKey(d => d.ComponentId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("FK_NormalRange_Component");
         });
 
@@ -1044,7 +1046,7 @@ public partial class FinalLabDbContext : DbContext
 
             entity.HasOne(d => d.Testtype).WithMany(p => p.TestComponents)
                 .HasForeignKey(d => d.TesttypeId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("FK_Component_Type");
         });
 
@@ -1123,7 +1125,7 @@ public partial class FinalLabDbContext : DbContext
 
             entity.HasOne(d => d.Component).WithMany(p => p.TestResults)
                 .HasForeignKey(d => d.ComponentId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("FK_Result_Component");
 
             entity.HasOne(d => d.EnteredByNavigation).WithMany(p => p.TestResultEnteredByNavigations)
@@ -1228,6 +1230,9 @@ public partial class FinalLabDbContext : DbContext
             entity.Property(e => e.OutsideCostPrice)
                 .HasColumnType("decimal(18, 2)")
                 .HasColumnName("outside_cost_price");
+            entity.Property(e => e.ReferenceType)
+                .HasMaxLength(20)
+                .HasColumnName("reference_type");
             entity.Property(e => e.PatientQuestion)
                 .HasMaxLength(500)
                 .HasColumnName("patient_question");
@@ -1237,7 +1242,7 @@ public partial class FinalLabDbContext : DbContext
 
             entity.HasOne(d => d.Group).WithMany(p => p.TestTypes)
                 .HasForeignKey(d => d.GroupId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("FK_TestType_Group");
 
             entity.HasOne(d => d.CollectionType).WithMany(p => p.TestTypes)
@@ -1266,7 +1271,7 @@ public partial class FinalLabDbContext : DbContext
 
             entity.HasOne(d => d.Testtype).WithMany(p => p.TestTypePrices)
                 .HasForeignKey(d => d.TesttypeId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_TestTypePrice_Type");
         });
 

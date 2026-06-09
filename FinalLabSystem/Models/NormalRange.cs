@@ -15,9 +15,13 @@ public partial class NormalRange
 
     public int AgeToDays { get; set; }
 
+    public int? AgeFromValue { get; set; }
+
+    public int? AgeToValue { get; set; }
+
     public string? AgeDescription { get; set; }
 
-    public bool? AppliesToPregnant { get; set; }
+    public bool? ForPregnantOnly { get; set; }
 
     public string? AgeUnit { get; set; }
 
