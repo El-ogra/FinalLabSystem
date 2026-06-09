@@ -78,7 +78,7 @@
                               FlowDirection="LeftToRight">
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Header="كود التحليل" DisplayMemberBinding="{Binding Code}" Width="100"/>
+                                <GridViewColumn Header="التحليل" DisplayMemberBinding="{Binding Name}" Width="240"/>
                             </GridView>
                         </ListView.View>
                     </ListView>
@@ -149,7 +149,10 @@
                             </Style>
                         </DataGrid.Resources>
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="كود التحليل" Binding="{Binding Code}" Width="*"/>
+                            <DataGridTextColumn Header="الكود" Binding="{Binding Code}" Width="60"/>
+                            <DataGridTextColumn Header="التحليل" Binding="{Binding Name}" Width="*"/>
+                            <DataGridTextColumn Header="السعر" Binding="{Binding Price}" Width="70"/>
+                            <DataGridTextColumn Header="العينة" Binding="{Binding SampleType}" Width="60"/>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Grid>
