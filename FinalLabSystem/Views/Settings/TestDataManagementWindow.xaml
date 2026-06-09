@@ -1,6 +1,7 @@
 <Window x:Class="FinalLabSystem.Views.Settings.TestDataManagementWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:shared="clr-namespace:FinalLabSystem.Views.Shared"
         Title="بيانات التحاليل"
         Height="860"
         Width="1320"
@@ -86,6 +87,7 @@
         <Border Grid.Row="0" Grid.Column="1" Background="White" BorderBrush="#CFD8DC" BorderThickness="1" Padding="10" Margin="6,0,0,0">
             <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <StackPanel>
+                    <shared:SpecialCharsBar Margin="0,0,0,8"/>
                     <TextBlock Text="Identity" Style="{StaticResource SectionHeaderStyle}"/>
                     <UniformGrid Columns="3">
                         <StackPanel>
@@ -163,6 +165,16 @@
                     </WrapPanel>
                     <Separator/>
 
+                    <TextBlock Text="Collection" Style="{StaticResource SectionHeaderStyle}"/>
+                    <UniformGrid Columns="2">
+                        <StackPanel>
+                            <TextBlock Text="Collection Type"/>
+                            <ComboBox ItemsSource="{Binding TestDetail.CollectionTypes}"
+                                      DisplayMemberPath="TypeNameAr"
+                                      SelectedValuePath="CollectionTypeId"
+                                      SelectedValue="{Binding TestDetail.SelectedCollectionTypeId, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                    </UniformGrid>
                     <TextBlock Text="Notes" Style="{StaticResource SectionHeaderStyle}"/>
                     <TextBlock Text="Collection Notes"/>
                     <TextBox Text="{Binding TestDetail.CollectionNotes, UpdateSourceTrigger=PropertyChanged}" Height="58" AcceptsReturn="True" TextWrapping="Wrap"/>
@@ -184,11 +196,60 @@
                     <Separator/>
 
                     <TextBlock Text="Zone C - Sample Tubes" Style="{StaticResource SectionHeaderStyle}"/>
+                    <UniformGrid Columns="3" x:Name="SimplifiedTubePanel">
+                        <StackPanel>
+                            <TextBlock Text="أنبوبة 1"/>
+                            <ComboBox x:Name="Tube1Combo" SelectedIndex="0">
+                                <ComboBoxItem>Serum</ComboBoxItem>
+                                <ComboBoxItem>Serum Fasting</ComboBoxItem>
+                                <ComboBoxItem>EDTA Blood</ComboBoxItem>
+                                <ComboBoxItem>Citrate Plasma</ComboBoxItem>
+                                <ComboBoxItem>Urine</ComboBoxItem>
+                                <ComboBoxItem>Stool</ComboBoxItem>
+                                <ComboBoxItem>Whole Blood</ComboBoxItem>
+                                <ComboBoxItem>Heparin Plasma</ComboBoxItem>
+                                <ComboBoxItem>CSF</ComboBoxItem>
+                            </ComboBox>
+                        </StackPanel>
+                        <StackPanel>
+                            <TextBlock Text="أنبوبة 2"/>
+                            <ComboBox x:Name="Tube2Combo" SelectedIndex="-1">
+                                <ComboBoxItem>Serum</ComboBoxItem>
+                                <ComboBoxItem>Serum Fasting</ComboBoxItem>
+                                <ComboBoxItem>EDTA Blood</ComboBoxItem>
+                                <ComboBoxItem>Citrate Plasma</ComboBoxItem>
+                                <ComboBoxItem>Urine</ComboBoxItem>
+                                <ComboBoxItem>Stool</ComboBoxItem>
+                                <ComboBoxItem>Whole Blood</ComboBoxItem>
+                                <ComboBoxItem>Heparin Plasma</ComboBoxItem>
+                                <ComboBoxItem>CSF</ComboBoxItem>
+                            </ComboBox>
+                        </StackPanel>
+                        <StackPanel>
+                            <TextBlock Text="أنبوبة 3"/>
+                            <ComboBox x:Name="Tube3Combo" SelectedIndex="-1">
+                                <ComboBoxItem>Serum</ComboBoxItem>
+                                <ComboBoxItem>Serum Fasting</ComboBoxItem>
+                                <ComboBoxItem>EDTA Blood</ComboBoxItem>
+                                <ComboBoxItem>Citrate Plasma</ComboBoxItem>
+                                <ComboBoxItem>Urine</ComboBoxItem>
+                                <ComboBoxItem>Stool</ComboBoxItem>
+                                <ComboBoxItem>Whole Blood</ComboBoxItem>
+                                <ComboBoxItem>Heparin Plasma</ComboBoxItem>
+                                <ComboBoxItem>CSF</ComboBoxItem>
+                            </ComboBox>
+                        </StackPanel>
+                    </UniformGrid>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="4,4,4,8">
+                        <Button Content="متقدم" x:Name="AdvancedTubeButton" Style="{StaticResource ActionButtonStyle}" Click="AdvancedTubeButton_Click"/>
+                    </StackPanel>
                     <DataGrid ItemsSource="{Binding TestDetail.Tubes}"
                               SelectedItem="{Binding TestDetail.SelectedTube}"
                               AutoGenerateColumns="False"
                               CanUserAddRows="False"
-                              Height="155">
+                              Height="155"
+                              x:Name="AdvancedTubeGrid"
+                              Visibility="Collapsed">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Sort" Binding="{Binding SortOrder, UpdateSourceTrigger=PropertyChanged}" Width="55"/>
                             <DataGridTextColumn Header="Tube Type" Binding="{Binding TubeType, UpdateSourceTrigger=PropertyChanged}" Width="120"/>
@@ -199,7 +260,7 @@
                             <DataGridTextColumn Header="Notes" Binding="{Binding Notes, UpdateSourceTrigger=PropertyChanged}" Width="*"/>
                         </DataGrid.Columns>
                     </DataGrid>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Visibility="Collapsed" x:Name="AdvancedTubeButtons">
                         <Button Content="Add" Command="{Binding TestDetail.AddTubeCommand}" Style="{StaticResource ActionButtonStyle}"/>
                         <Button Content="Edit" Command="{Binding TestDetail.EditTubeCommand}" Style="{StaticResource ActionButtonStyle}"/>
                         <Button Content="Delete" Command="{Binding TestDetail.DeleteTubeCommand}" Style="{StaticResource ActionButtonStyle}"/>

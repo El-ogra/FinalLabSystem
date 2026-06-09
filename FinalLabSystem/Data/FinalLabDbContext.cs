@@ -60,6 +60,8 @@ public partial class FinalLabDbContext : DbContext
 
     public virtual DbSet<TestComponent> TestComponents { get; set; }
 
+    public virtual DbSet<CollectionType> CollectionTypes { get; set; }
+
     public virtual DbSet<TestGroup> TestGroups { get; set; }
 
     public virtual DbSet<TestResult> TestResults { get; set; }
@@ -432,6 +434,30 @@ public partial class FinalLabDbContext : DbContext
                 .HasDefaultValue(36500)
                 .HasColumnName("age_to_days");
             entity.Property(e => e.AppliesToPregnant).HasColumnName("applies_to_pregnant");
+            entity.Property(e => e.AgeUnit)
+                .HasMaxLength(10)
+                .HasColumnName("age_unit");
+            entity.Property(e => e.LowFlag)
+                .HasMaxLength(20)
+                .HasColumnName("low_flag");
+            entity.Property(e => e.HighFlag)
+                .HasMaxLength(20)
+                .HasColumnName("high_flag");
+            entity.Property(e => e.LowComment)
+                .HasMaxLength(500)
+                .HasColumnName("low_comment");
+            entity.Property(e => e.HighComment)
+                .HasMaxLength(500)
+                .HasColumnName("high_comment");
+            entity.Property(e => e.CriticalRangeText)
+                .HasMaxLength(200)
+                .HasColumnName("critical_range_text");
+            entity.Property(e => e.CriticalFlag)
+                .HasMaxLength(20)
+                .HasColumnName("critical_flag");
+            entity.Property(e => e.CriticalComment)
+                .HasMaxLength(500)
+                .HasColumnName("critical_comment");
             entity.Property(e => e.ComponentId).HasColumnName("component_id");
             entity.Property(e => e.FastingState)
                 .HasMaxLength(1)
@@ -938,6 +964,26 @@ public partial class FinalLabDbContext : DbContext
                 .HasConstraintName("FK_StaffPerm_Staff");
         });
 
+        modelBuilder.Entity<CollectionType>(entity =>
+        {
+            entity.HasKey(e => e.CollectionTypeId).HasName("PK_CollectionType");
+
+            entity.ToTable("CollectionTypes");
+
+            entity.Property(e => e.CollectionTypeId).HasColumnName("collection_type_id");
+            entity.Property(e => e.TypeNameEn)
+                .HasMaxLength(100)
+                .IsRequired()
+                .HasColumnName("type_name_en");
+            entity.Property(e => e.TypeNameAr)
+                .HasMaxLength(100)
+                .HasColumnName("type_name_ar");
+            entity.Property(e => e.SortOrder).HasColumnName("sort_order");
+            entity.Property(e => e.IsActive)
+                .HasDefaultValue(true)
+                .HasColumnName("is_active");
+        });
+
         modelBuilder.Entity<TestCategory>(entity =>
         {
             entity.HasKey(e => e.CategoryId).HasName("PK__TestCate__D54EE9B457D2B89D");
@@ -1157,6 +1203,7 @@ public partial class FinalLabDbContext : DbContext
             entity.Property(e => e.CollectionNotes)
                 .HasMaxLength(1000)
                 .HasColumnName("collection_notes");
+            entity.Property(e => e.CollectionTypeId).HasColumnName("collection_type_id");
             entity.Property(e => e.IsRoutineTest)
                 .HasDefaultValue(false)
                 .HasColumnName("is_routine_test");
@@ -1192,6 +1239,11 @@ public partial class FinalLabDbContext : DbContext
                 .HasForeignKey(d => d.GroupId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_TestType_Group");
+
+            entity.HasOne(d => d.CollectionType).WithMany(p => p.TestTypes)
+                .HasForeignKey(d => d.CollectionTypeId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_TestType_CollectionType");
         });
 
         modelBuilder.Entity<TestTypePrice>(entity =>

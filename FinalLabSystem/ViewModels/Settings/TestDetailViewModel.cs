@@ -19,6 +19,7 @@ public sealed class TestDetailViewModel : ViewModelBase
     private double _labToLabPrice;
     private string? _validationMessage;
     private TestTypeSampleTubeRowViewModel? _selectedTube;
+    private int? _selectedCollectionTypeId;
 
     public TestDetailViewModel(ITestCatalogService testCatalogService)
     {
@@ -35,6 +36,19 @@ public sealed class TestDetailViewModel : ViewModelBase
     public event EventHandler? OpenNormalRangesRequested;
 
     public ObservableCollection<TestGroup> Groups { get; } = new();
+
+    public ObservableCollection<CollectionType> CollectionTypes { get; } = new();
+
+    public int? SelectedCollectionTypeId
+    {
+        get => _selectedCollectionTypeId;
+        set => SetProperty(ref _selectedCollectionTypeId, value);
+    }
+
+    public CollectionType? SelectedCollectionType
+    {
+        get => CollectionTypes.FirstOrDefault(ct => ct.CollectionTypeId == _selectedCollectionTypeId);
+    }
 
     public ObservableCollection<TestTypeSampleTubeRowViewModel> Tubes { get; } = new();
 
@@ -241,6 +255,10 @@ public sealed class TestDetailViewModel : ViewModelBase
         Groups.Clear();
         foreach (var group in await _testCatalogService.GetActiveGroupsAsync())
             Groups.Add(group);
+
+        CollectionTypes.Clear();
+        foreach (var ct in await _testCatalogService.GetAllCollectionTypesAsync())
+            CollectionTypes.Add(ct);
     }
 
     public async Task LoadAsync(int testTypeId, IReadOnlyList<TestRowViewModel> allTests)
@@ -251,6 +269,7 @@ public sealed class TestDetailViewModel : ViewModelBase
             return;
 
         EditableTest = CloneTest(test);
+        SelectedCollectionTypeId = test.CollectionTypeId;
         PatientPrice = test.TestTypePrices.FirstOrDefault(p => p.Scheme.SchemeName == "Patient Price")?.Price ?? test.DefaultPrice;
         LabToLabPrice = test.TestTypePrices.FirstOrDefault(p => p.Scheme.SchemeName == "Lab-to-Lab Price")?.Price ?? 0d;
         Tubes.Clear();
@@ -265,6 +284,7 @@ public sealed class TestDetailViewModel : ViewModelBase
     {
         AllTests = allTests;
         EditableTest = CreateEmptyTest();
+        SelectedCollectionTypeId = null;
         PatientPrice = 0d;
         LabToLabPrice = 0d;
         Tubes.Clear();
@@ -306,6 +326,7 @@ public sealed class TestDetailViewModel : ViewModelBase
         EditableTest.ReportNameLine2 = NullIfWhiteSpace(ReportNameLine2);
         EditableTest.BillNameLine1 = NullIfWhiteSpace(BillNameLine1);
         EditableTest.BillNameLine2 = NullIfWhiteSpace(BillNameLine2);
+        EditableTest.CollectionTypeId = SelectedCollectionTypeId;
         EditableTest.CollectionNotes = NullIfWhiteSpace(CollectionNotes);
         EditableTest.Notes = NullIfWhiteSpace(Notes);
         EditableTest.OutsideLabName = IsSendOutside ? NullIfWhiteSpace(OutsideLabName) : null;
@@ -406,6 +427,8 @@ public sealed class TestDetailViewModel : ViewModelBase
         OnPropertyChanged(nameof(GroupId));
         OnPropertyChanged(nameof(SortOrder));
         OnPropertyChanged(nameof(TurnaroundHours));
+        OnPropertyChanged(nameof(SelectedCollectionTypeId));
+        OnPropertyChanged(nameof(SelectedCollectionType));
         OnPropertyChanged(nameof(CollectionNotes));
         OnPropertyChanged(nameof(Notes));
         OnPropertyChanged(nameof(PatientPrice));
@@ -460,6 +483,7 @@ public sealed class TestDetailViewModel : ViewModelBase
             BillNameLine1 = test.BillNameLine1,
             BillNameLine2 = test.BillNameLine2,
             HistoryName = test.HistoryName,
+            CollectionTypeId = test.CollectionTypeId,
             CollectionNotes = test.CollectionNotes,
             IsRoutineTest = test.IsRoutineTest,
             SeeReport = test.SeeReport,

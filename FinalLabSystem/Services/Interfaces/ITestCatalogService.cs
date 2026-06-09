@@ -47,4 +47,11 @@ public interface ITestCatalogService
     Task<TestGroup> UpdateGroupAsync(TestGroup group);
     Task DeleteGroupAsync(int groupId);
     Task<List<TestGroup>> GetGroupsByCategoryIdAsync(int categoryId);
+
+    Task<List<CollectionType>> GetAllCollectionTypesAsync();
+    Task<CollectionType?> GetCollectionTypeByIdAsync(int collectionTypeId);
+    Task<CollectionType> CreateCollectionTypeAsync(CollectionType collectionType);
+    Task<CollectionType> UpdateCollectionTypeAsync(CollectionType collectionType);
+    Task<bool> DeleteCollectionTypeAsync(int collectionTypeId);
+    Task<bool> CollectionTypeHasTestTypesAsync(int collectionTypeId);
 }

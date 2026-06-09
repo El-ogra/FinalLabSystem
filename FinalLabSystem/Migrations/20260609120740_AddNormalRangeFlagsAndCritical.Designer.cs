@@ -4,6 +4,7 @@ using FinalLabSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinalLabSystem.Migrations
 {
     [DbContext(typeof(FinalLabDbContext))]
-    partial class FinalLabDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260609120740_AddNormalRangeFlagsAndCritical")]
+    partial class AddNormalRangeFlagsAndCritical
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2224,8 +2227,7 @@ namespace FinalLabSystem.Migrations
                         .HasColumnName("collection_notes");
 
                     b.Property<int?>("CollectionTypeId")
-                        .HasColumnType("int")
-                        .HasColumnName("collection_type_id");
+                        .HasColumnType("int");
 
                     b.Property<double>("DefaultPrice")
                         .HasColumnType("float")
@@ -3828,19 +3830,15 @@ namespace FinalLabSystem.Migrations
 
             modelBuilder.Entity("FinalLabSystem.Models.TestType", b =>
                 {
-                    b.HasOne("FinalLabSystem.Models.CollectionType", "CollectionType")
+                    b.HasOne("FinalLabSystem.Models.CollectionType", null)
                         .WithMany("TestTypes")
-                        .HasForeignKey("CollectionTypeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("FK_TestType_CollectionType");
+                        .HasForeignKey("CollectionTypeId");
 
                     b.HasOne("FinalLabSystem.Models.TestGroup", "Group")
                         .WithMany("TestTypes")
                         .HasForeignKey("GroupId")
                         .IsRequired()
                         .HasConstraintName("FK_TestType_Group");
-
-                    b.Navigation("CollectionType");
 
                     b.Navigation("Group");
                 });

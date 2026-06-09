@@ -4,6 +4,7 @@ using FinalLabSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinalLabSystem.Migrations
 {
     [DbContext(typeof(FinalLabDbContext))]
-    partial class FinalLabDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260609120103_AddCollectionType")]
+    partial class AddCollectionType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -839,11 +842,6 @@ namespace FinalLabSystem.Migrations
                         .HasDefaultValue(36500)
                         .HasColumnName("age_to_days");
 
-                    b.Property<string>("AgeUnit")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)")
-                        .HasColumnName("age_unit");
-
                     b.Property<bool?>("AppliesToPregnant")
                         .HasColumnType("bit")
                         .HasColumnName("applies_to_pregnant");
@@ -851,21 +849,6 @@ namespace FinalLabSystem.Migrations
                     b.Property<int>("ComponentId")
                         .HasColumnType("int")
                         .HasColumnName("component_id");
-
-                    b.Property<string>("CriticalComment")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)")
-                        .HasColumnName("critical_comment");
-
-                    b.Property<string>("CriticalFlag")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)")
-                        .HasColumnName("critical_flag");
-
-                    b.Property<string>("CriticalRangeText")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)")
-                        .HasColumnName("critical_range_text");
 
                     b.Property<string>("FastingState")
                         .IsRequired()
@@ -876,37 +859,17 @@ namespace FinalLabSystem.Migrations
                         .HasColumnName("fasting_state")
                         .IsFixedLength();
 
-                    b.Property<string>("HighComment")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)")
-                        .HasColumnName("high_comment");
-
                     b.Property<double?>("HighCritical")
                         .HasColumnType("float")
                         .HasColumnName("high_critical");
-
-                    b.Property<string>("HighFlag")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)")
-                        .HasColumnName("high_flag");
 
                     b.Property<double?>("HighNormal")
                         .HasColumnType("float")
                         .HasColumnName("high_normal");
 
-                    b.Property<string>("LowComment")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)")
-                        .HasColumnName("low_comment");
-
                     b.Property<double?>("LowCritical")
                         .HasColumnType("float")
                         .HasColumnName("low_critical");
-
-                    b.Property<string>("LowFlag")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)")
-                        .HasColumnName("low_flag");
 
                     b.Property<double?>("LowNormal")
                         .HasColumnType("float")
@@ -2224,8 +2187,7 @@ namespace FinalLabSystem.Migrations
                         .HasColumnName("collection_notes");
 
                     b.Property<int?>("CollectionTypeId")
-                        .HasColumnType("int")
-                        .HasColumnName("collection_type_id");
+                        .HasColumnType("int");
 
                     b.Property<double>("DefaultPrice")
                         .HasColumnType("float")
@@ -3828,19 +3790,15 @@ namespace FinalLabSystem.Migrations
 
             modelBuilder.Entity("FinalLabSystem.Models.TestType", b =>
                 {
-                    b.HasOne("FinalLabSystem.Models.CollectionType", "CollectionType")
+                    b.HasOne("FinalLabSystem.Models.CollectionType", null)
                         .WithMany("TestTypes")
-                        .HasForeignKey("CollectionTypeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("FK_TestType_CollectionType");
+                        .HasForeignKey("CollectionTypeId");
 
                     b.HasOne("FinalLabSystem.Models.TestGroup", "Group")
                         .WithMany("TestTypes")
                         .HasForeignKey("GroupId")
                         .IsRequired()
                         .HasConstraintName("FK_TestType_Group");
-
-                    b.Navigation("CollectionType");
 
                     b.Navigation("Group");
                 });

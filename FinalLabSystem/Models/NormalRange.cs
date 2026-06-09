@@ -19,6 +19,22 @@ public partial class NormalRange
 
     public bool? AppliesToPregnant { get; set; }
 
+    public string? AgeUnit { get; set; }
+
+    public string? LowFlag { get; set; }
+
+    public string? HighFlag { get; set; }
+
+    public string? LowComment { get; set; }
+
+    public string? HighComment { get; set; }
+
+    public string? CriticalRangeText { get; set; }
+
+    public string? CriticalFlag { get; set; }
+
+    public string? CriticalComment { get; set; }
+
     public string FastingState { get; set; } = null!;
 
     public double? LowNormal { get; set; }

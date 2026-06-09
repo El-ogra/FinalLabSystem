@@ -49,6 +49,8 @@ public partial class TestType
 
     public string? CollectionNotes { get; set; }
 
+    public int? CollectionTypeId { get; set; }
+
     public bool IsRoutineTest { get; set; }
 
     public bool SeeReport { get; set; }
@@ -68,6 +70,8 @@ public partial class TestType
     public string? PatientQuestion { get; set; }
 
     public virtual TestGroup Group { get; set; } = null!;
+
+    public virtual CollectionType? CollectionType { get; set; }
 
     public virtual ICollection<ReportCommentTemplate> ReportCommentTemplates { get; set; } = new List<ReportCommentTemplate>();
 

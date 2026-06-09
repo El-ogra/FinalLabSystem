@@ -161,6 +161,7 @@ public class TestCatalogService : ITestCatalogService
         existing.BillNameLine2 = entity.BillNameLine2;
         existing.HistoryName = entity.HistoryName;
         existing.CollectionNotes = entity.CollectionNotes;
+        existing.CollectionTypeId = entity.CollectionTypeId;
         existing.IsRoutineTest = entity.IsRoutineTest;
         existing.SeeReport = entity.SeeReport;
         existing.PrintWithOther = entity.PrintWithOther;
@@ -309,6 +310,14 @@ public class TestCatalogService : ITestCatalogService
         existing.AgeToDays = range.AgeToDays;
         existing.AgeDescription = range.AgeDescription;
         existing.AppliesToPregnant = range.AppliesToPregnant;
+        existing.AgeUnit = range.AgeUnit;
+        existing.LowFlag = range.LowFlag;
+        existing.HighFlag = range.HighFlag;
+        existing.LowComment = range.LowComment;
+        existing.HighComment = range.HighComment;
+        existing.CriticalRangeText = range.CriticalRangeText;
+        existing.CriticalFlag = range.CriticalFlag;
+        existing.CriticalComment = range.CriticalComment;
         existing.FastingState = range.FastingState;
         existing.LowNormal = range.LowNormal;
         existing.HighNormal = range.HighNormal;
@@ -397,6 +406,55 @@ public class TestCatalogService : ITestCatalogService
             .Where(g => g.CategoryId == categoryId)
             .OrderBy(g => g.SortOrder)
             .ToListAsync();
+    }
+
+    public async Task<List<CollectionType>> GetAllCollectionTypesAsync()
+    {
+        return await _context.CollectionTypes
+            .AsNoTracking()
+            .OrderBy(c => c.SortOrder)
+            .ThenBy(c => c.TypeNameEn)
+            .ToListAsync();
+    }
+
+    public async Task<CollectionType?> GetCollectionTypeByIdAsync(int collectionTypeId)
+    {
+        return await _context.CollectionTypes.FindAsync(collectionTypeId);
+    }
+
+    public async Task<CollectionType> CreateCollectionTypeAsync(CollectionType collectionType)
+    {
+        _context.CollectionTypes.Add(collectionType);
+        await _context.SaveChangesAsync();
+        return collectionType;
+    }
+
+    public async Task<CollectionType> UpdateCollectionTypeAsync(CollectionType collectionType)
+    {
+        _context.CollectionTypes.Update(collectionType);
+        await _context.SaveChangesAsync();
+        return collectionType;
+    }
+
+    public async Task<bool> DeleteCollectionTypeAsync(int collectionTypeId)
+    {
+        var entity = await _context.CollectionTypes.FindAsync(collectionTypeId);
+        if (entity is null) return false;
+
+        var hasTestTypes = await _context.TestTypes.AnyAsync(tt => tt.CollectionTypeId == collectionTypeId);
+        if (hasTestTypes)
+        {
+            throw new InvalidOperationException("لا يمكن حذف هذا النوع لأنه مرتبط بتحاليل");
+        }
+
+        _context.CollectionTypes.Remove(entity);
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> CollectionTypeHasTestTypesAsync(int collectionTypeId)
+    {
+        return await _context.TestTypes.AnyAsync(tt => tt.CollectionTypeId == collectionTypeId);
     }
 
     private async Task<(int PatientSchemeId, int LabToLabSchemeId)> ResolveSchemeIdsAsync()
