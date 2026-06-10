@@ -4,6 +4,7 @@ using FinalLabSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinalLabSystem.Migrations
 {
     [DbContext(typeof(FinalLabDbContext))]
-    partial class FinalLabDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260610092342_GroupTestTypeBehaviorFlags")]
+    partial class GroupTestTypeBehaviorFlags
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -902,12 +905,6 @@ namespace FinalLabSystem.Migrations
                         .HasColumnType("float")
                         .HasColumnName("high_normal");
 
-                    b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true)
-                        .HasColumnName("is_active");
-
                     b.Property<string>("LowComment")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)")
@@ -945,27 +942,15 @@ namespace FinalLabSystem.Migrations
                         .HasColumnName("sex")
                         .IsFixedLength();
 
-                    b.Property<int?>("SupersededById")
-                        .HasColumnType("int")
-                        .HasColumnName("superseded_by_id");
-
                     b.Property<string>("Unit")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)")
                         .HasColumnName("unit");
 
-                    b.Property<int>("Version")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(1)
-                        .HasColumnName("version");
-
                     b.HasKey("RangeId")
                         .HasName("PK__NormalRa__3C0A88B60E81F7C4");
 
                     b.HasIndex("ComponentId");
-
-                    b.HasIndex("SupersededById");
 
                     b.ToTable("NormalRange", (string)null);
                 });
@@ -2158,9 +2143,6 @@ namespace FinalLabSystem.Migrations
                         .HasColumnType("int")
                         .HasColumnName("last_modified_by");
 
-                    b.Property<int?>("NormalRangeId")
-                        .HasColumnType("int");
-
                     b.Property<decimal?>("ResultNumeric")
                         .HasColumnType("decimal(18, 4)")
                         .HasColumnName("result_numeric");
@@ -2228,8 +2210,6 @@ namespace FinalLabSystem.Migrations
                     b.HasIndex("EnteredBy");
 
                     b.HasIndex("LastModifiedBy");
-
-                    b.HasIndex("NormalRangeId");
 
                     b.HasIndex("ValidatedByStaffId");
 
@@ -3627,14 +3607,7 @@ namespace FinalLabSystem.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_NormalRange_Component");
 
-                    b.HasOne("FinalLabSystem.Models.NormalRange", "SupersededBy")
-                        .WithMany()
-                        .HasForeignKey("SupersededById")
-                        .OnDelete(DeleteBehavior.NoAction);
-
                     b.Navigation("Component");
-
-                    b.Navigation("SupersededBy");
                 });
 
             modelBuilder.Entity("FinalLabSystem.Models.OrganismAntibiotic", b =>
@@ -3890,11 +3863,6 @@ namespace FinalLabSystem.Migrations
                         .HasForeignKey("LastModifiedBy")
                         .HasConstraintName("FK_Result_ModifiedBy");
 
-                    b.HasOne("FinalLabSystem.Models.NormalRange", "NormalRange")
-                        .WithMany()
-                        .HasForeignKey("NormalRangeId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.HasOne("FinalLabSystem.Models.Staff", "ValidatedBy")
                         .WithMany("TestResultValidatedByNavigations")
                         .HasForeignKey("ValidatedByStaffId")
@@ -3912,8 +3880,6 @@ namespace FinalLabSystem.Migrations
                     b.Navigation("EnteredByNavigation");
 
                     b.Navigation("LastModifiedByNavigation");
-
-                    b.Navigation("NormalRange");
 
                     b.Navigation("ValidatedBy");
 

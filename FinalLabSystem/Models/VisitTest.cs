@@ -18,16 +18,46 @@ public partial class VisitTest
 
     public TestStage CurrentStage { get; set; }
 
+    /// <remarks>
+    /// DEPRECATED: Use ExternalShipmentItem for outsourcing.
+    /// These fields are kept for backward compatibility only.
+    /// Do not populate them in new code.
+    /// </remarks>
     public bool IsOutsourced { get; set; }
 
+    /// <remarks>
+    /// DEPRECATED: Use ExternalShipmentItem for outsourcing.
+    /// These fields are kept for backward compatibility only.
+    /// Do not populate them in new code.
+    /// </remarks>
     public int? ExternalLabId { get; set; }
 
+    /// <remarks>
+    /// DEPRECATED: Use ExternalShipmentItem for outsourcing.
+    /// These fields are kept for backward compatibility only.
+    /// Do not populate them in new code.
+    /// </remarks>
     public decimal? OutsourceCost { get; set; }
 
+    /// <remarks>
+    /// DEPRECATED: Use ExternalShipmentItem for outsourcing.
+    /// These fields are kept for backward compatibility only.
+    /// Do not populate them in new code.
+    /// </remarks>
     public DateTime? OutsourceSentAt { get; set; }
 
+    /// <remarks>
+    /// DEPRECATED: Use ExternalShipmentItem for outsourcing.
+    /// These fields are kept for backward compatibility only.
+    /// Do not populate them in new code.
+    /// </remarks>
     public int? OutsourceSentBy { get; set; }
 
+    /// <remarks>
+    /// DEPRECATED: Use ExternalShipmentItem for outsourcing.
+    /// These fields are kept for backward compatibility only.
+    /// Do not populate them in new code.
+    /// </remarks>
     public DateTime? OutsourceResultReceivedAt { get; set; }
 
     public DateTime AddedAt { get; set; }

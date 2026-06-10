@@ -93,6 +93,7 @@ public class RoutineResultService : IRoutineResultService
 
                 if (matchingRange != null)
                 {
+                    result.NormalRangeId = matchingRange.RangeId;
                     result.SnapLowNormal = matchingRange.LowNormal;
                     result.SnapHighNormal = matchingRange.HighNormal;
                     result.SnapLowCritical = matchingRange.LowCritical;

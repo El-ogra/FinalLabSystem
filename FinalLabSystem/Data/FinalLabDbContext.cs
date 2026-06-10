@@ -538,6 +538,18 @@ public partial class FinalLabDbContext : DbContext
             entity.Property(e => e.Unit)
                 .HasMaxLength(20)
                 .HasColumnName("unit");
+            entity.Property(e => e.Version)
+                .HasDefaultValue(1)
+                .HasColumnName("version");
+            entity.Property(e => e.IsActive)
+                .HasDefaultValue(true)
+                .HasColumnName("is_active");
+            entity.Property(e => e.SupersededById)
+                .HasColumnName("superseded_by_id");
+            entity.HasOne(e => e.SupersededBy)
+                .WithMany()
+                .HasForeignKey(e => e.SupersededById)
+                .OnDelete(DeleteBehavior.NoAction);
             entity.Property(e => e.Sex)
                 .HasMaxLength(1)
                 .HasDefaultValue("B")
@@ -1196,6 +1208,10 @@ public partial class FinalLabDbContext : DbContext
                 .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("FK_Result_Component");
 
+            entity.HasOne(d => d.NormalRange).WithMany()
+                .HasForeignKey(d => d.NormalRangeId)
+                .OnDelete(DeleteBehavior.SetNull);
+
             entity.HasOne(d => d.EnteredByNavigation).WithMany(p => p.TestResultEnteredByNavigations)
                 .HasForeignKey(d => d.EnteredBy)
                 .HasConstraintName("FK_Result_EnteredBy");
@@ -1310,6 +1326,9 @@ public partial class FinalLabDbContext : DbContext
             entity.Property(e => e.IsSendOutside)
                 .HasDefaultValue(false)
                 .HasColumnName("is_send_outside");
+            entity.Property(e => e.Behavior)
+                .HasColumnName("Behavior")
+                .HasDefaultValue(TestTypeBehavior.None);
             entity.Property(e => e.OutsideLabName)
                 .HasMaxLength(200)
                 .HasColumnName("outside_lab_name");

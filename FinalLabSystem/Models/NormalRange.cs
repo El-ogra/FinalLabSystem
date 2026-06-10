@@ -3,6 +3,13 @@ using System.Collections.Generic;
 
 namespace FinalLabSystem.Models;
 
+/// <remarks>
+/// NormalRange rows are treated as immutable once saved.
+/// To update a range: set IsActive = false on the old row,
+/// set SupersededById on the old row pointing to the new one,
+/// and insert a new row with Version = oldVersion + 1.
+/// Do NOT update existing rows in place.
+/// </remarks>
 public partial class NormalRange
 {
     public int RangeId { get; set; }
@@ -54,6 +61,14 @@ public partial class NormalRange
     public string? RangeNote { get; set; }
 
     public string? Unit { get; set; }
+
+    public int Version { get; set; } = 1;
+
+    public bool IsActive { get; set; } = true;
+
+    public int? SupersededById { get; set; }
+
+    public NormalRange? SupersededBy { get; set; }
 
     public virtual TestComponent Component { get; set; } = null!;
 }

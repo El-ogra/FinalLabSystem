@@ -3,6 +3,19 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FinalLabSystem.Models;
 
+[Flags]
+public enum TestTypeBehavior
+{
+    None = 0,
+    IsRoutineTest = 1 << 0,
+    SeeReport = 1 << 1,
+    PrintWithOther = 1 << 2,
+    AddWithGroup = 1 << 3,
+    IsMainTest = 1 << 4,
+    IsSendOutside = 1 << 5,
+    IsOutsourceable = 1 << 6,
+}
+
 public partial class TestType
 {
     public int TesttypeId { get; set; }
@@ -34,8 +47,6 @@ public partial class TestType
 
     public short TurnaroundHours { get; set; }
 
-    public bool IsOutsourceable { get; set; }
-
     public string? SpecialType { get; set; }
 
     public short SortOrder { get; set; }
@@ -58,18 +69,6 @@ public partial class TestType
 
     public int? CollectionTypeId { get; set; }
 
-    public bool IsRoutineTest { get; set; }
-
-    public bool SeeReport { get; set; }
-
-    public bool PrintWithOther { get; set; }
-
-    public bool AddWithGroup { get; set; }
-
-    public bool IsMainTest { get; set; }
-
-    public bool IsSendOutside { get; set; }
-
     public string? OutsideLabName { get; set; }
 
     public decimal? OutsideCostPrice { get; set; }
@@ -79,6 +78,78 @@ public partial class TestType
     public string? ReferenceType { get; set; }
 
     public string? BarcodeName { get; set; }
+
+    public TestTypeBehavior Behavior { get; set; } = TestTypeBehavior.None;
+
+    public bool IsOutsourceable
+    {
+        get => Behavior.HasFlag(TestTypeBehavior.IsOutsourceable);
+        set
+        {
+            if (value) Behavior |= TestTypeBehavior.IsOutsourceable;
+            else Behavior &= ~TestTypeBehavior.IsOutsourceable;
+        }
+    }
+
+    public bool IsRoutineTest
+    {
+        get => Behavior.HasFlag(TestTypeBehavior.IsRoutineTest);
+        set
+        {
+            if (value) Behavior |= TestTypeBehavior.IsRoutineTest;
+            else Behavior &= ~TestTypeBehavior.IsRoutineTest;
+        }
+    }
+
+    public bool SeeReport
+    {
+        get => Behavior.HasFlag(TestTypeBehavior.SeeReport);
+        set
+        {
+            if (value) Behavior |= TestTypeBehavior.SeeReport;
+            else Behavior &= ~TestTypeBehavior.SeeReport;
+        }
+    }
+
+    public bool PrintWithOther
+    {
+        get => Behavior.HasFlag(TestTypeBehavior.PrintWithOther);
+        set
+        {
+            if (value) Behavior |= TestTypeBehavior.PrintWithOther;
+            else Behavior &= ~TestTypeBehavior.PrintWithOther;
+        }
+    }
+
+    public bool AddWithGroup
+    {
+        get => Behavior.HasFlag(TestTypeBehavior.AddWithGroup);
+        set
+        {
+            if (value) Behavior |= TestTypeBehavior.AddWithGroup;
+            else Behavior &= ~TestTypeBehavior.AddWithGroup;
+        }
+    }
+
+    public bool IsMainTest
+    {
+        get => Behavior.HasFlag(TestTypeBehavior.IsMainTest);
+        set
+        {
+            if (value) Behavior |= TestTypeBehavior.IsMainTest;
+            else Behavior &= ~TestTypeBehavior.IsMainTest;
+        }
+    }
+
+    public bool IsSendOutside
+    {
+        get => Behavior.HasFlag(TestTypeBehavior.IsSendOutside);
+        set
+        {
+            if (value) Behavior |= TestTypeBehavior.IsSendOutside;
+            else Behavior &= ~TestTypeBehavior.IsSendOutside;
+        }
+    }
 
     public virtual TestGroup Group { get; set; } = null!;
 

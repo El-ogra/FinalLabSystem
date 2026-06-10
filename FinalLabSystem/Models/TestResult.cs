@@ -50,6 +50,10 @@ public partial class TestResult
 
     public virtual TestComponent Component { get; set; } = null!;
 
+    public int? NormalRangeId { get; set; }
+
+    public NormalRange? NormalRange { get; set; }
+
     public virtual Staff? EnteredByNavigation { get; set; }
 
     public virtual Staff? LastModifiedByNavigation { get; set; }
