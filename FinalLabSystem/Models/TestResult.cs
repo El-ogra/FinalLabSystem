@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using FinalLabSystem.Models.Enums;
 
 namespace FinalLabSystem.Models;
 
@@ -38,6 +39,14 @@ public partial class TestResult
     public DateTime? LastModifiedAt { get; set; }
 
     public string? Comment { get; set; }
+
+    public ResultValidationStatus ValidationStatus { get; set; } = ResultValidationStatus.Entered;
+
+    public int? ValidatedByStaffId { get; set; }
+
+    public DateTime? ValidatedAt { get; set; }
+
+    public virtual Staff? ValidatedBy { get; set; }
 
     public virtual TestComponent Component { get; set; } = null!;
 

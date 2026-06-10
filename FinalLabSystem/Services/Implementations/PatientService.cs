@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FinalLabSystem.Data;
 using FinalLabSystem.Models;
+using FinalLabSystem.Services.DTOs;
 using FinalLabSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -124,17 +125,36 @@ public class PatientService : IPatientService
             .ToListAsync();
     }
 
-    public async Task<List<Patient>> SearchPatientsAsync(string searchTerm)
+    public async Task<PagedResult<Patient>> SearchPatientsAsync(string searchTerm, int page = 1, int pageSize = 50)
     {
-        if (string.IsNullOrWhiteSpace(searchTerm))
-            return await _context.Patients.OrderByDescending(p => p.CreatedAt).Take(50).ToListAsync();
+        pageSize = Math.Min(pageSize, 100);
+        page = Math.Max(page, 1);
 
-        return await _context.Patients
-            .Where(p => p.FullNameAr.Contains(searchTerm)
+        IQueryable<Patient> query = _context.Patients;
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            query = query.Where(p => p.FullNameAr.Contains(searchTerm)
                 || (p.FullNameEn != null && p.FullNameEn.Contains(searchTerm))
                 || p.PatientCode.Contains(searchTerm)
-                || (p.Phone != null && p.Phone.Contains(searchTerm)))
+                || (p.Phone != null && p.Phone.Contains(searchTerm)));
+        }
+
+        var totalCount = await query.CountAsync();
+
+        var items = await query
+            .OrderByDescending(p => p.CreatedAt)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync();
+
+        return new PagedResult<Patient>
+        {
+            Items = items,
+            TotalCount = totalCount,
+            Page = page,
+            PageSize = pageSize
+        };
     }
 
     public async Task AddMedicalHistoryAsync(PatientMedicalHistory history)

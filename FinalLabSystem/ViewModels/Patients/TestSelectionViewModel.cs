@@ -7,7 +7,7 @@ using FinalLabSystem.Services.Interfaces;
 
 namespace FinalLabSystem.ViewModels.Patients;
 
-public sealed class TestSelectionViewModel : ViewModelBase
+public sealed class TestSelectionViewModel : ViewModelBase, IAsyncInitializable
 {
     private readonly ITestCatalogService _testCatalogService;
     private readonly List<TestDisplayItem> _allTests = new();
@@ -26,7 +26,59 @@ public sealed class TestSelectionViewModel : ViewModelBase
         RemoveTestCommand = new RelayCommand(parameter => RemoveTest(parameter as SelectedTestItem ?? SelectedTest));
         RemoveAllCommand = new RelayCommand(_ => RemoveAll());
         SetFilterCommand = new RelayCommand(parameter => ActiveFilter = parameter?.ToString() ?? "RoutineTests");
-        _ = LoadAsync();
+    }
+
+    public async Task InitializeAsync()
+    {
+        try
+        {
+            var categories = await _testCatalogService.GetFullHierarchyAsync();
+            _allTests.Clear();
+            foreach (var category in categories)
+            {
+                foreach (var group in category.TestGroups.Where(group => group.IsActive))
+                {
+                    foreach (var test in group.TestTypes.Where(test => test.IsActive))
+                    {
+                        _allTests.Add(new TestDisplayItem(
+                            test.TesttypeId,
+                            test.TypeCode,
+                            test.TypeNameAr ?? test.TypeNameEn,
+                            test.TypeNameEn,
+                            Convert.ToDecimal(test.DefaultPrice),
+                            test.SampleType,
+                            group.GroupNameAr ?? group.GroupNameEn,
+                            category.CategoryNameAr ?? category.CategoryNameEn,
+                            "RoutineTests"));
+                    }
+                }
+            }
+
+            var profiles = await _testCatalogService.GetActiveProfilesAsync();
+            foreach (var profile in profiles)
+            {
+                var profileTests = await _testCatalogService.GetProfileTestsAsync(profile.ProfileId);
+                foreach (var test in profileTests.Where(test => test.IsActive))
+                {
+                    _allTests.Add(new TestDisplayItem(
+                        test.TesttypeId,
+                        test.TypeCode,
+                        $"{profile.ProfileNameAr ?? profile.ProfileNameEn} - {test.TypeNameAr ?? test.TypeNameEn}",
+                        test.TypeNameEn,
+                        Convert.ToDecimal(test.DefaultPrice),
+                        test.SampleType,
+                        "Profiles",
+                        "Profiles",
+                        "Profiles"));
+                }
+            }
+
+            ApplyFilter();
+        }
+        catch
+        {
+            // TODO F-07: _dialogService.ShowError("حدث خطأ أثناء تحميل البيانات.");
+        }
     }
 
     public event EventHandler? TestsChanged;
@@ -129,52 +181,6 @@ public sealed class TestSelectionViewModel : ViewModelBase
         ActiveFilter = "RoutineTests";
         OnPropertyChanged(nameof(SelectedTestsCount));
         TestsChanged?.Invoke(this, EventArgs.Empty);
-    }
-
-    private async Task LoadAsync()
-    {
-        var categories = await _testCatalogService.GetFullHierarchyAsync();
-        _allTests.Clear();
-        foreach (var category in categories)
-        {
-            foreach (var group in category.TestGroups.Where(group => group.IsActive))
-            {
-                foreach (var test in group.TestTypes.Where(test => test.IsActive))
-                {
-                    _allTests.Add(new TestDisplayItem(
-                        test.TesttypeId,
-                        test.TypeCode,
-                        test.TypeNameAr ?? test.TypeNameEn,
-                        test.TypeNameEn,
-                        Convert.ToDecimal(test.DefaultPrice),
-                        test.SampleType,
-                        group.GroupNameAr ?? group.GroupNameEn,
-                        category.CategoryNameAr ?? category.CategoryNameEn,
-                        "RoutineTests"));
-                }
-            }
-        }
-
-        var profiles = await _testCatalogService.GetActiveProfilesAsync();
-        foreach (var profile in profiles)
-        {
-            var profileTests = await _testCatalogService.GetProfileTestsAsync(profile.ProfileId);
-            foreach (var test in profileTests.Where(test => test.IsActive))
-            {
-                _allTests.Add(new TestDisplayItem(
-                    test.TesttypeId,
-                    test.TypeCode,
-                    $"{profile.ProfileNameAr ?? profile.ProfileNameEn} - {test.TypeNameAr ?? test.TypeNameEn}",
-                    test.TypeNameEn,
-                    Convert.ToDecimal(test.DefaultPrice),
-                    test.SampleType,
-                    "Profiles",
-                    "Profiles",
-                    "Profiles"));
-            }
-        }
-
-        ApplyFilter();
     }
 
     private void ApplyFilter()

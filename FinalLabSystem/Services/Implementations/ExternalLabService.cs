@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FinalLabSystem.Data;
 using FinalLabSystem.Models;
+using FinalLabSystem.Models.Enums;
 using FinalLabSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -57,7 +58,7 @@ public class ExternalLabService : IExternalLabService
                 visitTest.ExternalLabId = externalLabId;
                 visitTest.OutsourceSentAt = DateTime.UtcNow;
                 visitTest.OutsourceSentBy = staffId;
-                visitTest.CurrentStage = "SENT_OUT";
+                visitTest.CurrentStage = TestStage.SentOut;
 
                 var item = new ExternalShipmentItem
                 {

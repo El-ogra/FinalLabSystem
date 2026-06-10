@@ -10,14 +10,16 @@ namespace FinalLabSystem.ViewModels.Settings;
 public sealed class NormalRangeListViewModel : ViewModelBase
 {
     private readonly ITestCatalogService _testCatalogService;
+    private readonly IDialogService _dialogService;
     private readonly NormalRangeDetailViewModel _detail;
     private TestComponent? _selectedComponent;
     private NormalRange? _selectedRange;
 
-    public NormalRangeListViewModel(ITestCatalogService testCatalogService, NormalRangeDetailViewModel detail)
+    public NormalRangeListViewModel(ITestCatalogService testCatalogService, NormalRangeDetailViewModel detail, IDialogService dialogService)
     {
         _testCatalogService = testCatalogService;
         _detail = detail;
+        _dialogService = dialogService;
         AddComponentCommand = new RelayCommand(_ => AddComponent());
         DeleteComponentCommand = new AsyncRelayCommand(DeleteComponentAsync, () => SelectedComponent is not null);
         AddRangeCommand = new RelayCommand(_ => AddRange(), _ => SelectedComponent is not null);
@@ -36,7 +38,19 @@ public sealed class NormalRangeListViewModel : ViewModelBase
         set
         {
             if (SetProperty(ref _selectedComponent, value))
-                _ = RefreshRangesAsync();
+                _ = RunRefreshRangesAsync();
+        }
+    }
+
+    private async Task RunRefreshRangesAsync()
+    {
+        try
+        {
+            await RefreshRangesAsync();
+        }
+        catch
+        {
+            _dialogService.ShowError("حدث خطأ أثناء تحميل النطاقات.");
         }
     }
 
@@ -140,8 +154,7 @@ public sealed class NormalRangeListViewModel : ViewModelBase
         if (SelectedRange is null)
             return;
 
-        var result = MessageBox.Show("هل أنت متأكد من حذف هذا النطاق؟", "تأكيد", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-        if (result != MessageBoxResult.Yes)
+        if (!_dialogService.ShowConfirmation("هل أنت متأكد من حذف هذا النطاق؟", "تأكيد"))
             return;
 
         if (SelectedRange.RangeId > 0)

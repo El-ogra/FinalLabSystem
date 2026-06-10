@@ -27,12 +27,12 @@ public class PricingService : IPricingService
             .ToListAsync();
     }
 
-    public async Task<double> GetTestPriceAsync(int testTypeId, int schemeId)
+    public async Task<decimal> GetTestPriceAsync(int testTypeId, int schemeId)
     {
         var price = await _context.TestTypePrices
             .FirstOrDefaultAsync(tp => tp.TesttypeId == testTypeId && tp.SchemeId == schemeId);
 
-        return price?.Price ?? 0.0;
+        return price?.Price ?? 0m;
     }
 
     public async Task UpdateSchemePricesAsync(int schemeId, List<TestTypePrice> prices)

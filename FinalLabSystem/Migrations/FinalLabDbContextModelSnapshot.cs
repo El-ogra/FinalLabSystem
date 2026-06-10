@@ -939,6 +939,11 @@ namespace FinalLabSystem.Migrations
                         .HasColumnName("sex")
                         .IsFixedLength();
 
+                    b.Property<string>("Unit")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasColumnName("unit");
+
                     b.HasKey("RangeId")
                         .HasName("PK__NormalRa__3C0A88B60E81F7C4");
 
@@ -1022,8 +1027,8 @@ namespace FinalLabSystem.Migrations
                         .HasColumnType("nvarchar(250)")
                         .HasColumnName("address");
 
-                    b.Property<double?>("ApproxAge")
-                        .HasColumnType("float")
+                    b.Property<int?>("ApproxAge")
+                        .HasColumnType("int")
                         .HasColumnName("approx_age");
 
                     b.Property<string>("ApproxAgeUnit")
@@ -1197,8 +1202,8 @@ namespace FinalLabSystem.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PaymentId"));
 
-                    b.Property<double>("Amount")
-                        .HasColumnType("float")
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("amount");
 
                     b.Property<string>("Notes")
@@ -1218,7 +1223,7 @@ namespace FinalLabSystem.Migrations
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)")
-                        .HasDefaultValue("CASH")
+                        .HasDefaultValue("Cash")
                         .HasColumnName("payment_method");
 
                     b.Property<string>("PaymentType")
@@ -2175,6 +2180,21 @@ namespace FinalLabSystem.Migrations
                         .HasColumnType("nvarchar(30)")
                         .HasColumnName("snap_unit");
 
+                    b.Property<DateTime?>("ValidatedAt")
+                        .HasPrecision(0)
+                        .HasColumnType("datetime2(0)")
+                        .HasColumnName("validated_at");
+
+                    b.Property<int?>("ValidatedByStaffId")
+                        .HasColumnType("int")
+                        .HasColumnName("validated_by_staff_id");
+
+                    b.Property<string>("ValidationStatus")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)")
+                        .HasColumnName("validation_status");
+
                     b.Property<int>("VisitTestId")
                         .HasColumnType("int")
                         .HasColumnName("visit_test_id");
@@ -2187,6 +2207,8 @@ namespace FinalLabSystem.Migrations
                     b.HasIndex("EnteredBy");
 
                     b.HasIndex("LastModifiedBy");
+
+                    b.HasIndex("ValidatedByStaffId");
 
                     b.HasIndex(new[] { "VisitTestId", "ComponentId" }, "UQ_TestResult")
                         .IsUnique();
@@ -2216,6 +2238,9 @@ namespace FinalLabSystem.Migrations
                         .HasDefaultValue(true)
                         .HasColumnName("add_with_group");
 
+                    b.Property<string>("BarcodeName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("BillNameLine1")
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)")
@@ -2235,8 +2260,8 @@ namespace FinalLabSystem.Migrations
                         .HasColumnType("int")
                         .HasColumnName("collection_type_id");
 
-                    b.Property<double>("DefaultPrice")
-                        .HasColumnType("float")
+                    b.Property<decimal>("DefaultPrice")
+                        .HasColumnType("decimal(18, 2)")
                         .HasColumnName("default_price");
 
                     b.Property<string>("DefaultTubeColor")
@@ -2401,8 +2426,8 @@ namespace FinalLabSystem.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PriceId"));
 
-                    b.Property<double>("Price")
-                        .HasColumnType("float")
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18, 2)")
                         .HasColumnName("price");
 
                     b.Property<int>("SchemeId")
@@ -2972,8 +2997,8 @@ namespace FinalLabSystem.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VisitId"));
 
-                    b.Property<double>("BalanceDue")
-                        .HasColumnType("float")
+                    b.Property<decimal>("BalanceDue")
+                        .HasColumnType("decimal(18, 2)")
                         .HasColumnName("balance_due");
 
                     b.Property<int?>("CompanyId")
@@ -2987,12 +3012,12 @@ namespace FinalLabSystem.Migrations
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("(sysdatetime())");
 
-                    b.Property<double>("DiscountAmount")
-                        .HasColumnType("float")
+                    b.Property<decimal>("DiscountAmount")
+                        .HasColumnType("decimal(18, 2)")
                         .HasColumnName("discount_amount");
 
-                    b.Property<double>("DiscountPercent")
-                        .HasColumnType("float")
+                    b.Property<decimal>("DiscountPercent")
+                        .HasColumnType("decimal(18, 2)")
                         .HasColumnName("discount_percent");
 
                     b.Property<DateTime?>("ExpectedReady")
@@ -3125,9 +3150,9 @@ namespace FinalLabSystem.Migrations
                     b.Property<string>("PaymentStatus")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)")
-                        .HasDefaultValue("PENDING")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)")
+                        .HasDefaultValue("Pending")
                         .HasColumnName("payment_status");
 
                     b.Property<int?>("ReceptionistId")
@@ -3142,8 +3167,8 @@ namespace FinalLabSystem.Migrations
                         .HasColumnType("int")
                         .HasColumnName("scheme_id");
 
-                    b.Property<double>("Subtotal")
-                        .HasColumnType("float")
+                    b.Property<decimal>("Subtotal")
+                        .HasColumnType("decimal(18, 2)")
                         .HasColumnName("subtotal");
 
                     b.Property<bool>("TakenOutsideLab")
@@ -3152,12 +3177,12 @@ namespace FinalLabSystem.Migrations
                         .HasDefaultValue(false)
                         .HasColumnName("taken_outside_lab");
 
-                    b.Property<double>("TotalAfterDiscount")
-                        .HasColumnType("float")
+                    b.Property<decimal>("TotalAfterDiscount")
+                        .HasColumnType("decimal(18, 2)")
                         .HasColumnName("total_after_discount");
 
-                    b.Property<double>("TotalPaid")
-                        .HasColumnType("float")
+                    b.Property<decimal>("TotalPaid")
+                        .HasColumnType("decimal(18, 2)")
                         .HasColumnName("total_paid");
 
                     b.Property<DateTime?>("UpdatedAt")
@@ -3181,9 +3206,9 @@ namespace FinalLabSystem.Migrations
                     b.Property<string>("VisitStatus")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)")
-                        .HasDefaultValue("OPEN")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)")
+                        .HasDefaultValue("Open")
                         .HasColumnName("visit_status");
 
                     b.HasKey("VisitId")
@@ -3276,9 +3301,9 @@ namespace FinalLabSystem.Migrations
                     b.Property<string>("CurrentStage")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)")
-                        .HasDefaultValue("PENDING")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)")
+                        .HasDefaultValue("Pending")
                         .HasColumnName("current_stage");
 
                     b.Property<int?>("ExternalLabId")
@@ -3289,8 +3314,8 @@ namespace FinalLabSystem.Migrations
                         .HasColumnType("bit")
                         .HasColumnName("is_outsourced");
 
-                    b.Property<double?>("OutsourceCost")
-                        .HasColumnType("float")
+                    b.Property<decimal?>("OutsourceCost")
+                        .HasColumnType("decimal(18, 2)")
                         .HasColumnName("outsource_cost");
 
                     b.Property<DateTime?>("OutsourceResultReceivedAt")
@@ -3307,8 +3332,8 @@ namespace FinalLabSystem.Migrations
                         .HasColumnType("int")
                         .HasColumnName("outsource_sent_by");
 
-                    b.Property<double>("PriceCharged")
-                        .HasColumnType("float")
+                    b.Property<decimal>("PriceCharged")
+                        .HasColumnType("decimal(18, 2)")
                         .HasColumnName("price_charged");
 
                     b.Property<int>("TesttypeId")
@@ -3827,6 +3852,12 @@ namespace FinalLabSystem.Migrations
                         .HasForeignKey("LastModifiedBy")
                         .HasConstraintName("FK_Result_ModifiedBy");
 
+                    b.HasOne("FinalLabSystem.Models.Staff", "ValidatedBy")
+                        .WithMany("TestResultValidatedByNavigations")
+                        .HasForeignKey("ValidatedByStaffId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("FK_Result_ValidatedBy");
+
                     b.HasOne("FinalLabSystem.Models.VisitTest", "VisitTest")
                         .WithMany("TestResults")
                         .HasForeignKey("VisitTestId")
@@ -3838,6 +3869,8 @@ namespace FinalLabSystem.Migrations
                     b.Navigation("EnteredByNavigation");
 
                     b.Navigation("LastModifiedByNavigation");
+
+                    b.Navigation("ValidatedBy");
 
                     b.Navigation("VisitTest");
                 });
@@ -4144,6 +4177,8 @@ namespace FinalLabSystem.Migrations
                     b.Navigation("TestResultEnteredByNavigations");
 
                     b.Navigation("TestResultLastModifiedByNavigations");
+
+                    b.Navigation("TestResultValidatedByNavigations");
 
                     b.Navigation("TestWorkflows");
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace FinalLabSystem.Models;
 
@@ -7,6 +8,8 @@ public partial class Staff
 {
     public int StaffId { get; set; }
 
+    [Required(ErrorMessage = "اسم المستخدم مطلوب")]
+    [StringLength(50)]
     public string Username { get; set; } = null!;
 
     public string DisplayName { get; set; } = null!;
@@ -62,6 +65,8 @@ public partial class Staff
     public virtual ICollection<TestResult> TestResultEnteredByNavigations { get; set; } = new List<TestResult>();
 
     public virtual ICollection<TestResult> TestResultLastModifiedByNavigations { get; set; } = new List<TestResult>();
+
+    public virtual ICollection<TestResult> TestResultValidatedByNavigations { get; set; } = new List<TestResult>();
 
     public virtual ICollection<TestWorkflow> TestWorkflows { get; set; } = new List<TestWorkflow>();
 

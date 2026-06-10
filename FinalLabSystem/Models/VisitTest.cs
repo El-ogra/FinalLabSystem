@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using FinalLabSystem.Models.Enums;
 
 namespace FinalLabSystem.Models;
 
@@ -13,15 +14,15 @@ public partial class VisitTest
 
     public int? TubeId { get; set; }
 
-    public double PriceCharged { get; set; }
+    public decimal PriceCharged { get; set; }
 
-    public string CurrentStage { get; set; } = null!;
+    public TestStage CurrentStage { get; set; }
 
     public bool IsOutsourced { get; set; }
 
     public int? ExternalLabId { get; set; }
 
-    public double? OutsourceCost { get; set; }
+    public decimal? OutsourceCost { get; set; }
 
     public DateTime? OutsourceSentAt { get; set; }
 

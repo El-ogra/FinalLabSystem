@@ -5,7 +5,8 @@
         Height="860"
         Width="1320"
         WindowStartupLocation="CenterScreen"
-        FlowDirection="RightToLeft">
+        FlowDirection="RightToLeft"
+        Loaded="Window_Loaded">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>
         <Style x:Key="ActionButtonStyle" TargetType="Button">
@@ -286,10 +287,12 @@
                     </Grid>
 
                     <!-- Patient Question -->
-                    <CheckBox Content="Patient Question" Margin="0,8,0,4"/>
+                    <CheckBox Content="Patient Question" Margin="0,8,0,4"
+                              IsChecked="{Binding TestDetail.HasPatientQuestion}"/>
                     <TextBox Text="{Binding TestDetail.PatientQuestion, UpdateSourceTrigger=PropertyChanged}"
                              Height="75" AcceptsReturn="True" TextWrapping="Wrap"
-                             VerticalScrollBarVisibility="Auto" Margin="2"/>
+                             VerticalScrollBarVisibility="Auto" Margin="2"
+                             IsEnabled="{Binding TestDetail.IsPatientQuestionEnabled}"/>
                 </StackPanel>
             </Grid>
         </Border>

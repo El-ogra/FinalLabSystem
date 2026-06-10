@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FinalLabSystem.Data;
 using FinalLabSystem.Models;
+using FinalLabSystem.Models.Enums;
 using FinalLabSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -46,14 +47,14 @@ public class FinancialService : IFinancialService
         }
     }
 
-    public async Task ApplyDiscountAsync(int visitId, double discount, int staffId)
+    public async Task ApplyDiscountAsync(int visitId, decimal discount, int staffId)
     {
         var visit = await _context.Visits.FindAsync(visitId);
         if (visit == null)
             throw new InvalidOperationException($"Visit with ID {visitId} not found.");
 
         visit.DiscountPercent = discount;
-        visit.DiscountAmount = visit.Subtotal * discount / 100.0;
+        visit.DiscountAmount = visit.Subtotal * discount / 100m;
         visit.TotalAfterDiscount = visit.Subtotal - visit.DiscountAmount;
         visit.UpdatedAt = DateTime.UtcNow;
 
@@ -74,7 +75,7 @@ public class FinancialService : IFinancialService
                 VisitId = visit.VisitId,
                 PaymentDate = DateTime.UtcNow,
                 Amount = amountToPay,
-                PaymentMethod = "CASH",
+                PaymentMethod = PaymentMethod.Cash,
                 PaymentType = "PAYMENT",
                 ReceivedBy = staffId,
                 Notes = "Full payment confirmation"
@@ -83,7 +84,7 @@ public class FinancialService : IFinancialService
 
         visit.TotalPaid = visit.TotalAfterDiscount;
         visit.BalanceDue = 0;
-        visit.PaymentStatus = "PAID";
+        visit.PaymentStatus = PaymentStatus.Paid;
         visit.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
@@ -102,9 +103,9 @@ public class FinancialService : IFinancialService
             if (visit is null)
                 return false;
 
-            var amountToPay = Convert.ToDouble(Math.Max(0, balanceDue));
-            if (amountToPay <= 0)
-                amountToPay = Math.Max(0, visit.TotalAfterDiscount - visit.TotalPaid);
+            var amountToPay = Math.Max(0m, balanceDue);
+            if (amountToPay <= 0m)
+                amountToPay = Math.Max(0m, visit.TotalAfterDiscount - visit.TotalPaid);
 
             var receivedBy = visit.ReceptionistId
                 ?? visit.Payments.OrderByDescending(payment => payment.PaymentDate).Select(payment => payment.ReceivedBy).FirstOrDefault();
@@ -122,7 +123,7 @@ public class FinancialService : IFinancialService
                     VisitId = visit.VisitId,
                     PaymentDate = DateTime.UtcNow,
                     Amount = amountToPay,
-                    PaymentMethod = "CASH",
+                    PaymentMethod = PaymentMethod.Cash,
                     PaymentType = "PAYMENT",
                     ReceivedBy = receivedBy,
                     Notes = "Clearance payment"
@@ -131,7 +132,7 @@ public class FinancialService : IFinancialService
 
             visit.TotalPaid = visit.TotalAfterDiscount;
             visit.BalanceDue = 0;
-            visit.PaymentStatus = "PAID";
+            visit.PaymentStatus = PaymentStatus.Paid;
             visit.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
@@ -155,7 +156,7 @@ public class FinancialService : IFinancialService
                 .Include(v => v.Payments)
                 .FirstOrDefaultAsync(v => v.VisitId == visitId);
 
-            if (visit is null || string.Equals(visit.PaymentStatus, "PAID", StringComparison.OrdinalIgnoreCase))
+            if (visit is null || visit.PaymentStatus == PaymentStatus.Paid)
                 return false;
 
             var lastPayment = visit.Payments
@@ -172,7 +173,7 @@ public class FinancialService : IFinancialService
 
             visit.TotalPaid = remainingPaid;
             visit.BalanceDue = Math.Max(0, visit.TotalAfterDiscount - remainingPaid);
-            visit.PaymentStatus = visit.BalanceDue <= 0 ? "PAID" : remainingPaid > 0 ? "PARTIAL" : "PENDING";
+            visit.PaymentStatus = visit.BalanceDue <= 0 ? PaymentStatus.Paid : remainingPaid > 0 ? PaymentStatus.PartiallyPaid : PaymentStatus.Pending;
             visit.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
@@ -198,7 +199,7 @@ public class FinancialService : IFinancialService
         _context.Payments.RemoveRange(visit.Payments);
         visit.TotalPaid = 0;
         visit.BalanceDue = visit.TotalAfterDiscount;
-        visit.PaymentStatus = "PENDING";
+        visit.PaymentStatus = PaymentStatus.Pending;
         visit.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();

@@ -118,6 +118,13 @@ public class LoginViewModel : ViewModelBase
             _userSettings.SetRememberedUsername(IsRememberMe ? Username : null);
             _session.SignIn(staff);
 
+            _session.StartIdleTimer(() =>
+            {
+                _session.SignOut();
+                _session.StopIdleTimer();
+                _navigationService.ShowLogin();
+            });
+
             _navigationService.ShowMain();
         }
         finally

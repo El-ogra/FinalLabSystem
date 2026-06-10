@@ -8,7 +8,7 @@ namespace FinalLabSystem.Services.Interfaces;
 public interface IVisitService
 {
     Task<Visit> CreateVisitAsync(Visit visit, List<int> testIds, List<int> profileIds, List<VisitCharge> charges);
-    Task<Visit> SavePatientVisitAsync(Patient patient, Visit visit, List<int> testTypeIds, double amountPaid, int staffId, List<PatientMedicalHistory> medicalHistories, ReferralSource? referralToSave);
+    Task<Visit> SavePatientVisitAsync(Patient patient, Visit visit, List<int> testTypeIds, decimal amountPaid, int staffId, List<PatientMedicalHistory> medicalHistories, ReferralSource? referralToSave);
     Task<VisitFullDto> GetVisitFullDataAsync(int visitId);
     Task<List<TodayPatientDto>> GetTodayPatientListAsync();
     Task<bool> CancelVisitAsync(int visitId);

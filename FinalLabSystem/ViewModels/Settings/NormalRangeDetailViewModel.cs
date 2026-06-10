@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
 using FinalLabSystem.Infrastructure;
 using FinalLabSystem.Models;
@@ -15,6 +14,7 @@ public enum RangeSex { M, F, B }
 public sealed class NormalRangeDetailViewModel : ViewModelBase
 {
     private readonly ITestCatalogService _testCatalogService;
+    private readonly IDialogService _dialogService;
     private NormalRange _editableRange = CreateEmptyRange();
     private bool _isDirty;
     private NormalRange? _lastLoadedRange;
@@ -27,9 +27,10 @@ public sealed class NormalRangeDetailViewModel : ViewModelBase
 
     public string[] AgeUnitOptions { get; } = new[] { "Days", "Months", "Years" };
 
-    public NormalRangeDetailViewModel(ITestCatalogService testCatalogService)
+    public NormalRangeDetailViewModel(ITestCatalogService testCatalogService, IDialogService dialogService)
     {
         _testCatalogService = testCatalogService;
+        _dialogService = dialogService;
     }
 
     public NormalRange EditableRange
@@ -55,9 +56,8 @@ public sealed class NormalRangeDetailViewModel : ViewModelBase
                 OnPropertyChanged(nameof(IsSexEnabled));
                 OnPropertyChanged(nameof(IsAgeEnabled));
                 OnPropertyChanged(nameof(IsRangeForAll));
-                OnPropertyChanged(nameof(IsRangeForSexAndAge));
-                OnPropertyChanged(nameof(IsRangeForSexOnly));
-                OnPropertyChanged(nameof(IsRangeForAgeOnly));
+                OnPropertyChanged(nameof(IsRangeForFemale));
+                OnPropertyChanged(nameof(IsRangeForMale));
             }
         }
     }
@@ -72,22 +72,16 @@ public sealed class NormalRangeDetailViewModel : ViewModelBase
         set { if (value) RangeFor = NormalRangeFor.Both; }
     }
 
-    public bool IsRangeForSexAndAge
+    public bool IsRangeForFemale
     {
         get => RangeFor == NormalRangeFor.Female;
         set { if (value) RangeFor = NormalRangeFor.Female; }
     }
 
-    public bool IsRangeForSexOnly
+    public bool IsRangeForMale
     {
         get => RangeFor == NormalRangeFor.Male;
         set { if (value) RangeFor = NormalRangeFor.Male; }
-    }
-
-    public bool IsRangeForAgeOnly
-    {
-        get => RangeFor == NormalRangeFor.Both;
-        set { if (value) RangeFor = NormalRangeFor.Both; }
     }
 
     public RangeSex Sex
@@ -168,6 +162,12 @@ public sealed class NormalRangeDetailViewModel : ViewModelBase
     {
         get => EditableRange.RangeNote;
         set => SetRangeProperty(EditableRange.RangeNote, value, v => EditableRange.RangeNote = v);
+    }
+
+    public string? Unit
+    {
+        get => EditableRange.Unit;
+        set => SetRangeProperty(EditableRange.Unit, value, v => EditableRange.Unit = v);
     }
 
     public string? AgeUnit
@@ -259,6 +259,9 @@ public sealed class NormalRangeDetailViewModel : ViewModelBase
 
         EditableRange = range is null ? CreateEmptyRange() : CloneRange(range);
 
+        if (range is null)
+            EditableRange.Unit = unit;
+
         Sex = EditableRange.Sex switch
         {
             "M" => RangeSex.M,
@@ -283,13 +286,13 @@ public sealed class NormalRangeDetailViewModel : ViewModelBase
     {
         if (LowNormal.HasValue && HighNormal.HasValue && LowNormal.Value > HighNormal.Value)
         {
-            MessageBox.Show("Low Normal يجب أن يكون أقل من أو يساوي High Normal.", "تنبيه", MessageBoxButton.OK, MessageBoxImage.Warning);
+            _dialogService.ShowWarning("Low Normal يجب أن يكون أقل من أو يساوي High Normal.");
             return;
         }
 
         if (LowCritical.HasValue && HighCritical.HasValue && LowCritical.Value > HighCritical.Value)
         {
-            MessageBox.Show("Low Critical يجب أن يكون أقل من أو يساوي High Critical.", "تنبيه", MessageBoxButton.OK, MessageBoxImage.Warning);
+            _dialogService.ShowWarning("Low Critical يجب أن يكون أقل من أو يساوي High Critical.");
             return;
         }
 
@@ -334,9 +337,8 @@ public sealed class NormalRangeDetailViewModel : ViewModelBase
         OnPropertyChanged(nameof(IsSexEnabled));
         OnPropertyChanged(nameof(IsAgeEnabled));
         OnPropertyChanged(nameof(IsRangeForAll));
-        OnPropertyChanged(nameof(IsRangeForSexAndAge));
-        OnPropertyChanged(nameof(IsRangeForSexOnly));
-        OnPropertyChanged(nameof(IsRangeForAgeOnly));
+        OnPropertyChanged(nameof(IsRangeForFemale));
+        OnPropertyChanged(nameof(IsRangeForMale));
         OnPropertyChanged(nameof(Sex));
         OnPropertyChanged(nameof(ForPregnantOnly));
         OnPropertyChanged(nameof(AgeFromDays));
@@ -349,6 +351,7 @@ public sealed class NormalRangeDetailViewModel : ViewModelBase
         OnPropertyChanged(nameof(HighCritical));
         OnPropertyChanged(nameof(NormalRangeText));
         OnPropertyChanged(nameof(RangeNote));
+        OnPropertyChanged(nameof(Unit));
         OnPropertyChanged(nameof(AgeUnit));
         OnPropertyChanged(nameof(LowFlag));
         OnPropertyChanged(nameof(HighFlag));
@@ -401,7 +404,8 @@ public sealed class NormalRangeDetailViewModel : ViewModelBase
             LowCritical = range.LowCritical,
             HighCritical = range.HighCritical,
             NormalRangeText = range.NormalRangeText,
-            RangeNote = range.RangeNote
+            RangeNote = range.RangeNote,
+            Unit = range.Unit
         };
     }
 }

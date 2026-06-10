@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FinalLabSystem.Data;
 using FinalLabSystem.Models;
+using FinalLabSystem.Services.DTOs;
 using FinalLabSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -66,6 +67,37 @@ public class TestCatalogService : ITestCatalogService
             .ToList() ?? new List<TestType>();
     }
 
+    public async Task<PagedResult<TestType>> GetTestTypesPagedAsync(int page = 1, int pageSize = 50)
+    {
+        pageSize = Math.Min(pageSize, 100);
+        page = Math.Max(page, 1);
+
+        var query = _context.TestTypes
+            .AsNoTracking()
+            .Include(tt => tt.Group)
+            .Include(tt => tt.TestComponents)
+            .Include(tt => tt.TestTypePrices)
+                .ThenInclude(p => p.Scheme)
+            .Include(tt => tt.TestTypeSampleTubes);
+
+        var totalCount = await query.CountAsync();
+
+        var items = await query
+            .OrderBy(tt => tt.SortOrder)
+            .ThenBy(tt => tt.TypeNameEn)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return new PagedResult<TestType>
+        {
+            Items = items,
+            TotalCount = totalCount,
+            Page = page,
+            PageSize = pageSize
+        };
+    }
+
     public async Task<List<TestType>> GetAllTestTypesAsync()
     {
         return await _context.TestTypes
@@ -92,8 +124,8 @@ public class TestCatalogService : ITestCatalogService
 
     public async Task<int> CreateTestTypeAsync(
         TestType entity,
-        double patientPrice,
-        double labToLabPrice,
+        decimal patientPrice,
+        decimal labToLabPrice,
         IReadOnlyList<TestTypeSampleTube> tubes)
     {
         if (entity is null) throw new ArgumentNullException(nameof(entity));
@@ -142,8 +174,8 @@ public class TestCatalogService : ITestCatalogService
 
     public async Task UpdateTestTypeAsync(
         TestType entity,
-        double patientPrice,
-        double labToLabPrice,
+        decimal patientPrice,
+        decimal labToLabPrice,
         IReadOnlyList<TestTypeSampleTube> tubes)
     {
         if (entity is null) throw new ArgumentNullException(nameof(entity));

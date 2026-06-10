@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FinalLabSystem.Data;
 using FinalLabSystem.Models;
 using FinalLabSystem.Models.DTOs;
+using FinalLabSystem.Models.Enums;
 using FinalLabSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -27,8 +28,8 @@ public class VisitService : IVisitService
         using var transaction = await _context.Database.BeginTransactionAsync();
         try
         {
-            visit.VisitStatus = "OPEN";
-            visit.PaymentStatus = "PENDING";
+            visit.VisitStatus = VisitStatus.Open;
+            visit.PaymentStatus = PaymentStatus.Pending;
             visit.Subtotal = 0;
             visit.DiscountAmount = 0;
             visit.DiscountPercent = 0;
@@ -73,7 +74,7 @@ public class VisitService : IVisitService
                         VisitId = visit.VisitId,
                         TesttypeId = testTypeId,
                         PriceCharged = testType.DefaultPrice,
-                        CurrentStage = "PENDING",
+                        CurrentStage = TestStage.Pending,
                         IsOutsourced = false,
                         AddedAt = DateTime.UtcNow
                     };
@@ -110,7 +111,7 @@ public class VisitService : IVisitService
         Patient patient,
         Visit visit,
         List<int> testTypeIds,
-        double amountPaid,
+        decimal amountPaid,
         int staffId,
         List<PatientMedicalHistory> medicalHistories,
         ReferralSource? referralToSave)
@@ -154,8 +155,8 @@ public class VisitService : IVisitService
             visit.TotalAfterDiscount = Math.Max(0, subtotal - visit.DiscountAmount);
             visit.TotalPaid = amountPaid;
             visit.BalanceDue = visit.TotalAfterDiscount - visit.TotalPaid;
-            visit.PaymentStatus = visit.BalanceDue <= 0 ? "PAID" : visit.TotalPaid > 0 ? "PARTIAL" : "PENDING";
-            visit.VisitStatus = string.IsNullOrWhiteSpace(visit.VisitStatus) ? "OPEN" : visit.VisitStatus;
+            visit.PaymentStatus = visit.BalanceDue <= 0 ? PaymentStatus.Paid : visit.TotalPaid > 0 ? PaymentStatus.PartiallyPaid : PaymentStatus.Pending;
+            visit.VisitStatus = VisitStatus.Open;
             visit.CreatedAt = visit.CreatedAt == default ? DateTime.UtcNow : visit.CreatedAt;
             visit.UpdatedAt = DateTime.UtcNow;
 
@@ -202,7 +203,7 @@ public class VisitService : IVisitService
                     VisitId = visit.VisitId,
                     PaymentDate = DateTime.UtcNow,
                     Amount = amountPaid,
-                    PaymentMethod = "CASH",
+                    PaymentMethod = PaymentMethod.Cash,
                     PaymentType = "PAYMENT",
                     ReceivedBy = staffId,
                     Notes = "Patient registration payment"
@@ -290,17 +291,17 @@ public class VisitService : IVisitService
                     TestTypeId = vt.TesttypeId,
                     TestCode = vt.Testtype.TypeCode,
                     TestName = vt.Testtype.TypeNameAr ?? vt.Testtype.TypeNameEn,
-                    Price = Convert.ToDecimal(vt.PriceCharged),
+                    Price = vt.PriceCharged,
                     SampleType = vt.Testtype.SampleType
                 })
                 .ToList(),
-            Subtotal = Convert.ToDecimal(visit.Subtotal),
-            DiscountAmount = Convert.ToDecimal(visit.DiscountAmount),
-            DiscountPercent = Convert.ToDecimal(visit.DiscountPercent),
-            TotalAfterDiscount = Convert.ToDecimal(visit.TotalAfterDiscount),
-            TotalPaid = Convert.ToDecimal(totalPaid),
-            BalanceDue = Convert.ToDecimal(balanceDue),
-            PaymentStatus = string.IsNullOrWhiteSpace(visit.PaymentStatus) ? "PENDING" : visit.PaymentStatus
+            Subtotal = visit.Subtotal,
+            DiscountAmount = visit.DiscountAmount,
+            DiscountPercent = visit.DiscountPercent,
+            TotalAfterDiscount = visit.TotalAfterDiscount,
+            TotalPaid = totalPaid,
+            BalanceDue = balanceDue,
+            PaymentStatus = visit.PaymentStatus.ToString()
         };
     }
 
@@ -412,7 +413,7 @@ public class VisitService : IVisitService
         var visitTest = await _context.VisitTests.FindAsync(visitTestId);
         if (visitTest != null)
         {
-            visitTest.CurrentStage = "CANCELLED";
+            visitTest.CurrentStage = TestStage.Cancelled;
             await _context.SaveChangesAsync();
         }
     }
@@ -455,7 +456,7 @@ public class VisitService : IVisitService
                 VisitId = visitId,
                 TesttypeId = test.TesttypeId,
                 PriceCharged = test.DefaultPrice,
-                CurrentStage = "PENDING",
+                CurrentStage = TestStage.Pending,
                 IsOutsourced = false,
                 AddedAt = DateTime.UtcNow
             });

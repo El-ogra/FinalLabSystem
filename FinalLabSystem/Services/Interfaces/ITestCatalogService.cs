@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FinalLabSystem.Models;
+using FinalLabSystem.Services.DTOs;
 
 namespace FinalLabSystem.Services.Interfaces;
 
@@ -11,19 +12,21 @@ public interface ITestCatalogService
     Task<List<TestProfile>> GetActiveProfilesAsync();
     Task<List<TestType>> GetProfileTestsAsync(int profileId);
 
+    Task<PagedResult<TestType>> GetTestTypesPagedAsync(int page = 1, int pageSize = 50);
+
     Task<List<TestType>> GetAllTestTypesAsync();
     Task<List<TestGroup>> GetActiveGroupsAsync();
 
     Task<int> CreateTestTypeAsync(
         TestType entity,
-        double patientPrice,
-        double labToLabPrice,
+        decimal patientPrice,
+        decimal labToLabPrice,
         IReadOnlyList<TestTypeSampleTube> tubes);
 
     Task UpdateTestTypeAsync(
         TestType entity,
-        double patientPrice,
-        double labToLabPrice,
+        decimal patientPrice,
+        decimal labToLabPrice,
         IReadOnlyList<TestTypeSampleTube> tubes);
 
     Task DeleteTestTypeAsync(int testTypeId);

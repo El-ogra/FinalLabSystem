@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FinalLabSystem.Data;
 using FinalLabSystem.Models;
+using FinalLabSystem.Models.Enums;
 using FinalLabSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -75,7 +76,7 @@ public class SampleTrackingService : ISampleTrackingService
             .ToListAsync();
     }
 
-    public async Task UpdateTestStageAsync(int visitTestId, string newStage, int staffId)
+    public async Task UpdateTestStageAsync(int visitTestId, TestStage newStage, int staffId)
     {
         var visitTest = await _context.VisitTests
             .FirstOrDefaultAsync(vt => vt.VisitTestId == visitTestId);
@@ -86,7 +87,7 @@ public class SampleTrackingService : ISampleTrackingService
         var workflow = new TestWorkflow
         {
             VisitTestId = visitTestId,
-            Stage = newStage,
+            Stage = newStage.ToString(),
             PerformedBy = staffId,
             PerformedAt = DateTime.UtcNow
         };

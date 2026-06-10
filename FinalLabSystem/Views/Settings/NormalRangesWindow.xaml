@@ -116,9 +116,8 @@
                             </Border>
                             <WrapPanel Margin="0,6,0,0">
                                 <RadioButton Content="For all" IsChecked="{Binding Detail.IsRangeForAll}" Margin="8,0" VerticalAlignment="Center"/>
-                                <RadioButton Content="By sex and age" IsChecked="{Binding Detail.IsRangeForSexAndAge}" Margin="8,0" VerticalAlignment="Center"/>
-                                <RadioButton Content="By sex only" IsChecked="{Binding Detail.IsRangeForSexOnly}" Margin="8,0" VerticalAlignment="Center"/>
-                                <RadioButton Content="By age only" IsChecked="{Binding Detail.IsRangeForAgeOnly}" Margin="8,0" VerticalAlignment="Center"/>
+                                <RadioButton Content="Female" IsChecked="{Binding Detail.IsRangeForFemale}" Margin="8,0" VerticalAlignment="Center"/>
+                                <RadioButton Content="Male" IsChecked="{Binding Detail.IsRangeForMale}" Margin="8,0" VerticalAlignment="Center"/>
                             </WrapPanel>
                         </StackPanel>
 
@@ -127,6 +126,7 @@
                             <WrapPanel Margin="0,0,0,6">
                                 <RadioButton Content="Male" IsChecked="{Binding Detail.IsSexMale}" Margin="12,0" VerticalAlignment="Center"/>
                                 <RadioButton Content="Female" IsChecked="{Binding Detail.IsSexFemale}" Margin="12,0" VerticalAlignment="Center"/>
+                                <RadioButton Content="Both" IsChecked="{Binding Detail.IsSexBoth}" Margin="12,0" VerticalAlignment="Center"/>
                             </WrapPanel>
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <TextBlock Text="Age from" Style="{StaticResource FieldLabel}" Margin="0,0,4,0"/>
@@ -278,7 +278,7 @@
                         Style="{StaticResource ActionButtonStyle}"/>
                 <Button Content="حفظ" Command="{Binding SaveCommand}"
                         Style="{StaticResource ActionButtonStyle}" Background="#4CAF50"/>
-                <Button Content="تعديل" Style="{StaticResource ActionButtonStyle}"/>
+                <!-- F-32: removed unbound تعديل button -->
                 <Button Content="إضافة مدى" Command="{Binding AddRangeCommand}"
                         Style="{StaticResource ActionButtonStyle}"/>
             </StackPanel>

@@ -36,11 +36,11 @@ public sealed class TestRowViewModel : ViewModelBase
 
     public string GroupNameAr => TestType.Group?.GroupNameAr ?? TestType.Group?.GroupNameEn ?? string.Empty;
 
-    public double PatientPrice => TestType.TestTypePrices
+    public decimal PatientPrice => TestType.TestTypePrices
         .FirstOrDefault(p => p.Scheme.SchemeName == "Patient Price")?.Price ?? TestType.DefaultPrice;
 
-    public double LabToLabPrice => TestType.TestTypePrices
-        .FirstOrDefault(p => p.Scheme.SchemeName == "Lab-to-Lab Price")?.Price ?? 0d;
+    public decimal LabToLabPrice => TestType.TestTypePrices
+        .FirstOrDefault(p => p.Scheme.SchemeName == "Lab-to-Lab Price")?.Price ?? 0m;
 
     public int TubeCount => TestType.TestTypeSampleTubes.Count(t => t.IsActive);
 

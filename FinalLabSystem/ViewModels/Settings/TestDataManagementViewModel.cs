@@ -9,11 +9,12 @@ using Microsoft.Extensions.Logging;
 
 namespace FinalLabSystem.ViewModels.Settings;
 
-public sealed class TestDataManagementViewModel : ViewModelBase
+public sealed class TestDataManagementViewModel : ViewModelBase, IAsyncInitializable
 {
     private readonly ITestCatalogService _testCatalogService;
     private readonly INavigationService _navigationService;
     private readonly ILogger<TestDataManagementViewModel> _logger;
+    private readonly IDialogService _dialogService;
     private bool _isAdding;
     private bool _isEditing;
     private bool _isBrowsing = true;
@@ -25,13 +26,15 @@ public sealed class TestDataManagementViewModel : ViewModelBase
         TestDetailViewModel testDetail,
         ITestCatalogService testCatalogService,
         INavigationService navigationService,
-        ILogger<TestDataManagementViewModel> logger)
+        ILogger<TestDataManagementViewModel> logger,
+        IDialogService dialogService)
     {
         TestList = testList;
         TestDetail = testDetail;
         _testCatalogService = testCatalogService;
         _navigationService = navigationService;
         _logger = logger;
+        _dialogService = dialogService;
 
         AddCommand = new RelayCommand(_ => Add(), _ => IsBrowsing);
         SaveCommand = new AsyncRelayCommand(SaveAsync, () => (IsAdding || IsEditing) && TestDetail.IsDirty);
@@ -41,7 +44,6 @@ public sealed class TestDataManagementViewModel : ViewModelBase
         TestList.SelectedTestChanged += OnSelectedTestChanged;
         TestDetail.DirtyStateChanged += (_, _) => System.Windows.Input.CommandManager.InvalidateRequerySuggested();
         TestDetail.OpenNormalRangesRequested += OnOpenNormalRangesRequested;
-        _ = InitializeAsync();
     }
 
     public TestListViewModel TestList { get; }
@@ -78,11 +80,19 @@ public sealed class TestDataManagementViewModel : ViewModelBase
         set => SetProperty(ref _isBrowsing, value);
     }
 
-    private async Task InitializeAsync()
+    public async Task InitializeAsync()
     {
-        await TestDetail.InitializeLookupsAsync();
-        await TestList.RefreshAsync();
-        TestDetail.StartNew(TestList.AllTests.ToList());
+        try
+        {
+            await TestDetail.InitializeLookupsAsync();
+            await TestList.RefreshAsync();
+            TestDetail.StartNew(TestList.AllTests.ToList());
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Initialization failed in {VM}", GetType().Name);
+            _dialogService.ShowError("حدث خطأ أثناء تهيئة النموذج.");
+        }
     }
 
     private void Add()
@@ -149,8 +159,7 @@ public sealed class TestDataManagementViewModel : ViewModelBase
         if (TestDetail.TesttypeId <= 0)
             return;
 
-        var result = MessageBox.Show("هل تريد حذف هذا التحليل؟", "تأكيد الحذف", MessageBoxButton.YesNo, MessageBoxImage.Question);
-        if (result != MessageBoxResult.Yes)
+        if (!_dialogService.ShowConfirmation("هل تريد حذف هذا التحليل؟", "تأكيد الحذف"))
             return;
 
         await _testCatalogService.DeleteTestTypeAsync(TestDetail.TesttypeId);
@@ -173,8 +182,7 @@ public sealed class TestDataManagementViewModel : ViewModelBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error in OnSelectedTestChanged");
-            // TODO F-07: replace MessageBox with IDialogService
-            MessageBox.Show("حدث خطأ أثناء تحميل البيانات.", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
+            _dialogService.ShowError("حدث خطأ أثناء تحميل البيانات.");
         }
     }
 
@@ -184,7 +192,7 @@ public sealed class TestDataManagementViewModel : ViewModelBase
         {
             if (TestDetail.EditableTest.TesttypeId <= 0)
             {
-                MessageBox.Show("احفظ التحليل أولاً قبل إدخال القيم الطبيعية.", "تنبيه", MessageBoxButton.OK, MessageBoxImage.Information);
+                _dialogService.ShowMessage("احفظ التحليل أولاً قبل إدخال القيم الطبيعية.", "تنبيه");
                 return;
             }
 
@@ -198,8 +206,7 @@ public sealed class TestDataManagementViewModel : ViewModelBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error in OnOpenNormalRangesRequested");
-            // TODO F-07: replace MessageBox with IDialogService
-            MessageBox.Show("حدث خطأ أثناء تحميل البيانات.", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
+            _dialogService.ShowError("حدث خطأ أثناء تحميل البيانات.");
         }
     }
 }

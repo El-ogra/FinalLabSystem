@@ -1,6 +1,7 @@
 <UserControl x:Class="FinalLabSystem.Views.Patients.TestSelectionView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors">
     <Border Background="#123A42"
             BorderBrush="#0A252C"
             BorderThickness="3"
@@ -71,7 +72,6 @@
                               ItemsSource="{Binding AvailableTests}"
                               SelectedItem="{Binding SelectedAvailableTest}"
                               VirtualizingPanel.IsVirtualizing="True"
-                              MouseDoubleClick="AvailableTests_OnMouseDoubleClick"
                               Background="#EAF4CF"
                               BorderBrush="#0A252C"
                               BorderThickness="1"
@@ -81,6 +81,11 @@
                                 <GridViewColumn Header="كود التحليل" DisplayMemberBinding="{Binding Code}" Width="100"/>
                             </GridView>
                         </ListView.View>
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseDoubleClick">
+                                <i:InvokeCommandAction Command="{Binding AddTestCommand}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
                     </ListView>
                 </Grid>
 

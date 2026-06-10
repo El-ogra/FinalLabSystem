@@ -6,7 +6,8 @@
         Width="520"
         WindowStartupLocation="CenterOwner"
         FlowDirection="RightToLeft"
-        ResizeMode="CanResize">
+        ResizeMode="CanResize"
+        Loaded="Window_Loaded">
     <DockPanel Margin="12">
         <TextBlock DockPanel.Dock="Top"
                    Text="مرضى اليوم"
@@ -14,12 +15,11 @@
                    FontWeight="Bold"
                    Margin="0,0,0,10"/>
 
-        <TextBox x:Name="SearchBox"
-                 DockPanel.Dock="Top"
+        <TextBox DockPanel.Dock="Top"
                  Height="32"
                  Margin="0,0,0,10"
                  Padding="6,2"
-                 TextChanged="SearchBox_OnTextChanged"/>
+                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
 
         <StackPanel DockPanel.Dock="Bottom"
                     Orientation="Horizontal"
@@ -29,17 +29,16 @@
                     Width="100"
                     Height="34"
                     Margin="8,0,0,0"
-                    Click="SelectButton_OnClick"/>
+                    Command="{Binding SelectCommand}"/>
             <Button Content="إلغاء"
                     Width="100"
                     Height="34"
-                    Click="CancelButton_OnClick"/>
+                    Command="{Binding CancelCommand}"/>
         </StackPanel>
 
-        <ListView x:Name="PatientsList"
-                  ItemsSource="{Binding}"
-                  SelectionMode="Single"
-                  MouseDoubleClick="PatientsList_OnMouseDoubleClick">
+        <ListView ItemsSource="{Binding PatientsView}"
+                  SelectedItem="{Binding SelectedPatient}"
+                  SelectionMode="Single">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="كود المريض"

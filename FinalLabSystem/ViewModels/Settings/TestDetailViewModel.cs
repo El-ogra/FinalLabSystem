@@ -1,6 +1,5 @@
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows;
 using System.Windows.Input;
 using FinalLabSystem.Infrastructure;
 using FinalLabSystem.Models;
@@ -11,10 +10,11 @@ namespace FinalLabSystem.ViewModels.Settings;
 public sealed class TestDetailViewModel : ViewModelBase
 {
     private readonly ITestCatalogService _testCatalogService;
+    private readonly IDialogService _dialogService;
     private TestType _editableTest = CreateEmptyTest();
     private bool _isDirty;
-    private double _patientPrice;
-    private double _labToLabPrice;
+    private decimal _patientPrice;
+    private decimal _labToLabPrice;
     private string? _validationMessage;
     private int? _selectedCollectionTypeId;
     private string? _referenceType;
@@ -29,9 +29,10 @@ public sealed class TestDetailViewModel : ViewModelBase
     private string? _baselineReferenceType;
     private string? _baselineBarcodeName;
 
-    public TestDetailViewModel(ITestCatalogService testCatalogService)
+    public TestDetailViewModel(ITestCatalogService testCatalogService, IDialogService dialogService)
     {
         _testCatalogService = testCatalogService;
+        _dialogService = dialogService;
         OpenNormalRangesCommand = new RelayCommand(_ => OpenNormalRangesRequested?.Invoke(this, EventArgs.Empty), _ => EditableTest.TesttypeId > 0);
     }
 
@@ -175,7 +176,7 @@ public sealed class TestDetailViewModel : ViewModelBase
         set => SetTestProperty(EditableTest.Notes, value, v => EditableTest.Notes = v);
     }
 
-    public double PatientPrice
+    public decimal PatientPrice
     {
         get => _patientPrice;
         set
@@ -185,7 +186,7 @@ public sealed class TestDetailViewModel : ViewModelBase
         }
     }
 
-    public double LabToLabPrice
+    public decimal LabToLabPrice
     {
         get => _labToLabPrice;
         set
@@ -249,6 +250,20 @@ public sealed class TestDetailViewModel : ViewModelBase
         set => SetTestProperty(EditableTest.OutsideCostPrice, value, v => EditableTest.OutsideCostPrice = v);
     }
 
+    private bool _hasPatientQuestion;
+
+    public bool HasPatientQuestion
+    {
+        get => _hasPatientQuestion;
+        set
+        {
+            if (SetProperty(ref _hasPatientQuestion, value))
+                OnPropertyChanged(nameof(IsPatientQuestionEnabled));
+        }
+    }
+
+    public bool IsPatientQuestionEnabled => HasPatientQuestion;
+
     public string? PatientQuestion
     {
         get => EditableTest.PatientQuestion;
@@ -278,7 +293,7 @@ public sealed class TestDetailViewModel : ViewModelBase
         EditableTest = CloneTest(test);
         SelectedCollectionTypeId = test.CollectionTypeId;
         PatientPrice = test.TestTypePrices.FirstOrDefault(p => p.Scheme.SchemeName == "Patient Price")?.Price ?? test.DefaultPrice;
-        LabToLabPrice = test.TestTypePrices.FirstOrDefault(p => p.Scheme.SchemeName == "Lab-to-Lab Price")?.Price ?? 0d;
+        LabToLabPrice = test.TestTypePrices.FirstOrDefault(p => p.Scheme.SchemeName == "Lab-to-Lab Price")?.Price ?? 0m;
         var tubes = test.TestTypeSampleTubes.OrderBy(t => t.SortOrder).ToList();
         Tube1 = tubes.ElementAtOrDefault(0)?.SampleType ?? string.Empty;
         Tube2 = tubes.ElementAtOrDefault(1)?.SampleType ?? string.Empty;
@@ -296,8 +311,8 @@ public sealed class TestDetailViewModel : ViewModelBase
         AllTests = allTests;
         EditableTest = CreateEmptyTest();
         SelectedCollectionTypeId = null;
-        PatientPrice = 0d;
-        LabToLabPrice = 0d;
+        PatientPrice = 0m;
+        LabToLabPrice = 0m;
         Tube1 = string.Empty;
         Tube2 = string.Empty;
         Tube3 = string.Empty;
@@ -321,7 +336,7 @@ public sealed class TestDetailViewModel : ViewModelBase
         if (GroupId <= 0)
             return Fail("مجموعة التحليل مطلوبة.");
 
-        if (PatientPrice < 0 || LabToLabPrice < 0)
+        if (PatientPrice < 0m || LabToLabPrice < 0m)
             return Fail("الأسعار لا يمكن أن تكون سالبة.");
 
         if (IsSendOutside && OutsideCostPrice is null)
@@ -399,7 +414,7 @@ public sealed class TestDetailViewModel : ViewModelBase
     private bool Fail(string message)
     {
         ValidationMessage = message;
-        MessageBox.Show(message, "تنبيه", MessageBoxButton.OK, MessageBoxImage.Warning);
+        _dialogService.ShowWarning(message, "تنبيه");
         return false;
     }
 

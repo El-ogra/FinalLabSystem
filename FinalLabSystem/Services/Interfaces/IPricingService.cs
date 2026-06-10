@@ -7,6 +7,6 @@ namespace FinalLabSystem.Services.Interfaces;
 public interface IPricingService
 {
     Task<List<PriceScheme>> GetAllSchemesAsync();
-    Task<double> GetTestPriceAsync(int testTypeId, int schemeId);
+    Task<decimal> GetTestPriceAsync(int testTypeId, int schemeId);
     Task UpdateSchemePricesAsync(int schemeId, List<TestTypePrice> prices);
 }

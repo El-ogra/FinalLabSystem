@@ -53,5 +53,7 @@ public partial class NormalRange
 
     public string? RangeNote { get; set; }
 
+    public string? Unit { get; set; }
+
     public virtual TestComponent Component { get; set; } = null!;
 }

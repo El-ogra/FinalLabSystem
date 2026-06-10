@@ -7,7 +7,7 @@ namespace FinalLabSystem.Services.Interfaces;
 public interface IFinancialService
 {
     Task RecordPatientPaymentAsync(Payment payment);
-    Task ApplyDiscountAsync(int visitId, double discount, int staffId);
+    Task ApplyDiscountAsync(int visitId, decimal discount, int staffId);
     Task ApplyFullPaymentAsync(int visitId, int staffId);
     Task<bool> ApplyClearancePaymentAsync(int visitId, decimal balanceDue);
     Task<bool> RevertClearanceAsync(int visitId);

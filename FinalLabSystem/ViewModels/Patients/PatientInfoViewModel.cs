@@ -6,7 +6,7 @@ using FinalLabSystem.Services.Interfaces;
 
 namespace FinalLabSystem.ViewModels.Patients;
 
-public sealed class PatientInfoViewModel : ViewModelBase
+public sealed class PatientInfoViewModel : ViewModelBase, IAsyncInitializable
 {
     private readonly IPatientService _patientService;
     private string _patientCode = string.Empty;
@@ -15,7 +15,7 @@ public sealed class PatientInfoViewModel : ViewModelBase
     private string _sex = "U";
     private string _patientType = "Individual";
     private bool _isVip;
-    private double? _approxAge;
+    private int? _approxAge;
     private string _approxAgeUnit = "Years";
     private string? _phone;
     private string? _phone2;
@@ -30,7 +30,21 @@ public sealed class PatientInfoViewModel : ViewModelBase
         TitleSuggestions = new ObservableCollection<string>();
         PatientTypes = new ObservableCollection<string> { "Individual", "Contract", "Company", "Insurance" };
         AgeUnits = new ObservableCollection<string> { "Years", "Months", "Days" };
-        _ = LoadTitlesAsync();
+    }
+
+    public async Task InitializeAsync()
+    {
+        try
+        {
+            var titles = await _patientService.GetPatientTitlesAsync();
+            TitleSuggestions.Clear();
+            foreach (var title in titles)
+                TitleSuggestions.Add(title);
+        }
+        catch
+        {
+            // TODO F-07: _dialogService.ShowError("حدث خطأ أثناء تحميل البيانات.");
+        }
     }
 
     public ObservableCollection<string> TitleSuggestions { get; }
@@ -118,7 +132,7 @@ public sealed class PatientInfoViewModel : ViewModelBase
         set => SetProperty(ref _isVip, value);
     }
 
-    public double? ApproxAge
+    public int? ApproxAge
     {
         get => _approxAge;
         set => SetProperty(ref _approxAge, value);
@@ -166,7 +180,7 @@ public sealed class PatientInfoViewModel : ViewModelBase
         set => SetProperty(ref _notes, value);
     }
 
-    public bool HasErrors => string.IsNullOrWhiteSpace(FullNameAr) || !new[] { "M", "F", "U" }.Contains(Sex);
+    public new bool HasErrors => string.IsNullOrWhiteSpace(FullNameAr) || !new[] { "M", "F", "U" }.Contains(Sex);
 
     public async Task GenerateCodeAsync()
     {
@@ -249,11 +263,5 @@ public sealed class PatientInfoViewModel : ViewModelBase
         };
     }
 
-    private async Task LoadTitlesAsync()
-    {
-        var titles = await _patientService.GetPatientTitlesAsync();
-        TitleSuggestions.Clear();
-        foreach (var title in titles)
-            TitleSuggestions.Add(title);
-    }
+
 }

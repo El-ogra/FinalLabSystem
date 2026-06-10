@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using FinalLabSystem.Data;
+using FinalLabSystem.Models.Enums;
 
 namespace FinalLabSystem.Models;
+
+[Auditable]
 
 public partial class Payment
 {
@@ -11,9 +15,9 @@ public partial class Payment
 
     public DateTime PaymentDate { get; set; }
 
-    public double Amount { get; set; }
+    public decimal Amount { get; set; }
 
-    public string PaymentMethod { get; set; } = null!;
+    public PaymentMethod PaymentMethod { get; set; }
 
     public string PaymentType { get; set; } = null!;
 

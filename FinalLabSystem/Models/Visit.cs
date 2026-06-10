@@ -1,12 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using FinalLabSystem.Data;
+using FinalLabSystem.Models.Enums;
 
 namespace FinalLabSystem.Models;
+
+[Auditable]
 
 public partial class Visit
 {
     public int VisitId { get; set; }
 
+    [Required]
+    [StringLength(30)]
     public string VisitCode { get; set; } = null!;
 
     public int PatientId { get; set; }
@@ -63,21 +69,21 @@ public partial class Visit
 
     public int? SchemeId { get; set; }
 
-    public double Subtotal { get; set; }
+    public decimal Subtotal { get; set; }
 
-    public double DiscountAmount { get; set; }
+    public decimal DiscountAmount { get; set; }
 
-    public double DiscountPercent { get; set; }
+    public decimal DiscountPercent { get; set; }
 
-    public double TotalAfterDiscount { get; set; }
+    public decimal TotalAfterDiscount { get; set; }
 
-    public double TotalPaid { get; set; }
+    public decimal TotalPaid { get; set; }
 
-    public double BalanceDue { get; set; }
+    public decimal BalanceDue { get; set; }
 
-    public string PaymentStatus { get; set; } = null!;
+    public PaymentStatus PaymentStatus { get; set; }
 
-    public string VisitStatus { get; set; } = null!;
+    public VisitStatus VisitStatus { get; set; }
 
     public int? ReceptionistId { get; set; }
 

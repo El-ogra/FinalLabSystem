@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace FinalLabSystem.Models;
 
@@ -9,15 +9,22 @@ public partial class TestType
 
     public int GroupId { get; set; }
 
+    [Required(ErrorMessage = "كود التحليل مطلوب")]
+    [StringLength(30)]
     public string TypeCode { get; set; } = null!;
 
+    [Required(ErrorMessage = "اسم التحليل بالانجليزية مطلوب")]
+    [StringLength(200)]
     public string TypeNameEn { get; set; } = null!;
 
+    [StringLength(200)]
     public string? TypeNameAr { get; set; }
 
+    [StringLength(20)]
     public string? TypeAbbrev { get; set; }
 
-    public double DefaultPrice { get; set; }
+    [Range(0, double.MaxValue, ErrorMessage = "السعر يجب أن يكون 0 أو أكثر")]
+    public decimal DefaultPrice { get; set; }
 
     public string? SampleType { get; set; }
 

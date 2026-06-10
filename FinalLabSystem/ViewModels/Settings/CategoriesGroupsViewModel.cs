@@ -12,6 +12,7 @@ public sealed class CategoriesGroupsViewModel : ViewModelBase
     private readonly ITestCatalogService _testCatalogService;
     private readonly INavigationService _navigationService;
     private readonly ILogger<CategoriesGroupsViewModel> _logger;
+    private readonly IDialogService _dialogService;
 
     public CategoriesGroupsViewModel(
         CategoryListViewModel categoryList,
@@ -20,7 +21,8 @@ public sealed class CategoriesGroupsViewModel : ViewModelBase
         GroupDetailViewModel groupDetail,
         ITestCatalogService testCatalogService,
         INavigationService navigationService,
-        ILogger<CategoriesGroupsViewModel> logger)
+        ILogger<CategoriesGroupsViewModel> logger,
+        IDialogService dialogService)
     {
         CategoryList = categoryList;
         CategoryDetail = categoryDetail;
@@ -29,6 +31,7 @@ public sealed class CategoriesGroupsViewModel : ViewModelBase
         _testCatalogService = testCatalogService;
         _navigationService = navigationService;
         _logger = logger;
+        _dialogService = dialogService;
 
         NewCategoryCommand = new RelayCommand(_ => NewCategory());
         SaveCategoryCommand = new AsyncRelayCommand(SaveCategoryAsync, () => CategoryDetail.IsDirty && CategoryDetail.Validate());
@@ -126,7 +129,7 @@ public sealed class CategoriesGroupsViewModel : ViewModelBase
         }
         catch (InvalidOperationException ex)
         {
-            MessageBox.Show(ex.Message);
+            _dialogService.ShowError(ex.Message);
         }
     }
 
@@ -188,8 +191,7 @@ public sealed class CategoriesGroupsViewModel : ViewModelBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error in OnSelectedCategoryChanged");
-            // TODO F-07: replace MessageBox with IDialogService
-            MessageBox.Show("حدث خطأ أثناء تحميل البيانات.", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
+            _dialogService.ShowError("حدث خطأ أثناء تحميل البيانات.");
         }
     }
 

@@ -6,19 +6,21 @@ using FinalLabSystem.Infrastructure.Navigation;
 using FinalLabSystem.Infrastructure.Session;
 using FinalLabSystem.Models;
 using FinalLabSystem.Models.DTOs;
+using FinalLabSystem.Models.Enums;
 using FinalLabSystem.Services.Interfaces;
 using FinalLabSystem.Views.Patients;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FinalLabSystem.ViewModels.Patients;
 
-public sealed class PatientRegistrationViewModel : ViewModelBase
+public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitializable
 {
     private readonly IVisitService _visitService;
     private readonly IPatientService _patientService;
     private readonly ISampleTrackingService _sampleTrackingService;
     private readonly INavigationService _navigationService;
     private readonly ICurrentUserSession _currentUserSession;
+    private readonly IDialogService _dialogService;
     private int _currentPatientId;
     private int _currentVisitId;
     private bool _isEditMode;
@@ -36,7 +38,8 @@ public sealed class PatientRegistrationViewModel : ViewModelBase
         IPatientService patientService,
         ISampleTrackingService sampleTrackingService,
         INavigationService navigationService,
-        ICurrentUserSession currentUserSession)
+        ICurrentUserSession currentUserSession,
+        IDialogService dialogService)
     {
         PatientInfo = patientInfo;
         Referral = referral;
@@ -48,6 +51,7 @@ public sealed class PatientRegistrationViewModel : ViewModelBase
         _sampleTrackingService = sampleTrackingService;
         _navigationService = navigationService;
         _currentUserSession = currentUserSession;
+        _dialogService = dialogService;
         TodayPatients = new ObservableCollection<TodayPatientDto>();
 
         TestSelection.TestsChanged += (_, _) =>
@@ -64,7 +68,20 @@ public sealed class PatientRegistrationViewModel : ViewModelBase
         ReceiptCommand = new AsyncRelayCommand(ReceiptAsync, () => CurrentVisitId > 0);
         ReturnToMainCommand = new RelayCommand(_ => ReturnToMain());
         LoadTodayPatientsCommand = new AsyncRelayCommand(LoadTodayPatientsAsync);
-        _ = AddNewAsync();
+    }
+
+    public async Task InitializeAsync()
+    {
+        try
+        {
+            await PatientInfo.InitializeAsync();
+            await Referral.InitializeAsync();
+            await AddNewAsync();
+        }
+        catch
+        {
+            _dialogService.ShowError("حدث خطأ أثناء تهيئة النموذج.");
+        }
     }
 
     public PatientInfoViewModel PatientInfo { get; }
@@ -166,14 +183,14 @@ public sealed class PatientRegistrationViewModel : ViewModelBase
     {
         if (PatientInfo.HasErrors)
         {
-            MessageBox.Show("يجب إدخال اسم المريض وتحديد النوع.", "تحقق", MessageBoxButton.OK, MessageBoxImage.Warning);
+            _dialogService.ShowWarning("يجب إدخال اسم المريض وتحديد النوع.", "تحقق");
             return;
         }
 
         var selectedTestIds = TestSelection.GetSelectedTestTypeIds();
         if (selectedTestIds.Count == 0)
         {
-            MessageBox.Show("يجب اختيار تحليل واحد على الأقل.", "تحقق", MessageBoxButton.OK, MessageBoxImage.Warning);
+            _dialogService.ShowWarning("يجب اختيار تحليل واحد على الأقل.", "تحقق");
             return;
         }
 
@@ -211,14 +228,14 @@ public sealed class PatientRegistrationViewModel : ViewModelBase
             HasLupus = MedicalHistory.HasLupus,
             HadXrayContrast = MedicalHistory.HadXrayContrast,
             ReferralId = Referral.SelectedReferral?.ReferralId,
-            Subtotal = Convert.ToDouble(Financial.Subtotal),
-            DiscountAmount = Convert.ToDouble(Financial.DiscountAmount),
-            DiscountPercent = Convert.ToDouble(Financial.DiscountPercent),
-            TotalAfterDiscount = Convert.ToDouble(Financial.TotalAfterDiscount),
-            TotalPaid = Convert.ToDouble(Financial.AmountPaid),
-            BalanceDue = Convert.ToDouble(Financial.BalanceDue),
-            PaymentStatus = Financial.BalanceDue <= 0 ? "PAID" : Financial.AmountPaid > 0 ? "PARTIAL" : "PENDING",
-            VisitStatus = "OPEN",
+            Subtotal = Financial.Subtotal,
+            DiscountAmount = Financial.DiscountAmount,
+            DiscountPercent = Financial.DiscountPercent,
+            TotalAfterDiscount = Financial.TotalAfterDiscount,
+            TotalPaid = Financial.AmountPaid,
+            BalanceDue = Financial.BalanceDue,
+            PaymentStatus = Financial.BalanceDue <= 0 ? PaymentStatus.Paid : Financial.AmountPaid > 0 ? PaymentStatus.PartiallyPaid : PaymentStatus.Pending,
+            VisitStatus = VisitStatus.Open,
             ReceptionistId = staffId,
             Notes = MedicalHistory.VisitNotes,
             CreatedAt = DateTime.UtcNow,
@@ -230,7 +247,7 @@ public sealed class PatientRegistrationViewModel : ViewModelBase
             patient,
             visit,
             selectedTestIds,
-            Convert.ToDouble(Financial.AmountPaid),
+            Financial.AmountPaid,
             staffId,
             MedicalHistory.ToMedicalHistoryList(),
             referralToSave);
@@ -240,14 +257,13 @@ public sealed class PatientRegistrationViewModel : ViewModelBase
         Financial.SetCurrentVisitId(savedVisit.VisitId);
         IsEditMode = true;
         HasUnsavedChanges = false;
-        MessageBox.Show("تم حفظ بيانات المريض والزيارة.", "حفظ", MessageBoxButton.OK, MessageBoxImage.Information);
+        _dialogService.ShowMessage("تم حفظ بيانات المريض والزيارة.", "حفظ");
     }
 
     private async Task EditAsync()
     {
-        await LoadTodayPatientsAsync();
-
-        var dialog = new TodayPatientsDialog(TodayPatients)
+        var viewModel = new TodayPatientsDialogViewModel(_visitService);
+        var dialog = new TodayPatientsDialog(viewModel)
         {
             Owner = Application.Current.Windows.OfType<Window>().FirstOrDefault(window => window.IsActive)
         };
@@ -277,8 +293,7 @@ public sealed class PatientRegistrationViewModel : ViewModelBase
         if (CurrentVisitId <= 0)
             return;
 
-        var result = MessageBox.Show("هل تريد حذف الزيارة الحالية؟", "حذف", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-        if (result != MessageBoxResult.Yes)
+        if (!_dialogService.ShowConfirmation("هل تريد حذف الزيارة الحالية؟", "حذف"))
             return;
 
         var deleted = await _visitService.CancelVisitAsync(CurrentVisitId);
@@ -323,8 +338,7 @@ public sealed class PatientRegistrationViewModel : ViewModelBase
     {
         if (HasUnsavedChanges)
         {
-            var result = MessageBox.Show("توجد تغييرات غير محفوظة. هل تريد العودة؟", "تنبيه", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-            if (result != MessageBoxResult.Yes)
+            if (!_dialogService.ShowConfirmation("توجد تغييرات غير محفوظة. هل تريد العودة؟", "تنبيه"))
                 return;
         }
 

@@ -3,6 +3,7 @@ using FinalLabSystem.Infrastructure.Security;
 using FinalLabSystem.Models;
 using FinalLabSystem.Services.Implementations;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -13,6 +14,7 @@ public class AuthServiceTests
     private static DbContextOptions<FinalLabDbContext> CreateOptions(string dbName)
         => new DbContextOptionsBuilder<FinalLabDbContext>()
             .UseInMemoryDatabase(dbName)
+            .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning))
             .Options;
 
     private static Staff CreateStaff(string username, string password, bool isAdmin = false)
@@ -52,15 +54,13 @@ public class AuthServiceTests
         var logger = Mock.Of<ILogger<AuthService>>();
         var service = new AuthService(context, logger);
 
-        context.Staff.Add(CreateStaff("dupuser", "Pass@123"));
-        await context.SaveChangesAsync();
+        var first = CreateStaff("dupuser", "Pass@123");
+        await service.CreateUserAsync(first, new List<int>());
 
         var duplicate = CreateStaff("dupuser", "OtherPass@456");
-        context.Staff.Add(duplicate);
-        await context.SaveChangesAsync();
-
-        var count = await context.Staff.CountAsync(s => s.Username == "dupuser");
-        Assert.Equal(2, count);
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => service.CreateUserAsync(duplicate, new List<int>()));
+        Assert.Contains("dupuser", ex.Message);
     }
 
     [Fact]

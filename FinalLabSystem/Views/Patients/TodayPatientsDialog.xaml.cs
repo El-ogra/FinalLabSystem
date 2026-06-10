@@ -1,73 +1,31 @@
-using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Input;
 using FinalLabSystem.Models.DTOs;
+using FinalLabSystem.ViewModels.Patients;
 
 namespace FinalLabSystem.Views.Patients;
 
 public partial class TodayPatientsDialog : Window
 {
-    private readonly ICollectionView _patientsView;
-
-    public TodayPatientsDialog()
-        : this(new ObservableCollection<TodayPatientDto>())
-    {
-    }
-
-    public TodayPatientsDialog(ObservableCollection<TodayPatientDto> todayPatients)
+    public TodayPatientsDialog(TodayPatientsDialogViewModel viewModel)
     {
         InitializeComponent();
-        _patientsView = CollectionViewSource.GetDefaultView(todayPatients);
-        _patientsView.Filter = FilterPatient;
-        DataContext = _patientsView;
+        DataContext = viewModel;
+        ViewModel = viewModel;
+        viewModel.CloseRequested += OnCloseRequested;
     }
 
-    public TodayPatientDto? SelectedPatient { get; private set; }
+    public TodayPatientsDialogViewModel ViewModel { get; }
 
-    private bool FilterPatient(object item)
+    public TodayPatientDto? SelectedPatient => ViewModel.SelectedPatient;
+
+    private void OnCloseRequested(object? sender, bool result)
     {
-        if (item is not TodayPatientDto patient)
-            return false;
-
-        var term = SearchBox?.Text?.Trim();
-        if (string.IsNullOrWhiteSpace(term))
-            return true;
-
-        return patient.PatientCode.Contains(term, StringComparison.OrdinalIgnoreCase)
-            || patient.FullNameAr.Contains(term, StringComparison.OrdinalIgnoreCase);
-    }
-
-    private void SearchBox_OnTextChanged(object sender, TextChangedEventArgs e)
-    {
-        _patientsView.Refresh();
-    }
-
-    private void SelectButton_OnClick(object sender, RoutedEventArgs e)
-    {
-        SelectCurrentPatient();
-    }
-
-    private void CancelButton_OnClick(object sender, RoutedEventArgs e)
-    {
-        DialogResult = false;
+        DialogResult = result;
         Close();
     }
 
-    private void PatientsList_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
+    private async void Window_Loaded(object sender, RoutedEventArgs e)
     {
-        SelectCurrentPatient();
-    }
-
-    private void SelectCurrentPatient()
-    {
-        if (PatientsList.SelectedItem is not TodayPatientDto patient)
-            return;
-
-        SelectedPatient = patient;
-        DialogResult = true;
-        Close();
+        await ViewModel.LoadAsync();
     }
 }

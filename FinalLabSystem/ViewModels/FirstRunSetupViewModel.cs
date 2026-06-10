@@ -40,7 +40,7 @@ public class FirstRunSetupViewModel : ViewModelBase, INotifyDataErrorInfo
         _createAdministratorCommand.ErrorOccurred += (_, ex) => StatusMessage = ex.Message;
     }
 
-    public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
+        public new event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
     public string? Username
     {
@@ -102,9 +102,9 @@ public class FirstRunSetupViewModel : ViewModelBase, INotifyDataErrorInfo
 
     public ICommand CreateAdministratorCommand => _createAdministratorCommand;
 
-    public bool HasErrors => _errors.Count > 0;
+    public new bool HasErrors => _errors.Count > 0;
 
-    public IEnumerable GetErrors(string? propertyName)
+    public new IEnumerable GetErrors(string? propertyName)
     {
         if (string.IsNullOrEmpty(propertyName))
             return _errors.SelectMany(kv => kv.Value);
@@ -147,7 +147,7 @@ public class FirstRunSetupViewModel : ViewModelBase, INotifyDataErrorInfo
             AddError(nameof(ConfirmPassword), "Passwords do not match.");
     }
 
-    private void AddError(string propertyName, string message)
+    private new void AddError(string propertyName, string message)
     {
         if (!_errors.TryGetValue(propertyName, out var list))
         {

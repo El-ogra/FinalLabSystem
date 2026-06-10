@@ -1,4 +1,3 @@
-using System.Windows;
 using System.Windows.Input;
 using FinalLabSystem.Infrastructure;
 using FinalLabSystem.Models.DTOs;
@@ -9,6 +8,7 @@ namespace FinalLabSystem.ViewModels.Patients;
 public sealed class FinancialViewModel : ViewModelBase
 {
     private readonly IFinancialService _financialService;
+    private readonly IDialogService _dialogService;
     private bool _isUpdating;
     private int _currentVisitId;
     private decimal _subtotal;
@@ -22,9 +22,10 @@ public sealed class FinancialViewModel : ViewModelBase
     private bool _isClearanceRequested;
     private string _paymentStatus = "PENDING";
 
-    public FinancialViewModel(IFinancialService financialService)
+    public FinancialViewModel(IFinancialService financialService, IDialogService dialogService)
     {
         _financialService = financialService;
+        _dialogService = dialogService;
         ConfirmPaymentCommand = new AsyncRelayCommand(ConfirmPaymentAsync);
         RevertCommand = new AsyncRelayCommand(RevertAsync, () => !IsPaymentConfirmed);
         ClearanceCommand = new RelayCommand(_ => RequestClearance());
@@ -280,7 +281,7 @@ public sealed class FinancialViewModel : ViewModelBase
         if (!IsPaymentConfirmed)
             return;
 
-        MessageBox.Show("تم تعديل الحسابات بعد تأكيد الدفع، سيتم إلغاء التأكيد.", "تنبيه", MessageBoxButton.OK, MessageBoxImage.Warning);
+        _dialogService.ShowWarning("تم تعديل الحسابات بعد تأكيد الدفع، سيتم إلغاء التأكيد.", "تنبيه");
         IsPaymentConfirmed = false;
     }
 }

@@ -68,6 +68,10 @@ public class AuthService : IAuthService
 
     public async Task<Staff> CreateUserAsync(Staff staff, List<int> permissionIds)
     {
+        var existing = await _context.Staff.AnyAsync(s => s.Username == staff.Username);
+        if (existing)
+            throw new InvalidOperationException($"Username '{staff.Username}' already exists.");
+
         using var transaction = await _context.Database.BeginTransactionAsync();
 
         try

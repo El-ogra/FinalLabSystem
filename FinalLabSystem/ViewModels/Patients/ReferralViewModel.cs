@@ -6,7 +6,7 @@ using FinalLabSystem.Services.Interfaces;
 
 namespace FinalLabSystem.ViewModels.Patients;
 
-public sealed class ReferralViewModel : ViewModelBase
+public sealed class ReferralViewModel : ViewModelBase, IAsyncInitializable
 {
     private readonly IReferralService _referralService;
     private string? _referralTitle;
@@ -21,7 +21,23 @@ public sealed class ReferralViewModel : ViewModelBase
         _referralService = referralService;
         ReferralSuggestions = new ObservableCollection<ReferralSource>();
         ReferralTitles = new ObservableCollection<string>();
-        _ = LoadInitialAsync();
+    }
+
+    public async Task InitializeAsync()
+    {
+        try
+        {
+            var titles = await _referralService.GetReferralTitlesAsync();
+            ReferralTitles.Clear();
+            foreach (var title in titles)
+                ReferralTitles.Add(title);
+
+            await SearchAsync(null);
+        }
+        catch
+        {
+            // TODO F-07: _dialogService.ShowError("حدث خطأ أثناء تحميل البيانات.");
+        }
     }
 
     public ObservableCollection<ReferralSource> ReferralSuggestions { get; }
@@ -121,16 +137,6 @@ public sealed class ReferralViewModel : ViewModelBase
             IsActive = true,
             CreatedAt = DateTime.UtcNow
         };
-    }
-
-    private async Task LoadInitialAsync()
-    {
-        var titles = await _referralService.GetReferralTitlesAsync();
-        ReferralTitles.Clear();
-        foreach (var title in titles)
-            ReferralTitles.Add(title);
-
-        await SearchAsync(null);
     }
 
     private async Task SearchAsync(string? term)

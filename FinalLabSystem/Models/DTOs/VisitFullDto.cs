@@ -18,7 +18,7 @@ public sealed class VisitFullDto
 
     public bool IsVip { get; set; }
 
-    public double? ApproxAge { get; set; }
+    public int? ApproxAge { get; set; }
 
     public string ApproxAgeUnit { get; set; } = "Years";
 

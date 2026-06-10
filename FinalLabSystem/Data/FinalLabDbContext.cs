@@ -1,12 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using FinalLabSystem.Infrastructure.Session;
 using FinalLabSystem.Models;
+using FinalLabSystem.Models.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinalLabSystem.Data;
 
 public partial class FinalLabDbContext : DbContext
 {
+    private readonly ICurrentUserSession? _session;
+
     public FinalLabDbContext()
     {
     }
@@ -14,6 +21,58 @@ public partial class FinalLabDbContext : DbContext
     public FinalLabDbContext(DbContextOptions<FinalLabDbContext> options)
         : base(options)
     {
+    }
+
+    public FinalLabDbContext(DbContextOptions<FinalLabDbContext> options, ICurrentUserSession session)
+        : base(options)
+    {
+        _session = session;
+    }
+
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        var auditableEntries = ChangeTracker.Entries()
+            .Where(e => e.State is EntityState.Added or EntityState.Modified or EntityState.Deleted
+                && e.Entity.GetType().GetCustomAttributes(typeof(AuditableAttribute), false).Length > 0)
+            .ToList();
+
+        var result = await base.SaveChangesAsync(cancellationToken);
+
+        if (auditableEntries.Count == 0 || _session is null)
+            return result;
+
+        var staffId = _session.CurrentUser?.StaffId;
+        var now = DateTime.UtcNow;
+
+        foreach (var entry in auditableEntries)
+        {
+            var tableName = entry.Metadata.GetTableName() ?? entry.Metadata.Name;
+            var key = entry.Metadata.FindPrimaryKey();
+            var recordId = key?.Properties
+                .Select(p => Convert.ToInt32(entry.Property(p.Name).CurrentValue))
+                .FirstOrDefault() ?? 0;
+
+            foreach (var property in entry.Properties)
+            {
+                if (!property.IsModified && entry.State != EntityState.Added)
+                    continue;
+
+                AuditLogs.Add(new AuditLog
+                {
+                    TableName = tableName,
+                    RecordId = recordId,
+                    Action = entry.State.ToString(),
+                    FieldName = property.Metadata.Name,
+                    OldValue = entry.State == EntityState.Added ? null : property.OriginalValue?.ToString(),
+                    NewValue = property.CurrentValue?.ToString(),
+                    ChangedBy = staffId,
+                    ChangedAt = now
+                });
+            }
+        }
+
+        await base.SaveChangesAsync(cancellationToken);
+        return result;
     }
 
     public virtual DbSet<AuditLog> AuditLogs { get; set; }
@@ -476,6 +535,9 @@ public partial class FinalLabDbContext : DbContext
             entity.Property(e => e.RangeNote)
                 .HasMaxLength(200)
                 .HasColumnName("range_note");
+            entity.Property(e => e.Unit)
+                .HasMaxLength(20)
+                .HasColumnName("unit");
             entity.Property(e => e.Sex)
                 .HasMaxLength(1)
                 .HasDefaultValue("B")
@@ -609,8 +671,9 @@ public partial class FinalLabDbContext : DbContext
                 .HasDefaultValueSql("(sysdatetime())")
                 .HasColumnName("payment_date");
             entity.Property(e => e.PaymentMethod)
+                .HasConversion(v => v.ToString(), v => (PaymentMethod)Enum.Parse(typeof(PaymentMethod), v ?? "Cash", true))
                 .HasMaxLength(20)
-                .HasDefaultValue("CASH")
+                .HasDefaultValue(PaymentMethod.Cash)
                 .HasColumnName("payment_method");
             entity.Property(e => e.PaymentType)
                 .HasMaxLength(10)
@@ -1136,6 +1199,22 @@ public partial class FinalLabDbContext : DbContext
                 .HasForeignKey(d => d.LastModifiedBy)
                 .HasConstraintName("FK_Result_ModifiedBy");
 
+            entity.Property(e => e.ValidationStatus)
+                .HasConversion<string>()
+                .HasMaxLength(30)
+                .HasColumnName("validation_status");
+
+            entity.Property(e => e.ValidatedByStaffId).HasColumnName("validated_by_staff_id");
+            entity.Property(e => e.ValidatedAt)
+                .HasPrecision(0)
+                .HasColumnName("validated_at");
+
+            entity.HasOne(d => d.ValidatedBy).WithMany(p => p.TestResultValidatedByNavigations)
+                .HasForeignKey(d => d.ValidatedByStaffId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_Result_ValidatedBy");
+
             entity.HasOne(d => d.VisitTest).WithMany(p => p.TestResults)
                 .HasForeignKey(d => d.VisitTestId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -1151,7 +1230,9 @@ public partial class FinalLabDbContext : DbContext
             entity.HasIndex(e => e.TypeCode, "UQ__TestType__2CB4DBF5D148A91E").IsUnique();
 
             entity.Property(e => e.TesttypeId).HasColumnName("testtype_id");
-            entity.Property(e => e.DefaultPrice).HasColumnName("default_price");
+            entity.Property(e => e.DefaultPrice)
+                .HasColumnType("decimal(18, 2)")
+                .HasColumnName("default_price");
             entity.Property(e => e.DefaultTubeColor)
                 .HasMaxLength(30)
                 .HasColumnName("default_tube_color");
@@ -1260,7 +1341,9 @@ public partial class FinalLabDbContext : DbContext
             entity.HasIndex(e => new { e.SchemeId, e.TesttypeId }, "UQ_SchemeTypePrice").IsUnique();
 
             entity.Property(e => e.PriceId).HasColumnName("price_id");
-            entity.Property(e => e.Price).HasColumnName("price");
+            entity.Property(e => e.Price)
+                .HasColumnType("decimal(18, 2)")
+                .HasColumnName("price");
             entity.Property(e => e.SchemeId).HasColumnName("scheme_id");
             entity.Property(e => e.TesttypeId).HasColumnName("testtype_id");
 
@@ -1596,14 +1679,20 @@ public partial class FinalLabDbContext : DbContext
             entity.HasIndex(e => e.VisitCode, "UQ__Visit__6B282A41CE8E7529").IsUnique();
 
             entity.Property(e => e.VisitId).HasColumnName("visit_id");
-            entity.Property(e => e.BalanceDue).HasColumnName("balance_due");
+            entity.Property(e => e.BalanceDue)
+                .HasColumnType("decimal(18, 2)")
+                .HasColumnName("balance_due");
             entity.Property(e => e.CompanyId).HasColumnName("company_id");
             entity.Property(e => e.CreatedAt)
                 .HasPrecision(0)
                 .HasDefaultValueSql("(sysdatetime())")
                 .HasColumnName("created_at");
-            entity.Property(e => e.DiscountAmount).HasColumnName("discount_amount");
-            entity.Property(e => e.DiscountPercent).HasColumnName("discount_percent");
+            entity.Property(e => e.DiscountAmount)
+                .HasColumnType("decimal(18, 2)")
+                .HasColumnName("discount_amount");
+            entity.Property(e => e.DiscountPercent)
+                .HasColumnType("decimal(18, 2)")
+                .HasColumnName("discount_percent");
             entity.Property(e => e.ExpectedReady)
                 .HasPrecision(0)
                 .HasColumnName("expected_ready");
@@ -1685,15 +1774,22 @@ public partial class FinalLabDbContext : DbContext
             entity.Property(e => e.Notes).HasColumnName("notes");
             entity.Property(e => e.PatientId).HasColumnName("patient_id");
             entity.Property(e => e.PaymentStatus)
-                .HasMaxLength(10)
-                .HasDefaultValue("PENDING")
+                .HasConversion(v => v.ToString(), v => (PaymentStatus)Enum.Parse(typeof(PaymentStatus), v ?? "Pending", true))
+                .HasMaxLength(30)
+                .HasDefaultValue(PaymentStatus.Pending)
                 .HasColumnName("payment_status");
             entity.Property(e => e.ReceptionistId).HasColumnName("receptionist_id");
             entity.Property(e => e.ReferralId).HasColumnName("referral_id");
             entity.Property(e => e.SchemeId).HasColumnName("scheme_id");
-            entity.Property(e => e.Subtotal).HasColumnName("subtotal");
-            entity.Property(e => e.TotalAfterDiscount).HasColumnName("total_after_discount");
-            entity.Property(e => e.TotalPaid).HasColumnName("total_paid");
+            entity.Property(e => e.Subtotal)
+                .HasColumnType("decimal(18, 2)")
+                .HasColumnName("subtotal");
+            entity.Property(e => e.TotalAfterDiscount)
+                .HasColumnType("decimal(18, 2)")
+                .HasColumnName("total_after_discount");
+            entity.Property(e => e.TotalPaid)
+                .HasColumnType("decimal(18, 2)")
+                .HasColumnName("total_paid");
             entity.Property(e => e.UpdatedAt)
                 .HasPrecision(0)
                 .HasColumnName("updated_at");
@@ -1705,8 +1801,9 @@ public partial class FinalLabDbContext : DbContext
                 .HasDefaultValueSql("(sysdatetime())")
                 .HasColumnName("visit_date");
             entity.Property(e => e.VisitStatus)
-                .HasMaxLength(15)
-                .HasDefaultValue("OPEN")
+                .HasConversion(v => v.ToString(), v => (VisitStatus)Enum.Parse(typeof(VisitStatus), v ?? "Open", true))
+                .HasMaxLength(30)
+                .HasDefaultValue(VisitStatus.Open)
                 .HasColumnName("visit_status");
 
             entity.HasOne(d => d.Company).WithMany(p => p.Visits)
@@ -1746,12 +1843,15 @@ public partial class FinalLabDbContext : DbContext
                 .HasColumnName("added_at");
             entity.Property(e => e.AddedBy).HasColumnName("added_by");
             entity.Property(e => e.CurrentStage)
-                .HasMaxLength(15)
-                .HasDefaultValue("PENDING")
+                .HasConversion(v => v.ToString(), v => (TestStage)Enum.Parse(typeof(TestStage), v ?? "Pending", true))
+                .HasMaxLength(30)
+                .HasDefaultValue(TestStage.Pending)
                 .HasColumnName("current_stage");
             entity.Property(e => e.ExternalLabId).HasColumnName("external_lab_id");
             entity.Property(e => e.IsOutsourced).HasColumnName("is_outsourced");
-            entity.Property(e => e.OutsourceCost).HasColumnName("outsource_cost");
+            entity.Property(e => e.OutsourceCost)
+                .HasColumnType("decimal(18, 2)")
+                .HasColumnName("outsource_cost");
             entity.Property(e => e.OutsourceResultReceivedAt)
                 .HasPrecision(0)
                 .HasColumnName("outsource_result_received_at");
@@ -1759,7 +1859,9 @@ public partial class FinalLabDbContext : DbContext
                 .HasPrecision(0)
                 .HasColumnName("outsource_sent_at");
             entity.Property(e => e.OutsourceSentBy).HasColumnName("outsource_sent_by");
-            entity.Property(e => e.PriceCharged).HasColumnName("price_charged");
+            entity.Property(e => e.PriceCharged)
+                .HasColumnType("decimal(18, 2)")
+                .HasColumnName("price_charged");
             entity.Property(e => e.TesttypeId).HasColumnName("testtype_id");
             entity.Property(e => e.TubeId).HasColumnName("tube_id");
             entity.Property(e => e.VisitId).HasColumnName("visit_id");

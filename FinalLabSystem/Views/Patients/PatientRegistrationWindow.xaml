@@ -60,7 +60,8 @@
                     BorderThickness="3"
                     Padding="5"
                     Margin="4,4,4,0"
-                    FlowDirection="RightToLeft">
+        FlowDirection="RightToLeft"
+        Loaded="Window_Loaded">
                 <Grid>
                     <Grid.Resources>
                         <Style x:Key="MainActionButtonStyle" TargetType="Button">

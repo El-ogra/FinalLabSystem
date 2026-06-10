@@ -17,6 +17,7 @@ using Microsoft.Extensions.Logging;
 using Serilog;
 using System.IO;
 using System.Windows;
+using System.Windows.Input;
 
 namespace FinalLabSystem;
 
@@ -74,6 +75,17 @@ public partial class App : Application
             ConfigureServices(services, connectionString);
             ServiceProvider = services.BuildServiceProvider();
 
+            var appSettings = configuration.GetSection("AppSettings");
+            var timeoutMinutes = appSettings.GetValue<int>("IdleTimeoutMinutes", 15);
+            var userSession = ServiceProvider.GetRequiredService<ICurrentUserSession>();
+            userSession.IdleTimeoutMinutes = timeoutMinutes;
+
+            InputManager.Current.PreProcessInput += (s, args) =>
+            {
+                if (args.StagingItem.Input is MouseEventArgs or KeyEventArgs)
+                    userSession.ResetIdleTimer();
+            };
+
             var navigation = ServiceProvider.GetRequiredService<INavigationService>();
             navigation.RegisterWindow<PatientRegistrationViewModel, PatientRegistrationWindow>();
             navigation.RegisterWindow<TestResultsViewModel, TestResultsWindow>();
@@ -120,6 +132,7 @@ public partial class App : Application
         services.AddScoped<IFinancialService, FinancialService>();
         services.AddScoped<ITestCatalogService, TestCatalogService>();
         services.AddScoped<ISampleTrackingService, SampleTrackingService>();
+        services.AddScoped<IAuditService, AuditService>();
 
         services.AddLogging(builder =>
         {
@@ -130,6 +143,7 @@ public partial class App : Application
         services.AddSingleton<IUserSettingsService, JsonUserSettingsService>();
         services.AddSingleton<ICurrentUserSession, CurrentUserSession>();
         services.AddSingleton<INavigationService, NavigationService>();
+        services.AddSingleton<IDialogService, DialogService>();
 
         services.AddTransient<LoginViewModel>();
         services.AddTransient<LoginView>();
@@ -160,6 +174,7 @@ public partial class App : Application
         services.AddTransient<PatientSearchWindow>();
         services.AddTransient<BarcodeDialog>();
         services.AddTransient<ReceiptDialog>();
+        services.AddTransient<TodayPatientsDialogViewModel>();
         services.AddTransient<TodayPatientsDialog>();
 
         services.AddTransient<TestDataManagementViewModel>();
