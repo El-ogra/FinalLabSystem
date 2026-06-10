@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using FinalLabSystem.Data;
@@ -43,6 +44,9 @@ public class RoutineResultService : IRoutineResultService
             .Include(vt => vt.Visit)
             .Where(vt => visitTestIds.Contains(vt.VisitTestId))
             .ToDictionaryAsync(vt => vt.VisitTestId);
+
+        foreach (var result in results)
+            SyncResultNumeric(result);
 
         var componentIds = results
             .Where(r => r.ResultNumeric.HasValue)
@@ -98,13 +102,13 @@ public class RoutineResultService : IRoutineResultService
 
                     var value = result.ResultNumeric.Value;
 
-                    if (matchingRange.HighCritical.HasValue && value > matchingRange.HighCritical.Value)
+                    if (matchingRange.HighCritical.HasValue && value > Convert.ToDecimal(matchingRange.HighCritical.Value))
                         result.ResultStatus = "HIGH_CRITICAL";
-                    else if (matchingRange.LowCritical.HasValue && value < matchingRange.LowCritical.Value)
+                    else if (matchingRange.LowCritical.HasValue && value < Convert.ToDecimal(matchingRange.LowCritical.Value))
                         result.ResultStatus = "LOW_CRITICAL";
-                    else if (matchingRange.HighNormal.HasValue && value > matchingRange.HighNormal.Value)
+                    else if (matchingRange.HighNormal.HasValue && value > Convert.ToDecimal(matchingRange.HighNormal.Value))
                         result.ResultStatus = "HIGH";
-                    else if (matchingRange.LowNormal.HasValue && value < matchingRange.LowNormal.Value)
+                    else if (matchingRange.LowNormal.HasValue && value < Convert.ToDecimal(matchingRange.LowNormal.Value))
                         result.ResultStatus = "LOW";
                     else
                         result.ResultStatus = "NORMAL";
@@ -125,6 +129,23 @@ public class RoutineResultService : IRoutineResultService
         }
 
         await _context.SaveChangesAsync();
+    }
+
+    private static void SyncResultNumeric(TestResult result)
+    {
+        if (!string.IsNullOrWhiteSpace(result.ResultValue)
+            && decimal.TryParse(
+                result.ResultValue,
+                NumberStyles.Any,
+                CultureInfo.InvariantCulture,
+                out var parsed))
+        {
+            result.ResultNumeric = parsed;
+        }
+        else
+        {
+            result.ResultNumeric = null;
+        }
     }
 
     public async Task<List<TestResult>> GetResultsByVisitTestAsync(int visitTestId)

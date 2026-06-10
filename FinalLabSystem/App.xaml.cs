@@ -144,6 +144,7 @@ public partial class App : Application
         services.AddSingleton<ICurrentUserSession, CurrentUserSession>();
         services.AddSingleton<INavigationService, NavigationService>();
         services.AddSingleton<IDialogService, DialogService>();
+        services.AddSingleton<IPrintService, NullPrintService>();
 
         services.AddTransient<LoginViewModel>();
         services.AddTransient<LoginView>();

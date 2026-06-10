@@ -14,7 +14,7 @@ public partial class TestResult
 
     public string? ResultValue { get; set; }
 
-    public double? ResultNumeric { get; set; }
+    public decimal? ResultNumeric { get; set; }
 
     public string? ResultStatus { get; set; }
 

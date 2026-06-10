@@ -1151,6 +1151,9 @@ public partial class FinalLabDbContext : DbContext
                 {
                     tb.HasTrigger("TR_TestResult_AuditInsert");
                     tb.HasTrigger("TR_TestResult_AuditUpdate");
+                    tb.HasCheckConstraint(
+                        "CK_TestResult_NumericSync",
+                        "[result_numeric] IS NULL OR [result_value] IS NOT NULL");
                 });
 
             entity.HasIndex(e => new { e.VisitTestId, e.ComponentId }, "UQ_TestResult").IsUnique();
@@ -1167,7 +1170,9 @@ public partial class FinalLabDbContext : DbContext
                 .HasPrecision(0)
                 .HasColumnName("last_modified_at");
             entity.Property(e => e.LastModifiedBy).HasColumnName("last_modified_by");
-            entity.Property(e => e.ResultNumeric).HasColumnName("result_numeric");
+            entity.Property(e => e.ResultNumeric)
+                .HasColumnType("decimal(18, 4)")
+                .HasColumnName("result_numeric");
             entity.Property(e => e.ResultStatus)
                 .HasMaxLength(15)
                 .HasColumnName("result_status");
