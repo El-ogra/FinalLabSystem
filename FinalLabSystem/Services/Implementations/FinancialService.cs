@@ -6,16 +6,19 @@ using FinalLabSystem.Data;
 using FinalLabSystem.Models;
 using FinalLabSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace FinalLabSystem.Services.Implementations;
 
 public class FinancialService : IFinancialService
 {
     private readonly FinalLabDbContext _context;
+    private readonly ILogger<FinancialService> _logger;
 
-    public FinancialService(FinalLabDbContext context)
+    public FinancialService(FinalLabDbContext context, ILogger<FinancialService> logger)
     {
         _context = context;
+        _logger = logger;
     }
 
     public async Task RecordPatientPaymentAsync(Payment payment)

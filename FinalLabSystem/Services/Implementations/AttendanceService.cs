@@ -6,16 +6,19 @@ using FinalLabSystem.Data;
 using FinalLabSystem.Models;
 using FinalLabSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace FinalLabSystem.Services.Implementations;
 
 public class AttendanceService : IAttendanceService
 {
     private readonly FinalLabDbContext _context;
+    private readonly ILogger<AttendanceService> _logger;
 
-    public AttendanceService(FinalLabDbContext context)
+    public AttendanceService(FinalLabDbContext context, ILogger<AttendanceService> logger)
     {
         _context = context;
+        _logger = logger;
     }
 
     public async Task<List<WorkShift>> GetActiveShiftsAsync()

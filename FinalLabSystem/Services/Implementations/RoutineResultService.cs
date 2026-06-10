@@ -6,16 +6,19 @@ using FinalLabSystem.Data;
 using FinalLabSystem.Models;
 using FinalLabSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace FinalLabSystem.Services.Implementations;
 
 public class RoutineResultService : IRoutineResultService
 {
     private readonly FinalLabDbContext _context;
+    private readonly ILogger<RoutineResultService> _logger;
 
-    public RoutineResultService(FinalLabDbContext context)
+    public RoutineResultService(FinalLabDbContext context, ILogger<RoutineResultService> logger)
     {
         _context = context;
+        _logger = logger;
     }
 
     public async Task SaveNumericOrTextResultsAsync(List<TestResult> results, int patientId, int staffId)

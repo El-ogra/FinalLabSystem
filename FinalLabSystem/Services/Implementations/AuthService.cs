@@ -6,6 +6,7 @@ using FinalLabSystem.Infrastructure.Security;
 using FinalLabSystem.Models;
 using FinalLabSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace FinalLabSystem.Services.Implementations;
 
@@ -17,10 +18,12 @@ public class AuthService : IAuthService
     private const string FullAccessPermissionDescription = "Unrestricted access to every module and operation in the system.";
 
     private readonly FinalLabDbContext _context;
+    private readonly ILogger<AuthService> _logger;
 
-    public AuthService(FinalLabDbContext context)
+    public AuthService(FinalLabDbContext context, ILogger<AuthService> logger)
     {
         _context = context;
+        _logger = logger;
     }
 
     public async Task<Staff?> LoginAsync(string username, string password)

@@ -5,6 +5,7 @@ using FinalLabSystem.Infrastructure.Navigation;
 using FinalLabSystem.Services.Interfaces;
 using FinalLabSystem.Views.Settings;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace FinalLabSystem.ViewModels.Settings;
 
@@ -12,6 +13,7 @@ public sealed class TestDataManagementViewModel : ViewModelBase
 {
     private readonly ITestCatalogService _testCatalogService;
     private readonly INavigationService _navigationService;
+    private readonly ILogger<TestDataManagementViewModel> _logger;
     private bool _isAdding;
     private bool _isEditing;
     private bool _isBrowsing = true;
@@ -22,12 +24,14 @@ public sealed class TestDataManagementViewModel : ViewModelBase
         TestListViewModel testList,
         TestDetailViewModel testDetail,
         ITestCatalogService testCatalogService,
-        INavigationService navigationService)
+        INavigationService navigationService,
+        ILogger<TestDataManagementViewModel> logger)
     {
         TestList = testList;
         TestDetail = testDetail;
         _testCatalogService = testCatalogService;
         _navigationService = navigationService;
+        _logger = logger;
 
         AddCommand = new RelayCommand(_ => Add(), _ => IsBrowsing);
         SaveCommand = new AsyncRelayCommand(SaveAsync, () => (IsAdding || IsEditing) && TestDetail.IsDirty);
@@ -159,25 +163,43 @@ public sealed class TestDataManagementViewModel : ViewModelBase
 
     private async void OnSelectedTestChanged(object? sender, TestRowViewModel? row)
     {
-        if (row is null)
-            return;
+        try
+        {
+            if (row is null)
+                return;
 
-        await TestDetail.LoadAsync(row.TesttypeId, TestList.AllTests.ToList());
+            await TestDetail.LoadAsync(row.TesttypeId, TestList.AllTests.ToList());
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in OnSelectedTestChanged");
+            // TODO F-07: replace MessageBox with IDialogService
+            MessageBox.Show("حدث خطأ أثناء تحميل البيانات.", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 
     private async void OnOpenNormalRangesRequested(object? sender, EventArgs e)
     {
-        if (TestDetail.EditableTest.TesttypeId <= 0)
+        try
         {
-            MessageBox.Show("احفظ التحليل أولاً قبل إدخال القيم الطبيعية.", "تنبيه", MessageBoxButton.OK, MessageBoxImage.Information);
-            return;
+            if (TestDetail.EditableTest.TesttypeId <= 0)
+            {
+                MessageBox.Show("احفظ التحليل أولاً قبل إدخال القيم الطبيعية.", "تنبيه", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var window = App.ServiceProvider.GetRequiredService<NormalRangesWindow>();
+            if (window.DataContext is NormalRangeWindowViewModel vm)
+                await vm.InitializeAsync(TestDetail.EditableTest);
+
+            window.Owner = Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive);
+            window.ShowDialog();
         }
-
-        var window = App.ServiceProvider.GetRequiredService<NormalRangesWindow>();
-        if (window.DataContext is NormalRangeWindowViewModel vm)
-            await vm.InitializeAsync(TestDetail.EditableTest);
-
-        window.Owner = Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive);
-        window.ShowDialog();
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in OnOpenNormalRangesRequested");
+            // TODO F-07: replace MessageBox with IDialogService
+            MessageBox.Show("حدث خطأ أثناء تحميل البيانات.", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 }

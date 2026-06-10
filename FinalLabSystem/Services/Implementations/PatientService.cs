@@ -5,16 +5,19 @@ using FinalLabSystem.Data;
 using FinalLabSystem.Models;
 using FinalLabSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace FinalLabSystem.Services.Implementations;
 
 public class PatientService : IPatientService
 {
     private readonly FinalLabDbContext _context;
+    private readonly ILogger<PatientService> _logger;
 
-    public PatientService(FinalLabDbContext context)
+    public PatientService(FinalLabDbContext context, ILogger<PatientService> logger)
     {
         _context = context;
+        _logger = logger;
     }
 
     public async Task<Patient> RegisterPatientAsync(Patient patient)

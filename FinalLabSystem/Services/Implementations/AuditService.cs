@@ -6,16 +6,19 @@ using FinalLabSystem.Data;
 using FinalLabSystem.Models;
 using FinalLabSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace FinalLabSystem.Services.Implementations;
 
 public class AuditService : IAuditService
 {
     private readonly FinalLabDbContext _context;
+    private readonly ILogger<AuditService> _logger;
 
-    public AuditService(FinalLabDbContext context)
+    public AuditService(FinalLabDbContext context, ILogger<AuditService> logger)
     {
         _context = context;
+        _logger = logger;
     }
 
     public async Task<List<VResultAuditTrail>> GetResultModificationsAsync(int visitTestId)

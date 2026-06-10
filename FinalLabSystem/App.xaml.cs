@@ -11,7 +11,11 @@ using FinalLabSystem.Views;
 using FinalLabSystem.Views.Patients;
 using FinalLabSystem.Views.Settings;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Serilog;
+using System.IO;
 using System.Windows;
 
 namespace FinalLabSystem;
@@ -24,39 +28,90 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
-        var services = new ServiceCollection();
-        ConfigureServices(services);
-        ServiceProvider = services.BuildServiceProvider();
+        Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Information()
+            .WriteTo.File(
+                path: Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs", "finallabsystem.log"),
+                rollingInterval: RollingInterval.Day,
+                retainedFileCountLimit: 30,
+                outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] {SourceContext} {Message:lj}{NewLine}{Exception}")
+            .CreateLogger();
 
-        var navigation = ServiceProvider.GetRequiredService<INavigationService>();
-        navigation.RegisterWindow<PatientRegistrationViewModel, PatientRegistrationWindow>();
-        navigation.RegisterWindow<TestResultsViewModel, TestResultsWindow>();
-        navigation.RegisterWindow<DeliveryViewModel, DeliveryWindow>();
-        navigation.RegisterWindow<PatientSearchViewModel, PatientSearchWindow>();
-        navigation.RegisterWindow<TestDataManagementViewModel, TestDataManagementWindow>();
-        navigation.RegisterWindow<NormalRangeWindowViewModel, NormalRangesWindow>();
-        navigation.RegisterWindow<CategoriesGroupsViewModel, CategoriesGroupsWindow>();
-
-        bool hasAdmin;
-        using (var scope = ServiceProvider.CreateScope())
+        DispatcherUnhandledException += (s, e) =>
         {
-            var auth = scope.ServiceProvider.GetRequiredService<IAuthService>();
-            hasAdmin = await auth.HasAnyAdministratorAsync();
-        }
+            Log.Fatal(e.Exception, "Unhandled dispatcher exception");
+            MessageBox.Show(
+                "حدث خطأ غير متوقع. تم تسجيل التفاصيل في ملف السجل.",
+                "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
+            e.Handled = true;
+        };
 
-        if (hasAdmin)
-            navigation.ShowLogin();
-        else
-            navigation.ShowFirstRunSetup();
+        TaskScheduler.UnobservedTaskException += (s, e) =>
+        {
+            Log.Error(e.Exception, "Unobserved task exception");
+            e.SetObserved();
+        };
+
+        AppDomain.CurrentDomain.UnhandledException += (s, e) =>
+        {
+            Log.Fatal(e.ExceptionObject as Exception, "AppDomain unhandled exception — app will terminate");
+            Log.CloseAndFlush();
+        };
+
+        try
+        {
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
+                .AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: false)
+                .Build();
+
+            var connectionString = configuration.GetConnectionString("DefaultConnection")
+                ?? throw new InvalidOperationException(
+                    "Connection string 'DefaultConnection' not found in configuration. Check appsettings.json.");
+
+            var services = new ServiceCollection();
+            ConfigureServices(services, connectionString);
+            ServiceProvider = services.BuildServiceProvider();
+
+            var navigation = ServiceProvider.GetRequiredService<INavigationService>();
+            navigation.RegisterWindow<PatientRegistrationViewModel, PatientRegistrationWindow>();
+            navigation.RegisterWindow<TestResultsViewModel, TestResultsWindow>();
+            navigation.RegisterWindow<DeliveryViewModel, DeliveryWindow>();
+            navigation.RegisterWindow<PatientSearchViewModel, PatientSearchWindow>();
+            navigation.RegisterWindow<TestDataManagementViewModel, TestDataManagementWindow>();
+            navigation.RegisterWindow<NormalRangeWindowViewModel, NormalRangesWindow>();
+            navigation.RegisterWindow<CategoriesGroupsViewModel, CategoriesGroupsWindow>();
+
+            bool hasAdmin;
+            using (var scope = ServiceProvider.CreateScope())
+            {
+                var auth = scope.ServiceProvider.GetRequiredService<IAuthService>();
+                hasAdmin = await auth.HasAnyAdministratorAsync();
+            }
+
+            if (hasAdmin)
+                navigation.ShowLogin();
+            else
+                navigation.ShowFirstRunSetup();
+        }
+        catch (Exception ex)
+        {
+            Log.Fatal(ex, "Fatal error during application startup");
+            Log.CloseAndFlush();
+            MessageBox.Show(
+                $"فشل تشغيل البرنامج:\n{ex.Message}",
+                "خطأ في التشغيل", MessageBoxButton.OK, MessageBoxImage.Error);
+            Shutdown(1);
+        }
     }
 
-    private static void ConfigureServices(IServiceCollection services)
+    private static void ConfigureServices(IServiceCollection services, string connectionString)
     {
         services.AddDbContext<FinalLabDbContext>(options =>
-            options.UseSqlServer(
-                "Server=.\\SQLEXPRESS;Database=FinalLab;Trusted_Connection=True;TrustServerCertificate=True;"),
-            ServiceLifetime.Transient,
-            ServiceLifetime.Transient);
+            options.UseSqlServer(connectionString),
+            ServiceLifetime.Scoped,
+            ServiceLifetime.Scoped);
 
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IPatientService, PatientService>();
@@ -65,6 +120,12 @@ public partial class App : Application
         services.AddScoped<IFinancialService, FinancialService>();
         services.AddScoped<ITestCatalogService, TestCatalogService>();
         services.AddScoped<ISampleTrackingService, SampleTrackingService>();
+
+        services.AddLogging(builder =>
+        {
+            builder.ClearProviders();
+            builder.AddSerilog(dispose: true);
+        });
 
         services.AddSingleton<IUserSettingsService, JsonUserSettingsService>();
         services.AddSingleton<ICurrentUserSession, CurrentUserSession>();
@@ -115,5 +176,11 @@ public partial class App : Application
         services.AddTransient<TestDataManagementWindow>();
         services.AddTransient<NormalRangesWindow>();
         services.AddTransient<CategoriesGroupsWindow>();
+    }
+
+    protected override void OnExit(ExitEventArgs e)
+    {
+        Log.CloseAndFlush();
+        base.OnExit(e);
     }
 }

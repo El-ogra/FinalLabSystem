@@ -6,16 +6,19 @@ using FinalLabSystem.Data;
 using FinalLabSystem.Models;
 using FinalLabSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace FinalLabSystem.Services.Implementations;
 
 public class ReportingService : IReportingService
 {
     private readonly FinalLabDbContext _context;
+    private readonly ILogger<ReportingService> _logger;
 
-    public ReportingService(FinalLabDbContext context)
+    public ReportingService(FinalLabDbContext context, ILogger<ReportingService> logger)
     {
         _context = context;
+        _logger = logger;
     }
 
     public async Task<List<VPendingTest>> GetPendingWorksheetsAsync()

@@ -3,6 +3,7 @@ using System.Windows.Input;
 using FinalLabSystem.Infrastructure;
 using FinalLabSystem.Infrastructure.Navigation;
 using FinalLabSystem.Services.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace FinalLabSystem.ViewModels.Settings;
 
@@ -10,6 +11,7 @@ public sealed class CategoriesGroupsViewModel : ViewModelBase
 {
     private readonly ITestCatalogService _testCatalogService;
     private readonly INavigationService _navigationService;
+    private readonly ILogger<CategoriesGroupsViewModel> _logger;
 
     public CategoriesGroupsViewModel(
         CategoryListViewModel categoryList,
@@ -17,7 +19,8 @@ public sealed class CategoriesGroupsViewModel : ViewModelBase
         GroupListViewModel groupList,
         GroupDetailViewModel groupDetail,
         ITestCatalogService testCatalogService,
-        INavigationService navigationService)
+        INavigationService navigationService,
+        ILogger<CategoriesGroupsViewModel> logger)
     {
         CategoryList = categoryList;
         CategoryDetail = categoryDetail;
@@ -25,6 +28,7 @@ public sealed class CategoriesGroupsViewModel : ViewModelBase
         GroupDetail = groupDetail;
         _testCatalogService = testCatalogService;
         _navigationService = navigationService;
+        _logger = logger;
 
         NewCategoryCommand = new RelayCommand(_ => NewCategory());
         SaveCategoryCommand = new AsyncRelayCommand(SaveCategoryAsync, () => CategoryDetail.IsDirty && CategoryDetail.Validate());
@@ -166,18 +170,27 @@ public sealed class CategoriesGroupsViewModel : ViewModelBase
 
     private async void OnSelectedCategoryChanged(object? sender, CategoryRowViewModel? row)
     {
-        if (row is null)
+        try
         {
-            CategoryDetail.Clear();
-            GroupList.Clear();
-            GroupDetail.Clear();
-            return;
-        }
+            if (row is null)
+            {
+                CategoryDetail.Clear();
+                GroupList.Clear();
+                GroupDetail.Clear();
+                return;
+            }
 
-        CategoryDetail.Load(row);
-        await GroupList.RefreshAsync(row.CategoryId);
-        GroupDetail.Clear();
-        GroupDetail.LoadAvailableCategories(CategoryList.AllCategories);
+            CategoryDetail.Load(row);
+            await GroupList.RefreshAsync(row.CategoryId);
+            GroupDetail.Clear();
+            GroupDetail.LoadAvailableCategories(CategoryList.AllCategories);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in OnSelectedCategoryChanged");
+            // TODO F-07: replace MessageBox with IDialogService
+            MessageBox.Show("حدث خطأ أثناء تحميل البيانات.", "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 
     private void OnSelectedGroupChanged(object? sender, GroupRowViewModel? row)

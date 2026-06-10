@@ -6,16 +6,19 @@ using FinalLabSystem.Data;
 using FinalLabSystem.Models;
 using FinalLabSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace FinalLabSystem.Services.Implementations;
 
 public class ContractService : IContractService
 {
     private readonly FinalLabDbContext _context;
+    private readonly ILogger<ContractService> _logger;
 
-    public ContractService(FinalLabDbContext context)
+    public ContractService(FinalLabDbContext context, ILogger<ContractService> logger)
     {
         _context = context;
+        _logger = logger;
     }
 
     public async Task<ContractInvoice> GenerateMonthlyCorporateInvoiceAsync(int companyId, DateTime start, DateTime end, int staffId)

@@ -7,16 +7,19 @@ using FinalLabSystem.Models;
 using FinalLabSystem.Models.DTOs;
 using FinalLabSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace FinalLabSystem.Services.Implementations;
 
 public class VisitService : IVisitService
 {
     private readonly FinalLabDbContext _context;
+    private readonly ILogger<VisitService> _logger;
 
-    public VisitService(FinalLabDbContext context)
+    public VisitService(FinalLabDbContext context, ILogger<VisitService> logger)
     {
         _context = context;
+        _logger = logger;
     }
 
     public async Task<Visit> CreateVisitAsync(Visit visit, List<int> testIds, List<int> profileIds, List<VisitCharge> charges)

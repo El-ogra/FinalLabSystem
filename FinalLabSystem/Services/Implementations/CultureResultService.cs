@@ -5,16 +5,19 @@ using FinalLabSystem.Data;
 using FinalLabSystem.Models;
 using FinalLabSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace FinalLabSystem.Services.Implementations;
 
 public class CultureResultService : ICultureResultService
 {
     private readonly FinalLabDbContext _context;
+    private readonly ILogger<CultureResultService> _logger;
 
-    public CultureResultService(FinalLabDbContext context)
+    public CultureResultService(FinalLabDbContext context, ILogger<CultureResultService> logger)
     {
         _context = context;
+        _logger = logger;
     }
 
     public async Task<List<AntibioticCatalog>> GetSafeAntibioticsAsync(bool isPregnant, bool isChild)

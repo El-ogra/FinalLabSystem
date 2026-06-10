@@ -6,16 +6,19 @@ using FinalLabSystem.Data;
 using FinalLabSystem.Models;
 using FinalLabSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace FinalLabSystem.Services.Implementations;
 
 public class SampleTrackingService : ISampleTrackingService
 {
     private readonly FinalLabDbContext _context;
+    private readonly ILogger<SampleTrackingService> _logger;
 
-    public SampleTrackingService(FinalLabDbContext context)
+    public SampleTrackingService(FinalLabDbContext context, ILogger<SampleTrackingService> logger)
     {
         _context = context;
+        _logger = logger;
     }
 
     public async Task<List<SampleTube>> GenerateBarcodesForVisitAsync(int visitId, int staffId)

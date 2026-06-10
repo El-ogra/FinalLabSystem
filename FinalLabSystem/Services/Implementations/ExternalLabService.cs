@@ -6,16 +6,19 @@ using FinalLabSystem.Data;
 using FinalLabSystem.Models;
 using FinalLabSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace FinalLabSystem.Services.Implementations;
 
 public class ExternalLabService : IExternalLabService
 {
     private readonly FinalLabDbContext _context;
+    private readonly ILogger<ExternalLabService> _logger;
 
-    public ExternalLabService(FinalLabDbContext context)
+    public ExternalLabService(FinalLabDbContext context, ILogger<ExternalLabService> logger)
     {
         _context = context;
+        _logger = logger;
     }
 
     public async Task<ExternalShipment> CreateOutsourceManifestAsync(int externalLabId, List<int> visitTestIds, int staffId)

@@ -2,6 +2,7 @@ using FinalLabSystem.Data;
 using FinalLabSystem.Models;
 using FinalLabSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,10 +12,12 @@ namespace FinalLabSystem.Services.Implementations;
 public class SettingsService : ISettingsService
 {
     private readonly FinalLabDbContext _context;
+    private readonly ILogger<SettingsService> _logger;
 
-    public SettingsService(FinalLabDbContext context)
+    public SettingsService(FinalLabDbContext context, ILogger<SettingsService> logger)
     {
         _context = context;
+        _logger = logger;
     }
 
     public async Task<string?> GetSettingValueAsync(string key)

@@ -6,6 +6,7 @@ using FinalLabSystem.Data;
 using FinalLabSystem.Models;
 using FinalLabSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace FinalLabSystem.Services.Implementations;
 
@@ -15,10 +16,12 @@ public class TestCatalogService : ITestCatalogService
     private const string LabToLabSchemeName = "Lab-to-Lab Price";
 
     private readonly FinalLabDbContext _context;
+    private readonly ILogger<TestCatalogService> _logger;
 
-    public TestCatalogService(FinalLabDbContext context)
+    public TestCatalogService(FinalLabDbContext context, ILogger<TestCatalogService> logger)
     {
         _context = context;
+        _logger = logger;
     }
 
     public async Task<List<TestCategory>> GetFullHierarchyAsync()
