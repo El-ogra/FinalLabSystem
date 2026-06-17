@@ -24,7 +24,7 @@
                         <Border BorderBrush="#333" BorderThickness="1" Margin="6"
                                 Width="300" Padding="8">
                             <Border.InputBindings>
-                                <MouseBinding Gesture="MouseDoubleClick"
+                                <MouseBinding MouseAction="LeftDoubleClick"
                                               Command="{Binding DataContext.PrintBarcodeCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                               CommandParameter="{Binding}"/>
                             </Border.InputBindings>

@@ -116,6 +116,7 @@ public class VisitService : IVisitService
         List<PatientMedicalHistory> medicalHistories,
         ReferralSource? referralToSave)
     {
+        _context.ChangeTracker.Clear();
         using var transaction = await _context.Database.BeginTransactionAsync();
 
         try
@@ -169,13 +170,9 @@ public class VisitService : IVisitService
             {
                 _context.Visits.Update(visit);
                 await _context.SaveChangesAsync();
-                await UpdateVisitTestsInternalAsync(visit.VisitId, uniqueTestIds);
             }
 
-            if (visit.VisitId != 0)
-            {
-                await UpdateVisitTestsInternalAsync(visit.VisitId, uniqueTestIds);
-            }
+            await UpdateVisitTestsInternalAsync(visit.VisitId, uniqueTestIds);
 
             var oldHistory = await _context.PatientMedicalHistories
                 .Where(h => h.PatientId == patient.PatientId)
@@ -215,9 +212,21 @@ public class VisitService : IVisitService
 
             return (await GetVisitSummaryAsync(visit.VisitId))!;
         }
-        catch
+        catch (Exception originalEx)
         {
-            await transaction.RollbackAsync();
+            _logger.LogError(originalEx, "Error occurred while saving patient visit");
+            try
+            {
+                await transaction.RollbackAsync();
+            }
+            catch (Exception rollbackEx)
+            {
+                _logger.LogWarning(rollbackEx, "Rollback failed (original error will be re-thrown)");
+            }
+            finally
+            {
+                _context.ChangeTracker.Clear();
+            }
             throw;
         }
     }

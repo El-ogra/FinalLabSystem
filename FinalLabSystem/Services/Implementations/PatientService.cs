@@ -77,6 +77,7 @@ public class PatientService : IPatientService
     {
         var todayPrefix = $"P{DateTime.UtcNow:yyyyMMdd}";
         var lastCode = await _context.Patients
+            .AsNoTracking()
             .Where(p => p.PatientCode.StartsWith(todayPrefix))
             .OrderByDescending(p => p.PatientCode)
             .Select(p => p.PatientCode)
@@ -96,7 +97,7 @@ public class PatientService : IPatientService
             candidate = $"{todayPrefix}{next:0000}";
             next++;
         }
-        while (await _context.Patients.AnyAsync(p => p.PatientCode == candidate));
+        while (await _context.Patients.AsNoTracking().AnyAsync(p => p.PatientCode == candidate));
 
         return candidate;
     }
