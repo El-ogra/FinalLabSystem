@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using FinalLabSystem.Infrastructure.Barcoding;
 using FinalLabSystem.ViewModels.Patients;
 using FinalLabSystem.Services.Interfaces;
 using ZXing;
@@ -13,10 +14,16 @@ namespace FinalLabSystem.Services.Implementations;
 
 public sealed class WpfLabelPrintService : ILabelPrintService
 {
-    private static readonly double PageWidth = 38.0 * 96.0 / 25.4;
-    private static readonly double PageHeight = 25.0 * 96.0 / 25.4;
+    private static readonly double PageWidth = BarcodeFormatOptions.LabelWidthMm * BarcodeFormatOptions.DotsPerInch / BarcodeFormatOptions.MmPerInch;
+    private static readonly double PageHeight = BarcodeFormatOptions.LabelHeightMm * BarcodeFormatOptions.DotsPerInch / BarcodeFormatOptions.MmPerInch;
     private static readonly int BarcodeWidth = (int)(PageWidth - 14);
     private const int BarcodeHeight = 28;
+
+    /// <summary>
+    /// Set by a future settings module to skip the dialog and send directly to a configured printer.
+    /// When null (default), the standard PrintDialog is shown so the user can pick a printer.
+    /// </summary>
+    public string? PreferredPrinterName { get; set; }
 
     public Task PrintLabelsAsync(IEnumerable<BarcodeLabel> labels)
     {
