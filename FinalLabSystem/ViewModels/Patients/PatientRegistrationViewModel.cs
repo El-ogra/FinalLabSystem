@@ -77,6 +77,7 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
         {
             await PatientInfo.InitializeAsync();
             await Referral.InitializeAsync();
+            await TestSelection.InitializeAsync();
             await AddNewAsync();
         }
         catch
