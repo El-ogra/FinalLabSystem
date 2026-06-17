@@ -238,14 +238,14 @@ public sealed class NormalRangeDetailViewModel : ViewModelBase
 
     public bool IsFastingAny
     {
-        get => FastingState == "Any";
-        set { if (value) FastingState = "Any"; }
+        get => FastingState == "A";
+        set { if (value) FastingState = "A"; }
     }
 
     public bool IsFasting
     {
-        get => FastingState == "Fasting";
-        set { if (value) FastingState = "Fasting"; }
+        get => FastingState == "F";
+        set { if (value) FastingState = "F"; }
     }
 
     public ICommand SaveCommand => _saveCommand ??= new RelayCommand(async _ => await SaveAsync(), _ => IsDirty);
@@ -372,7 +372,7 @@ public sealed class NormalRangeDetailViewModel : ViewModelBase
         return new NormalRange
         {
             Sex = "Both",
-            FastingState = "Any",
+            FastingState = "A",
             AgeFromDays = 0,
             AgeToDays = 36500,
             AgeUnit = "Days"

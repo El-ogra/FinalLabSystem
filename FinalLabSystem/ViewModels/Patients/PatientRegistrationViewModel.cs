@@ -78,7 +78,7 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
             await PatientInfo.InitializeAsync();
             await Referral.InitializeAsync();
             await TestSelection.InitializeAsync();
-            await AddNewAsync();
+            await ClearFormAsync();
         }
         catch
         {
@@ -171,7 +171,7 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
 
     public ICommand LoadTodayPatientsCommand { get; }
 
-    private async Task AddNewAsync()
+    private async Task ClearFormAsync()
     {
         CurrentPatientId = 0;
         CurrentVisitId = 0;
@@ -185,6 +185,11 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
         Financial.ClearAllFields();
         await PatientInfo.GenerateCodeAsync();
         HasUnsavedChanges = false;
+    }
+
+    private async Task AddNewAsync()
+    {
+        await ClearFormAsync();
         IsFormUnlocked = true;
     }
 
@@ -203,70 +208,77 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
             return;
         }
 
-        var patient = PatientInfo.ToPatient();
-        patient.PatientId = CurrentPatientId;
-        var staffId = _currentUserSession.CurrentUser?.StaffId ?? 1;
-        patient.CreatedBy = staffId;
-
-        var visit = new Visit
+        try
         {
-            VisitId = CurrentVisitId,
-            VisitCode = PatientInfo.PatientCode,
-            PatientId = CurrentPatientId,
-            VisitDate = EntryDate,
-            ExpectedReady = ExpectedReady,
-            IsPregnant = MedicalHistory.IsPregnant,
-            IsFasting = MedicalHistory.IsFasting,
-            FastingHours = MedicalHistory.FastingHours,
-            TakenOutsideLab = MedicalHistory.TakenOutsideLab,
-            OutsideUrine = MedicalHistory.OutsideUrine,
-            OutsideStool = MedicalHistory.OutsideStool,
-            OutsideBlood = MedicalHistory.OutsideBlood,
-            OutsideSemen = MedicalHistory.OutsideSemen,
-            OutsideCsf = MedicalHistory.OutsideCsf,
-            HasDiabetes = MedicalHistory.HasDiabetes,
-            HasAnemia = MedicalHistory.HasAnemia,
-            HasBleedingDisorder = MedicalHistory.HasBleedingDisorder,
-            HasThyroid = MedicalHistory.HasThyroid,
-            HasJointDisease = MedicalHistory.HasJointDisease,
-            HasViralInfection = MedicalHistory.HasViralInfection,
-            OnAnticoagulant = MedicalHistory.OnAnticoagulant,
-            HasHypertension = MedicalHistory.HasHypertension,
-            HasLiverDisease = MedicalHistory.HasLiverDisease,
-            HasKidneyDisease = MedicalHistory.HasKidneyDisease,
-            HasLupus = MedicalHistory.HasLupus,
-            HadXrayContrast = MedicalHistory.HadXrayContrast,
-            ReferralId = Referral.SelectedReferral?.ReferralId,
-            Subtotal = Financial.Subtotal,
-            DiscountAmount = Financial.DiscountAmount,
-            DiscountPercent = Financial.DiscountPercent,
-            TotalAfterDiscount = Financial.TotalAfterDiscount,
-            TotalPaid = Financial.AmountPaid,
-            BalanceDue = Financial.BalanceDue,
-            PaymentStatus = Financial.BalanceDue <= 0 ? PaymentStatus.Paid : Financial.AmountPaid > 0 ? PaymentStatus.PartiallyPaid : PaymentStatus.Pending,
-            VisitStatus = VisitStatus.Open,
-            ReceptionistId = staffId,
-            Notes = MedicalHistory.VisitNotes,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
-        };
+            var patient = PatientInfo.ToPatient();
+            patient.PatientId = CurrentPatientId;
+            var staffId = _currentUserSession.CurrentUser?.StaffId ?? 1;
+            patient.CreatedBy = staffId;
 
-        var referralToSave = Referral.ShouldSaveReferral ? Referral.ToReferralSource() : null;
-        var savedVisit = await _visitService.SavePatientVisitAsync(
-            patient,
-            visit,
-            selectedTestIds,
-            Financial.AmountPaid,
-            staffId,
-            MedicalHistory.ToMedicalHistoryList(),
-            referralToSave);
+            var visit = new Visit
+            {
+                VisitId = CurrentVisitId,
+                VisitCode = PatientInfo.PatientCode,
+                PatientId = CurrentPatientId,
+                VisitDate = EntryDate,
+                ExpectedReady = ExpectedReady,
+                IsPregnant = MedicalHistory.IsPregnant,
+                IsFasting = MedicalHistory.IsFasting,
+                FastingHours = MedicalHistory.FastingHours,
+                TakenOutsideLab = MedicalHistory.TakenOutsideLab,
+                OutsideUrine = MedicalHistory.OutsideUrine,
+                OutsideStool = MedicalHistory.OutsideStool,
+                OutsideBlood = MedicalHistory.OutsideBlood,
+                OutsideSemen = MedicalHistory.OutsideSemen,
+                OutsideCsf = MedicalHistory.OutsideCsf,
+                HasDiabetes = MedicalHistory.HasDiabetes,
+                HasAnemia = MedicalHistory.HasAnemia,
+                HasBleedingDisorder = MedicalHistory.HasBleedingDisorder,
+                HasThyroid = MedicalHistory.HasThyroid,
+                HasJointDisease = MedicalHistory.HasJointDisease,
+                HasViralInfection = MedicalHistory.HasViralInfection,
+                OnAnticoagulant = MedicalHistory.OnAnticoagulant,
+                HasHypertension = MedicalHistory.HasHypertension,
+                HasLiverDisease = MedicalHistory.HasLiverDisease,
+                HasKidneyDisease = MedicalHistory.HasKidneyDisease,
+                HasLupus = MedicalHistory.HasLupus,
+                HadXrayContrast = MedicalHistory.HadXrayContrast,
+                ReferralId = Referral.SelectedReferral?.ReferralId,
+                Subtotal = Financial.Subtotal,
+                DiscountAmount = Financial.DiscountAmount,
+                DiscountPercent = Financial.DiscountPercent,
+                TotalAfterDiscount = Financial.TotalAfterDiscount,
+                TotalPaid = Financial.AmountPaid,
+                BalanceDue = Financial.BalanceDue,
+                PaymentStatus = Financial.BalanceDue <= 0 ? PaymentStatus.Paid : Financial.AmountPaid > 0 ? PaymentStatus.PartiallyPaid : PaymentStatus.Pending,
+                VisitStatus = VisitStatus.Open,
+                ReceptionistId = staffId,
+                Notes = MedicalHistory.VisitNotes,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
 
-        CurrentPatientId = savedVisit.PatientId;
-        CurrentVisitId = savedVisit.VisitId;
-        Financial.SetCurrentVisitId(savedVisit.VisitId);
-        IsEditMode = true;
-        HasUnsavedChanges = false;
-        _dialogService.ShowMessage("تم حفظ بيانات المريض والزيارة.", "حفظ");
+            var referralToSave = Referral.ShouldSaveReferral ? Referral.ToReferralSource() : null;
+            var savedVisit = await _visitService.SavePatientVisitAsync(
+                patient,
+                visit,
+                selectedTestIds,
+                Financial.AmountPaid,
+                staffId,
+                MedicalHistory.ToMedicalHistoryList(),
+                referralToSave);
+
+            CurrentPatientId = savedVisit.PatientId;
+            CurrentVisitId = savedVisit.VisitId;
+            Financial.SetCurrentVisitId(savedVisit.VisitId);
+            IsEditMode = true;
+            HasUnsavedChanges = false;
+            _dialogService.ShowMessage("تم حفظ بيانات المريض والزيارة.", "حفظ");
+        }
+        catch (Exception ex)
+        {
+            _dialogService.ShowError(ex.Message);
+        }
     }
 
     private async Task EditAsync()

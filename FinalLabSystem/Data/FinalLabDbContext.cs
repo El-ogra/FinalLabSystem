@@ -61,7 +61,13 @@ public partial class FinalLabDbContext : DbContext
                 {
                     TableName = tableName,
                     RecordId = recordId,
-                    Action = entry.State.ToString(),
+                    Action = entry.State switch
+                    {
+                        EntityState.Added => "A",
+                        EntityState.Modified => "M",
+                        EntityState.Deleted => "D",
+                        _ => "U"
+                    },
                     FieldName = property.Metadata.Name,
                     OldValue = entry.State == EntityState.Added ? null : property.OriginalValue?.ToString(),
                     NewValue = property.CurrentValue?.ToString(),

@@ -140,7 +140,7 @@ public sealed class NormalRangeListViewModel : ViewModelBase
         {
             ComponentId = SelectedComponent.ComponentId,
             Sex = "Both",
-            FastingState = "Any",
+            FastingState = "A",
             AgeFromDays = 0,
             AgeToDays = 36500
         };
