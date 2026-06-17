@@ -30,22 +30,33 @@ public class SampleTrackingService : ISampleTrackingService
 
         var visitTests = await _context.VisitTests
             .Include(vt => vt.Testtype)
+                .ThenInclude(tt => tt.TestTypeSampleTubes)
+            .Include(vt => vt.Testtype)
+                .ThenInclude(tt => tt.CollectionType)
+            .Include(vt => vt.Visit)
+                .ThenInclude(v => v.Patient)
             .Where(vt => vt.VisitId == visitId)
             .ToListAsync();
 
+        if (visitTests.Count == 0)
+            return new List<SampleTube>();
+
+        var patientCode = visitTests[0].Visit.Patient.PatientCode;
+
         var groups = visitTests
-            .GroupBy(vt => new { vt.Testtype.DefaultTubeType, vt.Testtype.DefaultTubeColor });
+            .GroupBy(vt => TubeResolver.ResolvePrimaryTubeIdentity(vt.Testtype));
 
         var tubes = new List<SampleTube>();
+        var ordinal = 1;
 
         foreach (var group in groups)
         {
             var tube = new SampleTube
             {
                 VisitId = visitId,
-                TubeType = group.Key.DefaultTubeType!,
-                TubeColor = group.Key.DefaultTubeColor,
-                BarcodeValue = $"TUBE-{visitId}-{Guid.NewGuid():N}",
+                TubeType = group.Key,
+                TubeColor = null,
+                BarcodeValue = $"{patientCode}-{ordinal:D2}",
                 PrintedAt = DateTime.UtcNow,
                 PrintedBy = staffId
             };
@@ -58,6 +69,7 @@ public class SampleTrackingService : ISampleTrackingService
             }
 
             tubes.Add(tube);
+            ordinal++;
         }
 
         await _context.SaveChangesAsync();

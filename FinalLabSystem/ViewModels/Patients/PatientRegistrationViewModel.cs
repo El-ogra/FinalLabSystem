@@ -25,6 +25,7 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
     private int _currentVisitId;
     private bool _isEditMode;
     private bool _hasUnsavedChanges;
+    private bool _isFormUnlocked;
     private DateTime _entryDate = DateTime.Now;
     private DateTime? _expectedReady = DateTime.Now.AddDays(1);
 
@@ -127,6 +128,12 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
         set => SetProperty(ref _hasUnsavedChanges, value);
     }
 
+    public bool IsFormUnlocked
+    {
+        get => _isFormUnlocked;
+        private set => SetProperty(ref _isFormUnlocked, value);
+    }
+
     public DateTime EntryDate
     {
         get => _entryDate;
@@ -177,6 +184,7 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
         Financial.ClearAllFields();
         await PatientInfo.GenerateCodeAsync();
         HasUnsavedChanges = false;
+        IsFormUnlocked = true;
     }
 
     private async Task SaveAsync()
@@ -286,6 +294,7 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
         Financial.LoadFromDto(dto);
         IsEditMode = true;
         HasUnsavedChanges = false;
+        IsFormUnlocked = true;
     }
 
     private async Task DeleteAsync()

@@ -145,6 +145,7 @@ public partial class App : Application
         services.AddSingleton<INavigationService, NavigationService>();
         services.AddSingleton<IDialogService, DialogService>();
         services.AddSingleton<IPrintService, NullPrintService>();
+        services.AddSingleton<ILabelPrintService, WpfLabelPrintService>();
 
         services.AddTransient<LoginViewModel>();
         services.AddTransient<LoginView>();

@@ -1,8 +1,4 @@
 using System.Collections.ObjectModel;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Input;
 using FinalLabSystem.Infrastructure;
 using FinalLabSystem.Models;
@@ -13,18 +9,20 @@ namespace FinalLabSystem.ViewModels.Patients;
 public sealed class BarcodeDialogViewModel : ViewModelBase
 {
     private readonly ISampleTrackingService _sampleTrackingService;
+    private readonly ILabelPrintService _labelPrintService;
     private int _visitId;
-    private SampleTube? _selectedTube;
+    private BarcodeLabel? _selectedLabel;
 
-    public BarcodeDialogViewModel(ISampleTrackingService sampleTrackingService)
+    public BarcodeDialogViewModel(ISampleTrackingService sampleTrackingService, ILabelPrintService labelPrintService)
     {
         _sampleTrackingService = sampleTrackingService;
-        Tubes = new ObservableCollection<SampleTube>();
-        PrintBarcodeCommand = new RelayCommand(parameter => PrintTube(parameter as SampleTube ?? SelectedTube));
-        PrintAllCommand = new RelayCommand(_ => PrintAll());
+        _labelPrintService = labelPrintService;
+        Labels = new ObservableCollection<BarcodeLabel>();
+        PrintBarcodeCommand = new AsyncRelayCommand<BarcodeLabel>(parameter => PrintLabelAsync(parameter));
+        PrintAllCommand = new AsyncRelayCommand(_ => PrintAllAsync());
     }
 
-    public ObservableCollection<SampleTube> Tubes { get; }
+    public ObservableCollection<BarcodeLabel> Labels { get; }
 
     public int VisitId
     {
@@ -32,10 +30,10 @@ public sealed class BarcodeDialogViewModel : ViewModelBase
         private set => SetProperty(ref _visitId, value);
     }
 
-    public SampleTube? SelectedTube
+    public BarcodeLabel? SelectedLabel
     {
-        get => _selectedTube;
-        set => SetProperty(ref _selectedTube, value);
+        get => _selectedLabel;
+        set => SetProperty(ref _selectedLabel, value);
     }
 
     public ICommand PrintBarcodeCommand { get; }
@@ -46,81 +44,81 @@ public sealed class BarcodeDialogViewModel : ViewModelBase
     {
         VisitId = visitId;
         var tubes = await _sampleTrackingService.GetTubesForVisitAsync(visitId);
-        Tubes.Clear();
+        Labels.Clear();
         foreach (var tube in tubes)
-            Tubes.Add(tube);
+            Labels.Add(ProjectLabel(tube));
     }
 
-    private static void PrintTube(SampleTube? tube)
+    private async Task PrintLabelAsync(BarcodeLabel? label)
     {
-        if (tube is null)
+        if (label is null)
             return;
 
-        PrintTubes(new[] { tube }, "Lab barcode");
+        await _labelPrintService.PrintLabelsAsync(new[] { label });
     }
 
-    private void PrintAll()
+    private async Task PrintAllAsync()
     {
-        if (Tubes.Count == 0)
+        if (Labels.Count == 0)
             return;
 
-        PrintTubes(Tubes, "Lab barcodes");
+        await _labelPrintService.PrintLabelsAsync(Labels);
     }
 
-    private static void PrintTubes(IEnumerable<SampleTube> tubes, string jobName)
+    private static BarcodeLabel ProjectLabel(SampleTube tube)
     {
-        var document = new FlowDocument
+        var patient = tube.Visit?.Patient;
+        var sexLine = (patient?.Sex) switch
         {
-            FlowDirection = FlowDirection.LeftToRight,
-            FontFamily = new System.Windows.Media.FontFamily("Consolas"),
-            FontSize = 12,
-            PagePadding = new Thickness(24)
+            "M" => "Male",
+            "F" => "Female",
+            _ => ""
         };
 
-        foreach (var tube in tubes)
+        if (patient is not null && patient.ApproxAge.HasValue && !string.IsNullOrWhiteSpace(patient.ApproxAgeUnit))
         {
-            var sampleType = string.Join(", ", tube.VisitTests
-                .Select(vt => vt.Testtype.SampleType)
-                .Where(sample => !string.IsNullOrWhiteSpace(sample))
-                .Distinct());
-
-            var patientCode = tube.Visit?.Patient?.PatientCode ?? string.Empty;
-            var patientName = tube.Visit?.Patient?.FullNameAr ?? string.Empty;
-            var visitDate = tube.Visit?.VisitDate.ToString("yyyy-MM-dd HH:mm") ?? string.Empty;
-
-            var block = new Paragraph
-            {
-                BorderBrush = System.Windows.Media.Brushes.Black,
-                BorderThickness = new Thickness(1),
-                Padding = new Thickness(8),
-                Margin = new Thickness(0, 0, 0, 10)
-            };
-            block.Inlines.Add(new Run($"{patientCode} - {patientName}") { FontWeight = FontWeights.Bold });
-            block.Inlines.Add(new LineBreak());
-            block.Inlines.Add(new Run(tube.BarcodeValue) { FontSize = 18, FontWeight = FontWeights.Bold });
-            block.Inlines.Add(new LineBreak());
-            block.Inlines.Add(new Run($"{tube.TubeType} - {sampleType}"));
-            block.Inlines.Add(new LineBreak());
-            block.Inlines.Add(new Run(visitDate));
-            document.Blocks.Add(block);
+            if (sexLine.Length > 0)
+                sexLine += " - ";
+            sexLine += $"{patient.ApproxAge} {patient.ApproxAgeUnit}";
         }
 
-        var printDialog = new PrintDialog();
-        if (printDialog.ShowDialog() == true)
-            printDialog.PrintDocument(((IDocumentPaginatorSource)document).DocumentPaginator, jobName);
+        var testCodes = string.Join(", ", tube.VisitTests
+            .Select(vt => ResolveAbbreviation(vt.Testtype))
+            .Where(c => !string.IsNullOrWhiteSpace(c)));
+
+        var patientCode = patient?.PatientCode ?? string.Empty;
+        var tubeName = tube.TubeType;
+
+        return new BarcodeLabel
+        (
+            patient?.FullNameAr ?? string.Empty,
+            sexLine,
+            testCodes,
+            tube.BarcodeValue,
+            patientCode,
+            tubeName,
+            tube
+        );
     }
 
-    private static string BuildZplStub(SampleTube tube)
+    private static string ResolveAbbreviation(TestType test)
     {
-        var patientCode = tube.Visit?.Patient?.PatientCode ?? string.Empty;
-        var patientName = tube.Visit?.Patient?.FullNameAr ?? string.Empty;
-        var builder = new StringBuilder();
-        builder.AppendLine("^XA");
-        builder.AppendLine("^FO30,20^A0N,25,25^FD" + patientCode + "^FS");
-        builder.AppendLine("^FO30,50^A0N,20,20^FD" + patientName + "^FS");
-        builder.AppendLine("^FO30,80^BCN,60,Y,N,N^FD" + tube.BarcodeValue + "^FS");
-        builder.AppendLine("^FO30,160^A0N,20,20^FD" + tube.TubeType + "^FS");
-        builder.AppendLine("^XZ");
-        return builder.ToString();
+        if (!string.IsNullOrWhiteSpace(test.TypeCode))
+            return test.TypeCode;
+        if (!string.IsNullOrWhiteSpace(test.TypeAbbrev))
+            return test.TypeAbbrev;
+        if (!string.IsNullOrWhiteSpace(test.TypeNameEn))
+            return test.TypeNameEn;
+        return string.Empty;
     }
 }
+
+public sealed record BarcodeLabel(
+    string PatientNameAr,
+    string SexAgeLine,
+    string TestCodesLine,
+    string BarcodePayload,
+    string PatientIdentifierLine,
+    string TubeName,
+    SampleTube SourceTube
+);
