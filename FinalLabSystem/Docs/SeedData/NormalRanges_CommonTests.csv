@@ -1,0 +1,534 @@
+﻿category_code,category_name_en,group_code,group_name_en,type_code,type_name_en,component_code,component_name_en,unit,result_type,sex,age_from_days,age_to_days,age_from_value,age_to_value,age_unit,low_normal,high_normal,normal_range_text,range_note,status
+CHEM,Clinical Chemistry,ELEC,Electrolytes,NAS,"Sodium, Serum",NAS,"Sodium, Serum",,NUMERIC,B,0,364,0,1,year,,,not established,Not established (per Mayo),OK
+CHEM,Clinical Chemistry,ELEC,Electrolytes,NAS,"Sodium, Serum",NAS,"Sodium, Serum",mmol/L,NUMERIC,B,365,36500,1,,year,135.0,145.0,135-145 mmol/L,,OK
+CHEM,Clinical Chemistry,ELEC,Electrolytes,KS,"Potassium, Serum",KS,"Potassium, Serum",,NUMERIC,B,0,364,0,1,year,,,not established,Not established (per Mayo),OK
+CHEM,Clinical Chemistry,ELEC,Electrolytes,KS,"Potassium, Serum",KS,"Potassium, Serum",mmol/L,NUMERIC,B,365,36500,1,,year,3.6,5.2,3.6-5.2 mmol/L,,OK
+CHEM,Clinical Chemistry,ELEC,Electrolytes,CL,"Chloride, Serum",CL,"Chloride, Serum",mmol/L,NUMERIC,B,365,6205,1,17,year,102.0,112.0,102-112 mmol/L,,OK
+CHEM,Clinical Chemistry,ELEC,Electrolytes,CL,"Chloride, Serum",CL,"Chloride, Serum",mmol/L,NUMERIC,B,6570,36500,18,,year,98.0,107.0,98-107 mmol/L,,OK
+CHEM,Clinical Chemistry,ELEC,Electrolytes,HCO3,"Bicarbonate, Serum",HCO3,"Bicarbonate, Serum",mmol/L,NUMERIC,M,360,720,12,24,month,17.0,25.0,17-25 mmol/L,,OK
+CHEM,Clinical Chemistry,ELEC,Electrolytes,HCO3,"Bicarbonate, Serum",HCO3,"Bicarbonate, Serum",mmol/L,NUMERIC,M,1460,1825,4,5,year,19.0,27.0,19-27 mmol/L,,OK
+CHEM,Clinical Chemistry,ELEC,Electrolytes,HCO3,"Bicarbonate, Serum",HCO3,"Bicarbonate, Serum",mmol/L,NUMERIC,M,2190,2555,6,7,year,20.0,28.0,20-28 mmol/L,,OK
+CHEM,Clinical Chemistry,ELEC,Electrolytes,HCO3,"Bicarbonate, Serum",HCO3,"Bicarbonate, Serum",mmol/L,NUMERIC,M,2920,6205,8,17,year,21.0,29.0,21-29 mmol/L,,OK
+CHEM,Clinical Chemistry,ELEC,Electrolytes,HCO3,"Bicarbonate, Serum",HCO3,"Bicarbonate, Serum",mmol/L,NUMERIC,M,6570,36500,18,,year,22.0,29.0,22-29 mmol/L,,OK
+CHEM,Clinical Chemistry,ELEC,Electrolytes,HCO3,"Bicarbonate, Serum",HCO3,"Bicarbonate, Serum",mmol/L,NUMERIC,F,365,1095,1,3,year,18.0,25.0,18-25 mmol/L,,OK
+CHEM,Clinical Chemistry,ELEC,Electrolytes,HCO3,"Bicarbonate, Serum",HCO3,"Bicarbonate, Serum",mmol/L,NUMERIC,F,1460,1825,4,5,year,19.0,26.0,19-26 mmol/L,,OK
+CHEM,Clinical Chemistry,ELEC,Electrolytes,HCO3,"Bicarbonate, Serum",HCO3,"Bicarbonate, Serum",mmol/L,NUMERIC,F,2190,2555,6,7,year,20.0,27.0,20-27 mmol/L,,OK
+CHEM,Clinical Chemistry,ELEC,Electrolytes,HCO3,"Bicarbonate, Serum",HCO3,"Bicarbonate, Serum",mmol/L,NUMERIC,F,2920,3285,8,9,year,21.0,28.0,21-28 mmol/L,,OK
+CHEM,Clinical Chemistry,ELEC,Electrolytes,HCO3,"Bicarbonate, Serum",HCO3,"Bicarbonate, Serum",mmol/L,NUMERIC,F,3650,36500,10,,year,22.0,29.0,22-29 mmol/L,,OK
+CHEM,Clinical Chemistry,ELEC,Electrolytes,CA,"Calcium, Total, Serum",CA,"Calcium, Total, Serum",mg/dL,NUMERIC,B,0,364,0,1,year,8.7,11.0,8.7-11.0 mg/dL,,OK
+CHEM,Clinical Chemistry,ELEC,Electrolytes,CA,"Calcium, Total, Serum",CA,"Calcium, Total, Serum",mg/dL,NUMERIC,B,365,6205,1,17,year,9.3,10.6,9.3-10.6 mg/dL,,OK
+CHEM,Clinical Chemistry,ELEC,Electrolytes,CA,"Calcium, Total, Serum",CA,"Calcium, Total, Serum",mg/dL,NUMERIC,B,6570,21535,18,59,year,8.6,10.0,8.6-10.0 mg/dL,,OK
+CHEM,Clinical Chemistry,ELEC,Electrolytes,CA,"Calcium, Total, Serum",CA,"Calcium, Total, Serum",mg/dL,NUMERIC,B,21900,36500,60,,year,8.8,10.2,8.8-10.2 mg/dL,,OK
+CHEM,Clinical Chemistry,ELEC,Electrolytes,CAI,"Calcium, Ionized, Serum",CAI,"Calcium, Ionized, Serum",mg/dL,NUMERIC,B,1095,8395,3,23,year,4.83,5.52,4.83-5.52 mg/dL,,OK
+CHEM,Clinical Chemistry,ELEC,Electrolytes,CAI,"Calcium, Ionized, Serum",CAI,"Calcium, Ionized, Serum",mg/dL,NUMERIC,B,8760,35405,24,97,year,4.57,5.43,4.57-5.43 mg/dL,,OK
+CHEM,Clinical Chemistry,ELEC,Electrolytes,CAI,"Calcium, Ionized, Serum",CAI,"Calcium, Ionized, Serum",,NUMERIC,B,35770,36500,98,,year,,,Not established,Not established (per Mayo),OK
+CHEM,Clinical Chemistry,ELEC,Electrolytes,MGS,"Magnesium, Serum",MGS,"Magnesium, Serum",mg/dL,NUMERIC,B,0,730,0,2,year,1.6,2.7,1.6-2.7 mg/dL,,OK
+CHEM,Clinical Chemistry,ELEC,Electrolytes,MGS,"Magnesium, Serum",MGS,"Magnesium, Serum",mg/dL,NUMERIC,B,1095,1825,3,5,year,1.6,2.6,1.6-2.6 mg/dL,,OK
+CHEM,Clinical Chemistry,ELEC,Electrolytes,MGS,"Magnesium, Serum",MGS,"Magnesium, Serum",mg/dL,NUMERIC,B,2190,2920,6,8,year,1.6,2.5,1.6-2.5 mg/dL,,OK
+CHEM,Clinical Chemistry,ELEC,Electrolytes,MGS,"Magnesium, Serum",MGS,"Magnesium, Serum",mg/dL,NUMERIC,B,3285,4015,9,11,year,1.6,2.4,1.6-2.4 mg/dL,,OK
+CHEM,Clinical Chemistry,ELEC,Electrolytes,MGS,"Magnesium, Serum",MGS,"Magnesium, Serum",mg/dL,NUMERIC,B,4380,6205,12,17,year,1.6,2.3,1.6-2.3 mg/dL,,OK
+CHEM,Clinical Chemistry,ELEC,Electrolytes,MGS,"Magnesium, Serum",MGS,"Magnesium, Serum",mg/dL,NUMERIC,B,6205,36500,17,,year,1.7,2.3,1.7-2.3 mg/dL,,OK
+CHEM,Clinical Chemistry,RENAL,Renal Function,URIC,"Uric Acid, Serum",URIC,"Uric Acid, Serum",mg/dL,NUMERIC,M,365,3650,1,10,year,2.4,5.4,2.4-5.4 mg/dL,,OK
+CHEM,Clinical Chemistry,RENAL,Renal Function,URIC,"Uric Acid, Serum",URIC,"Uric Acid, Serum",mg/dL,NUMERIC,M,5840,36500,16,,year,3.7,8.0,3.7-8.0 mg/dL,,OK
+CHEM,Clinical Chemistry,RENAL,Renal Function,URIC,"Uric Acid, Serum",URIC,"Uric Acid, Serum",mg/dL,NUMERIC,F,2555,2920,7,8,year,2.3,5.5,2.3-5.5 mg/dL,,OK
+CHEM,Clinical Chemistry,RENAL,Renal Function,URIC,"Uric Acid, Serum",URIC,"Uric Acid, Serum",mg/dL,NUMERIC,F,3285,3650,9,10,year,2.3,5.7,2.3-5.7 mg/dL,,OK
+CHEM,Clinical Chemistry,RENAL,Renal Function,URIC,"Uric Acid, Serum",URIC,"Uric Acid, Serum",mg/dL,NUMERIC,F,4745,36500,13,,year,2.7,6.1,2.7-6.1 mg/dL,,OK
+CHEM,Clinical Chemistry,LIVER,Liver Function,ALT,"Alanine Aminotransferase (ALT) (GPT), Serum",ALT,"Alanine Aminotransferase (ALT) (GPT), Serum",U/L,NUMERIC,M,365,36500,1,,year,7.0,55.0,7-55 U/L,,OK
+CHEM,Clinical Chemistry,LIVER,Liver Function,ALT,"Alanine Aminotransferase (ALT) (GPT), Serum",ALT,"Alanine Aminotransferase (ALT) (GPT), Serum",U/L,NUMERIC,F,365,36500,1,,year,7.0,45.0,7-45 U/L,,OK
+CHEM,Clinical Chemistry,LIVER,Liver Function,AST,"Aspartate Aminotransferase (AST) (GOT), Serum",AST,"Aspartate Aminotransferase (AST) (GOT), Serum",,NUMERIC,M,0,330,0,11,month,,,not established,Not established (per Mayo),OK
+CHEM,Clinical Chemistry,LIVER,Liver Function,AST,"Aspartate Aminotransferase (AST) (GOT), Serum",AST,"Aspartate Aminotransferase (AST) (GOT), Serum",U/L,NUMERIC,M,365,4745,1,13,year,8.0,60.0,8-60 U/L,,OK
+CHEM,Clinical Chemistry,LIVER,Liver Function,AST,"Aspartate Aminotransferase (AST) (GOT), Serum",AST,"Aspartate Aminotransferase (AST) (GOT), Serum",U/L,NUMERIC,M,5110,36500,14,,year,8.0,48.0,8-48 U/L,,OK
+CHEM,Clinical Chemistry,LIVER,Liver Function,AST,"Aspartate Aminotransferase (AST) (GOT), Serum",AST,"Aspartate Aminotransferase (AST) (GOT), Serum",,NUMERIC,F,0,330,0,11,month,,,not established,Not established (per Mayo),OK
+CHEM,Clinical Chemistry,LIVER,Liver Function,AST,"Aspartate Aminotransferase (AST) (GOT), Serum",AST,"Aspartate Aminotransferase (AST) (GOT), Serum",U/L,NUMERIC,F,365,4745,1,13,year,8.0,50.0,8-50 U/L,,OK
+CHEM,Clinical Chemistry,LIVER,Liver Function,AST,"Aspartate Aminotransferase (AST) (GOT), Serum",AST,"Aspartate Aminotransferase (AST) (GOT), Serum",U/L,NUMERIC,F,5110,36500,14,,year,8.0,43.0,8-43 U/L,,OK
+CHEM,Clinical Chemistry,LIVER,Liver Function,ALP,"Alkaline Phosphatase, Serum",ALP,"Alkaline Phosphatase, Serum",U/L,NUMERIC,M,0,14,0,14,day,83.0,248.0,83-248 U/L,,OK
+CHEM,Clinical Chemistry,LIVER,Liver Function,ALP,"Alkaline Phosphatase, Serum",ALP,"Alkaline Phosphatase, Serum",U/L,NUMERIC,M,6935,36500,19,,year,40.0,129.0,40-129 U/L,,OK
+CHEM,Clinical Chemistry,LIVER,Liver Function,ALP,"Alkaline Phosphatase, Serum",ALP,"Alkaline Phosphatase, Serum",U/L,NUMERIC,F,0,14,0,14,day,83.0,248.0,83-248 U/L,,OK
+CHEM,Clinical Chemistry,LIVER,Liver Function,ALP,"Alkaline Phosphatase, Serum",ALP,"Alkaline Phosphatase, Serum",U/L,NUMERIC,F,6205,36500,17,,year,35.0,104.0,35-104 U/L,,OK
+CHEM,Clinical Chemistry,LIVER,Liver Function,BILIT,"Bilirubin, Total, Serum",BILIT,"Bilirubin, Total, Serum",,NUMERIC,B,0,6,0,6,day,,,Refer to www.bilitool.org for information on age-specific (postnatal hour of life) serum,COMPLEX TEXT - manual review required,OK
+CHEM,Clinical Chemistry,LIVER,Liver Function,BILIT,"Bilirubin, Total, Serum",BILIT,"Bilirubin, Total, Serum",mg/dL,NUMERIC,B,7,14,7,14,day,0.0,14.9,0.0-14.9 mg/dL,,OK
+CHEM,Clinical Chemistry,LIVER,Liver Function,BILIT,"Bilirubin, Total, Serum",BILIT,"Bilirubin, Total, Serum",mg/dL,NUMERIC,B,6570,36500,18,,year,0.0,1.2,0.0-1.2 mg/dL,,OK
+CHEM,Clinical Chemistry,LIVER,Liver Function,BILID,"Bilirubin, Direct, Serum",BILID,"Bilirubin, Direct, Serum",mg/dL,NUMERIC,B,360,36500,12,,month,0.0,0.3,0.0-0.3 mg/dL,,OK
+CHEM,Clinical Chemistry,LIVER,Liver Function,TP,"Protein, Total, Serum",TP,"Protein, Total, Serum",g/dL,NUMERIC,B,365,36500,1,,year,6.3,7.9,6.3-7.9 g/dL,,OK
+CHEM,Clinical Chemistry,LIVER,Liver Function,ALB,"Albumin, Serum",ALB,"Albumin, Serum",g/dL,NUMERIC,B,360,36500,12,,month,3.5,5.0,3.5-5.0 g/dL,,OK
+CHEM,Clinical Chemistry,GLUC,Glucose & Diabetes,HBA1C,"Hemoglobin A1c, Blood",HBA1C,"Hemoglobin A1c, Blood",%,NUMERIC,B,0,36500,,,,4.0,5.6,4.0-5.6%,,OK
+CHEM,Clinical Chemistry,GLUC,Glucose & Diabetes,HBA1C,"Hemoglobin A1c, Blood",HBA1C,"Hemoglobin A1c, Blood",,NUMERIC,B,0,6569,0,18,year,,,Hemoglobin A1c criteria for diagnosing diabetes have not been established for patients who,COMPLEX TEXT - manual review required,OK
+CHEM,Clinical Chemistry,GLUC,Glucose & Diabetes,HBA1C,"Hemoglobin A1c, Blood",HBA1C,"Hemoglobin A1c, Blood",,NUMERIC,B,6570,36500,18,,year,,,Increased risk for diabetes (prediabetes): 5.7-6.4%,COMPLEX TEXT - manual review required,OK
+CHEM,Clinical Chemistry,GLUC,Glucose & Diabetes,CPR,"C-Peptide, Serum",CPR,"C-Peptide, Serum",ng/mL,NUMERIC,B,0,36500,,,,1.1,4.4,1.1-4.4 ng/mL,,OK
+CHEM,Clinical Chemistry,GLUC,Glucose & Diabetes,INS,"Insulin, Serum",INS,"Insulin, Serum",mcIU/mL,NUMERIC,B,0,36500,,,,2.6,24.9,2.6-24.9 mcIU/mL,,OK
+CHEM,Clinical Chemistry,LIPID,Lipid Profile,CHOL,"Cholesterol, Total, Serum",CHOL,"Cholesterol, Total, Serum",,NUMERIC,B,,,,,,,,The National Lipid Association and the National Cholesterol Education Program have set the following |         guidelines for lipids in a context of cardiovascular disease for adults 18 years old and older: |  |         TOTAL CHOLESTEROL |  |         Desirable: <200 mg/dL |  |         Borderline High: 200-239 mg/,COMPLEX/NARRATIVE TEXT - manual review required,COMPLEX
+CHEM,Clinical Chemistry,LIPID,Lipid Profile,HDCH,"Cholesterol, High-Density Lipoprotein (HDL), Serum",HDCH,"Cholesterol, High-Density Lipoprotein (HDL), Serum",mg/dL,NUMERIC,M,0,36500,,,,40.0,,> or =40 mg/dL,"Threshold value (guideline-based), verify interpretation",OK
+CHEM,Clinical Chemistry,LIPID,Lipid Profile,HDCH,"Cholesterol, High-Density Lipoprotein (HDL), Serum",HDCH,"Cholesterol, High-Density Lipoprotein (HDL), Serum",mg/dL,NUMERIC,F,0,36500,,,,50.0,,> or =50 mg/dL,"Threshold value (guideline-based), verify interpretation",OK
+CHEM,Clinical Chemistry,LIPID,Lipid Profile,TRIG1,"Triglycerides, Serum",TRIG1,"Triglycerides, Serum",mg/dL,NUMERIC,B,730,3285,2,9,year,,75.0,<75 mg/dL,"Acceptable (per Mayo); Threshold value (guideline-based), verify interpretation",OK
+CHEM,Clinical Chemistry,LIPID,Lipid Profile,TRIG1,"Triglycerides, Serum",TRIG1,"Triglycerides, Serum",mg/dL,NUMERIC,B,730,3285,2,9,year,75.0,99.0,75-99 mg/dL,Borderline High (per Mayo),OK
+CHEM,Clinical Chemistry,LIPID,Lipid Profile,TRIG1,"Triglycerides, Serum",TRIG1,"Triglycerides, Serum",mg/dL,NUMERIC,B,730,3285,2,9,year,100.0,,> or =100 mg/dL,"High (per Mayo); Threshold value (guideline-based), verify interpretation",OK
+CHEM,Clinical Chemistry,LIPID,Lipid Profile,TRIG1,"Triglycerides, Serum",TRIG1,"Triglycerides, Serum",mg/dL,NUMERIC,B,3650,6205,10,17,year,,90.0,<90 mg/dL,"Acceptable (per Mayo); Threshold value (guideline-based), verify interpretation",OK
+CHEM,Clinical Chemistry,LIPID,Lipid Profile,TRIG1,"Triglycerides, Serum",TRIG1,"Triglycerides, Serum",mg/dL,NUMERIC,B,3650,6205,10,17,year,90.0,129.0,90-129 mg/dL,Borderline High (per Mayo),OK
+CHEM,Clinical Chemistry,LIPID,Lipid Profile,TRIG1,"Triglycerides, Serum",TRIG1,"Triglycerides, Serum",mg/dL,NUMERIC,B,3650,6205,10,17,year,130.0,,> or =130 mg/dL,"High (per Mayo); Threshold value (guideline-based), verify interpretation",OK
+CHEM,Clinical Chemistry,LIPID,Lipid Profile,FLDLD,"LDL Cholesterol, Direct",FLDLD,"LDL Cholesterol, Direct",,NUMERIC,B,0,6935,0,19,year,,,109 mg/dL or less,Desirable (per Mayo); COMPLEX TEXT - manual review required,OK
+CHEM,Clinical Chemistry,LIPID,Lipid Profile,FLDLD,"LDL Cholesterol, Direct",FLDLD,"LDL Cholesterol, Direct",mg/dL,NUMERIC,B,0,6935,0,19,year,110.0,129.0,110-129 mg/dL,Borderline (per Mayo),OK
+CHEM,Clinical Chemistry,LIPID,Lipid Profile,FLDLD,"LDL Cholesterol, Direct",FLDLD,"LDL Cholesterol, Direct",,NUMERIC,B,0,6935,0,19,year,,,130 mg/dL or greater,Higher risk (per Mayo); COMPLEX TEXT - manual review required,OK
+CHEM,Clinical Chemistry,LIPID,Lipid Profile,FLDLD,"LDL Cholesterol, Direct",FLDLD,"LDL Cholesterol, Direct",,NUMERIC,B,0,6935,0,19,year,,,20 years and older:,COMPLEX TEXT - manual review required,OK
+CHEM,Clinical Chemistry,LIPID,Lipid Profile,FLDLD,"LDL Cholesterol, Direct",FLDLD,"LDL Cholesterol, Direct",,NUMERIC,B,0,6935,0,19,year,,,129 mg/dL or less (99 mg/dL or less if patient has CHD),Desirable (per Mayo); COMPLEX TEXT - manual review required,OK
+CHEM,Clinical Chemistry,LIPID,Lipid Profile,FLDLD,"LDL Cholesterol, Direct",FLDLD,"LDL Cholesterol, Direct",mg/dL,NUMERIC,B,0,6935,0,19,year,130.0,159.0,130-159 mg/dL,Borderline (per Mayo),OK
+CHEM,Clinical Chemistry,LIPID,Lipid Profile,FLDLD,"LDL Cholesterol, Direct",FLDLD,"LDL Cholesterol, Direct",,NUMERIC,B,0,6935,0,19,year,,,160 mg/dL or greater,Higher risk (per Mayo); COMPLEX TEXT - manual review required,OK
+CHEM,Clinical Chemistry,CARD,Cardiac Markers,CK,"Creatine Kinase (CK), Serum",CK,"Creatine Kinase (CK), Serum",U/L,NUMERIC,M,90,36500,3,,month,39.0,308.0,39-308 U/L,,OK
+CHEM,Clinical Chemistry,CARD,Cardiac Markers,CK,"Creatine Kinase (CK), Serum",CK,"Creatine Kinase (CK), Serum",U/L,NUMERIC,F,90,36500,3,,month,26.0,192.0,26-192 U/L,,OK
+CHEM,Clinical Chemistry,CARD,Cardiac Markers,TRPS,"Troponin T, 5th Generation, Plasma",TRPS,"Troponin T, 5th Generation, Plasma",ng/L,NUMERIC,M,0,36500,,,,,15.0,< or =15 ng/L,"Threshold value (guideline-based), verify interpretation",OK
+CHEM,Clinical Chemistry,CARD,Cardiac Markers,TRPS,"Troponin T, 5th Generation, Plasma",TRPS,"Troponin T, 5th Generation, Plasma",ng/L,NUMERIC,F,0,36500,,,,,10.0,< or =10 ng/L,"Threshold value (guideline-based), verify interpretation",OK
+CHEM,Clinical Chemistry,CARD,Cardiac Markers,BNP,"B-Type Natriuretic Peptide, Plasma",BNP,"B-Type Natriuretic Peptide, Plasma",pg/mL,NUMERIC,M,30295,36500,83,,year,,93.0,< or =93 pg/mL,"Threshold value (guideline-based), verify interpretation",OK
+CHEM,Clinical Chemistry,CARD,Cardiac Markers,BNP,"B-Type Natriuretic Peptide, Plasma",BNP,"B-Type Natriuretic Peptide, Plasma",pg/mL,NUMERIC,F,30295,36500,83,,year,,167.0,< or =167 pg/mL,"Threshold value (guideline-based), verify interpretation",OK
+CHEM,Clinical Chemistry,IRON,Iron Studies,IRON,"Iron, Serum",IRON,"Iron, Serum",mcg/dL,NUMERIC,M,0,36500,,,,50.0,150.0,50-150 mcg/dL,,OK
+CHEM,Clinical Chemistry,IRON,Iron Studies,IRON,"Iron, Serum",IRON,"Iron, Serum",mcg/dL,NUMERIC,F,0,36500,,,,35.0,145.0,35-145 mcg/dL,,OK
+CHEM,Clinical Chemistry,IRON,Iron Studies,SFEC,"Iron and Total Iron-Binding Capacity, Serum",SFEC_Iron,Iron,mcg/dL,NUMERIC,M,0,36500,,,,50.0,150.0,50-150 mcg/dL,,OK
+CHEM,Clinical Chemistry,IRON,Iron Studies,SFEC,"Iron and Total Iron-Binding Capacity, Serum",SFEC_Iron,Iron,mcg/dL,NUMERIC,F,0,36500,,,,35.0,145.0,35-145 mcg/dL,,OK
+CHEM,Clinical Chemistry,IRON,Iron Studies,SFEC,"Iron and Total Iron-Binding Capacity, Serum",SFEC_TotalIronB,Total Iron-Binding Capacity,mcg/dL,NUMERIC,F,0,36500,,,,250.0,400.0,250-400 mcg/dL,,OK
+CHEM,Clinical Chemistry,IRON,Iron Studies,SFEC,"Iron and Total Iron-Binding Capacity, Serum",SFEC_PercentSat,Percent Saturation,%,NUMERIC,F,0,36500,,,,14.0,50.0,14-50%,,OK
+CHEM,Clinical Chemistry,IRON,Iron Studies,FERR1,"Ferritin, Serum",FERR1,"Ferritin, Serum",mcg/L,NUMERIC,M,0,28,0,4,week,150.0,973.0,150-973 mcg/L,,OK
+CHEM,Clinical Chemistry,IRON,Iron Studies,FERR1,"Ferritin, Serum",FERR1,"Ferritin, Serum",mcg/L,NUMERIC,M,35,150,5,5,month,9.0,580.0,9-580 mcg/L,,OK
+CHEM,Clinical Chemistry,IRON,Iron Studies,FERR1,"Ferritin, Serum",FERR1,"Ferritin, Serum",mcg/L,NUMERIC,M,180,3285,6,9,year,6.0,111.0,6-111 mcg/L,,OK
+CHEM,Clinical Chemistry,IRON,Iron Studies,FERR1,"Ferritin, Serum",FERR1,"Ferritin, Serum",mcg/L,NUMERIC,M,3650,6205,10,17,year,15.0,201.0,15-201 mcg/L,,OK
+CHEM,Clinical Chemistry,IRON,Iron Studies,FERR1,"Ferritin, Serum",FERR1,"Ferritin, Serum",mcg/L,NUMERIC,M,6570,36500,18,,year,31.0,409.0,31-409 mcg/L,,OK
+CHEM,Clinical Chemistry,IRON,Iron Studies,FERR1,"Ferritin, Serum",FERR1,"Ferritin, Serum",mcg/L,NUMERIC,F,0,28,0,4,week,150.0,973.0,150-973 mcg/L,,OK
+CHEM,Clinical Chemistry,IRON,Iron Studies,FERR1,"Ferritin, Serum",FERR1,"Ferritin, Serum",mcg/L,NUMERIC,F,35,150,5,5,month,9.0,580.0,9-580 mcg/L,,OK
+CHEM,Clinical Chemistry,IRON,Iron Studies,FERR1,"Ferritin, Serum",FERR1,"Ferritin, Serum",mcg/L,NUMERIC,F,180,6205,6,17,year,8.0,115.0,8-115 mcg/L,,OK
+CHEM,Clinical Chemistry,IRON,Iron Studies,FERR1,"Ferritin, Serum",FERR1,"Ferritin, Serum",mcg/L,NUMERIC,F,6570,18250,18,50,year,6.0,175.0,6-175 mcg/L,,OK
+CHEM,Clinical Chemistry,IRON,Iron Studies,FERR1,"Ferritin, Serum",FERR1,"Ferritin, Serum",mcg/L,NUMERIC,F,18615,36500,51,,year,11.0,328.0,11-328 mcg/L,,OK
+CHEM,Clinical Chemistry,IRON,Iron Studies,TRSF,"Transferrin, Serum",TRSF,"Transferrin, Serum",mg/dL,NUMERIC,B,0,36500,,,,200.0,360.0,200-360 mg/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,HGB,"Hemoglobin, Blood",HGB,"Hemoglobin, Blood",g/dL,NUMERIC,M,0,14,0,14,day,13.9,19.1,13.9-19.1 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,HGB,"Hemoglobin, Blood",HGB,"Hemoglobin, Blood",g/dL,NUMERIC,M,15,28,15,4,week,10.0,15.3,10.0-15.3 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,HGB,"Hemoglobin, Blood",HGB,"Hemoglobin, Blood",g/dL,NUMERIC,M,35,49,5,7,week,8.9,12.7,8.9-12.7 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,HGB,"Hemoglobin, Blood",HGB,"Hemoglobin, Blood",g/dL,NUMERIC,M,56,150,8,5,month,9.6,12.4,9.6-12.4 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,HGB,"Hemoglobin, Blood",HGB,"Hemoglobin, Blood",g/dL,NUMERIC,M,180,690,6,23,month,10.1,12.5,10.1-12.5 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,HGB,"Hemoglobin, Blood",HGB,"Hemoglobin, Blood",g/dL,NUMERIC,M,720,1050,24,35,month,10.2,12.7,10.2-12.7 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,HGB,"Hemoglobin, Blood",HGB,"Hemoglobin, Blood",g/dL,NUMERIC,M,1095,1825,3,5,year,11.4,14.3,11.4-14.3 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,HGB,"Hemoglobin, Blood",HGB,"Hemoglobin, Blood",g/dL,NUMERIC,M,2190,2920,6,8,year,11.5,14.3,11.5-14.3 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,HGB,"Hemoglobin, Blood",HGB,"Hemoglobin, Blood",g/dL,NUMERIC,M,3285,3650,9,10,year,11.8,14.7,11.8-14.7 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,HGB,"Hemoglobin, Blood",HGB,"Hemoglobin, Blood",g/dL,NUMERIC,M,4015,5110,11,14,year,12.4,15.7,12.4-15.7 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,HGB,"Hemoglobin, Blood",HGB,"Hemoglobin, Blood",g/dL,NUMERIC,M,5475,6205,15,17,year,13.3,16.9,13.3-16.9 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,HGB,"Hemoglobin, Blood",HGB,"Hemoglobin, Blood",g/dL,NUMERIC,M,6570,36500,18,,year,13.2,16.6,13.2-16.6 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,HGB,"Hemoglobin, Blood",HGB,"Hemoglobin, Blood",g/dL,NUMERIC,F,0,14,0,14,day,13.4,20.0,13.4-20.0 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,HGB,"Hemoglobin, Blood",HGB,"Hemoglobin, Blood",g/dL,NUMERIC,F,15,28,15,4,week,10.8,14.6,10.8-14.6 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,HGB,"Hemoglobin, Blood",HGB,"Hemoglobin, Blood",g/dL,NUMERIC,F,35,49,5,7,week,9.2,11.4,9.2-11.4 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,HGB,"Hemoglobin, Blood",HGB,"Hemoglobin, Blood",g/dL,NUMERIC,F,56,150,8,5,month,9.9,12.4,9.9-12.4 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,HGB,"Hemoglobin, Blood",HGB,"Hemoglobin, Blood",g/dL,NUMERIC,F,180,1050,6,35,month,10.2,12.7,10.2-12.7 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,HGB,"Hemoglobin, Blood",HGB,"Hemoglobin, Blood",g/dL,NUMERIC,F,1095,1825,3,5,year,11.4,14.3,11.4-14.3 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,HGB,"Hemoglobin, Blood",HGB,"Hemoglobin, Blood",g/dL,NUMERIC,F,2190,2920,6,8,year,11.5,14.3,11.5-14.3 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,HGB,"Hemoglobin, Blood",HGB,"Hemoglobin, Blood",g/dL,NUMERIC,F,3285,3650,9,10,year,11.8,14.7,11.8-14.7 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,HGB,"Hemoglobin, Blood",HGB,"Hemoglobin, Blood",g/dL,NUMERIC,F,4015,6205,11,17,year,11.9,14.8,11.9-14.8 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,HGB,"Hemoglobin, Blood",HGB,"Hemoglobin, Blood",g/dL,NUMERIC,F,6570,36500,18,,year,11.6,15.0,11.6-15.0 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,M,0,14,0,14,day,4.1,5.55,4.10-5.55 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,M,15,28,15,4,week,3.16,4.63,3.16-4.63 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,M,35,49,5,7,week,3.02,4.22,3.02-4.22 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,M,56,150,8,5,month,3.43,4.8,3.43-4.80 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,M,180,690,6,23,month,4.03,5.07,4.03-5.07 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,M,720,1050,24,35,month,3.89,4.97,3.89-4.97 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,M,1095,1825,3,5,year,4.0,5.1,4.00-5.10 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,M,2190,3650,6,10,year,4.1,5.2,4.10-5.20 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,M,4015,5110,11,14,year,4.2,5.3,4.20-5.30 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,M,5475,6205,15,17,year,4.3,5.7,4.30-5.70 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,M,6570,36500,18,,year,4.35,5.65,4.35-5.65 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,F,0,14,0,14,day,4.12,5.74,4.12-5.74 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,F,15,28,15,4,week,3.32,4.8,3.32-4.80 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,F,35,49,5,7,week,2.93,3.87,2.93-3.87 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,F,56,150,8,5,month,3.45,4.75,3.45-4.75 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,F,180,690,6,23,month,3.97,5.01,3.97-5.01 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,F,720,1050,24,35,month,3.84,4.92,3.84-4.92 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,F,1095,1825,3,5,year,4.0,5.1,4.00-5.10 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,F,2190,3650,6,10,year,4.1,5.2,4.10-5.20 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,F,4015,5110,11,14,year,4.1,5.1,4.10-5.10 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,F,5475,6205,15,17,year,3.8,5.0,3.80-5.00 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,F,6570,36500,18,,year,3.92,5.13,3.92-5.13 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hemoglobin,Hemoglobin,g/dL,NUMERIC,M,0,14,0,14,day,13.9,19.1,13.9-19.1 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hemoglobin,Hemoglobin,g/dL,NUMERIC,M,15,28,15,4,week,10.0,15.3,10.0-15.3 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hemoglobin,Hemoglobin,g/dL,NUMERIC,M,35,49,5,7,week,8.9,12.7,8.9-12.7 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hemoglobin,Hemoglobin,g/dL,NUMERIC,M,56,150,8,5,month,9.6,12.4,9.6-12.4 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hemoglobin,Hemoglobin,g/dL,NUMERIC,M,180,690,6,23,month,10.1,12.5,10.1-12.5 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hemoglobin,Hemoglobin,g/dL,NUMERIC,M,720,1050,24,35,month,10.2,12.7,10.2-12.7 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hemoglobin,Hemoglobin,g/dL,NUMERIC,M,1095,1825,3,5,year,11.4,14.3,11.4-14.3 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hemoglobin,Hemoglobin,g/dL,NUMERIC,M,2190,2920,6,8,year,11.5,14.3,11.5-14.3 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hemoglobin,Hemoglobin,g/dL,NUMERIC,M,3285,3650,9,10,year,11.8,14.7,11.8-14.7 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hemoglobin,Hemoglobin,g/dL,NUMERIC,M,4015,5110,11,14,year,12.4,15.7,12.4-15.7 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hemoglobin,Hemoglobin,g/dL,NUMERIC,M,5475,6205,15,17,year,13.3,16.9,13.3-16.9 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hemoglobin,Hemoglobin,g/dL,NUMERIC,M,6570,36500,18,,year,13.2,16.6,13.2-16.6 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hemoglobin,Hemoglobin,g/dL,NUMERIC,F,0,14,0,14,day,13.4,20.0,13.4-20.0 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hemoglobin,Hemoglobin,g/dL,NUMERIC,F,15,28,15,4,week,10.8,14.6,10.8-14.6 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hemoglobin,Hemoglobin,g/dL,NUMERIC,F,35,49,5,7,week,9.2,11.4,9.2-11.4 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hemoglobin,Hemoglobin,g/dL,NUMERIC,F,56,150,8,5,month,9.9,12.4,9.9-12.4 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hemoglobin,Hemoglobin,g/dL,NUMERIC,F,180,1050,6,35,month,10.2,12.7,10.2-12.7 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hemoglobin,Hemoglobin,g/dL,NUMERIC,F,1095,1825,3,5,year,11.4,14.3,11.4-14.3 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hemoglobin,Hemoglobin,g/dL,NUMERIC,F,2190,2920,6,8,year,11.5,14.3,11.5-14.3 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hemoglobin,Hemoglobin,g/dL,NUMERIC,F,3285,3650,9,10,year,11.8,14.7,11.8-14.7 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hemoglobin,Hemoglobin,g/dL,NUMERIC,F,4015,6205,11,17,year,11.9,14.8,11.9-14.8 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hemoglobin,Hemoglobin,g/dL,NUMERIC,F,6570,36500,18,,year,11.6,15.0,11.6-15.0 g/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hematocrit,Hematocrit,%,NUMERIC,M,0,14,0,14,day,39.8,53.6,39.8-53.6%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hematocrit,Hematocrit,%,NUMERIC,M,15,28,15,4,week,30.5,45.0,30.5-45.0%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hematocrit,Hematocrit,%,NUMERIC,M,35,49,5,7,week,26.8,37.5,26.8-37.5%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hematocrit,Hematocrit,%,NUMERIC,M,56,150,8,5,month,28.6,37.2,28.6-37.2%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hematocrit,Hematocrit,%,NUMERIC,M,180,690,6,23,month,30.8,37.8,30.8-37.8%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hematocrit,Hematocrit,%,NUMERIC,M,720,1050,24,35,month,31.0,37.7,31.0-37.7%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hematocrit,Hematocrit,%,NUMERIC,M,1095,2555,3,7,year,34.0,42.0,34-42%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hematocrit,Hematocrit,%,NUMERIC,M,2920,4015,8,11,year,35.0,43.0,35-43%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hematocrit,Hematocrit,%,NUMERIC,M,4380,5475,12,15,year,38.0,47.0,38-47%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hematocrit,Hematocrit,%,NUMERIC,M,5840,6205,16,17,year,40.0,50.0,40-50%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hematocrit,Hematocrit,%,NUMERIC,M,6570,36500,18,,year,38.3,48.6,38.3-48.6%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hematocrit,Hematocrit,%,NUMERIC,F,0,14,0,14,day,39.6,57.2,39.6-57.2%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hematocrit,Hematocrit,%,NUMERIC,F,15,28,15,4,week,32.0,44.5,32.0-44.5%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hematocrit,Hematocrit,%,NUMERIC,F,35,49,5,7,week,27.7,35.1,27.7-35.1%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hematocrit,Hematocrit,%,NUMERIC,F,56,150,8,5,month,29.5,37.1,29.5-37.1%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hematocrit,Hematocrit,%,NUMERIC,F,180,690,6,23,month,30.9,37.9,30.9-37.9%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hematocrit,Hematocrit,%,NUMERIC,F,720,1050,24,35,month,31.2,37.8,31.2-37.8%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hematocrit,Hematocrit,%,NUMERIC,F,1095,2555,3,7,year,34.0,42.0,34-42%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hematocrit,Hematocrit,%,NUMERIC,F,2920,6205,8,17,year,35.0,43.0,35-43%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Hematocrit,Hematocrit,%,NUMERIC,F,6570,36500,18,,year,35.5,44.9,35.5-44.9%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_MeanCorpus,Mean Corpuscular Volume (Mcv),fL,NUMERIC,M,0,14,0,14,day,91.3,103.1,91.3-103.1 fL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_MeanCorpus,Mean Corpuscular Volume (Mcv),fL,NUMERIC,M,15,28,15,4,week,89.4,99.7,89.4-99.7 fL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_MeanCorpus,Mean Corpuscular Volume (Mcv),fL,NUMERIC,M,35,49,5,7,week,84.3,94.2,84.3-94.2 fL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_MeanCorpus,Mean Corpuscular Volume (Mcv),fL,NUMERIC,M,56,150,8,5,month,74.1,87.5,74.1-87.5 fL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_MeanCorpus,Mean Corpuscular Volume (Mcv),fL,NUMERIC,M,180,690,6,23,month,69.5,81.7,69.5-81.7 fL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_MeanCorpus,Mean Corpuscular Volume (Mcv),fL,NUMERIC,M,720,1050,24,35,month,71.3,84.0,71.3-84.0 fL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_MeanCorpus,Mean Corpuscular Volume (Mcv),fL,NUMERIC,M,1095,1825,3,5,year,77.2,89.5,77.2-89.5 fL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_MeanCorpus,Mean Corpuscular Volume (Mcv),fL,NUMERIC,M,2190,4015,6,11,year,77.8,91.1,77.8-91.1 fL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_MeanCorpus,Mean Corpuscular Volume (Mcv),fL,NUMERIC,M,4380,5110,12,14,year,79.9,93.0,79.9-93.0 fL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_MeanCorpus,Mean Corpuscular Volume (Mcv),fL,NUMERIC,M,5475,6205,15,17,year,82.5,98.0,82.5-98.0 fL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_MeanCorpus,Mean Corpuscular Volume (Mcv),fL,NUMERIC,M,6570,36500,18,,year,78.2,97.9,78.2-97.9 fL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_MeanCorpus,Mean Corpuscular Volume (Mcv),fL,NUMERIC,F,0,14,0,14,day,92.7,106.4,92.7-106.4 fL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_MeanCorpus,Mean Corpuscular Volume (Mcv),fL,NUMERIC,F,15,28,15,4,week,90.1,103.0,90.1-103.0 fL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_MeanCorpus,Mean Corpuscular Volume (Mcv),fL,NUMERIC,F,35,49,5,7,week,83.4,96.4,83.4-96.4 fL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_MeanCorpus,Mean Corpuscular Volume (Mcv),fL,NUMERIC,F,56,150,8,5,month,74.8,88.3,74.8-88.3 fL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_MeanCorpus,Mean Corpuscular Volume (Mcv),fL,NUMERIC,F,180,690,6,23,month,71.3,82.6,71.3-82.6 fL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_MeanCorpus,Mean Corpuscular Volume (Mcv),fL,NUMERIC,F,720,1050,24,35,month,72.3,85.0,72.3-85.0 fL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_MeanCorpus,Mean Corpuscular Volume (Mcv),fL,NUMERIC,F,1095,1825,3,5,year,77.2,89.5,77.2-89.5 fL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_MeanCorpus,Mean Corpuscular Volume (Mcv),fL,NUMERIC,F,2190,4015,6,11,year,77.8,91.1,77.8-91.1 fL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_MeanCorpus,Mean Corpuscular Volume (Mcv),fL,NUMERIC,F,4380,5110,12,14,year,79.9,93.0,79.9-93.0 fL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_MeanCorpus,Mean Corpuscular Volume (Mcv),fL,NUMERIC,F,5475,6205,15,17,year,82.5,98.0,82.5-98.0 fL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_MeanCorpus,Mean Corpuscular Volume (Mcv),fL,NUMERIC,F,6570,36500,18,,year,78.2,97.93,78.2-97.93 fL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_RedCellDis,Red Cell Distribution Width (Rdw),%,NUMERIC,M,0,14,0,14,day,14.8,17.0,14.8-17.0%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_RedCellDis,Red Cell Distribution Width (Rdw),%,NUMERIC,M,15,28,15,4,week,14.3,16.8,14.3-16.8%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_RedCellDis,Red Cell Distribution Width (Rdw),%,NUMERIC,M,35,49,5,7,week,13.8,16.1,13.8-16.1%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_RedCellDis,Red Cell Distribution Width (Rdw),%,NUMERIC,M,56,150,8,5,month,12.4,15.3,12.4-15.3%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_RedCellDis,Red Cell Distribution Width (Rdw),%,NUMERIC,M,180,690,6,23,month,12.9,15.6,12.9-15.6%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_RedCellDis,Red Cell Distribution Width (Rdw),%,NUMERIC,M,720,1050,24,35,month,12.5,14.9,12.5-14.9%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_RedCellDis,Red Cell Distribution Width (Rdw),%,NUMERIC,M,1095,1825,3,5,year,11.3,13.4,11.3-13.4%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_RedCellDis,Red Cell Distribution Width (Rdw),%,NUMERIC,M,2190,6205,6,17,year,11.4,13.5,11.4-13.5%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_RedCellDis,Red Cell Distribution Width (Rdw),%,NUMERIC,M,6570,36500,18,,year,11.8,14.5,11.8-14.5%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_RedCellDis,Red Cell Distribution Width (Rdw),%,NUMERIC,F,0,14,0,14,day,14.6,17.3,14.6-17.3%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_RedCellDis,Red Cell Distribution Width (Rdw),%,NUMERIC,F,15,28,15,4,week,14.4,16.2,14.4-16.2%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_RedCellDis,Red Cell Distribution Width (Rdw),%,NUMERIC,F,35,49,5,7,week,13.6,15.8,13.6-15.8%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_RedCellDis,Red Cell Distribution Width (Rdw),%,NUMERIC,F,56,150,8,5,month,12.2,14.3,12.2-14.3%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_RedCellDis,Red Cell Distribution Width (Rdw),%,NUMERIC,F,180,690,6,23,month,12.7,15.1,12.7-15.1%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_RedCellDis,Red Cell Distribution Width (Rdw),%,NUMERIC,F,720,1050,24,35,month,12.4,14.9,12.4-14.9%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_RedCellDis,Red Cell Distribution Width (Rdw),%,NUMERIC,F,1095,1825,3,5,year,11.3,13.4,11.3-13.4%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_RedCellDis,Red Cell Distribution Width (Rdw),%,NUMERIC,F,2190,6205,6,17,year,11.4,13.5,11.4-13.5%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_RedCellDis,Red Cell Distribution Width (Rdw),%,NUMERIC,F,6570,36500,18,,year,12.2,16.1,12.2-16.1%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_WhiteBlood,White Blood Cell Count (Wbc),x 10(9)/L,NUMERIC,M,0,14,0,14,day,8.0,15.4,8.0-15.4 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_WhiteBlood,White Blood Cell Count (Wbc),x 10(9)/L,NUMERIC,M,15,28,15,4,week,7.8,15.9,7.8-15.9 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_WhiteBlood,White Blood Cell Count (Wbc),x 10(9)/L,NUMERIC,M,35,49,5,7,week,8.1,15.0,8.1-15.0 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_WhiteBlood,White Blood Cell Count (Wbc),x 10(9)/L,NUMERIC,M,56,150,8,5,month,6.5,13.3,6.5-13.3 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_WhiteBlood,White Blood Cell Count (Wbc),x 10(9)/L,NUMERIC,M,180,690,6,23,month,6.0,13.5,6.0-13.5 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_WhiteBlood,White Blood Cell Count (Wbc),x 10(9)/L,NUMERIC,M,720,1050,24,35,month,5.1,13.4,5.1-13.4 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_WhiteBlood,White Blood Cell Count (Wbc),x 10(9)/L,NUMERIC,M,1095,1825,3,5,year,4.4,12.9,4.4-12.9 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_WhiteBlood,White Blood Cell Count (Wbc),x 10(9)/L,NUMERIC,M,2190,6205,6,17,year,3.8,10.4,3.8-10.4 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_WhiteBlood,White Blood Cell Count (Wbc),x 10(9)/L,NUMERIC,M,6570,36500,18,,year,3.4,9.6,3.4-9.6 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_WhiteBlood,White Blood Cell Count (Wbc),x 10(9)/L,NUMERIC,F,0,14,0,14,day,8.2,14.6,8.2-14.6 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_WhiteBlood,White Blood Cell Count (Wbc),x 10(9)/L,NUMERIC,F,15,28,15,4,week,8.4,14.4,8.4-14.4 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_WhiteBlood,White Blood Cell Count (Wbc),x 10(9)/L,NUMERIC,F,35,49,5,7,week,7.1,14.7,7.1-14.7 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_WhiteBlood,White Blood Cell Count (Wbc),x 10(9)/L,NUMERIC,F,56,150,8,5,month,6.0,13.3,6.0-13.3 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_WhiteBlood,White Blood Cell Count (Wbc),x 10(9)/L,NUMERIC,F,180,690,6,23,month,6.5,13.0,6.5-13.0 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_WhiteBlood,White Blood Cell Count (Wbc),x 10(9)/L,NUMERIC,F,720,1050,24,35,month,4.9,13.2,4.9-13.2 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_WhiteBlood,White Blood Cell Count (Wbc),x 10(9)/L,NUMERIC,F,1095,1825,3,5,year,4.4,12.9,4.4-12.9 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_WhiteBlood,White Blood Cell Count (Wbc),x 10(9)/L,NUMERIC,F,2190,6205,6,17,year,3.8,10.4,3.8-10.4 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_WhiteBlood,White Blood Cell Count (Wbc),x 10(9)/L,NUMERIC,F,6570,36500,18,,year,3.4,9.6,3.4-9.6 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Platelets,Platelets,x 10(9)/L,NUMERIC,M,0,14,0,14,day,218.0,419.0,218-419 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Platelets,Platelets,x 10(9)/L,NUMERIC,M,15,28,15,4,week,248.0,586.0,248-586 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Platelets,Platelets,x 10(9)/L,NUMERIC,M,35,49,5,7,week,229.0,562.0,229-562 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Platelets,Platelets,x 10(9)/L,NUMERIC,M,56,150,8,5,month,244.0,529.0,244-529 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Platelets,Platelets,x 10(9)/L,NUMERIC,M,180,690,6,23,month,206.0,445.0,206-445 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Platelets,Platelets,x 10(9)/L,NUMERIC,M,720,1050,24,35,month,202.0,403.0,202-403 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Platelets,Platelets,x 10(9)/L,NUMERIC,M,1095,1825,3,5,year,187.0,445.0,187-445 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Platelets,Platelets,x 10(9)/L,NUMERIC,M,2190,3285,6,9,year,187.0,400.0,187-400 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Platelets,Platelets,x 10(9)/L,NUMERIC,M,3650,4745,10,13,year,177.0,381.0,177-381 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Platelets,Platelets,x 10(9)/L,NUMERIC,M,5110,6205,14,17,year,139.0,320.0,139-320 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Platelets,Platelets,x 10(9)/L,NUMERIC,M,6570,36500,18,,year,135.0,317.0,135-317 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Platelets,Platelets,x 10(9)/L,NUMERIC,F,0,14,0,14,day,144.0,449.0,144-449 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Platelets,Platelets,x 10(9)/L,NUMERIC,F,15,28,15,4,week,279.0,571.0,279-571 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Platelets,Platelets,x 10(9)/L,NUMERIC,F,35,49,5,7,week,331.0,597.0,331-597 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Platelets,Platelets,x 10(9)/L,NUMERIC,F,56,150,8,5,month,247.0,580.0,247-580 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Platelets,Platelets,x 10(9)/L,NUMERIC,F,180,690,6,23,month,214.0,459.0,214-459 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Platelets,Platelets,x 10(9)/L,NUMERIC,F,720,1050,24,35,month,189.0,394.0,189-394 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Platelets,Platelets,x 10(9)/L,NUMERIC,F,1095,1825,3,5,year,187.0,445.0,187-445 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Platelets,Platelets,x 10(9)/L,NUMERIC,F,2190,3285,6,9,year,187.0,400.0,187-400 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Platelets,Platelets,x 10(9)/L,NUMERIC,F,3650,4745,10,13,year,177.0,381.0,177-381 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Platelets,Platelets,x 10(9)/L,NUMERIC,F,5110,6205,14,17,year,158.0,362.0,158-362 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Platelets,Platelets,x 10(9)/L,NUMERIC,F,6570,36500,18,,year,157.0,371.0,157-371 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Neutrophil,Neutrophils,x 10(9)/L,NUMERIC,M,0,14,0,14,day,1.6,6.06,1.60-6.06 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Neutrophil,Neutrophils,x 10(9)/L,NUMERIC,M,15,28,15,4,week,1.18,5.45,1.18-5.45 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Neutrophil,Neutrophils,x 10(9)/L,NUMERIC,M,35,49,5,7,week,0.83,4.23,0.83-4.23 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Neutrophil,Neutrophils,x 10(9)/L,NUMERIC,M,56,150,8,5,month,0.97,5.45,0.97-5.45 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Neutrophil,Neutrophils,x 10(9)/L,NUMERIC,M,180,690,6,23,month,1.19,7.21,1.19-7.21 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Neutrophil,Neutrophils,x 10(9)/L,NUMERIC,M,720,1050,24,35,month,1.54,7.92,1.54-7.92 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Neutrophil,Neutrophils,x 10(9)/L,NUMERIC,M,1095,1825,3,5,year,1.6,7.8,1.60-7.80 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Neutrophil,Neutrophils,x 10(9)/L,NUMERIC,M,2190,5840,6,16,year,1.4,6.1,1.40-6.10 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Neutrophil,Neutrophils,x 10(9)/L,NUMERIC,M,6570,36500,18,,year,1.56,6.45,1.56-6.45 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Neutrophil,Neutrophils,x 10(9)/L,NUMERIC,F,0,14,0,14,day,1.73,6.75,1.73-6.75 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Neutrophil,Neutrophils,x 10(9)/L,NUMERIC,F,15,28,15,4,week,1.23,4.8,1.23-4.80 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Neutrophil,Neutrophils,x 10(9)/L,NUMERIC,F,35,49,5,7,week,1.0,4.68,1.00-4.68 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Neutrophil,Neutrophils,x 10(9)/L,NUMERIC,F,56,150,8,5,month,1.04,7.2,1.04-7.20 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Neutrophil,Neutrophils,x 10(9)/L,NUMERIC,F,180,690,6,23,month,1.27,7.18,1.27-7.18 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Neutrophil,Neutrophils,x 10(9)/L,NUMERIC,F,720,1050,24,35,month,1.6,8.29,1.60-8.29 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Neutrophil,Neutrophils,x 10(9)/L,NUMERIC,F,1095,1825,3,5,year,1.6,7.8,1.60-7.80 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Neutrophil,Neutrophils,x 10(9)/L,NUMERIC,F,2190,5110,6,14,year,1.5,6.5,1.50-6.50 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Neutrophil,Neutrophils,x 10(9)/L,NUMERIC,F,5475,6205,15,17,year,2.0,7.4,2.00-7.40 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Neutrophil,Neutrophils,x 10(9)/L,NUMERIC,F,6570,36500,18,,year,1.56,6.45,1.56-6.45 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Lymphocyte,Lymphocytes,x 10(9)/L,NUMERIC,M,0,14,0,14,day,2.07,7.53,2.07-7.53 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Lymphocyte,Lymphocytes,x 10(9)/L,NUMERIC,M,15,28,15,4,week,2.11,8.38,2.11-8.38 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Lymphocyte,Lymphocytes,x 10(9)/L,NUMERIC,M,35,49,5,7,week,2.47,7.95,2.47-7.95 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Lymphocyte,Lymphocytes,x 10(9)/L,NUMERIC,M,56,150,8,5,month,2.45,8.89,2.45-8.89 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Lymphocyte,Lymphocytes,x 10(9)/L,NUMERIC,M,180,690,6,23,month,1.56,7.83,1.56-7.83 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Lymphocyte,Lymphocytes,x 10(9)/L,NUMERIC,M,720,1050,24,35,month,1.13,5.52,1.13-5.52 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Lymphocyte,Lymphocytes,x 10(9)/L,NUMERIC,M,1095,1825,3,5,year,1.6,5.3,1.60-5.30 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Lymphocyte,Lymphocytes,x 10(9)/L,NUMERIC,M,2190,4015,6,11,year,1.4,3.9,1.40-3.90 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Lymphocyte,Lymphocytes,x 10(9)/L,NUMERIC,M,4380,6205,12,17,year,1.0,3.2,1.00-3.20 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Lymphocyte,Lymphocytes,x 10(9)/L,NUMERIC,M,6570,36500,18,,year,0.95,3.07,0.95-3.07 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Lymphocyte,Lymphocytes,x 10(9)/L,NUMERIC,F,0,14,0,14,day,1.75,8.0,1.75-8.00 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Lymphocyte,Lymphocytes,x 10(9)/L,NUMERIC,F,15,28,15,4,week,2.42,8.2,2.42-8.20 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Lymphocyte,Lymphocytes,x 10(9)/L,NUMERIC,F,35,49,5,7,week,2.29,9.14,2.29-9.14 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Lymphocyte,Lymphocytes,x 10(9)/L,NUMERIC,F,56,150,8,5,month,2.14,8.99,2.14-8.99 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Lymphocyte,Lymphocytes,x 10(9)/L,NUMERIC,F,180,690,6,23,month,1.52,8.09,1.52-8.09 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Lymphocyte,Lymphocytes,x 10(9)/L,NUMERIC,F,720,1050,24,35,month,1.25,5.77,1.25-5.77 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Lymphocyte,Lymphocytes,x 10(9)/L,NUMERIC,F,1095,1825,3,5,year,1.6,5.3,1.60-5.30 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Lymphocyte,Lymphocytes,x 10(9)/L,NUMERIC,F,2190,4015,6,11,year,1.4,3.9,1.40-3.90 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Lymphocyte,Lymphocytes,x 10(9)/L,NUMERIC,F,4380,6205,12,17,year,1.0,3.2,1.00-3.20 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Lymphocyte,Lymphocytes,x 10(9)/L,NUMERIC,F,6570,36500,18,,year,0.95,3.07,0.95-3.07 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Monocytes,Monocytes,x 10(9)/L,NUMERIC,M,0,14,0,14,day,0.52,1.77,0.52-1.77 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Monocytes,Monocytes,x 10(9)/L,NUMERIC,M,15,28,15,4,week,0.28,1.38,0.28-1.38 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Monocytes,Monocytes,x 10(9)/L,NUMERIC,M,35,49,5,7,week,0.28,1.05,0.28-1.05 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Monocytes,Monocytes,x 10(9)/L,NUMERIC,M,56,150,8,5,month,0.28,1.07,0.28-1.07 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Monocytes,Monocytes,x 10(9)/L,NUMERIC,M,180,690,6,23,month,0.25,1.15,0.25-1.15 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Monocytes,Monocytes,x 10(9)/L,NUMERIC,M,720,1050,24,35,month,0.19,0.94,0.19-0.94 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Monocytes,Monocytes,x 10(9)/L,NUMERIC,M,1095,1825,3,5,year,0.3,0.9,0.30-0.90 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Monocytes,Monocytes,x 10(9)/L,NUMERIC,M,2190,6205,6,17,year,0.2,0.8,0.20-0.80 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Monocytes,Monocytes,x 10(9)/L,NUMERIC,M,6570,36500,18,,year,0.26,0.81,0.26-0.81 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Monocytes,Monocytes,x 10(9)/L,NUMERIC,F,0,14,0,14,day,0.57,1.72,0.57-1.72 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Monocytes,Monocytes,x 10(9)/L,NUMERIC,F,15,28,15,4,week,0.42,1.21,0.42-1.21 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Monocytes,Monocytes,x 10(9)/L,NUMERIC,F,35,49,5,7,week,0.28,1.21,0.28-1.21 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Monocytes,Monocytes,x 10(9)/L,NUMERIC,F,56,150,8,5,month,0.24,1.17,0.24-1.17 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Monocytes,Monocytes,x 10(9)/L,NUMERIC,F,180,690,6,23,month,0.26,1.08,0.26-1.08 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Monocytes,Monocytes,x 10(9)/L,NUMERIC,F,720,1050,24,35,month,0.24,0.92,0.24-0.92 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Monocytes,Monocytes,x 10(9)/L,NUMERIC,F,1095,1825,3,5,year,0.3,0.9,0.30-0.90 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Monocytes,Monocytes,x 10(9)/L,NUMERIC,F,2190,6205,6,17,year,0.2,0.8,0.20-0.80 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Monocytes,Monocytes,x 10(9)/L,NUMERIC,F,6570,36500,18,,year,0.26,0.81,0.26-0.81 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Eosinophil,Eosinophils,x 10(9)/L,NUMERIC,M,0,14,0,14,day,0.12,0.66,0.12-0.66 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Eosinophil,Eosinophils,x 10(9)/L,NUMERIC,M,15,28,15,4,week,0.08,0.8,0.08-0.80 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Eosinophil,Eosinophils,x 10(9)/L,NUMERIC,M,35,49,5,7,week,0.05,0.57,0.05-0.57 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Eosinophil,Eosinophils,x 10(9)/L,NUMERIC,M,56,150,8,5,month,0.03,0.61,0.03-0.61 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Eosinophil,Eosinophils,x 10(9)/L,NUMERIC,M,180,690,6,23,month,0.02,0.82,0.02-0.82 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Eosinophil,Eosinophils,x 10(9)/L,NUMERIC,M,720,1050,24,35,month,0.03,0.53,0.03-0.53 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Eosinophil,Eosinophils,x 10(9)/L,NUMERIC,M,1095,4015,3,11,year,0.0,0.5,0.00-0.50 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Eosinophil,Eosinophils,x 10(9)/L,NUMERIC,M,4380,6205,12,17,year,0.1,0.2,0.10-0.20 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Eosinophil,Eosinophils,x 10(9)/L,NUMERIC,M,6570,36500,18,,year,0.03,0.48,0.03-0.48 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Eosinophil,Eosinophils,x 10(9)/L,NUMERIC,F,0,14,0,14,day,0.09,0.64,0.09-0.64 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Eosinophil,Eosinophils,x 10(9)/L,NUMERIC,F,15,28,15,4,week,0.06,0.75,0.06-0.75 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Eosinophil,Eosinophils,x 10(9)/L,NUMERIC,F,35,49,5,7,week,0.04,0.63,0.04-0.63 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Eosinophil,Eosinophils,x 10(9)/L,NUMERIC,F,56,150,8,5,month,0.02,0.74,0.02-0.74 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Eosinophil,Eosinophils,x 10(9)/L,NUMERIC,F,180,690,6,23,month,0.02,0.58,0.02-0.58 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Eosinophil,Eosinophils,x 10(9)/L,NUMERIC,F,720,1050,24,35,month,0.03,0.46,0.03-0.46 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Eosinophil,Eosinophils,x 10(9)/L,NUMERIC,F,1095,4015,3,11,year,0.0,0.5,0.00-0.50 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Eosinophil,Eosinophils,x 10(9)/L,NUMERIC,F,4380,6205,12,17,year,0.1,0.2,0.10-0.20 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Eosinophil,Eosinophils,x 10(9)/L,NUMERIC,F,6570,36500,18,,year,0.03,0.48,0.03-0.48 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Basophils,Basophils,x 10(9)/L,NUMERIC,M,0,14,0,14,day,0.02,0.11,0.02-0.11 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Basophils,Basophils,x 10(9)/L,NUMERIC,M,15,49,15,7,week,0.01,0.07,0.01-0.07 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Basophils,Basophils,x 10(9)/L,NUMERIC,M,56,1050,8,35,month,0.01,0.06,0.01-0.06 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Basophils,Basophils,x 10(9)/L,NUMERIC,M,1095,6205,3,17,year,0.0,0.1,0.00-0.10 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Basophils,Basophils,x 10(9)/L,NUMERIC,M,6570,36500,18,,year,0.01,0.08,0.01-0.08 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Basophils,Basophils,x 10(9)/L,NUMERIC,F,0,14,0,14,day,0.02,0.07,0.02-0.07 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Basophils,Basophils,x 10(9)/L,NUMERIC,F,15,28,15,4,week,0.01,0.06,0.01-0.06 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Basophils,Basophils,x 10(9)/L,NUMERIC,F,35,49,5,7,week,0.01,0.05,0.01-0.05 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Basophils,Basophils,x 10(9)/L,NUMERIC,F,56,150,8,5,month,0.01,0.07,0.01-0.07 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Basophils,Basophils,x 10(9)/L,NUMERIC,F,180,1050,6,35,month,0.01,0.06,0.01-0.06 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Basophils,Basophils,x 10(9)/L,NUMERIC,F,1095,6205,3,17,year,0.0,0.1,0.00-0.10 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,CBC,"Complete Blood Cell Count (CBC) with Differential, Blood",CBC_Basophils,Basophils,x 10(9)/L,NUMERIC,F,6570,36500,18,,year,0.01,0.08,0.01-0.08 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_Reticulocy,% Reticulocytes,%,NUMERIC,B,1,3,1,3,day,3.47,5.4,3.47-5.40%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_Reticulocy,% Reticulocytes,%,NUMERIC,B,4,28,4,4,week,1.06,2.37,1.06-2.37%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_Reticulocy,% Reticulocytes,%,NUMERIC,B,35,49,5,7,week,2.12,3.47,2.12-3.47%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_Reticulocy,% Reticulocytes,%,NUMERIC,B,56,150,8,5,month,1.55,2.7,1.55-2.70%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_Reticulocy,% Reticulocytes,%,NUMERIC,B,180,690,6,23,month,0.99,1.82,0.99-1.82%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_Reticulocy,% Reticulocytes,%,NUMERIC,B,720,1825,24,5,year,0.82,1.45,0.82-1.45%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_Reticulocy,% Reticulocytes,%,NUMERIC,B,2190,4015,6,11,year,0.98,1.94,0.98-1.94%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_Reticulocy,% Reticulocytes,%,NUMERIC,B,4380,6205,12,17,year,0.9,1.49,0.90-1.49%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_Reticulocy,% Reticulocytes,%,NUMERIC,B,6570,36500,18,,year,0.6,2.71,0.60-2.71%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_AbsoluteRe,Absolute Reticulocytes,x 10(9)/L,NUMERIC,B,1,3,1,3,day,147.5,216.4,147.5-216.4 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_AbsoluteRe,Absolute Reticulocytes,x 10(9)/L,NUMERIC,B,4,28,4,4,week,51.3,110.4,51.3-110.4 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_AbsoluteRe,Absolute Reticulocytes,x 10(9)/L,NUMERIC,B,35,49,5,7,week,51.8,77.9,51.8-77.9 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_AbsoluteRe,Absolute Reticulocytes,x 10(9)/L,NUMERIC,B,56,150,8,5,month,48.2,88.2,48.2-88.2 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_AbsoluteRe,Absolute Reticulocytes,x 10(9)/L,NUMERIC,B,180,690,6,23,month,43.5,111.1,43.5-111.1 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_AbsoluteRe,Absolute Reticulocytes,x 10(9)/L,NUMERIC,B,720,1825,24,5,year,36.4,68.0,36.4-68.0 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_AbsoluteRe,Absolute Reticulocytes,x 10(9)/L,NUMERIC,B,2190,4015,6,11,year,42.4,70.2,42.4-70.2 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_AbsoluteRe,Absolute Reticulocytes,x 10(9)/L,NUMERIC,B,4380,6205,12,17,year,41.6,65.1,41.6-65.1 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_AbsoluteRe,Absolute Reticulocytes,x 10(9)/L,NUMERIC,B,6570,36500,18,,year,30.4,110.9,30.4-110.9 x 10(9)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_ImmatureRe,Immature Reticulocyte Fraction (Irf),%,NUMERIC,B,1,3,1,3,day,30.5,35.1,30.5-35.1%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_ImmatureRe,Immature Reticulocyte Fraction (Irf),%,NUMERIC,B,4,28,4,4,week,14.5,24.6,14.5-24.6%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_ImmatureRe,Immature Reticulocyte Fraction (Irf),%,NUMERIC,B,35,60,5,2,month,19.1,28.9,19.1-28.9%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_ImmatureRe,Immature Reticulocyte Fraction (Irf),%,NUMERIC,B,90,150,3,5,month,13.4,23.3,13.4-23.3%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_ImmatureRe,Immature Reticulocyte Fraction (Irf),%,NUMERIC,F,0,36500,,,,3.0,15.9,3.0-15.9%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_ImmatureRe,Immature Reticulocyte Fraction (Irf),%,NUMERIC,M,0,36500,,,,2.3,13.4,2.3-13.4%,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_Reticulocy,Reticulocyte Hemoglobin,pg,NUMERIC,M,1,150,1,5,month,27.6,38.7,27.6-38.7 pg,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_Reticulocy,Reticulocyte Hemoglobin,pg,NUMERIC,M,6570,36500,18,,year,30.0,37.6,30.0-37.6 pg,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_Reticulocy,Reticulocyte Hemoglobin,pg,NUMERIC,F,1,150,1,5,month,29.2,37.5,29.2-37.5 pg,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_Reticulocy,Reticulocyte Hemoglobin,pg,NUMERIC,F,6570,36500,18,,year,30.0,37.6,30.0-37.6 pg,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,M,0,14,0,14,day,4.1,5.55,4.10-5.55 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,M,15,28,15,4,week,3.16,4.63,3.16-4.63 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,M,35,49,5,7,week,3.02,4.22,3.02-4.22 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,M,56,150,8,5,month,3.43,4.8,3.43-4.80 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,M,180,690,6,23,month,4.03,5.07,4.03-5.07 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,M,720,1050,24,35,month,3.89,4.97,3.89-4.97 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,M,1095,1825,3,5,year,4.0,5.1,4.00-5.10 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,M,2190,3650,6,10,year,4.1,5.2,4.10-5.20 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,M,4015,5110,11,14,year,4.2,5.3,4.20-5.30 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,M,5475,6205,15,17,year,4.3,5.7,4.30-5.70 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,M,6570,36500,18,,year,4.35,5.65,4.35-5.65 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,F,0,14,0,14,day,4.12,5.74,4.12-5.74 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,F,15,28,15,4,week,3.32,4.8,3.32-4.80 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,F,35,49,5,7,week,2.93,3.87,2.93-3.87 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,F,56,150,8,5,month,3.45,4.75,3.45-4.75 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,F,180,690,6,23,month,3.97,5.01,3.97-5.01 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,F,720,1050,24,35,month,3.84,4.92,3.84-4.92 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,F,1095,1825,3,5,year,4.0,5.1,4.00-5.10 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,F,2190,3650,6,10,year,4.1,5.2,4.10-5.20 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,F,4015,5110,11,14,year,4.1,5.1,4.10-5.10 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,F,5475,6205,15,17,year,3.8,5.0,3.80-5.00 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,RETB,"Reticulocyte Profile, Blood",RETB_RedBloodCe,Red Blood Cell Count (Rbc),x 10(12)/L,NUMERIC,F,6570,36500,18,,year,3.92,5.13,3.92-5.13 x 10(12)/L,,OK
+HEMA,Hematology,CBC,Complete Blood Count,PLHBB,"Plasma Free Hemoglobin, Plasma",PLHBB,"Plasma Free Hemoglobin, Plasma",mg/dL,NUMERIC,B,360,36500,12,,month,0.0,15.2,0.0-15.2 mg/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,PLHBB,"Plasma Free Hemoglobin, Plasma",PLHBB,"Plasma Free Hemoglobin, Plasma",mg/dL,NUMERIC,B,360,36500,12,,month,0.0,12.4,0.0-12.4 mg/dL,,OK
+HEMA,Hematology,CBC,Complete Blood Count,MET,"Methemoglobin and Sulfhemoglobin, Blood",MET_Methemoglo,Methemoglobin,,NUMERIC,B,0,330,0,11,month,,,Not established,Not established (per Mayo),OK
+HEMA,Hematology,CBC,Complete Blood Count,MET,"Methemoglobin and Sulfhemoglobin, Blood",MET_Methemoglo,Methemoglobin,% of total hemoglobin,NUMERIC,B,365,36500,1,,year,0.0,1.5,0.0-1.5% of total hemoglobin,,OK
+HEMA,Hematology,CBC,Complete Blood Count,MET,"Methemoglobin and Sulfhemoglobin, Blood",MET_Sulfhemogl,Sulfhemoglobin,,NUMERIC,B,0,330,0,11,month,,,Not established,Not established (per Mayo),OK
+HEMA,Hematology,CBC,Complete Blood Count,MET,"Methemoglobin and Sulfhemoglobin, Blood",MET_Sulfhemogl,Sulfhemoglobin,% of total hemoglobin,NUMERIC,B,365,36500,1,,year,0.0,0.4,0.0-0.4% of total hemoglobin,,OK
+HEMA,Hematology,COAG,Coagulation,APTSC,"Activated Partial Thromboplastin Time (APTT), Plasma",APTSC,"Activated Partial Thromboplastin Time (APTT), Plasma",seconds,NUMERIC,B,0,36500,,,,25.0,37.0,25-37 seconds,,OK
+HEMA,Hematology,COAG,Coagulation,FIBTP,"Fibrinogen, Plasma",FIBTP,"Fibrinogen, Plasma",mg/dL,NUMERIC,B,0,36500,,,,200.0,393.0,200-393 mg/dL,,OK
+HEMA,Hematology,COAG,Coagulation,DDITT,"D-Dimer, Plasma",DDITT,"D-Dimer, Plasma",ng/mL Fibrinogen Equivalent Units (FEU),NUMERIC,B,0,36500,,,,,500.0,< or =500 ng/mL Fibrinogen Equivalent Units (FEU),"Threshold value (guideline-based), verify interpretation",OK
+ENDO,Endocrinology,THY,Thyroid,STSH,"Thyroid-Stimulating Hormone-Sensitive (s-TSH), Serum",STSH,"Thyroid-Stimulating Hormone-Sensitive (s-TSH), Serum",mIU/L,NUMERIC,B,0,5,0,5,day,0.7,15.2,0.7-15.2 mIU/L,,OK
+ENDO,Endocrinology,THY,Thyroid,STSH,"Thyroid-Stimulating Hormone-Sensitive (s-TSH), Serum",STSH,"Thyroid-Stimulating Hormone-Sensitive (s-TSH), Serum",mIU/L,NUMERIC,B,6,60,6,2,month,0.7,11.0,0.7-11.0 mIU/L,,OK
+ENDO,Endocrinology,THY,Thyroid,STSH,"Thyroid-Stimulating Hormone-Sensitive (s-TSH), Serum",STSH,"Thyroid-Stimulating Hormone-Sensitive (s-TSH), Serum",mIU/L,NUMERIC,B,90,330,3,11,month,0.7,8.4,0.7-8.4 mIU/L,,OK
+ENDO,Endocrinology,THY,Thyroid,STSH,"Thyroid-Stimulating Hormone-Sensitive (s-TSH), Serum",STSH,"Thyroid-Stimulating Hormone-Sensitive (s-TSH), Serum",mIU/L,NUMERIC,B,365,1825,1,5,year,0.7,6.0,0.7-6.0 mIU/L,,OK
+ENDO,Endocrinology,THY,Thyroid,STSH,"Thyroid-Stimulating Hormone-Sensitive (s-TSH), Serum",STSH,"Thyroid-Stimulating Hormone-Sensitive (s-TSH), Serum",mIU/L,NUMERIC,B,2190,3650,6,10,year,0.6,4.8,0.6-4.8 mIU/L,,OK
+ENDO,Endocrinology,THY,Thyroid,STSH,"Thyroid-Stimulating Hormone-Sensitive (s-TSH), Serum",STSH,"Thyroid-Stimulating Hormone-Sensitive (s-TSH), Serum",mIU/L,NUMERIC,B,4015,6935,11,19,year,0.5,4.3,0.5-4.3 mIU/L,,OK
+ENDO,Endocrinology,THY,Thyroid,STSH,"Thyroid-Stimulating Hormone-Sensitive (s-TSH), Serum",STSH,"Thyroid-Stimulating Hormone-Sensitive (s-TSH), Serum",mIU/L,NUMERIC,B,7300,36500,20,,year,0.3,4.2,0.3-4.2 mIU/L,,OK
+ENDO,Endocrinology,THY,Thyroid,T3FR,"T3 (Triiodothyronine), Free, Serum",T3FR,"T3 (Triiodothyronine), Free, Serum",pg/mL,NUMERIC,B,0,30,0,1,month,2.7,8.5,2.7-8.5 pg/mL,,OK
+ENDO,Endocrinology,THY,Thyroid,FRTUP,"Free Thyroxine Index (FTI), Serum",FRTUP,"Free Thyroxine Index (FTI), Serum",TBI,NUMERIC,B,0,6935,0,19,year,0.8,1.2,0.8-1.2 TBI,,OK
+ENDO,Endocrinology,THY,Thyroid,FRTUP,"Free Thyroxine Index (FTI), Serum",FRTUP,"Free Thyroxine Index (FTI), Serum",TBI,NUMERIC,B,7300,36500,20,,year,0.8,1.3,0.8-1.3 TBI,,OK
+ENDO,Endocrinology,THY,Thyroid,FRTUP,"Free Thyroxine Index (FTI), Serum",FRTUP,"Free Thyroxine Index (FTI), Serum",mcg/dL,NUMERIC,B,0,5,0,5,day,5.0,18.5,5.0-18.5 mcg/dL,,OK
+ENDO,Endocrinology,THY,Thyroid,FRTUP,"Free Thyroxine Index (FTI), Serum",FRTUP,"Free Thyroxine Index (FTI), Serum",mcg/dL,NUMERIC,B,6,60,6,2,month,5.4,17.0,5.4-17.0 mcg/dL,,OK
+ENDO,Endocrinology,THY,Thyroid,FRTUP,"Free Thyroxine Index (FTI), Serum",FRTUP,"Free Thyroxine Index (FTI), Serum",mcg/dL,NUMERIC,B,90,330,3,11,month,5.7,16.0,5.7-16.0 mcg/dL,,OK
+ENDO,Endocrinology,THY,Thyroid,FRTUP,"Free Thyroxine Index (FTI), Serum",FRTUP,"Free Thyroxine Index (FTI), Serum",mcg/dL,NUMERIC,B,365,1825,1,5,year,6.0,14.7,6.0-14.7 mcg/dL,,OK
+ENDO,Endocrinology,THY,Thyroid,FRTUP,"Free Thyroxine Index (FTI), Serum",FRTUP,"Free Thyroxine Index (FTI), Serum",mcg/dL,NUMERIC,B,2190,3650,6,10,year,6.0,13.8,6.0-13.8 mcg/dL,,OK
+ENDO,Endocrinology,THY,Thyroid,FRTUP,"Free Thyroxine Index (FTI), Serum",FRTUP,"Free Thyroxine Index (FTI), Serum",mcg/dL,NUMERIC,B,4015,6935,11,19,year,5.9,13.2,5.9-13.2 mcg/dL,,OK
+ENDO,Endocrinology,THY,Thyroid,FRTUP,"Free Thyroxine Index (FTI), Serum",FRTUP,"Free Thyroxine Index (FTI), Serum",mcg/dL,NUMERIC,B,7300,36500,20,,year,4.5,11.7,4.5-11.7 mcg/dL,,OK
+ENDO,Endocrinology,THY,Thyroid,FRTUP,"Free Thyroxine Index (FTI), Serum",FRTUP,"Free Thyroxine Index (FTI), Serum",mcg/dL,NUMERIC,B,0,5,0,5,day,5.1,20.8,5.1-20.8 mcg/dL,,OK
+ENDO,Endocrinology,THY,Thyroid,FRTUP,"Free Thyroxine Index (FTI), Serum",FRTUP,"Free Thyroxine Index (FTI), Serum",mcg/dL,NUMERIC,B,6,60,6,2,month,5.5,18.0,5.5-18.0 mcg/dL,,OK
+ENDO,Endocrinology,THY,Thyroid,FRTUP,"Free Thyroxine Index (FTI), Serum",FRTUP,"Free Thyroxine Index (FTI), Serum",mcg/dL,NUMERIC,B,90,330,3,11,month,5.7,16.8,5.7-16.8 mcg/dL,,OK
+ENDO,Endocrinology,THY,Thyroid,FRTUP,"Free Thyroxine Index (FTI), Serum",FRTUP,"Free Thyroxine Index (FTI), Serum",mcg/dL,NUMERIC,B,365,1825,1,5,year,5.9,15.0,5.9-15.0 mcg/dL,,OK
+ENDO,Endocrinology,THY,Thyroid,FRTUP,"Free Thyroxine Index (FTI), Serum",FRTUP,"Free Thyroxine Index (FTI), Serum",mcg/dL,NUMERIC,B,2190,3650,6,10,year,6.0,13.9,6.0-13.9 mcg/dL,,OK
+ENDO,Endocrinology,THY,Thyroid,FRTUP,"Free Thyroxine Index (FTI), Serum",FRTUP,"Free Thyroxine Index (FTI), Serum",mcg/dL,NUMERIC,B,4015,6935,11,19,year,5.9,13.2,5.9-13.2 mcg/dL,,OK
+ENDO,Endocrinology,THY,Thyroid,FRTUP,"Free Thyroxine Index (FTI), Serum",FRTUP,"Free Thyroxine Index (FTI), Serum",mcg/dL,NUMERIC,B,7300,36500,20,,year,4.8,12.7,4.8-12.7 mcg/dL,,OK
+ENDO,Endocrinology,ADR,Adrenal,CORT,"Cortisol, Serum",CORT,"Cortisol, Serum",mcg/dL,NUMERIC,B,6570,36500,18,,year,7.0,25.0,7-25 mcg/dL,a.m. (per Mayo),OK
+ENDO,Endocrinology,ADR,Adrenal,CORT,"Cortisol, Serum",CORT,"Cortisol, Serum",mcg/dL,NUMERIC,B,6570,36500,18,,year,2.0,14.0,2-14 mcg/dL,p.m. (per Mayo),OK
+ENDO,Endocrinology,PARA,Parathyroid/Calcium Regulation,PTH2,"Parathyroid Hormone, Serum",PTH2,"Parathyroid Hormone, Serum",pg/mL,NUMERIC,B,0,29,0,1,month,7.0,59.0,7.0-59 pg/mL,,OK
+ENDO,Endocrinology,PARA,Parathyroid/Calcium Regulation,PTH2,"Parathyroid Hormone, Serum",PTH2,"Parathyroid Hormone, Serum",pg/mL,NUMERIC,B,28,330,4,11,month,8.0,61.0,8.0-61 pg/mL,,OK
+ENDO,Endocrinology,PARA,Parathyroid/Calcium Regulation,PTH2,"Parathyroid Hormone, Serum",PTH2,"Parathyroid Hormone, Serum",pg/mL,NUMERIC,B,360,3650,12,10,year,11.0,59.0,11-59 pg/mL,,OK
+ENDO,Endocrinology,PARA,Parathyroid/Calcium Regulation,PTH2,"Parathyroid Hormone, Serum",PTH2,"Parathyroid Hormone, Serum",pg/mL,NUMERIC,B,4015,6205,11,17,year,15.0,68.0,15-68 pg/mL,,OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,PRL,"Prolactin, Serum",PRL,"Prolactin, Serum",,NUMERIC,M,0,6569,0,18,year,,,not established,Not established (per Mayo),OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,PRL,"Prolactin, Serum",PRL,"Prolactin, Serum",ng/mL,NUMERIC,M,6570,36500,18,,year,4.0,15.2,4.0-15.2 ng/mL,,OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,PRL,"Prolactin, Serum",PRL,"Prolactin, Serum",,NUMERIC,F,0,6569,0,18,year,,,not established,Not established (per Mayo),OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,PRL,"Prolactin, Serum",PRL,"Prolactin, Serum",ng/mL,NUMERIC,F,6570,36500,18,,year,4.8,23.3,4.8-23.3 ng/mL,,OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,PGSN,"Progesterone, Serum",PGSN,"Progesterone, Serum",,NUMERIC,B,0,27,0,4,week,,,Not established,Not established (per Mayo),OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,PGSN,"Progesterone, Serum",PGSN,"Progesterone, Serum",ng/mL,NUMERIC,B,360,3285,12,9,year,,0.35,< or =0.35 ng/mL,"Threshold value (guideline-based), verify interpretation",OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,PGSN,"Progesterone, Serum",PGSN,"Progesterone, Serum",,NUMERIC,B,3650,6205,10,17,year,,,Concentrations increase through adolescence and puberty,COMPLEX TEXT - manual review required,OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,PGSN,"Progesterone, Serum",PGSN,"Progesterone, Serum",ng/mL,NUMERIC,B,6570,36500,18,,year,,0.2,<0.20 ng/mL,"Threshold value (guideline-based), verify interpretation",OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,PGSN,"Progesterone, Serum",PGSN,"Progesterone, Serum",ng/mL,NUMERIC,F,360,3285,12,9,year,,0.35,< or =0.35 ng/mL,"Threshold value (guideline-based), verify interpretation",OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,PGSN,"Progesterone, Serum",PGSN,"Progesterone, Serum",,NUMERIC,F,3650,6205,10,17,year,,,Adult concentrations are attained by puberty,COMPLEX TEXT - manual review required,OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,PGSN,"Progesterone, Serum",PGSN,"Progesterone, Serum",ng/mL,NUMERIC,F,6570,36500,18,,year,,0.89,< or =0.89 ng/mL,"-Follicular phase (per Mayo); Threshold value (guideline-based), verify interpretation",OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,PGSN,"Progesterone, Serum",PGSN,"Progesterone, Serum",ng/mL,NUMERIC,F,6570,36500,18,,year,,12.0,< or =12 ng/mL,"-Ovulation (per Mayo); Threshold value (guideline-based), verify interpretation",OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,PGSN,"Progesterone, Serum",PGSN,"Progesterone, Serum",ng/mL,NUMERIC,F,6570,36500,18,,year,1.8,24.0,1.8-24 ng/mL,-Luteal phase (per Mayo),OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,PGSN,"Progesterone, Serum",PGSN,"Progesterone, Serum",ng/mL,NUMERIC,F,6570,36500,18,,year,,0.2,< or =0.20 ng/mL,"-Post-menopausal (per Mayo); Threshold value (guideline-based), verify interpretation",OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,PGSN,"Progesterone, Serum",PGSN,"Progesterone, Serum",ng/mL,NUMERIC,F,6570,36500,18,,year,11.0,44.0,11-44 ng/mL,-1st trimester (per Mayo),OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,PGSN,"Progesterone, Serum",PGSN,"Progesterone, Serum",ng/mL,NUMERIC,F,6570,36500,18,,year,25.0,83.0,25-83 ng/mL,-2nd trimester (per Mayo),OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,PGSN,"Progesterone, Serum",PGSN,"Progesterone, Serum",ng/mL,NUMERIC,F,6570,36500,18,,year,58.0,214.0,58-214 ng/mL,-3rd trimester (per Mayo),OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,EEST,"Estradiol, Serum",EEST,"Estradiol, Serum",pg/mL,NUMERIC,M,0,36500,,,,10.0,40.0,10-40 pg/mL,,OK
+TUMOR,Tumor Markers,TUMOR,Tumor Markers,PSA,"Prostate-Specific Antigen (PSA) Diagnostic, Serum",PSA,"Prostate-Specific Antigen (PSA) Diagnostic, Serum",,NUMERIC,B,,,,,,,,,COMPLEX/NARRATIVE TEXT - manual review required,COMPLEX
+TUMOR,Tumor Markers,TUMOR,Tumor Markers,CEA,"Carcinoembryonic Antigen (CEA), Serum",CEA,"Carcinoembryonic Antigen (CEA), Serum",,NUMERIC,B,,,,,,,,"Nonsmokers: < or =3.0 ng/mL |  |         Some smokers may have elevated CEA, usually <5.0 ng/mL. |  |         Serum markers are not specific for malignancy, and values may vary by method.",COMPLEX/NARRATIVE TEXT - manual review required,COMPLEX
+TUMOR,Tumor Markers,TUMOR,Tumor Markers,CA19,"Carbohydrate Antigen 19-9 (CA 19-9), Serum",CA19,"Carbohydrate Antigen 19-9 (CA 19-9), Serum",U/mL,NUMERIC,B,0,36500,,,,,35.0,<35 U/mL,"Threshold value (guideline-based), verify interpretation",OK
+TUMOR,Tumor Markers,TUMOR,Tumor Markers,AFP,"Alpha-Fetoprotein (AFP) Tumor Marker, Serum",AFP,"Alpha-Fetoprotein (AFP) Tumor Marker, Serum",ng/mL,NUMERIC,B,0,36500,,,,,8.4,<8.4 ng/mL,"Threshold value (guideline-based), verify interpretation",OK
+VITAMIN,Vitamins & Nutrition,VIT,Vitamins,FOL,"Folate, Serum",FOL,"Folate, Serum",mcg/L,NUMERIC,B,0,36500,,,,4.0,,> or =4.0 mcg/L,"Threshold value (guideline-based), verify interpretation",OK
+VITAMIN,Vitamins & Nutrition,VIT,Vitamins,FOL,"Folate, Serum",FOL,"Folate, Serum",mcg/L suggests folate deficiency,NUMERIC,B,0,36500,,,,,4.0,<4.0 mcg/L suggests folate deficiency,"Threshold value (guideline-based), verify interpretation",OK
+CHEM,Clinical Chemistry,INFLAM,Inflammation Markers,CRP,"C-Reactive Protein (CRP), Serum",CRP,"C-Reactive Protein (CRP), Serum",mg/L,NUMERIC,B,0,36500,,,,,5.0,<5.0 mg/L,"Threshold value (guideline-based), verify interpretation",OK
+URINE,Urinalysis,URINE24,24-Hour Urine,PTU,"Protein, Total, 24 Hour, Urine",PTU,"Protein, Total, 24 Hour, Urine",mg/24 hours,NUMERIC,B,6570,36500,18,,year,,229.0,<229 mg/24 hours,"Threshold value (guideline-based), verify interpretation",OK
+URINE,Urinalysis,URINE24,24-Hour Urine,NAU,"Sodium, 24 Hour, Urine",NAU,"Sodium, 24 Hour, Urine",mmol/24 hours,NUMERIC,B,6570,36500,18,,year,22.0,328.0,22-328 mmol/24 hours,,OK
+URINE,Urinalysis,URINE24,24-Hour Urine,KUR,"Potassium, 24 Hour, Urine",KUR,"Potassium, 24 Hour, Urine",mmol/24 hours,NUMERIC,B,6570,36500,18,,year,16.0,105.0,16-105 mmol/24 hours,,OK
+URINE,Urinalysis,URINE24,24-Hour Urine,CALU,"Calcium, 24 Hour, Urine",CALU,"Calcium, 24 Hour, Urine",mg/24 h*,NUMERIC,M,0,36500,,,,,250.0,<250 mg/24 h*,"Threshold value (guideline-based), verify interpretation",OK
+URINE,Urinalysis,URINE24,24-Hour Urine,CALU,"Calcium, 24 Hour, Urine",CALU,"Calcium, 24 Hour, Urine",mg/24 h*,NUMERIC,F,0,36500,,,,,200.0,<200 mg/24 h*,"Threshold value (guideline-based), verify interpretation",OK
+URINE,Urinalysis,URINE24,24-Hour Urine,URCU,"Uric Acid, 24 Hour, Urine",URCU,"Uric Acid, 24 Hour, Urine",,NUMERIC,B,,,,,,,,"Males > or =18 years old: 200-1,000 mg/24 hours |  |         Females > or =18 years old: 250-750 mg/24 hours |  |         Reference values have not been established for patients who are less than 18 years of age. |  |         The reference value is for a 24-hour collection.",COMPLEX/NARRATIVE TEXT - manual review required,COMPLEX
+URINE,Urinalysis,URINE24,24-Hour Urine,MAGU,"Magnesium, 24 Hour, Urine",MAGU,"Magnesium, 24 Hour, Urine",mg/24 hours,NUMERIC,B,0,36500,,,,51.0,269.0,51-269 mg/24 hours,,OK
+CHEM,Clinical Chemistry,PANC,Pancreatic Function,AMS,"Amylase, Total, Serum",AMS,"Amylase, Total, Serum",U/L,NUMERIC,B,0,30,0,30,day,0.0,6.0,0-6 U/L,,OK
+CHEM,Clinical Chemistry,PANC,Pancreatic Function,AMS,"Amylase, Total, Serum",AMS,"Amylase, Total, Serum",U/L,NUMERIC,B,31,182,31,182,day,1.0,17.0,1-17 U/L,,OK
+CHEM,Clinical Chemistry,PANC,Pancreatic Function,AMS,"Amylase, Total, Serum",AMS,"Amylase, Total, Serum",U/L,NUMERIC,B,183,365,183,365,day,6.0,44.0,6-44 U/L,,OK
+CHEM,Clinical Chemistry,PANC,Pancreatic Function,AMS,"Amylase, Total, Serum",AMS,"Amylase, Total, Serum",U/L,NUMERIC,B,365,1095,1,3,year,8.0,79.0,8-79 U/L,,OK
+CHEM,Clinical Chemistry,PANC,Pancreatic Function,AMS,"Amylase, Total, Serum",AMS,"Amylase, Total, Serum",U/L,NUMERIC,B,1460,6205,4,17,year,21.0,110.0,21-110 U/L,,OK
+CHEM,Clinical Chemistry,PANC,Pancreatic Function,AMS,"Amylase, Total, Serum",AMS,"Amylase, Total, Serum",U/L,NUMERIC,B,6570,36500,18,,year,28.0,100.0,28-100 U/L,,OK
+CHEM,Clinical Chemistry,PANC,Pancreatic Function,LPS,"Lipase, Serum",LPS,"Lipase, Serum",,NUMERIC,B,,,,,,,,13-60 U/L,COMPLEX/NARRATIVE TEXT - manual review required,COMPLEX
+CHEM,Clinical Chemistry,MISC,Miscellaneous Chemistry,LD,"Lactate Dehydrogenase (LDH), Serum",LD,"Lactate Dehydrogenase (LDH), Serum",U/L,NUMERIC,B,1,30,1,30,day,135.0,750.0,135-750 U/L,,OK
+CHEM,Clinical Chemistry,MISC,Miscellaneous Chemistry,LD,"Lactate Dehydrogenase (LDH), Serum",LD,"Lactate Dehydrogenase (LDH), Serum",U/L,NUMERIC,B,31,330,31,11,month,180.0,435.0,180-435 U/L,,OK
+CHEM,Clinical Chemistry,MISC,Miscellaneous Chemistry,LD,"Lactate Dehydrogenase (LDH), Serum",LD,"Lactate Dehydrogenase (LDH), Serum",U/L,NUMERIC,B,365,1095,1,3,year,160.0,370.0,160-370 U/L,,OK
+CHEM,Clinical Chemistry,MISC,Miscellaneous Chemistry,LD,"Lactate Dehydrogenase (LDH), Serum",LD,"Lactate Dehydrogenase (LDH), Serum",U/L,NUMERIC,B,1460,2190,4,6,year,145.0,345.0,145-345 U/L,,OK
+CHEM,Clinical Chemistry,MISC,Miscellaneous Chemistry,LD,"Lactate Dehydrogenase (LDH), Serum",LD,"Lactate Dehydrogenase (LDH), Serum",U/L,NUMERIC,B,2555,3285,7,9,year,143.0,290.0,143-290 U/L,,OK
+CHEM,Clinical Chemistry,MISC,Miscellaneous Chemistry,LD,"Lactate Dehydrogenase (LDH), Serum",LD,"Lactate Dehydrogenase (LDH), Serum",U/L,NUMERIC,B,3650,4380,10,12,year,120.0,293.0,120-293 U/L,,OK
+CHEM,Clinical Chemistry,MISC,Miscellaneous Chemistry,LD,"Lactate Dehydrogenase (LDH), Serum",LD,"Lactate Dehydrogenase (LDH), Serum",U/L,NUMERIC,B,4745,5475,13,15,year,110.0,283.0,110-283 U/L,,OK
+CHEM,Clinical Chemistry,MISC,Miscellaneous Chemistry,LD,"Lactate Dehydrogenase (LDH), Serum",LD,"Lactate Dehydrogenase (LDH), Serum",U/L,NUMERIC,B,5840,6205,16,17,year,105.0,233.0,105-233 U/L,,OK
+CHEM,Clinical Chemistry,MISC,Miscellaneous Chemistry,LD,"Lactate Dehydrogenase (LDH), Serum",LD,"Lactate Dehydrogenase (LDH), Serum",U/L,NUMERIC,B,6570,36500,18,,year,122.0,222.0,122-222 U/L,,OK
+CHEM,Clinical Chemistry,MISC,Miscellaneous Chemistry,NH3V,"Ammonia, Plasma",NH3V,"Ammonia, Plasma",mcmol/L,NUMERIC,B,0,36500,,,,,30.0,< or =30 mcmol/L,"Threshold value (guideline-based), verify interpretation",OK
+CHEM,Clinical Chemistry,MISC,Miscellaneous Chemistry,HAPT,"Haptoglobin, Serum",HAPT,"Haptoglobin, Serum",mg/dL,NUMERIC,B,0,36500,,,,30.0,200.0,30-200 mg/dL,,OK
+CHEM,Clinical Chemistry,LIVER,Liver Function,PALB,"Prealbumin, Serum",PALB,"Prealbumin, Serum",mg/dL,NUMERIC,B,6570,36500,18,,year,19.0,38.0,19-38 mg/dL,,OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,LH,"Luteinizing Hormone (LH), Serum",LH,"Luteinizing Hormone (LH), Serum",IU/L,NUMERIC,M,6570,36500,18,,year,1.3,9.6,1.3-9.6 IU/L,,OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,FSH,"Follicle-Stimulating Hormone (FSH), Serum",FSH,"Follicle-Stimulating Hormone (FSH), Serum",IU/L,NUMERIC,M,0,359,0,12,month,,3.3,< or =3.3 IU/L,"Threshold value (guideline-based), verify interpretation",OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,FSH,"Follicle-Stimulating Hormone (FSH), Serum",FSH,"Follicle-Stimulating Hormone (FSH), Serum",IU/L,NUMERIC,M,360,1825,12,5,year,,1.9,< or =1.9 IU/L,"Threshold value (guideline-based), verify interpretation",OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,FSH,"Follicle-Stimulating Hormone (FSH), Serum",FSH,"Follicle-Stimulating Hormone (FSH), Serum",IU/L,NUMERIC,M,6570,36500,18,,year,1.2,15.8,1.2-15.8 IU/L,,OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,FSH,"Follicle-Stimulating Hormone (FSH), Serum",FSH,"Follicle-Stimulating Hormone (FSH), Serum",IU/L,NUMERIC,F,0,359,0,12,month,1.2,12.5,1.2-12.5 IU/L,,OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,FSH,"Follicle-Stimulating Hormone (FSH), Serum",FSH,"Follicle-Stimulating Hormone (FSH), Serum",IU/L,NUMERIC,F,360,3650,12,10,year,0.5,6.0,0.5-6.0 IU/L,,OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,FSH,"Follicle-Stimulating Hormone (FSH), Serum",FSH,"Follicle-Stimulating Hormone (FSH), Serum",,NUMERIC,F,0,36500,,,,,,10.5 (+/- 2) years. There is evidence that it may occur up to 1 year earlier in obese girls and in African,COMPLEX TEXT - manual review required,OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,TGRP,"Testosterone, Total and Free, Serum",TGRP_Testostero,"Testosterone, Free",,NUMERIC,B,0,364,0,1,year,,,Term infants,COMPLEX TEXT - manual review required,OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,TGRP,"Testosterone, Total and Free, Serum",TGRP_Testostero,"Testosterone, Free",ng/dL*,NUMERIC,B,1,15,1,15,day,0.2,3.1,0.20-3.10 ng/dL*,,OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,TGRP,"Testosterone, Total and Free, Serum",TGRP_Testostero,"Testosterone, Free",,NUMERIC,B,16,365,16,1,year,,,Values decrease gradually from newborn (0.20-3.10 ng/dL) to prepubertal levels,COMPLEX TEXT - manual review required,OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,TGRP,"Testosterone, Total and Free, Serum",TGRP_Testostero,"Testosterone, Free",ng/dL,NUMERIC,B,365,2920,1,8,year,,0.13,<0.13 ng/dL,"Threshold value (guideline-based), verify interpretation",OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,TGRP,"Testosterone, Total and Free, Serum",TGRP_Testostero,"Testosterone, Free",,NUMERIC,B,0,364,0,1,year,,,Term infants,COMPLEX TEXT - manual review required,OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,TGRP,"Testosterone, Total and Free, Serum",TGRP_Testostero,"Testosterone, Free",-0.25 ng/dL*,NUMERIC,B,1,15,1,15,day,,0.13,<0.13-0.25 ng/dL*,"Threshold value (guideline-based), verify interpretation",OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,TGRP,"Testosterone, Total and Free, Serum",TGRP_Testostero,"Testosterone, Free",,NUMERIC,B,16,365,16,1,year,,,Values decrease gradually from newborn (<0.13-0.25 ng/dL) to prepubertal levels,COMPLEX TEXT - manual review required,OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,TGRP,"Testosterone, Total and Free, Serum",TGRP_Testostero,"Testosterone, Free",ng/dL,NUMERIC,B,365,1460,1,4,year,,0.13,<0.13 ng/dL,"Threshold value (guideline-based), verify interpretation",OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,TGRP,"Testosterone, Total and Free, Serum",TGRP_Testostero,"Testosterone, Free",-1.09 ng/dL,NUMERIC,B,5475,6570,15,18,year,,0.13,<0.13-1.09 ng/dL,"Threshold value (guideline-based), verify interpretation",OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,TGRP,"Testosterone, Total and Free, Serum",TGRP_Testostero,"Testosterone, Total",ng/dL,NUMERIC,M,0,150,0,5,month,75.0,400.0,75-400 ng/dL,,OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,TGRP,"Testosterone, Total and Free, Serum",TGRP_Testostero,"Testosterone, Total",-20 ng/dL,NUMERIC,M,180,3285,6,9,year,,7.0,<7-20 ng/dL,"Threshold value (guideline-based), verify interpretation",OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,TGRP,"Testosterone, Total and Free, Serum",TGRP_Testostero,"Testosterone, Total",-130 ng/dL,NUMERIC,M,3650,4015,10,11,year,,7.0,<7-130 ng/dL,"Threshold value (guideline-based), verify interpretation",OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,TGRP,"Testosterone, Total and Free, Serum",TGRP_Testostero,"Testosterone, Total",-800 ng/dL,NUMERIC,M,4380,4745,12,13,year,,7.0,<7-800 ng/dL,"Threshold value (guideline-based), verify interpretation",OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,TGRP,"Testosterone, Total and Free, Serum",TGRP_Testostero,"Testosterone, Total",",200 ng/dL",NUMERIC,M,5475,5840,15,16,year,100.0,1.0,"100-1,200 ng/dL",,OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,TGRP,"Testosterone, Total and Free, Serum",TGRP_Testostero,"Testosterone, Total",",200 ng/dL",NUMERIC,M,6205,6570,17,18,year,300.0,1.0,"300-1,200 ng/dL",,OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,TGRP,"Testosterone, Total and Free, Serum",TGRP_Testostero,"Testosterone, Total",ng/dL,NUMERIC,M,6935,36500,19,,year,240.0,950.0,240-950 ng/dL,,OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,TGRP,"Testosterone, Total and Free, Serum",TGRP_Testostero,"Testosterone, Total",ng/dL,NUMERIC,F,0,150,0,5,month,20.0,80.0,20-80 ng/dL,,OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,TGRP,"Testosterone, Total and Free, Serum",TGRP_Testostero,"Testosterone, Total",-20 ng/dL,NUMERIC,F,180,3285,6,9,year,,7.0,<7-20 ng/dL,"Threshold value (guideline-based), verify interpretation",OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,TGRP,"Testosterone, Total and Free, Serum",TGRP_Testostero,"Testosterone, Total",-44 ng/dL,NUMERIC,F,3650,4015,10,11,year,,7.0,<7-44 ng/dL,"Threshold value (guideline-based), verify interpretation",OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,TGRP,"Testosterone, Total and Free, Serum",TGRP_Testostero,"Testosterone, Total",-75 ng/dL,NUMERIC,F,4380,5840,12,16,year,,7.0,<7-75 ng/dL,"Threshold value (guideline-based), verify interpretation",OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,TGRP,"Testosterone, Total and Free, Serum",TGRP_Testostero,"Testosterone, Total",ng/dL,NUMERIC,F,6205,6570,17,18,year,20.0,75.0,20-75 ng/dL,,OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,TGRP,"Testosterone, Total and Free, Serum",TGRP_Testostero,"Testosterone, Total",ng/dL,NUMERIC,F,6935,36500,19,,year,8.0,60.0,8-60 ng/dL,,OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,TGRP,"Testosterone, Total and Free, Serum",TGRP_Testostero,"Testosterone, Total",,NUMERIC,F,0,36500,,,,,,11.5 (+/-2) years and for girls at a median age of 10.5 (+/-2) years. There is evidence that it may occur,COMPLEX TEXT - manual review required,OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,BHCG,"Beta-Human Chorionic Gonadotropin, Quantitative, Serum",BHCG,"Beta-Human Chorionic Gonadotropin, Quantitative, Serum",IU/L,NUMERIC,M,0,36500,,,,,1.4,<1.4 IU/L,"Threshold value (guideline-based), verify interpretation",OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,BHCG,"Beta-Human Chorionic Gonadotropin, Quantitative, Serum",BHCG,"Beta-Human Chorionic Gonadotropin, Quantitative, Serum",,NUMERIC,F,0,36500,,,,,,"1. Chen RJ, Huang SC, Chow SN, Hsieh CY. Human chorionic gonadotropin pattern in maternal",COMPLEX TEXT - manual review required,OK
+ENDO,Endocrinology,REPRO,Reproductive Hormones,BHCG,"Beta-Human Chorionic Gonadotropin, Quantitative, Serum",BHCG,"Beta-Human Chorionic Gonadotropin, Quantitative, Serum",,NUMERIC,F,0,36500,,,,,,"2. Schneider DT, Calaminus G, Göbel U. Diagnostic value of alpha 1-fetoprotein and beta-human",COMPLEX TEXT - manual review required,OK
+VITAMIN,Vitamins & Nutrition,VIT,Vitamins,B12,"Vitamin B12 Assay, Serum",B12,"Vitamin B12 Assay, Serum",ng/L,NUMERIC,B,0,36500,,,,180.0,914.0,180-914 ng/L,,OK
+SEROL,Serology/Immunology,INFECT,Infectious Disease Serology,RPRS,"Rapid Plasma Reagin Screen with Reflex, Serum",RPRS,"Rapid Plasma Reagin Screen with Reflex, Serum",,NUMERIC,B,,,,,,,,"Only available as a reflex test. For more information see SYPHT / Syphilis Total Antibody with Reflex, |         Serum. |  |         Nonreactive",COMPLEX/NARRATIVE TEXT - manual review required,COMPLEX
+SEROL,Serology/Immunology,AUTO,Autoimmune Markers,RHUT,"Rheumatoid Factor, Serum",RHUT,"Rheumatoid Factor, Serum",IU/mL,NUMERIC,B,0,36500,,,,,15.0,<15 IU/mL,"Threshold value (guideline-based), verify interpretation",OK
+SEROL,Serology/Immunology,AUTO,Autoimmune Markers,ANA2,"Antinuclear Antibodies (ANA), Serum",ANA2,"Antinuclear Antibodies (ANA), Serum",,NUMERIC,B,,,,,,,,Negative: < or =1.0 U |  | Weakly positive: 1.1-2.9 U |  |         Positive: 3.0-5.9 U |  |         Strongly positive: > or =6.0 U |  |         Reference values apply to all ages.,COMPLEX/NARRATIVE TEXT - manual review required,COMPLEX
+TDM,Therapeutic Drug Monitoring,TDM,Drug Levels,DIG,"Digoxin, Serum",DIG,"Digoxin, Serum",ng/mL,NUMERIC,B,5840,36500,16,,year,0.6,1.2,0.6-1.2 ng/mL,Therapeutic range (per Mayo),OK
+TDM,Therapeutic Drug Monitoring,TDM,Drug Levels,DIG,"Digoxin, Serum",DIG,"Digoxin, Serum",ng/mL,NUMERIC,B,5840,36500,16,,year,4.0,,> or =4.0 ng/mL,"Toxic concentration (per Mayo); Threshold value (guideline-based), verify interpretation",OK
+TDM,Therapeutic Drug Monitoring,TDM,Drug Levels,LITH,"Lithium, Serum",LITH,"Lithium, Serum",,NUMERIC,B,,,,,,,,Therapeutic: 0.5-1.2 mmol/L (trough concentration) |  |                          Critical value: >1.6 mmol/L |  |                          There is no relationship between peak concentration and degree of intoxication.,COMPLEX/NARRATIVE TEXT - manual review required,COMPLEX
+TDM,Therapeutic Drug Monitoring,TDM,Drug Levels,VALPA,"Valproic Acid, Total, Serum",VALPA,"Valproic Acid, Total, Serum",,NUMERIC,B,,,,,,,,Therapeutic: 50 (trough)-125 (peak) mcg/mL |  |         Critical value: > or =151 mcg/mL,COMPLEX/NARRATIVE TEXT - manual review required,COMPLEX
+TDM,Therapeutic Drug Monitoring,TDM,Drug Levels,PNYA,"Phenytoin, Total, Serum",PNYA,"Phenytoin, Total, Serum",,NUMERIC,B,,,,,,,,Therapeutic: 10.0-20.0 mcg/mL |  |         Critical value: > or =30.0 mcg/mL,COMPLEX/NARRATIVE TEXT - manual review required,COMPLEX
+TUMOR,Tumor Markers,TUMOR,Tumor Markers,CA25,"Cancer Antigen 125 (CA 125), Serum",CA25,"Cancer Antigen 125 (CA 125), Serum",,NUMERIC,M,0,36500,,,,,,Not applicable,COMPLEX TEXT - manual review required,OK
+TUMOR,Tumor Markers,TUMOR,Tumor Markers,CA25,"Cancer Antigen 125 (CA 125), Serum",CA25,"Cancer Antigen 125 (CA 125), Serum",U/mL,NUMERIC,F,0,36500,,,,,46.0,<46 U/mL,"Threshold value (guideline-based), verify interpretation",OK

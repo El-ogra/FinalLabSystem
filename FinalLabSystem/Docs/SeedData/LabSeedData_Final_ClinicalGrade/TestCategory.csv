@@ -1,9 +1,0 @@
-category_id,category_code,category_name_en,category_name_ar,sort_order,is_active
-1,HEM,Hematology,أمراض الدم,1,1
-2,CHEM,Clinical Chemistry,الكيمياء السريرية,2,1
-3,LFT,Liver Function,وظائف الكبد,3,1
-4,LIP,Lipid Profile,دهون الدم,4,1
-5,URN,Urinalysis,تحليل البول,5,1
-6,STL,Stool Analysis,تحليل البراز,6,1
-7,SER,Serology,السيرولوجي,7,1
-8,HRM,Hormones,الهرمونات,8,1
