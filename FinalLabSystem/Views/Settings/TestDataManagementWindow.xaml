@@ -50,7 +50,8 @@
     <Grid Background="#E8EEF4" Margin="0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -74,7 +75,7 @@
                     <TextBox x:Name="SearchGroupNameBox" Width="160" Height="26" Margin="0,0,16,0"
                              Text="{Binding TestList.SearchGroupName, UpdateSourceTrigger=PropertyChanged}"
                              VerticalContentAlignment="Center"/>
-                    <TextBlock Text="By test ID" Foreground="White" FontWeight="Bold" FontSize="12" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="By code" Foreground="White" FontWeight="Bold" FontSize="12" Margin="0,0,6,0" VerticalAlignment="Center"/>
                     <TextBox x:Name="SearchTestIdBox" Width="160" Height="26"
                              Text="{Binding TestList.SearchTestId, UpdateSourceTrigger=PropertyChanged}"
                              VerticalContentAlignment="Center"/>
@@ -312,7 +313,7 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="100"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Text="Test time (Day)" Style="{StaticResource FieldLabel}" Width="95"/>
+                <TextBlock Grid.Column="0" Text="Test time (Hours)" Style="{StaticResource FieldLabel}" Width="95"/>
                 <TextBox Grid.Column="1" Text="{Binding TestDetail.TurnaroundHours, UpdateSourceTrigger=PropertyChanged}"
                          Style="{StaticResource FieldTextBox}" Width="80"/>
                 <TextBlock Grid.Column="2" Text="Arrange No" Style="{StaticResource FieldLabel}" Width="80"/>
@@ -321,6 +322,9 @@
                 <TextBlock Grid.Column="4" Text="Reference type" Style="{StaticResource FieldLabel}" Width="95"/>
                 <ComboBox Grid.Column="5" Style="{StaticResource FieldComboBox}" Width="120"
                           IsEditable="True"
+                          ItemsSource="{Binding TestDetail.ReferenceClassifications}"
+                          DisplayMemberPath="DisplayName"
+                          SelectedValuePath="Value"
                           Text="{Binding TestDetail.ReferenceType, UpdateSourceTrigger=PropertyChanged}"/>
                 <TextBlock Grid.Column="6" Text="Patient price" Style="{StaticResource FieldLabel}" Width="85" Foreground="#C62828" FontWeight="Bold"/>
                 <TextBox Grid.Column="7" Text="{Binding TestDetail.PatientPrice, UpdateSourceTrigger=PropertyChanged}"
@@ -331,8 +335,48 @@
             </Grid>
         </Border>
 
-        <!-- Row 5: Bottom Button Bar -->
-        <Border Grid.Row="5" Background="#1565C0" BorderBrush="#0D47A1" BorderThickness="3" Padding="5" Margin="0,6,0,0">
+        <!-- Row 5: Components Panel -->
+        <Border Grid.Row="5" Background="White" BorderBrush="#B0BEC5" BorderThickness="1" Padding="8,6" Margin="4,4,4,0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Header + Buttons -->
+                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,6">
+                    <TextBlock Text="Test Components" FontWeight="Bold" Foreground="#1565C0" FontSize="14" VerticalAlignment="Center" Margin="0,0,16,0"/>
+                    <Button Content="Add Component" Command="{Binding TestDetail.AddComponentCommand}"
+                            Style="{StaticResource ActionButtonStyle}" Background="#4CAF50" Height="30" MinWidth="100" Margin="4,0"/>
+                    <Button Content="Delete" Command="{Binding TestDetail.DeleteComponentCommand}"
+                            Style="{StaticResource ActionButtonStyle}" Background="#C62828" Height="30" MinWidth="80" Margin="4,0"/>
+                    <Button Content="Up" Command="{Binding TestDetail.MoveComponentUpCommand}"
+                            Style="{StaticResource ActionButtonStyle}" Height="30" MinWidth="60" Margin="4,0"/>
+                    <Button Content="Down" Command="{Binding TestDetail.MoveComponentDownCommand}"
+                            Style="{StaticResource ActionButtonStyle}" Height="30" MinWidth="60" Margin="4,0"/>
+                </StackPanel>
+
+                <!-- Component DataGrid -->
+                <DataGrid Grid.Row="1" ItemsSource="{Binding TestDetail.Components}"
+                          SelectedItem="{Binding TestDetail.SelectedComponent}"
+                          AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False"
+                          HeadersVisibility="Column" MaxHeight="160"
+                          GridLinesVisibility="Horizontal" Background="White"
+                          AlternatingRowBackground="#F5F7FA" BorderThickness="0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Code" Binding="{Binding ComponentCode}" Width="100"/>
+                        <DataGridTextColumn Header="Name (En)" Binding="{Binding ComponentNameEn}" Width="*"/>
+                        <DataGridTextColumn Header="Unit" Binding="{Binding Unit}" Width="80"/>
+                        <DataGridTextColumn Header="Result Type" Binding="{Binding ResultType}" Width="100"/>
+                        <DataGridTextColumn Header="Decimals" Binding="{Binding DecimalPlaces}" Width="70"/>
+                        <DataGridTextColumn Header="Sort" Binding="{Binding SortOrder}" Width="60"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Border>
+
+        <!-- Row 6: Bottom Button Bar -->
+        <Border Grid.Row="6" Background="#1565C0" BorderBrush="#0D47A1" BorderThickness="3" Padding="5" Margin="0,6,0,0">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <Button Content="إضافة تحليل" Command="{Binding AddCommand}"
                         Style="{StaticResource ActionButtonStyle}"

@@ -155,6 +155,10 @@ public partial class FinalLabDbContext : DbContext
 
     public virtual DbSet<VisitTest> VisitTests { get; set; }
 
+    public virtual DbSet<Unit> Units => Set<Unit>();
+
+    public virtual DbSet<TubeMaterial> TubeMaterials => Set<TubeMaterial>();
+
     // V4.0 New DbSets
     public virtual DbSet<Attendance> Attendances { get; set; }
 
@@ -1045,6 +1049,30 @@ public partial class FinalLabDbContext : DbContext
                 .HasForeignKey(d => d.StaffId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_StaffPerm_Staff");
+        });
+
+        modelBuilder.Entity<Unit>(entity =>
+        {
+            entity.ToTable("Unit");
+            entity.HasKey(e => e.UnitId);
+            entity.Property(e => e.UnitId).HasColumnName("unit_id");
+            entity.Property(e => e.UnitName).IsRequired().HasMaxLength(30).HasColumnName("unit_name");
+            entity.Property(e => e.UnitNameAr).HasMaxLength(30).HasColumnName("unit_name_ar");
+            entity.Property(e => e.Abbreviation).HasMaxLength(10).HasColumnName("abbreviation");
+            entity.Property(e => e.IsActive).HasDefaultValue(true).HasColumnName("is_active");
+            entity.Property(e => e.SortOrder).HasColumnName("sort_order");
+        });
+
+        modelBuilder.Entity<TubeMaterial>(entity =>
+        {
+            entity.ToTable("TubeMaterial");
+            entity.HasKey(e => e.TubeMaterialId);
+            entity.Property(e => e.TubeMaterialId).HasColumnName("tube_material_id");
+            entity.Property(e => e.MaterialName).IsRequired().HasMaxLength(50).HasColumnName("material_name");
+            entity.Property(e => e.MaterialNameAr).HasMaxLength(30).HasColumnName("material_name_ar");
+            entity.Property(e => e.TubeColor).HasMaxLength(20).HasColumnName("tube_color");
+            entity.Property(e => e.IsActive).HasDefaultValue(true).HasColumnName("is_active");
+            entity.Property(e => e.SortOrder).HasColumnName("sort_order");
         });
 
         modelBuilder.Entity<CollectionType>(entity =>

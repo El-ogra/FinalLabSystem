@@ -83,7 +83,7 @@ public class RoutineResultService : IRoutineResultService
                 var isPregnant = visitTests.TryGetValue(result.VisitTestId, out var vt) && vt.Visit.IsPregnant;
 
                 var matchingRange = ranges
-                    .Where(nr =>
+                    .Where(nr => nr.IsActive &&
                         (nr.Sex == "B" || nr.Sex == patient.Sex) &&
                         patientAgeInDays >= nr.AgeFromDays &&
                         patientAgeInDays <= nr.AgeToDays &&

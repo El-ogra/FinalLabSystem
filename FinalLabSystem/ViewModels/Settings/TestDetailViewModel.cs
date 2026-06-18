@@ -23,11 +23,21 @@ public sealed class TestDetailViewModel : ViewModelBase
     private string _tube3 = string.Empty;
     private string? _barcodeName;
 
+    private TestType? _baselineTest;
+    private int? _baselineCollectionTypeId;
+    private decimal _baselinePatientPrice;
+    private decimal _baselineLabToLabPrice;
     private string? _baselineTube1;
     private string? _baselineTube2;
     private string? _baselineTube3;
     private string? _baselineReferenceType;
     private string? _baselineBarcodeName;
+    private bool _baselineHasPatientQuestion;
+    private ICommand? _addComponentCommand;
+    private ICommand? _deleteComponentCommand;
+    private ICommand? _moveComponentUpCommand;
+    private ICommand? _moveComponentDownCommand;
+    private TestComponent? _selectedComponent;
 
     public TestDetailViewModel(ITestCatalogService testCatalogService, IDialogService dialogService)
     {
@@ -43,6 +53,15 @@ public sealed class TestDetailViewModel : ViewModelBase
     public ObservableCollection<TestGroup> Groups { get; } = new();
 
     public ObservableCollection<CollectionType> CollectionTypes { get; } = new();
+
+    private List<ReferenceClassification> _referenceClassifications = new();
+    public List<ReferenceClassification> ReferenceClassifications
+    {
+        get => _referenceClassifications;
+        set => SetProperty(ref _referenceClassifications, value);
+    }
+
+    public ObservableCollection<TestComponent> Components { get; } = new();
 
     public int? SelectedCollectionTypeId
     {
@@ -60,6 +79,20 @@ public sealed class TestDetailViewModel : ViewModelBase
         get => CollectionTypes.FirstOrDefault(ct => ct.CollectionTypeId == _selectedCollectionTypeId);
     }
 
+    public TestComponent? SelectedComponent
+    {
+        get => _selectedComponent;
+        set
+        {
+            if (SetProperty(ref _selectedComponent, value))
+            {
+                OnPropertyChanged(nameof(IsComponentSelected));
+            }
+        }
+    }
+
+    public bool IsComponentSelected => SelectedComponent is not null;
+
     public string? ReferenceType { get => _referenceType; set => SetProperty(ref _referenceType, value); }
 
     public string Tube1 { get => _tube1; set => SetProperty(ref _tube1, value); }
@@ -68,7 +101,12 @@ public sealed class TestDetailViewModel : ViewModelBase
 
     public string Tube3 { get => _tube3; set => SetProperty(ref _tube3, value); }
 
-    public List<string> AvailableTubeTypes { get; } = new() { "Serum", "Plasma", "EDTA Blood", "Citrate Blood", "Urine", "CSF", "Other" };
+    private List<string> _availableTubeTypes = new();
+    public List<string> AvailableTubeTypes
+    {
+        get => _availableTubeTypes;
+        private set => SetProperty(ref _availableTubeTypes, value);
+    }
 
     public string? BarcodeName { get => _barcodeName; set => SetProperty(ref _barcodeName, value); }
 
@@ -272,6 +310,11 @@ public sealed class TestDetailViewModel : ViewModelBase
 
     public ICommand OpenNormalRangesCommand { get; }
 
+    public ICommand AddComponentCommand => _addComponentCommand ??= new RelayCommand(_ => AddComponent());
+    public ICommand DeleteComponentCommand => _deleteComponentCommand ??= new RelayCommand(async _ => await DeleteComponentAsync(), _ => SelectedComponent is not null);
+    public ICommand MoveComponentUpCommand => _moveComponentUpCommand ??= new RelayCommand(_ => MoveComponent(-1), _ => CanMoveUp());
+    public ICommand MoveComponentDownCommand => _moveComponentDownCommand ??= new RelayCommand(_ => MoveComponent(1), _ => CanMoveDown());
+
     public async Task InitializeLookupsAsync()
     {
         Groups.Clear();
@@ -281,6 +324,19 @@ public sealed class TestDetailViewModel : ViewModelBase
         CollectionTypes.Clear();
         foreach (var ct in await _testCatalogService.GetAllCollectionTypesAsync())
             CollectionTypes.Add(ct);
+
+        await LoadReferenceClassificationsAsync();
+        await LoadTubeMaterialsAsync();
+    }
+
+    public async Task LoadReferenceClassificationsAsync()
+    {
+        ReferenceClassifications = await _testCatalogService.GetReferenceClassificationsAsync();
+    }
+
+    public async Task LoadTubeMaterialsAsync()
+    {
+        AvailableTubeTypes = (await _testCatalogService.GetAllTubeMaterialsAsync()).Select(t => t.MaterialName).ToList();
     }
 
     public async Task LoadAsync(int testTypeId, IReadOnlyList<TestRowViewModel> allTests)
@@ -300,7 +356,9 @@ public sealed class TestDetailViewModel : ViewModelBase
         Tube3 = tubes.ElementAtOrDefault(2)?.SampleType ?? string.Empty;
         ReferenceType = test.ReferenceType;
         BarcodeName = test.BarcodeName;
+        HasPatientQuestion = test.PatientQuestion is not null;
 
+        InitializeComponents(test);
         SaveBaseline();
         RaiseAllFieldsChanged();
         IsDirty = false;
@@ -318,6 +376,7 @@ public sealed class TestDetailViewModel : ViewModelBase
         Tube3 = string.Empty;
         ReferenceType = null;
         BarcodeName = null;
+        Components.Clear();
         RaiseAllFieldsChanged();
         IsDirty = true;
     }
@@ -375,13 +434,13 @@ public sealed class TestDetailViewModel : ViewModelBase
         short sortOrder = 1;
 
         if (!string.IsNullOrWhiteSpace(Tube1))
-            result.Add(new TestTypeSampleTube { TestTypeId = EditableTest.TesttypeId, SampleType = Tube1, Quantity = 1, SortOrder = sortOrder++, IsActive = true, TubeType = "Default" });
+            result.Add(new TestTypeSampleTube { TestTypeId = EditableTest.TesttypeId, SampleType = Tube1, Quantity = 1, SortOrder = sortOrder++, IsActive = true, TubeType = Tube1 });
 
         if (!string.IsNullOrWhiteSpace(Tube2))
-            result.Add(new TestTypeSampleTube { TestTypeId = EditableTest.TesttypeId, SampleType = Tube2, Quantity = 1, SortOrder = sortOrder++, IsActive = true, TubeType = "Default" });
+            result.Add(new TestTypeSampleTube { TestTypeId = EditableTest.TesttypeId, SampleType = Tube2, Quantity = 1, SortOrder = sortOrder++, IsActive = true, TubeType = Tube2 });
 
         if (!string.IsNullOrWhiteSpace(Tube3))
-            result.Add(new TestTypeSampleTube { TestTypeId = EditableTest.TesttypeId, SampleType = Tube3, Quantity = 1, SortOrder = sortOrder++, IsActive = true, TubeType = "Default" });
+            result.Add(new TestTypeSampleTube { TestTypeId = EditableTest.TesttypeId, SampleType = Tube3, Quantity = 1, SortOrder = sortOrder++, IsActive = true, TubeType = Tube3 });
 
         return result;
     }
@@ -394,20 +453,35 @@ public sealed class TestDetailViewModel : ViewModelBase
 
     public void SaveBaseline()
     {
+        _baselineTest = CloneTest(EditableTest);
+        _baselineCollectionTypeId = SelectedCollectionTypeId;
+        _baselinePatientPrice = PatientPrice;
+        _baselineLabToLabPrice = LabToLabPrice;
         _baselineTube1 = Tube1;
         _baselineTube2 = Tube2;
         _baselineTube3 = Tube3;
         _baselineReferenceType = ReferenceType;
         _baselineBarcodeName = BarcodeName;
+        _baselineHasPatientQuestion = HasPatientQuestion;
     }
 
     public void CancelChanges()
     {
+        if (_baselineTest is null)
+            return;
+
+        EditableTest = CloneTest(_baselineTest);
+        InitializeComponents(EditableTest);
+        SelectedCollectionTypeId = _baselineCollectionTypeId;
+        PatientPrice = _baselinePatientPrice;
+        LabToLabPrice = _baselineLabToLabPrice;
         Tube1 = _baselineTube1 ?? string.Empty;
         Tube2 = _baselineTube2 ?? string.Empty;
         Tube3 = _baselineTube3 ?? string.Empty;
         ReferenceType = _baselineReferenceType;
         BarcodeName = _baselineBarcodeName;
+        HasPatientQuestion = _baselineHasPatientQuestion;
+        RaiseAllFieldsChanged();
         IsDirty = false;
     }
 
@@ -518,8 +592,100 @@ public sealed class TestDetailViewModel : ViewModelBase
             IsSendOutside = test.IsSendOutside,
             OutsideLabName = test.OutsideLabName,
             OutsideCostPrice = test.OutsideCostPrice,
-            PatientQuestion = test.PatientQuestion
+            PatientQuestion = test.PatientQuestion,
+            TestComponents = test.TestComponents?.Select(tc => new TestComponent
+            {
+                ComponentId = tc.ComponentId,
+                TesttypeId = tc.TesttypeId,
+                ComponentCode = tc.ComponentCode,
+                ComponentNameEn = tc.ComponentNameEn,
+                ComponentNameAr = tc.ComponentNameAr,
+                ResultType = tc.ResultType,
+                DecimalPlaces = tc.DecimalPlaces,
+                Unit = tc.Unit,
+                SortOrder = tc.SortOrder,
+                IsActive = tc.IsActive
+            }).ToList() ?? new List<TestComponent>()
         };
+    }
+
+    private void AddComponent()
+    {
+        var maxSort = Components.Count > 0 ? Components.Max(c => c.SortOrder) : 0;
+        var component = new TestComponent
+        {
+            ComponentCode = "",
+            ComponentNameEn = "",
+            ResultType = "NUMERIC",
+            SortOrder = (short)(maxSort + 1),
+            IsActive = true,
+            DecimalPlaces = 2,
+            TesttypeId = EditableTest.TesttypeId
+        };
+        Components.Add(component);
+        SelectedComponent = component;
+        MarkEntityDirty();
+    }
+
+    private async Task DeleteComponentAsync()
+    {
+        if (SelectedComponent is null) return;
+        if (SelectedComponent.ComponentId > 0)
+        {
+            if (!_dialogService.ShowConfirmation("Are you sure you want to delete this component?", "Confirm"))
+                return;
+            try
+            {
+                await _testCatalogService.DeleteComponentAsync(SelectedComponent.ComponentId);
+            }
+            catch
+            {
+                _dialogService.ShowWarning("Cannot delete component. It may have associated ranges or results.");
+                return;
+            }
+        }
+        Components.Remove(SelectedComponent);
+        SelectedComponent = null;
+        MarkEntityDirty();
+    }
+
+    private bool CanMoveUp() => SelectedComponent is not null && Components.IndexOf(SelectedComponent) > 0;
+    private bool CanMoveDown() => SelectedComponent is not null && Components.IndexOf(SelectedComponent) < Components.Count - 1;
+
+    private void MoveComponent(int direction)
+    {
+        if (SelectedComponent is null) return;
+        var idx = Components.IndexOf(SelectedComponent);
+        var swapIdx = idx + direction;
+        if (swapIdx < 0 || swapIdx >= Components.Count) return;
+
+        Components.Move(idx, swapIdx);
+        for (int i = 0; i < Components.Count; i++)
+            Components[i].SortOrder = (short)(i + 1);
+        MarkEntityDirty();
+    }
+
+    private void InitializeComponents(TestType? test)
+    {
+        Components.Clear();
+        if (test?.TestComponents is not null)
+        {
+            foreach (var c in test.TestComponents.OrderBy(c => c.SortOrder))
+                Components.Add(c);
+        }
+    }
+
+    public IReadOnlyList<TestComponent> BuildComponents()
+    {
+        foreach (var c in Components)
+        {
+            c.TesttypeId = EditableTest.TesttypeId;
+            if (c.ComponentId == 0 && string.IsNullOrWhiteSpace(c.ComponentCode))
+                c.ComponentCode = EditableTest.TypeCode;
+            if (c.ComponentId == 0 && string.IsNullOrWhiteSpace(c.ComponentNameEn))
+                c.ComponentNameEn = EditableTest.TypeNameEn;
+        }
+        return Components.ToList();
     }
 
     private static string? NullIfWhiteSpace(string? value)

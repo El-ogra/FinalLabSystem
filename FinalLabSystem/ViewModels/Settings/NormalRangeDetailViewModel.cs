@@ -7,8 +7,6 @@ using FinalLabSystem.Services.Interfaces;
 
 namespace FinalLabSystem.ViewModels.Settings;
 
-public enum NormalRangeFor { Female, Male, Both }
-
 public enum RangeSex { M, F, B }
 
 public sealed class NormalRangeDetailViewModel : ViewModelBase
@@ -19,13 +17,19 @@ public sealed class NormalRangeDetailViewModel : ViewModelBase
     private bool _isDirty;
     private NormalRange? _lastLoadedRange;
     private string? _lastLoadedUnit;
-    private NormalRangeFor _rangeFor;
-    private RangeSex _sex;
+    private RangeSex _sex = RangeSex.B;
     private bool _forPregnantOnly;
     private ICommand? _saveCommand;
     private ICommand? _cancelCommand;
+    private List<Unit> _units = new();
 
     public string[] AgeUnitOptions { get; } = new[] { "Days", "Months", "Years" };
+
+    public List<Unit> Units
+    {
+        get => _units;
+        set => SetProperty(ref _units, value);
+    }
 
     public NormalRangeDetailViewModel(ITestCatalogService testCatalogService, IDialogService dialogService)
     {
@@ -43,45 +47,6 @@ public sealed class NormalRangeDetailViewModel : ViewModelBase
     {
         get => _isDirty;
         private set => SetProperty(ref _isDirty, value);
-    }
-
-    public NormalRangeFor RangeFor
-    {
-        get => _rangeFor;
-        set
-        {
-            if (SetProperty(ref _rangeFor, value))
-            {
-                MarkDirty();
-                OnPropertyChanged(nameof(IsSexEnabled));
-                OnPropertyChanged(nameof(IsAgeEnabled));
-                OnPropertyChanged(nameof(IsRangeForAll));
-                OnPropertyChanged(nameof(IsRangeForFemale));
-                OnPropertyChanged(nameof(IsRangeForMale));
-            }
-        }
-    }
-
-    public bool IsSexEnabled => RangeFor != NormalRangeFor.Both;
-
-    public bool IsAgeEnabled => RangeFor == NormalRangeFor.Both;
-
-    public bool IsRangeForAll
-    {
-        get => RangeFor == NormalRangeFor.Both;
-        set { if (value) RangeFor = NormalRangeFor.Both; }
-    }
-
-    public bool IsRangeForFemale
-    {
-        get => RangeFor == NormalRangeFor.Female;
-        set { if (value) RangeFor = NormalRangeFor.Female; }
-    }
-
-    public bool IsRangeForMale
-    {
-        get => RangeFor == NormalRangeFor.Male;
-        set { if (value) RangeFor = NormalRangeFor.Male; }
     }
 
     public RangeSex Sex
@@ -269,17 +234,15 @@ public sealed class NormalRangeDetailViewModel : ViewModelBase
             _ => RangeSex.B
         };
 
-        RangeFor = EditableRange.Sex switch
-        {
-            "M" => NormalRangeFor.Male,
-            "F" => NormalRangeFor.Female,
-            _ => NormalRangeFor.Both
-        };
-
         ForPregnantOnly = EditableRange.ForPregnantOnly ?? false;
 
         RaiseAllChanged();
         IsDirty = false;
+    }
+
+    public async Task LoadUnitsAsync()
+    {
+        Units = await _testCatalogService.GetAllUnitsAsync();
     }
 
     private async Task SaveAsync()
@@ -333,12 +296,6 @@ public sealed class NormalRangeDetailViewModel : ViewModelBase
 
     private void RaiseAllChanged()
     {
-        OnPropertyChanged(nameof(RangeFor));
-        OnPropertyChanged(nameof(IsSexEnabled));
-        OnPropertyChanged(nameof(IsAgeEnabled));
-        OnPropertyChanged(nameof(IsRangeForAll));
-        OnPropertyChanged(nameof(IsRangeForFemale));
-        OnPropertyChanged(nameof(IsRangeForMale));
         OnPropertyChanged(nameof(Sex));
         OnPropertyChanged(nameof(ForPregnantOnly));
         OnPropertyChanged(nameof(AgeFromDays));

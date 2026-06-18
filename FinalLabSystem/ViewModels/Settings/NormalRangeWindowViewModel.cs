@@ -76,20 +76,9 @@ public sealed class NormalRangeWindowViewModel : ViewModelBase
         Title = $"القيم الطبيعية - {ParentTest.TypeNameEn}";
 
         var components = ParentTest.TestComponents.ToList();
-        if (components.Count == 0)
-        {
-            components.Add(new TestComponent
-            {
-                TesttypeId = ParentTest.TesttypeId,
-                ComponentCode = ParentTest.TypeCode,
-                ComponentNameEn = ParentTest.TypeNameEn,
-                ResultType = "NUMERIC",
-                IsActive = true,
-                SortOrder = 1
-            });
-        }
-
         List.LoadComponents(components);
         ReferenceCount = List.RangesForSelectedComponent.Count;
+
+        await Detail.LoadUnitsAsync();
     }
 }

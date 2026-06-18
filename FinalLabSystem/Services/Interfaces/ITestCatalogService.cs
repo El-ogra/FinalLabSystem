@@ -107,6 +107,13 @@ public interface ITestCatalogService
     Task DeleteComponentAsync(int componentId);
 
     /// <summary>
+    /// Saves all components for a test type (adds, updates, and deletes as needed).
+    /// </summary>
+    /// <param name="testTypeId">The test type identifier.</param>
+    /// <param name="components">The components to persist.</param>
+    Task SaveTestComponentsAsync(int testTypeId, IReadOnlyList<TestComponent> components);
+
+    /// <summary>
     /// Gets normal ranges for a component.
     /// </summary>
     /// <param name="componentId">The component identifier.</param>
@@ -247,4 +254,59 @@ public interface ITestCatalogService
     /// <param name="collectionTypeId">The collection type identifier.</param>
     /// <returns><c>true</c> when test types reference the collection type; otherwise, <c>false</c>.</returns>
     Task<bool> CollectionTypeHasTestTypesAsync(int collectionTypeId);
+
+    /// <summary>
+    /// Gets all units ordered by sort order then name.
+    /// </summary>
+    Task<List<Unit>> GetAllUnitsAsync();
+
+    /// <summary>
+    /// Gets a unit by identifier.
+    /// </summary>
+    Task<Unit?> GetUnitByIdAsync(int unitId);
+
+    /// <summary>
+    /// Creates a new unit.
+    /// </summary>
+    Task<Unit> CreateUnitAsync(Unit unit);
+
+    /// <summary>
+    /// Updates an existing unit.
+    /// </summary>
+    Task<Unit> UpdateUnitAsync(Unit unit);
+
+    /// <summary>
+    /// Deletes a unit if it is not in use.
+    /// </summary>
+    Task<bool> DeleteUnitAsync(int unitId);
+
+    /// <summary>
+    /// Gets the fixed list of reference classifications.
+    /// </summary>
+    Task<List<ReferenceClassification>> GetReferenceClassificationsAsync();
+
+    /// <summary>
+    /// Gets all tube materials ordered by sort order then name.
+    /// </summary>
+    Task<List<TubeMaterial>> GetAllTubeMaterialsAsync();
+
+    /// <summary>
+    /// Gets a tube material by identifier.
+    /// </summary>
+    Task<TubeMaterial?> GetTubeMaterialByIdAsync(int tubeMaterialId);
+
+    /// <summary>
+    /// Creates a new tube material.
+    /// </summary>
+    Task<TubeMaterial> CreateTubeMaterialAsync(TubeMaterial tubeMaterial);
+
+    /// <summary>
+    /// Updates an existing tube material.
+    /// </summary>
+    Task<TubeMaterial> UpdateTubeMaterialAsync(TubeMaterial tubeMaterial);
+
+    /// <summary>
+    /// Deletes a tube material if it is not in use by test type sample tubes.
+    /// </summary>
+    Task<bool> DeleteTubeMaterialAsync(int tubeMaterialId);
 }

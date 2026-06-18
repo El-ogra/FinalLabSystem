@@ -148,6 +148,10 @@ public sealed class TestDataManagementViewModel : ViewModelBase, IAsyncInitializ
             TestDetail.AcceptChanges();
         }
 
+        await _testCatalogService.SaveTestComponentsAsync(
+            TestDetail.TesttypeId,
+            TestDetail.BuildComponents());
+
         await TestList.RefreshAsync();
         IsBrowsing = true;
         IsAdding = false;

@@ -161,6 +161,16 @@ public class TestCatalogService : ITestCatalogService
                 }
             }
 
+            _context.TestComponents.Add(new TestComponent
+            {
+                TesttypeId = entity.TesttypeId,
+                ComponentCode = entity.TypeCode,
+                ComponentNameEn = entity.TypeNameEn,
+                ResultType = "NUMERIC",
+                SortOrder = 1,
+                IsActive = true
+            });
+
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();
             return entity.TesttypeId;
@@ -338,11 +348,8 @@ public class TestCatalogService : ITestCatalogService
     {
         if (range is null) throw new ArgumentNullException(nameof(range));
 
-        if (range.AgeUnit is not null)
-        {
-            range.AgeFromDays = ConvertAgeToDays(range.AgeFromDays, range.AgeUnit);
-            range.AgeToDays = ConvertAgeToDays(range.AgeToDays, range.AgeUnit);
-        }
+        range.Version = 1;
+        range.IsActive = true;
 
         _context.NormalRanges.Add(range);
         await _context.SaveChangesAsync();
@@ -352,39 +359,7 @@ public class TestCatalogService : ITestCatalogService
     public async Task UpdateRangeAsync(NormalRange range)
     {
         if (range is null) throw new ArgumentNullException(nameof(range));
-
-        var existing = await _context.NormalRanges.FirstOrDefaultAsync(r => r.RangeId == range.RangeId)
-            ?? throw new InvalidOperationException($"NormalRange {range.RangeId} not found.");
-
-        if (range.AgeUnit is not null)
-        {
-            range.AgeFromDays = ConvertAgeToDays(range.AgeFromDays, range.AgeUnit);
-            range.AgeToDays = ConvertAgeToDays(range.AgeToDays, range.AgeUnit);
-        }
-
-        existing.ComponentId = range.ComponentId;
-        existing.Sex = range.Sex;
-        existing.AgeFromDays = range.AgeFromDays;
-        existing.AgeToDays = range.AgeToDays;
-        existing.AgeDescription = range.AgeDescription;
-        existing.ForPregnantOnly = range.ForPregnantOnly;
-        existing.AgeUnit = range.AgeUnit;
-        existing.LowFlag = range.LowFlag;
-        existing.HighFlag = range.HighFlag;
-        existing.LowComment = range.LowComment;
-        existing.HighComment = range.HighComment;
-        existing.CriticalRangeText = range.CriticalRangeText;
-        existing.CriticalFlag = range.CriticalFlag;
-        existing.CriticalComment = range.CriticalComment;
-        existing.FastingState = range.FastingState;
-        existing.LowNormal = range.LowNormal;
-        existing.HighNormal = range.HighNormal;
-        existing.LowCritical = range.LowCritical;
-        existing.HighCritical = range.HighCritical;
-        existing.NormalRangeText = range.NormalRangeText;
-        existing.RangeNote = range.RangeNote;
-
-        await _context.SaveChangesAsync();
+        await SaveRangeAsync(range);
     }
 
     public async Task DeleteRangeAsync(int rangeId)
@@ -521,6 +496,113 @@ public class TestCatalogService : ITestCatalogService
         return await _context.TestTypes.AnyAsync(tt => tt.CollectionTypeId == collectionTypeId);
     }
 
+    public async Task<List<Unit>> GetAllUnitsAsync()
+    {
+        return await _context.Units.OrderBy(u => u.SortOrder).ThenBy(u => u.UnitName).ToListAsync();
+    }
+
+    public async Task<Unit?> GetUnitByIdAsync(int unitId)
+    {
+        return await _context.Units.FindAsync(unitId);
+    }
+
+    public async Task<Unit> CreateUnitAsync(Unit unit)
+    {
+        var maxSort = await _context.Units.MaxAsync(u => (int?)u.SortOrder) ?? 0;
+        unit.SortOrder = maxSort + 1;
+        unit.IsActive = true;
+        _context.Units.Add(unit);
+        await _context.SaveChangesAsync();
+        return unit;
+    }
+
+    public async Task<Unit> UpdateUnitAsync(Unit unit)
+    {
+        var existing = await _context.Units.FindAsync(unit.UnitId)
+            ?? throw new InvalidOperationException($"Unit {unit.UnitId} not found.");
+        existing.UnitName = unit.UnitName;
+        existing.UnitNameAr = unit.UnitNameAr;
+        existing.Abbreviation = unit.Abbreviation;
+        existing.IsActive = unit.IsActive;
+        existing.SortOrder = unit.SortOrder;
+        await _context.SaveChangesAsync();
+        return existing;
+    }
+
+    public Task<List<ReferenceClassification>> GetReferenceClassificationsAsync()
+    {
+        var classifications = new List<ReferenceClassification>
+        {
+            new() { Value = "Numeric Range", DisplayName = "Numeric Range" },
+            new() { Value = "Qualitative Result", DisplayName = "Qualitative Result" },
+            new() { Value = "Positive / Negative", DisplayName = "Positive / Negative" },
+            new() { Value = "Titer", DisplayName = "Titer" },
+            new() { Value = "Free Text", DisplayName = "Free Text" },
+            new() { Value = "Mixed Text + Numeric", DisplayName = "Mixed Text + Numeric" },
+        };
+        return Task.FromResult(classifications);
+    }
+
+    public async Task<List<TubeMaterial>> GetAllTubeMaterialsAsync()
+    {
+        return await _context.TubeMaterials.OrderBy(t => t.SortOrder).ThenBy(t => t.MaterialName).ToListAsync();
+    }
+
+    public async Task<TubeMaterial?> GetTubeMaterialByIdAsync(int tubeMaterialId)
+    {
+        return await _context.TubeMaterials.FindAsync(tubeMaterialId);
+    }
+
+    public async Task<TubeMaterial> CreateTubeMaterialAsync(TubeMaterial tubeMaterial)
+    {
+        var maxSort = await _context.TubeMaterials.MaxAsync(t => (int?)t.SortOrder) ?? 0;
+        tubeMaterial.SortOrder = maxSort + 1;
+        tubeMaterial.IsActive = true;
+        _context.TubeMaterials.Add(tubeMaterial);
+        await _context.SaveChangesAsync();
+        return tubeMaterial;
+    }
+
+    public async Task<TubeMaterial> UpdateTubeMaterialAsync(TubeMaterial tubeMaterial)
+    {
+        var existing = await _context.TubeMaterials.FindAsync(tubeMaterial.TubeMaterialId)
+            ?? throw new InvalidOperationException($"TubeMaterial {tubeMaterial.TubeMaterialId} not found.");
+        existing.MaterialName = tubeMaterial.MaterialName;
+        existing.MaterialNameAr = tubeMaterial.MaterialNameAr;
+        existing.TubeColor = tubeMaterial.TubeColor;
+        existing.IsActive = tubeMaterial.IsActive;
+        existing.SortOrder = tubeMaterial.SortOrder;
+        await _context.SaveChangesAsync();
+        return existing;
+    }
+
+    public async Task<bool> DeleteTubeMaterialAsync(int tubeMaterialId)
+    {
+        var material = await _context.TubeMaterials.FindAsync(tubeMaterialId);
+        if (material is null) return false;
+        var usedByTube = await _context.TestTypeSampleTubes.AnyAsync(t => t.TubeType == material.MaterialName);
+        if (usedByTube)
+            throw new InvalidOperationException($"Tube material '{material.MaterialName}' is in use and cannot be deleted.");
+        _context.TubeMaterials.Remove(material);
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> DeleteUnitAsync(int unitId)
+    {
+        var unit = await _context.Units.FindAsync(unitId);
+        if (unit is null) return false;
+
+        var usedByComponent = await _context.TestComponents.AnyAsync(tc => tc.Unit == unit.UnitName);
+        var usedByRange = await _context.NormalRanges.AnyAsync(nr => nr.Unit == unit.UnitName);
+        if (usedByComponent || usedByRange)
+            throw new InvalidOperationException($"Unit '{unit.UnitName}' is in use by components or ranges and cannot be deleted.");
+
+        _context.Units.Remove(unit);
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
     private async Task<(int PatientSchemeId, int LabToLabSchemeId)> ResolveSchemeIdsAsync()
     {
         var schemes = await _context.PriceSchemes
@@ -536,66 +618,105 @@ public class TestCatalogService : ITestCatalogService
         return (patient.SchemeId, lab.SchemeId);
     }
 
-    private static int ConvertAgeToDays(int ageValue, string? ageUnit)
-    {
-        return ageUnit switch
-        {
-            "Years" => ageValue * 365,
-            "Months" => ageValue * 30,
-            "Days" => ageValue,
-            _ => ageValue
-        };
-    }
-
     public async Task<NormalRange> SaveRangeAsync(NormalRange range)
     {
         if (range is null) throw new ArgumentNullException(nameof(range));
 
-        if (range.AgeUnit is not null)
-        {
-            range.AgeFromDays = ConvertAgeToDays(range.AgeFromDays, range.AgeUnit);
-            range.AgeToDays = ConvertAgeToDays(range.AgeToDays, range.AgeUnit);
-        }
-
         if (range.RangeId == 0)
         {
+            range.Version = 1;
+            range.IsActive = true;
             _context.NormalRanges.Add(range);
+            await _context.SaveChangesAsync();
+            return range;
         }
-        else
+
+        var existing = await _context.NormalRanges
+            .FirstOrDefaultAsync(r => r.RangeId == range.RangeId)
+            ?? throw new InvalidOperationException($"NormalRange {range.RangeId} not found.");
+
+        if (!existing.IsActive)
+            throw new InvalidOperationException($"Cannot modify a superseded NormalRange (ID={range.RangeId}).");
+
+        await using var transaction = await _context.Database.BeginTransactionAsync();
+
+        try
         {
-            var existing = await _context.NormalRanges
-                .FirstOrDefaultAsync(r => r.RangeId == range.RangeId)
-                ?? throw new InvalidOperationException($"NormalRange {range.RangeId} not found.");
+            // Deactivate the old row
+            existing.IsActive = false;
 
-            existing.ComponentId = range.ComponentId;
-            existing.Sex = range.Sex;
-            existing.AgeFromDays = range.AgeFromDays;
-            existing.AgeToDays = range.AgeToDays;
-            existing.AgeFromValue = range.AgeFromValue;
-            existing.AgeToValue = range.AgeToValue;
-            existing.AgeDescription = range.AgeDescription;
-            existing.ForPregnantOnly = range.ForPregnantOnly;
-            existing.AgeUnit = range.AgeUnit;
-            existing.LowFlag = range.LowFlag;
-            existing.HighFlag = range.HighFlag;
-            existing.LowComment = range.LowComment;
-            existing.HighComment = range.HighComment;
-            existing.CriticalRangeText = range.CriticalRangeText;
-            existing.CriticalFlag = range.CriticalFlag;
-            existing.CriticalComment = range.CriticalComment;
-            existing.FastingState = range.FastingState;
-            existing.LowNormal = range.LowNormal;
-            existing.HighNormal = range.HighNormal;
-            existing.LowCritical = range.LowCritical;
-            existing.HighCritical = range.HighCritical;
-            existing.NormalRangeText = range.NormalRangeText;
-            existing.RangeNote = range.RangeNote;
+            // Create new row with bumped version
+            var newRange = new NormalRange
+            {
+                ComponentId = range.ComponentId,
+                Sex = range.Sex,
+                AgeFromDays = range.AgeFromDays,
+                AgeToDays = range.AgeToDays,
+                AgeFromValue = range.AgeFromValue,
+                AgeToValue = range.AgeToValue,
+                AgeDescription = range.AgeDescription,
+                ForPregnantOnly = range.ForPregnantOnly,
+                AgeUnit = range.AgeUnit,
+                LowFlag = range.LowFlag,
+                HighFlag = range.HighFlag,
+                LowComment = range.LowComment,
+                HighComment = range.HighComment,
+                CriticalRangeText = range.CriticalRangeText,
+                CriticalFlag = range.CriticalFlag,
+                CriticalComment = range.CriticalComment,
+                FastingState = range.FastingState,
+                LowNormal = range.LowNormal,
+                HighNormal = range.HighNormal,
+                LowCritical = range.LowCritical,
+                HighCritical = range.HighCritical,
+                NormalRangeText = range.NormalRangeText,
+                RangeNote = range.RangeNote,
+                Unit = range.Unit,
+                Version = existing.Version + 1,
+                IsActive = true
+            };
 
-            range = existing;
+            _context.NormalRanges.Add(newRange);
+            await _context.SaveChangesAsync();
+
+            existing.SupersededById = newRange.RangeId;
+            await _context.SaveChangesAsync();
+
+            await transaction.CommitAsync();
+            return newRange;
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
+    }
+
+    public async Task SaveTestComponentsAsync(int testTypeId, IReadOnlyList<TestComponent> components)
+    {
+        var existing = await _context.TestComponents.Where(c => c.TesttypeId == testTypeId).ToListAsync();
+        var incomingIds = components.Where(c => c.ComponentId > 0).Select(c => c.ComponentId).ToHashSet();
+
+        foreach (var old in existing)
+        {
+            if (!incomingIds.Contains(old.ComponentId))
+            {
+                await DeleteComponentAsync(old.ComponentId);
+            }
         }
 
-        await _context.SaveChangesAsync();
-        return range;
+        foreach (var component in components.OrderBy(c => c.SortOrder))
+        {
+            component.TesttypeId = testTypeId;
+            if (component.ComponentId == 0)
+            {
+                await AddComponentAsync(testTypeId, component);
+            }
+            else
+            {
+                await UpdateComponentAsync(component);
+            }
+        }
     }
 
     public async Task<List<NormalRange>> GetRangesForTestTypeAsync(int testTypeId)
