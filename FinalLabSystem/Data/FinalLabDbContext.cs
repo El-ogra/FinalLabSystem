@@ -546,7 +546,7 @@ public partial class FinalLabDbContext : DbContext
                 .HasMaxLength(200)
                 .HasColumnName("range_note");
             entity.Property(e => e.Unit)
-                .HasMaxLength(20)
+                .HasMaxLength(50)
                 .HasColumnName("unit");
             entity.Property(e => e.Version)
                 .HasDefaultValue(1)

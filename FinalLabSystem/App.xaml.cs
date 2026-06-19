@@ -95,6 +95,15 @@ public partial class App : Application
             navigation.RegisterWindow<NormalRangeWindowViewModel, NormalRangesWindow>();
             navigation.RegisterWindow<CategoriesGroupsViewModel, CategoriesGroupsWindow>();
 
+            using (var scope = ServiceProvider.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<FinalLabDbContext>();
+                var seeder = scope.ServiceProvider.GetRequiredService<ITestCatalogSeeder>();
+
+                await db.Database.MigrateAsync();
+                await seeder.SeedAsync();
+            }
+
             bool hasAdmin;
             using (var scope = ServiceProvider.CreateScope())
             {
@@ -133,6 +142,7 @@ public partial class App : Application
         services.AddScoped<ITestCatalogService, TestCatalogService>();
         services.AddScoped<ISampleTrackingService, SampleTrackingService>();
         services.AddScoped<IAuditService, AuditService>();
+        services.AddScoped<ITestCatalogSeeder, TestCatalogSeeder>();
 
         services.AddLogging(builder =>
         {
