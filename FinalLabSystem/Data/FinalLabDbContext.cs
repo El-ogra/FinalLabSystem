@@ -159,8 +159,10 @@ public partial class FinalLabDbContext : DbContext
 
     public virtual DbSet<TubeMaterial> TubeMaterials => Set<TubeMaterial>();
 
-    // V4.0 New DbSets
-    public virtual DbSet<Attendance> Attendances { get; set; }
+        public virtual DbSet<ReceiptPrintLog> ReceiptPrintLogs { get; set; }
+
+        // V4.0 New DbSets
+        public virtual DbSet<Attendance> Attendances { get; set; }
 
     public virtual DbSet<AntibioticCatalog> AntibioticCatalogs { get; set; }
 
@@ -2184,6 +2186,53 @@ public partial class FinalLabDbContext : DbContext
             entity.Property(e => e.ClockInTime).HasColumnName("clock_in_time");
             entity.Property(e => e.ClockOutTime).HasColumnName("clock_out_time");
             entity.Property(e => e.IsActive).HasColumnName("is_active");
+        });
+
+        modelBuilder.Entity<ReceiptPrintLog>(entity =>
+        {
+            entity.HasKey(e => e.LogId).HasName("PK_ReceiptPrintLog");
+
+            entity.ToTable("ReceiptPrintLog");
+
+            entity.Property(e => e.LogId).HasColumnName("log_id");
+            entity.Property(e => e.VisitId).HasColumnName("visit_id");
+            entity.Property(e => e.StaffId).HasColumnName("staff_id");
+            entity.Property(e => e.PrintedAt)
+                .HasPrecision(0)
+                .HasDefaultValueSql("(sysdatetime())")
+                .HasColumnName("printed_at");
+            entity.Property(e => e.Format)
+                .HasMaxLength(10)
+                .HasColumnName("format");
+            entity.Property(e => e.ShowBreakdown).HasColumnName("show_breakdown");
+            entity.Property(e => e.Subtotal)
+                .HasColumnType("decimal(18, 2)")
+                .HasColumnName("subtotal");
+            entity.Property(e => e.DiscountAmount)
+                .HasColumnType("decimal(18, 2)")
+                .HasColumnName("discount_amount");
+            entity.Property(e => e.TotalAfterDiscount)
+                .HasColumnType("decimal(18, 2)")
+                .HasColumnName("total_after_discount");
+            entity.Property(e => e.TotalPaid)
+                .HasColumnType("decimal(18, 2)")
+                .HasColumnName("total_paid");
+            entity.Property(e => e.BalanceDue)
+                .HasColumnType("decimal(18, 2)")
+                .HasColumnName("balance_due");
+
+            entity.HasOne(d => d.Visit).WithMany()
+                .HasForeignKey(d => d.VisitId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ReceiptPrintLog_Visit");
+
+            entity.HasOne(d => d.Staff).WithMany()
+                .HasForeignKey(d => d.StaffId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ReceiptPrintLog_Staff");
+
+            entity.HasIndex(e => e.VisitId, "IX_ReceiptPrintLog_VisitId");
+            entity.HasIndex(e => e.PrintedAt, "IX_ReceiptPrintLog_PrintedAt");
         });
 
         // Update existing entities for V4.0 compatibility

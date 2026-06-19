@@ -239,6 +239,7 @@ public class VisitService : IVisitService
             .Include(v => v.Payments)
             .Include(v => v.VisitTests)
                 .ThenInclude(vt => vt.Testtype)
+                    .ThenInclude(t => t.Group)
             .FirstOrDefaultAsync(v => v.VisitId == visitId);
 
         if (visit is null)
@@ -300,8 +301,14 @@ public class VisitService : IVisitService
                     TestTypeId = vt.TesttypeId,
                     TestCode = vt.Testtype.TypeCode,
                     TestName = vt.Testtype.TypeNameAr ?? vt.Testtype.TypeNameEn,
+                    BillNameLine1 = vt.Testtype.BillNameLine1,
+                    BillNameLine2 = vt.Testtype.BillNameLine2,
                     Price = vt.PriceCharged,
-                    SampleType = vt.Testtype.SampleType
+                    SampleType = vt.Testtype.SampleType,
+                    GroupId = vt.Testtype.GroupId,
+                    GroupName = vt.Testtype.Group != null
+                        ? (vt.Testtype.Group.GroupNameAr ?? vt.Testtype.Group.GroupNameEn)
+                        : null
                 })
                 .ToList(),
             Subtotal = visit.Subtotal,

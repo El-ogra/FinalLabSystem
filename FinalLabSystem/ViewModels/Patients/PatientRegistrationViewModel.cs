@@ -340,7 +340,12 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
     {
         var dto = await _visitService.GetVisitFullDataAsync(CurrentVisitId);
         var viewModel = App.ServiceProvider.GetRequiredService<ReceiptDialogViewModel>();
-        viewModel.Initialize(dto);
+        await viewModel.InitializeAsync(dto);
+        if (!viewModel.CanPrint)
+        {
+            _dialogService.ShowWarning("تم طباعة الإيصال مسبقاً لهذا الحالة المالية.", "طباعة الإيصال");
+            return;
+        }
         var dialog = new ReceiptDialog(viewModel)
         {
             Owner = Application.Current.Windows.OfType<Window>().FirstOrDefault(window => window.IsActive)

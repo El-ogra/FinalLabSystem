@@ -143,6 +143,7 @@ public partial class App : Application
         services.AddScoped<ISampleTrackingService, SampleTrackingService>();
         services.AddScoped<IAuditService, AuditService>();
         services.AddScoped<ITestCatalogSeeder, TestCatalogSeeder>();
+        services.AddScoped<IReceiptService, ReceiptService>();
 
         services.AddLogging(builder =>
         {

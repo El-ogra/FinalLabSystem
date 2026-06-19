@@ -15,4 +15,8 @@ public sealed class SelectedTestDto
     public decimal Price { get; set; }
 
     public string? SampleType { get; set; }
+
+    public int? GroupId { get; set; }
+
+    public string? GroupName { get; set; }
 }
