@@ -14,14 +14,6 @@ public abstract class PlaceholderTaskViewModelBase : ViewModelBase
     public ICommand ReturnToMainCommand { get; }
 }
 
-public sealed class TestResultsViewModel : PlaceholderTaskViewModelBase
-{
-    public TestResultsViewModel(INavigationService navigationService)
-        : base(navigationService)
-    {
-    }
-}
-
 public sealed class DeliveryViewModel : PlaceholderTaskViewModelBase
 {
     public DeliveryViewModel(INavigationService navigationService)

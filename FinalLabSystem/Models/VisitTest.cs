@@ -87,4 +87,20 @@ public partial class VisitTest
     public virtual Visit Visit { get; set; } = null!;
 
     public virtual ICollection<ExternalShipmentItem> ExternalShipmentItems { get; set; } = new List<ExternalShipmentItem>();
+
+    public bool IsPrinted { get; set; }
+
+    public DateTime? PrintedAt { get; set; }
+
+    public int? PrintedBy { get; set; }
+
+    public virtual Staff? PrintedByNavigation { get; set; }
+
+    public bool IsExported { get; set; }
+
+    public DateTime? ExportedAt { get; set; }
+
+    public int? ExportedBy { get; set; }
+
+    public virtual Staff? ExportedByNavigation { get; set; }
 }

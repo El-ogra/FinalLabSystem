@@ -442,11 +442,128 @@ public class VisitService : IVisitService
             .Include(v => v.Payments)
             .Include(v => v.VisitTests)
                 .ThenInclude(vt => vt.Testtype)
+                    .ThenInclude(t => t.TestComponents)
+            .Include(v => v.VisitTests)
+                .ThenInclude(vt => vt.TestResults)
+            .Include(v => v.VisitTests)
+                .ThenInclude(vt => vt.TestWorkflows)
             .Include(v => v.VisitCharges)
             .Include(v => v.Scheme)
             .Include(v => v.Receptionist)
             .FirstOrDefaultAsync(v => v.VisitId == visitId);
     }
+
+    public async Task<List<TodayPatientWithStatusDto>> GetTodayPatientsWithStatusAsync(DateTime? date = null)
+    {
+        var targetDate = date ?? DateTime.Today;
+        var nextDay = targetDate.AddDays(1);
+
+        var visits = await _context.Visits
+            .Include(v => v.Patient)
+            .Include(v => v.Referral)
+            .Include(v => v.Payments)
+            .Include(v => v.VisitTests)
+                .ThenInclude(vt => vt.TestResults)
+            .Include(v => v.VisitTests)
+                .ThenInclude(vt => vt.TestWorkflows)
+            .Where(v => v.VisitDate >= targetDate && v.VisitDate < nextDay)
+            .OrderByDescending(v => v.VisitDate)
+            .ToListAsync();
+
+        var patientVisitCounts = visits
+            .GroupBy(v => v.PatientId)
+            .ToDictionary(g => g.Key, g => g.Count());
+
+        return visits.Select(v =>
+        {
+            var status = ComputeVisitStatus(v);
+            return new TodayPatientWithStatusDto
+            {
+                PatientId = v.PatientId,
+                VisitId = v.VisitId,
+                VisitCode = v.VisitCode,
+                PatientCode = v.Patient.PatientCode,
+                FullNameAr = v.Patient.FullNameAr,
+                Title = v.Patient.Title,
+                Sex = v.Patient.Sex,
+                ApproxAge = v.Patient.ApproxAge,
+                ApproxAgeUnit = v.Patient.ApproxAgeUnit,
+                IsVip = v.Patient.IsVip,
+                ReferralName = v.Referral?.SourceName,
+                VisitCount = patientVisitCounts.GetValueOrDefault(v.PatientId, 1),
+                ComputedStatus = status,
+                StatusIcon = GetStatusIcon(status),
+                StatusColor = GetStatusColor(status),
+                BalanceDue = v.BalanceDue,
+                PaymentStatus = v.PaymentStatus,
+                VisitNotes = v.Notes
+            };
+        }).ToList();
+    }
+
+    public async Task<int> GetPatientVisitCountAsync(int patientId)
+    {
+        return await _context.Visits.CountAsync(v => v.PatientId == patientId);
+    }
+
+    private static PatientVisitStatus ComputeVisitStatus(Visit visit)
+    {
+        if (visit.VisitStatus == VisitStatus.Closed && visit.BalanceDue <= 0)
+            return PatientVisitStatus.FullyComplete;
+
+        if (visit.VisitStatus == VisitStatus.Closed && visit.BalanceDue > 0)
+            return PatientVisitStatus.CompleteWithBalance;
+
+        var visitTests = visit.VisitTests.ToList();
+        if (visitTests.Count == 0 || visitTests.All(vt => vt.CurrentStage == TestStage.Pending))
+            return PatientVisitStatus.NewNoResults;
+
+        var allResults = visitTests
+            .SelectMany(vt => vt.TestResults)
+            .ToList();
+
+        if (allResults.Count == 0 || allResults.All(r => r.ValidationStatus == ResultValidationStatus.Entered))
+        {
+            if (visitTests.Any(vt => vt.CurrentStage == TestStage.Pending))
+                return PatientVisitStatus.HasUnwrittenResults;
+            return PatientVisitStatus.HasUnreviewedResults;
+        }
+
+        if (allResults.All(r => r.ValidationStatus >= ResultValidationStatus.Reviewed))
+        {
+            if (visit.VisitStatus == VisitStatus.Open)
+                return PatientVisitStatus.HasUndeliveredResults;
+        }
+
+        if (allResults.Any(r => r.ValidationStatus == ResultValidationStatus.Entered))
+            return PatientVisitStatus.HasUnreviewedResults;
+
+        return PatientVisitStatus.HasUnprintedResults;
+    }
+
+    private static string GetStatusIcon(PatientVisitStatus status) => status switch
+    {
+        PatientVisitStatus.NewNoResults => "○",
+        PatientVisitStatus.HasUnwrittenResults => "◐",
+        PatientVisitStatus.HasUnreviewedResults => "◑",
+        PatientVisitStatus.HasUnprintedResults => "◉",
+        PatientVisitStatus.HasUndeliveredResults => "◎",
+        PatientVisitStatus.CompleteWithBalance => "$",
+        PatientVisitStatus.FullyComplete => "✓",
+        _ => "○"
+    };
+
+    private static string GetStatusColor(PatientVisitStatus status) => status switch
+    {
+        PatientVisitStatus.NewNoResults => "#808080",
+        PatientVisitStatus.HasUnwrittenResults => "#FF8C00",
+        PatientVisitStatus.HasUnreviewedResults => "#FFD700",
+        PatientVisitStatus.HasUnprintedResults => "#4FC3F7",
+        PatientVisitStatus.HasUndeliveredResults => "#9C27B0",
+        PatientVisitStatus.CompleteWithBalance => "#F44336",
+        PatientVisitStatus.FullyComplete => "#4CAF50",
+        _ => "#808080"
+    };
 
     private async Task UpdateVisitTestsInternalAsync(int visitId, List<int> testTypeIds)
     {

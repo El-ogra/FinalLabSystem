@@ -1,4 +1,8 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:FinalLabSystem.Views">
     <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+    <BooleanToVisibilityConverter x:Key="BoolToVisConverter"/>
+    <local:BoolToCheckConverter x:Key="BoolToCheckConverter"/>
+    <local:NullToVisibilityConverter x:Key="NullToVisConverter"/>
 </ResourceDictionary>

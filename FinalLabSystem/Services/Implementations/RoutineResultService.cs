@@ -157,4 +157,60 @@ public class RoutineResultService : IRoutineResultService
             .OrderBy(r => r.Component.SortOrder)
             .ToListAsync();
     }
+
+    public async Task SaveSingleComponentResultAsync(int visitTestId, int componentId, string? resultValue, int patientId, int staffId)
+    {
+        var result = new TestResult
+        {
+            VisitTestId = visitTestId,
+            ComponentId = componentId,
+            ResultValue = resultValue
+        };
+
+        await SaveNumericOrTextResultsAsync(new List<TestResult> { result }, patientId, staffId);
+    }
+
+    public async Task<bool> TogglePrintStatusAsync(int visitTestId, int staffId)
+    {
+        var vt = await _context.VisitTests.FindAsync(visitTestId);
+        if (vt == null) return false;
+
+        vt.IsPrinted = !vt.IsPrinted;
+        vt.PrintedAt = vt.IsPrinted ? DateTime.UtcNow : null;
+        vt.PrintedBy = vt.IsPrinted ? staffId : null;
+
+        _context.TestWorkflows.Add(new TestWorkflow
+        {
+            VisitTestId = visitTestId,
+            Stage = vt.IsPrinted ? "PRINTED" : "PRINT_UNDO",
+            PerformedBy = staffId,
+            PerformedAt = DateTime.UtcNow,
+            Notes = vt.IsPrinted ? "تمت الطباعة" : "إلغاء الطباعة"
+        });
+
+        await _context.SaveChangesAsync();
+        return vt.IsPrinted;
+    }
+
+    public async Task<bool> ToggleExportStatusAsync(int visitTestId, int staffId)
+    {
+        var vt = await _context.VisitTests.FindAsync(visitTestId);
+        if (vt == null) return false;
+
+        vt.IsExported = !vt.IsExported;
+        vt.ExportedAt = vt.IsExported ? DateTime.UtcNow : null;
+        vt.ExportedBy = vt.IsExported ? staffId : null;
+
+        _context.TestWorkflows.Add(new TestWorkflow
+        {
+            VisitTestId = visitTestId,
+            Stage = vt.IsExported ? "EXPORTED" : "EXPORT_UNDO",
+            PerformedBy = staffId,
+            PerformedAt = DateTime.UtcNow,
+            Notes = vt.IsExported ? "تم التصدير" : "إلغاء التصدير"
+        });
+
+        await _context.SaveChangesAsync();
+        return vt.IsExported;
+    }
 }

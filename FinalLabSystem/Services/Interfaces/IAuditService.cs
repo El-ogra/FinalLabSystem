@@ -20,4 +20,9 @@ public interface IAuditService
     /// <param name="recordId">The audited record identifier.</param>
     /// <returns>The table audit log entries.</returns>
     Task<List<AuditLog>> GetTableAuditHistoryAsync(string tableName, int recordId);
+
+    /// <summary>
+    /// Logs a manual audit action to the AuditLog table.
+    /// </summary>
+    Task LogActionAsync(string tableName, int recordId, string action, int staffId, string? notes = null);
 }

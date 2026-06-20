@@ -1951,6 +1951,30 @@ public partial class FinalLabDbContext : DbContext
                 .HasForeignKey(d => d.VisitId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_VT_Visit");
+
+            entity.Property(e => e.IsPrinted)
+                .HasDefaultValue(false)
+                .HasColumnName("is_printed");
+            entity.Property(e => e.PrintedAt)
+                .HasPrecision(0)
+                .HasColumnName("printed_at");
+            entity.Property(e => e.PrintedBy)
+                .HasColumnName("printed_by");
+            entity.Property(e => e.IsExported)
+                .HasDefaultValue(false)
+                .HasColumnName("is_exported");
+            entity.Property(e => e.ExportedAt)
+                .HasPrecision(0)
+                .HasColumnName("exported_at");
+            entity.Property(e => e.ExportedBy)
+                .HasColumnName("exported_by");
+
+            entity.HasOne(d => d.PrintedByNavigation).WithMany()
+                .HasForeignKey(d => d.PrintedBy)
+                .HasConstraintName("FK_VT_PrintedBy");
+            entity.HasOne(d => d.ExportedByNavigation).WithMany()
+                .HasForeignKey(d => d.ExportedBy)
+                .HasConstraintName("FK_VT_ExportedBy");
         });
 
         // V4.0 New Entity Configurations

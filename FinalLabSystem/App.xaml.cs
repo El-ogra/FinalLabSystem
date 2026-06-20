@@ -144,6 +144,9 @@ public partial class App : Application
         services.AddScoped<IAuditService, AuditService>();
         services.AddScoped<ITestCatalogSeeder, TestCatalogSeeder>();
         services.AddScoped<IReceiptService, ReceiptService>();
+        services.AddScoped<IRoutineResultService, RoutineResultService>();
+        services.AddScoped<IReportingService, ReportingService>();
+        services.AddScoped<IResultEditorFactory, DefaultResultEditorFactory>();
 
         services.AddLogging(builder =>
         {

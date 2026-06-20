@@ -42,4 +42,20 @@ public class AuditService : IAuditService
             .OrderByDescending(al => al.ChangedAt)
             .ToListAsync();
     }
+
+    public async Task LogActionAsync(string tableName, int recordId, string action, int staffId, string? notes = null)
+    {
+        var entry = new AuditLog
+        {
+            TableName = tableName,
+            RecordId = recordId,
+            Action = action,
+            ChangedBy = staffId,
+            ChangedAt = DateTime.UtcNow,
+            Notes = notes
+        };
+
+        _context.AuditLogs.Add(entry);
+        await _context.SaveChangesAsync();
+    }
 }

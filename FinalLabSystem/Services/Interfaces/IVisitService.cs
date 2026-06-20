@@ -81,4 +81,14 @@ public interface IVisitService
     /// <param name="visitId">The visit identifier.</param>
     /// <returns>The visit summary, or <c>null</c> when no visit exists.</returns>
     Task<Visit?> GetVisitSummaryAsync(int visitId);
+
+    /// <summary>
+    /// Gets today's patients with dynamically computed visit statuses.
+    /// </summary>
+    Task<List<TodayPatientWithStatusDto>> GetTodayPatientsWithStatusAsync(DateTime? date = null);
+
+    /// <summary>
+    /// Gets the visit count for a patient.
+    /// </summary>
+    Task<int> GetPatientVisitCountAsync(int patientId);
 }
