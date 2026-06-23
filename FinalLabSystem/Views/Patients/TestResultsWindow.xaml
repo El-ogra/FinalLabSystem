@@ -393,30 +393,15 @@
                         <DataGridTemplateColumn Header="النتيجة" Width="110">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Grid>
-                                        <!-- عرض النص (الحالة الافتراضية) -->
-                                        <TextBlock x:Name="ResultDisplay"
-                                                   Text="{Binding SingleComponentResultValue}"
-                                                   Foreground="#4FC3F7" FontWeight="Bold"
-                                                   VerticalAlignment="Center" Padding="4,2"
-                                                   ToolTip="{Binding SingleComponentResultValue}"/>
-                                    </Grid>
+                                    <TextBox Text="{Binding SingleComponentResultValue,
+                                                 Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             BorderThickness="0" Background="Transparent"
+                                             Foreground="#4FC3F7" FontWeight="Bold"
+                                             Padding="4,2" VerticalContentAlignment="Center"
+                                             ToolTip="{Binding SingleComponentResultValue}"
+                                             KeyDown="ResultTextBox_KeyDown"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
-                            <DataGridTemplateColumn.CellEditingTemplate>
-                                <DataTemplate>
-                                    <TextBox x:Name="ResultEditTextBox"
-                                             Text="{Binding DataContext.InlineResultValue,
-                                                 RelativeSource={RelativeSource AncestorType=Window},
-                                                 Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                             Width="100" Padding="4,2"
-                                             Background="#1A4A52" Foreground="#4FC3F7"
-                                             BorderBrush="#4CAF50" BorderThickness="1"
-                                             FontWeight="Bold"
-                                             VerticalContentAlignment="Center"
-                                             Loaded="ResultEditTextBox_Loaded"/>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellEditingTemplate>
                         </DataGridTemplateColumn>
 
                         <!-- 4. الحالة -->
@@ -560,6 +545,7 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
@@ -588,8 +574,14 @@
                                 Style="{StaticResource RowActionButton}"
                                 Background="#607D8B"/>
 
+                        <!-- حفظ -->
+                        <Button Grid.Column="4" Content="حفظ"
+                                Command="{Binding SaveInlineResultCommand}"
+                                Style="{StaticResource RowActionButton}"
+                                Background="#4CAF50"/>
+
                         <!-- مربع نص الملاحظات السريعة -->
-                        <TextBox Grid.Column="4"
+                        <TextBox Grid.Column="5"
                                  Text="{Binding QuickNoteText, UpdateSourceTrigger=PropertyChanged}"
                                  Background="#1A4A52" Foreground="#FFFFFF"
                                  BorderBrush="#3A5068" BorderThickness="1"
@@ -597,7 +589,7 @@
                                  Padding="4,2" FontSize="11"/>
 
                         <!-- زر ملاحظات -->
-                        <Button Grid.Column="5" Content="ملاحظات"
+                        <Button Grid.Column="6" Content="ملاحظات"
                                 Command="{Binding AddEditNotesCommand}"
                                 Style="{StaticResource RowActionButton}"
                                 Background="#5C6BC0"/>

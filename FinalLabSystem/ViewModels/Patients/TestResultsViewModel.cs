@@ -93,7 +93,7 @@ public sealed class TestResultsViewModel : ViewModelBase
         PrintMedicalHistoryCommand = new AsyncRelayCommand(async _ => await PrintMedicalHistoryAsync(), _ => HasSelectedPatient && SelectedTest != null);
         PrintBlankReportCommand = new AsyncRelayCommand(async _ => await PrintBlankReportAsync(), _ => HasSelectedPatient);
 
-        SaveInlineResultCommand = new AsyncRelayCommand(async _ => await SaveInlineResultAsync(), _ => IsInlineEditing);
+        SaveInlineResultCommand = new AsyncRelayCommand(async _ => await SaveSelectedTestResultAsync(), _ => SelectedTest != null && HasSelectedPatient);
         CancelInlineEditCommand = new RelayCommand(_ => CancelInlineEdit(), _ => IsInlineEditing);
         HandleRowActivateCommand = new AsyncRelayCommand<object>(async param => await HandleRowActivateAsync(param));
         TogglePrintCommand = new AsyncRelayCommand(async _ => await TogglePrintAsync(), _ => SelectedTest != null && HasSelectedPatient);
@@ -443,6 +443,25 @@ public sealed class TestResultsViewModel : ViewModelBase
 
         IsInlineEditing = false;
         EditingTest = null;
+
+        if (SelectedPatient != null)
+            await SelectPatientAsync(SelectedPatient);
+    }
+
+    private async Task SaveSelectedTestResultAsync()
+    {
+        if (SelectedTest == null || !HasSelectedPatient) return;
+
+        var staffId = _currentUserSession.CurrentUser?.StaffId ?? 0;
+        if (staffId == 0) return;
+
+        var patientId = CurrentPatientInfo?.PatientId ?? 0;
+        var component = SelectedTest.ComponentResults.FirstOrDefault();
+        if (component == null) return;
+
+        await _routineResultService.SaveSingleComponentResultAsync(
+            SelectedTest.VisitTestId, component.ComponentId,
+            SelectedTest.SingleComponentResultValue, patientId, staffId);
 
         if (SelectedPatient != null)
             await SelectPatientAsync(SelectedPatient);

@@ -42,7 +42,18 @@ public sealed class VisitTestItemDto : INotifyPropertyChanged
 
     public string SingleComponentResultValue
     {
-        get => ComponentResults.Count == 1 ? ComponentResults[0].ResultValue ?? string.Empty : string.Empty;
+        get => ComponentResults.Count == 1
+            ? ComponentResults[0].ResultValue ?? string.Empty
+            : string.Empty;
+        set
+        {
+            if (ComponentResults.Count == 1)
+            {
+                ComponentResults[0].ResultValue = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SingleComponentResultValue)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SingleComponentStatus)));
+            }
+        }
     }
 
     public string SingleComponentStatus
