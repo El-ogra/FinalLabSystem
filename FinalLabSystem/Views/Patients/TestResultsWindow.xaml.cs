@@ -13,6 +13,7 @@ public partial class TestResultsWindow : Window
     {
         InitializeComponent();
         DataContext = viewModel;
+        KeyDown += Window_KeyDown;
     }
 
     private async void Window_Loaded(object sender, RoutedEventArgs e)
@@ -66,5 +67,23 @@ public partial class TestResultsWindow : Window
                 return result;
         }
         return null;
+    }
+
+    private void Window_KeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.LeftCtrl || e.Key == Key.RightCtrl)
+        {
+            if (TestsDataGrid.IsFocused)
+            {
+                var patientList = FindVisualChild<System.Windows.Controls.ListView>(
+                    (DependencyObject)VisualTreeHelper.GetChild(this, 0));
+                patientList?.Focus();
+            }
+            else
+            {
+                TestsDataGrid.Focus();
+            }
+            e.Handled = true;
+        }
     }
 }

@@ -19,6 +19,7 @@ public sealed class ResultEntryViewModel : ViewModelBase
     private readonly int _patientId;
 
     private ObservableCollection<TestComponentResultDto> _components;
+    private TestComponentResultDto? _selectedComponent;
     private bool _isSaving;
 
     public ResultEntryViewModel(
@@ -50,6 +51,12 @@ public sealed class ResultEntryViewModel : ViewModelBase
     {
         get => _components;
         set => SetProperty(ref _components, value);
+    }
+
+    public TestComponentResultDto? SelectedComponent
+    {
+        get => _selectedComponent;
+        set => SetProperty(ref _selectedComponent, value);
     }
 
     public bool IsSaving

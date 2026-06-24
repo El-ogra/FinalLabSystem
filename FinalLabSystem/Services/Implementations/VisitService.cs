@@ -318,7 +318,8 @@ public class VisitService : IVisitService
             TotalAfterDiscount = visit.TotalAfterDiscount,
             TotalPaid = totalPaid,
             BalanceDue = balanceDue,
-            PaymentStatus = visit.PaymentStatus.ToString()
+            PaymentStatus = visit.PaymentStatus.ToString(),
+            VisitCount = await _context.Visits.CountAsync(v => v.PatientId == visit.PatientId)
         };
     }
 
@@ -475,7 +476,9 @@ public class VisitService : IVisitService
             .GroupBy(v => v.PatientId)
             .ToDictionary(g => g.Key, g => g.Count());
 
-        return visits.Select(v =>
+        var orderedVisits = visits.OrderBy(v => v.VisitDate).ToList();
+
+        return orderedVisits.Select((v, index) =>
         {
             var status = ComputeVisitStatus(v);
             return new TodayPatientWithStatusDto
@@ -490,6 +493,7 @@ public class VisitService : IVisitService
                 ApproxAge = v.Patient.ApproxAge,
                 ApproxAgeUnit = v.Patient.ApproxAgeUnit,
                 IsVip = v.Patient.IsVip,
+                PhotoPath = v.Patient.PhotoPath,
                 ReferralName = v.Referral?.SourceName,
                 VisitCount = patientVisitCounts.GetValueOrDefault(v.PatientId, 1),
                 ComputedStatus = status,
@@ -498,7 +502,8 @@ public class VisitService : IVisitService
                 BalanceDue = v.BalanceDue,
                 PaymentStatus = v.PaymentStatus,
                 VisitNotes = v.Notes,
-                PatientType = v.Patient.PatientType
+                PatientType = v.Patient.PatientType,
+                AttendanceNumber = index + 1
             };
         }).ToList();
     }

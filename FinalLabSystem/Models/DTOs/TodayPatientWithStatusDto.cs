@@ -22,6 +22,8 @@ public sealed class TodayPatientWithStatusDto
 
     public bool IsVip { get; set; }
 
+    public string? PhotoPath { get; set; }
+
     public string? ReferralName { get; set; }
 
     public int VisitCount { get; set; }
@@ -41,4 +43,6 @@ public sealed class TodayPatientWithStatusDto
     public string? VisitCode { get; set; }
 
     public string PatientType { get; set; } = "Individual";
+
+    public int AttendanceNumber { get; set; }
 }

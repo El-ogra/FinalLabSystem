@@ -59,6 +59,9 @@ public partial class Patient
     [StringLength(20)]
     public string PatientType { get; set; } = "Individual";
 
+    [StringLength(500)]
+    public string? PhotoPath { get; set; }
+
     public DateTime CreatedAt { get; set; }
 
     public int? CreatedBy { get; set; }

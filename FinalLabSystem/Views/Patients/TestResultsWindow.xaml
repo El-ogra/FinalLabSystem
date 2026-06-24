@@ -94,6 +94,15 @@
 
                 <Separator Background="#3A5068" Width="1" Margin="6,2" Height="20"/>
 
+                <Button Content="معاينة" Command="{Binding PreviewReportCommand}"
+                        Style="{StaticResource BottomBarButton}"
+                        Background="#42A5F5"/>
+                <Button Content="إرسال SMS" Command="{Binding SendSmsCommand}"
+                        Style="{StaticResource BottomBarButton}"
+                        Background="#66BB6A"/>
+
+                <Separator Background="#3A5068" Width="1" Margin="6,2" Height="20"/>
+
                 <Button Content="العودة للرئيسية" Command="{Binding ReturnToMainCommand}"
                         Style="{StaticResource BottomBarButton}"
                         Background="#F44336"/>
@@ -148,6 +157,11 @@
                                 <Trigger Property="IsSelected" Value="True">
                                     <Setter Property="Background" Value="#1976D2"/>
                                 </Trigger>
+                                <DataTrigger Binding="{Binding IsVip}" Value="True">
+                                    <Setter Property="Background" Value="#FFF8E1"/>
+                                    <Setter Property="BorderBrush" Value="#FFD700"/>
+                                    <Setter Property="BorderThickness" Value="2,0,2,0"/>
+                                </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </ListView.ItemContainerStyle>
@@ -161,8 +175,25 @@
                                            Width="28" TextAlignment="Center"
                                            VerticalAlignment="Center"/>
                                 <StackPanel Margin="4,0,0,0">
-                                    <TextBlock Text="{Binding FullNameAr}"
-                                               FontWeight="SemiBold" FontSize="13"/>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding FullNameAr}"
+                                                   FontWeight="SemiBold" FontSize="13"/>
+                                        <Border Background="#FFD700" CornerRadius="3"
+                                                Padding="4,1" Margin="6,0,0,0"
+                                                VerticalAlignment="Center">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsVip}" Value="False">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <TextBlock Text="VIP" Foreground="#333333"
+                                                       FontWeight="Bold" FontSize="9"/>
+                                        </Border>
+                                    </StackPanel>
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="{Binding PatientCode}"
                                                    Foreground="#88AAAAAA" FontSize="11"/>
@@ -262,9 +293,39 @@
                         <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="0"
                                 Background="#2A4A5A" CornerRadius="4"
                                 Width="52" Height="52" Margin="0,0,10,0"
-                                VerticalAlignment="Center">
-                            <TextBlock Text="&#x1F464;" FontFamily="Segoe UI Emoji" FontSize="24"
-                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                VerticalAlignment="Center" ClipToBounds="True">
+                            <Grid>
+                                <Image Stretch="UniformToFill" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                    <Image.Style>
+                                        <Style TargetType="Image">
+                                            <Setter Property="Source" Value="{Binding CurrentPatientInfo.PhotoPath}"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding CurrentPatientInfo.PhotoPath}" Value="{x:Null}">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding CurrentPatientInfo.PhotoPath}" Value="">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Image.Style>
+                                </Image>
+                                <TextBlock Text="&#x1F464;" FontFamily="Segoe UI Emoji" FontSize="24"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding CurrentPatientInfo.PhotoPath}" Value="{x:Null}">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding CurrentPatientInfo.PhotoPath}" Value="">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Grid>
                         </Border>
 
                         <!-- الصف العلوي: الكود | الاسم | الجنس -->
@@ -363,7 +424,7 @@
                                 </Border>
                                 <Border Background="#4CAF50" CornerRadius="4" Padding="10,4"
                                         VerticalAlignment="Center" Margin="6,0,0,0">
-                                    <TextBlock Text="{Binding CurrentPatientInfo.SelectedTests.Count, FallbackValue='0'}"
+                                    <TextBlock Text="{Binding CurrentPatientInfo.VisitCount, FallbackValue='0'}"
                                                Foreground="#FFFFFF" FontWeight="Bold" FontSize="14"
                                                VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                 </Border>
@@ -435,6 +496,10 @@
                                     <Setter Property="Background" Value="#1976D2"/>
                                     <Setter Property="Foreground" Value="#FFFFFF"/>
                                 </Trigger>
+                                <DataTrigger Binding="{Binding IsMultiComponent}" Value="True">
+                                    <Setter Property="Background" Value="#FFF3E0"/>
+                                    <Setter Property="Foreground" Value="#333333"/>
+                                </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </DataGrid.Resources>
@@ -479,7 +544,7 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
-                        <!-- 3. النتيجة (قابل للتعديل لأحادي المكوّن فقط) -->
+                        <!-- 3. النتيجة (عرض + إدخال inline لأحادي المكوّن فقط) -->
                         <DataGridTemplateColumn Header="Result" Width="110">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
@@ -490,7 +555,21 @@
                                               FontWeight="Bold"
                                               Padding="4,2" VerticalContentAlignment="Center"
                                               ToolTip="{Binding SingleComponentResultValue}"
-                                              KeyDown="ResultTextBox_KeyDown"/>
+                                              KeyDown="ResultTextBox_KeyDown">
+                                         <TextBox.Style>
+                                             <Style TargetType="TextBox">
+                                                 <Style.Triggers>
+                                                     <DataTrigger Binding="{Binding IsMultiComponent}" Value="True">
+                                                         <Setter Property="IsReadOnly" Value="True"/>
+                                                         <Setter Property="Background" Value="#FFF3E0"/>
+                                                         <Setter Property="Text" Value="See Report"/>
+                                                         <Setter Property="Foreground" Value="#E65100"/>
+                                                         <Setter Property="FontStyle" Value="Italic"/>
+                                                     </DataTrigger>
+                                                 </Style.Triggers>
+                                             </Style>
+                                         </TextBox.Style>
+                                     </TextBox>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -708,4 +787,15 @@
             </StackPanel>
         </Border>
     </DockPanel>
+
+    <Window.InputBindings>
+        <KeyBinding Key="F2" Command="{Binding OpenPatientDataCommand}"/>
+        <KeyBinding Key="F3" Command="{Binding OpenSearchCommand}"/>
+        <KeyBinding Key="F5" Command="{Binding RefreshCommand}"/>
+        <KeyBinding Key="F6" Command="{Binding OpenDeliveryCommand}"/>
+        <KeyBinding Key="F8" Command="{Binding ToggleReviewStatusCommand}"/>
+        <KeyBinding Key="F9" Command="{Binding ToggleFinishStatusCommand}"/>
+        <KeyBinding Key="F12" Command="{Binding TogglePrintStatusCommand}"/>
+        <KeyBinding Key="Escape" Command="{Binding ReturnToMainCommand}"/>
+    </Window.InputBindings>
 </Window>

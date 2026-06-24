@@ -102,6 +102,13 @@ public sealed class TestResultsViewModel : ViewModelBase
         MarkReviewedCommand = new AsyncRelayCommand(async _ => await MarkReviewedAsync(), _ => SelectedTest != null && HasSelectedPatient);
         SaveQuickNoteCommand = new AsyncRelayCommand(async _ => await SaveQuickNoteAsync(), _ => HasSelectedPatient);
         SetPatientTypeCommand = new RelayCommand(param => SelectedPatientType = param as string ?? "All");
+        OpenSearchCommand = new RelayCommand(_ => navigationService.OpenTaskWindow<PatientSearchViewModel>());
+        OpenDeliveryCommand = new RelayCommand(_ => navigationService.OpenTaskWindow<DeliveryViewModel>());
+        ToggleReviewStatusCommand = new AsyncRelayCommand(async _ => await ToggleReviewStatusAsync(), _ => SelectedTest != null && HasSelectedPatient);
+        ToggleFinishStatusCommand = new AsyncRelayCommand(async _ => await ToggleFinishStatusAsync(), _ => SelectedTest != null && HasSelectedPatient);
+        TogglePrintStatusCommand = new AsyncRelayCommand(async _ => await TogglePrintStatusAsync(), _ => SelectedTest != null && HasSelectedPatient);
+        PreviewReportCommand = new AsyncRelayCommand(async _ => await PreviewReportAsync(), _ => HasSelectedPatient);
+        SendSmsCommand = new AsyncRelayCommand(async _ => await SendSmsAsync(), _ => HasSelectedPatient);
     }
 
     public ObservableCollection<TodayPatientWithStatusDto> AllPatients
@@ -272,6 +279,13 @@ public sealed class TestResultsViewModel : ViewModelBase
     public ICommand MarkReviewedCommand { get; }
     public ICommand SaveQuickNoteCommand { get; }
     public ICommand SetPatientTypeCommand { get; }
+    public ICommand OpenSearchCommand { get; }
+    public ICommand OpenDeliveryCommand { get; }
+    public ICommand ToggleReviewStatusCommand { get; }
+    public ICommand ToggleFinishStatusCommand { get; }
+    public ICommand TogglePrintStatusCommand { get; }
+    public ICommand PreviewReportCommand { get; }
+    public ICommand SendSmsCommand { get; }
 
     public async Task LoadAsync()
     {
@@ -392,7 +406,8 @@ public sealed class TestResultsViewModel : ViewModelBase
         {
             if (!patient.PatientCode.Contains(term, StringComparison.OrdinalIgnoreCase) &&
                 !patient.FullNameAr.Contains(term, StringComparison.OrdinalIgnoreCase) &&
-                !(patient.VisitCode?.Contains(term, StringComparison.OrdinalIgnoreCase) == true))
+                !(patient.VisitCode?.Contains(term, StringComparison.OrdinalIgnoreCase) == true) &&
+                !(int.TryParse(term, out var attNum) && patient.AttendanceNumber == attNum))
                 return false;
         }
 
@@ -519,7 +534,68 @@ public sealed class TestResultsViewModel : ViewModelBase
         var staffId = _currentUserSession.CurrentUser?.StaffId ?? 0;
         if (staffId == 0) return;
 
+        if (!SelectedTest.IsPrinted)
+        {
+            _dialogService.ShowWarning(
+                "يجب طباعة النتائج أولاً قبل التصدير.\nيرجى الضغط على زر 'طبعت' أولاً.", "تنبيه");
+            return;
+        }
+
         await _routineResultService.ToggleExportStatusAsync(SelectedTest.VisitTestId, staffId);
+
+        if (SelectedPatient != null)
+            await SelectPatientAsync(SelectedPatient);
+    }
+
+    private async Task ToggleReviewStatusAsync()
+    {
+        if (SelectedTest == null) return;
+        var staffId = _currentUserSession.CurrentUser?.StaffId ?? 0;
+        if (staffId == 0) return;
+
+        var action = SelectedTest.IsAllReviewed ? "UNREVIEWED" : "REVIEWED";
+        await _auditService.LogActionAsync(
+            "VisitTest", SelectedTest.VisitTestId, action, staffId,
+            $"{(SelectedTest.IsAllReviewed ? "إلغاء مراجعة" : "مراجعة")} بواسطة {_currentUserSession.CurrentUser?.DisplayName}");
+
+        if (SelectedPatient != null)
+            await SelectPatientAsync(SelectedPatient);
+    }
+
+    private async Task ToggleFinishStatusAsync()
+    {
+        if (SelectedTest == null) return;
+        var staffId = _currentUserSession.CurrentUser?.StaffId ?? 0;
+        if (staffId == 0) return;
+
+        if (SelectedTest.IsManuallyOverridden)
+        {
+            await _auditService.LogActionAsync(
+                "VisitTest", SelectedTest.VisitTestId, "MANUAL_UNDO", staffId,
+                $"إلغاء التجاوز بواسطة {_currentUserSession.CurrentUser?.DisplayName}");
+        }
+        else
+        {
+            await _auditService.LogActionAsync(
+                "VisitTest", SelectedTest.VisitTestId, "MANUAL_COMPLETE", staffId,
+                $"تجاوز يدوي بواسطة {_currentUserSession.CurrentUser?.DisplayName}");
+
+            await _visitService.UpdateVisitTestsAsync(
+                SelectedPatient!.VisitId,
+                PatientTests.Select(t => t.VisitTestId).ToList());
+        }
+
+        if (SelectedPatient != null)
+            await SelectPatientAsync(SelectedPatient);
+    }
+
+    private async Task TogglePrintStatusAsync()
+    {
+        if (SelectedTest == null) return;
+        var staffId = _currentUserSession.CurrentUser?.StaffId ?? 0;
+        if (staffId == 0) return;
+
+        await _routineResultService.TogglePrintStatusAsync(SelectedTest.VisitTestId, staffId);
 
         if (SelectedPatient != null)
             await SelectPatientAsync(SelectedPatient);
@@ -782,5 +858,43 @@ public sealed class TestResultsViewModel : ViewModelBase
     {
         if (CurrentPatientInfo == null) return;
         await _printService.PrintAsync("BlankReport", CurrentPatientInfo.VisitId);
+    }
+
+    private async Task PreviewReportAsync()
+    {
+        if (CurrentPatientInfo == null) return;
+
+        var allReviewed = PatientTests.All(t =>
+            t.ComponentResults.All(c =>
+                c.ValidationStatus >= ResultValidationStatus.Reviewed));
+
+        if (!allReviewed)
+        {
+            _dialogService.ShowWarning(
+                "يجب مراجعة جميع النتائج قبل المعاينة.", "تنبيه");
+            return;
+        }
+
+        await _printService.PrintAsync("CompositeReport", CurrentPatientInfo);
+    }
+
+    private async Task SendSmsAsync()
+    {
+        if (CurrentPatientInfo == null) return;
+
+        if (string.IsNullOrWhiteSpace(CurrentPatientInfo.Phone))
+        {
+            _dialogService.ShowWarning(
+                "لا يوجد رقم هاتف مسجل لهذا المريض.", "تنبيه");
+            return;
+        }
+
+        var phone = CurrentPatientInfo.Phone;
+        var message = $"atient {CurrentPatientInfo.FullNameAr} - Lab ID: {CurrentPatientInfo.VisitCode}\nResults are ready for collection.";
+
+        _dialogService.ShowMessage(
+            $"إرسال SMS إلى:\n{phone}\n\n{message}", "إرسال رسالة نصية");
+
+        await System.Threading.Tasks.Task.CompletedTask;
     }
 }

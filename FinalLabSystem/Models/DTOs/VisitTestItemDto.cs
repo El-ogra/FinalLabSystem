@@ -36,6 +36,8 @@ public sealed class VisitTestItemDto : INotifyPropertyChanged
 
     public bool IsSingleComponent => TotalComponents == 1;
 
+    public bool IsMultiComponent => TotalComponents > 1;
+
     public bool IsAllReviewed => TotalComponents > 0 &&
         ComponentResults.Count >= TotalComponents &&
         ComponentResults.All(c => c.ValidationStatus >= ResultValidationStatus.Reviewed);
@@ -47,12 +49,22 @@ public sealed class VisitTestItemDto : INotifyPropertyChanged
             : string.Empty;
         set
         {
-            if (ComponentResults.Count == 1)
+            if (ComponentResults.Count == 1 && IsSingleComponent)
             {
                 ComponentResults[0].ResultValue = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SingleComponentResultValue)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SingleComponentStatus)));
             }
+        }
+    }
+
+    public void SetSingleComponentResultValue(string value)
+    {
+        if (ComponentResults.Count == 1)
+        {
+            ComponentResults[0].ResultValue = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SingleComponentResultValue)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SingleComponentStatus)));
         }
     }
 

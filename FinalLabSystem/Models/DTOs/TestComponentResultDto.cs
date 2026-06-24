@@ -45,4 +45,25 @@ public sealed class TestComponentResultDto
     public DateTime? LastModifiedAt { get; set; }
 
     public int SortOrder { get; set; }
+
+    public string LOrH
+    {
+        get
+        {
+            if (ResultNumeric == null || SnapLowNormal == null || SnapHighNormal == null)
+                return string.Empty;
+            var val = (double)ResultNumeric.Value;
+            var low = SnapLowNormal.Value;
+            var high = SnapHighNormal.Value;
+            if (val >= high * 2) return "HH";
+            if (val <= low * 2) return "LL";
+            if (val > high) return "H";
+            if (val < low) return "L";
+            return string.Empty;
+        }
+    }
+
+    public bool IsVerified => ValidationStatus >= ResultValidationStatus.Reviewed;
+
+    public bool IsPrintEnabled { get; set; }
 }

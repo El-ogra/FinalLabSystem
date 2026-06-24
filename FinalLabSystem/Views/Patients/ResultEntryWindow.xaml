@@ -1,7 +1,7 @@
 <Window x:Class="FinalLabSystem.Views.Patients.ResultEntryWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="إدخال نتيجة التحليل" Height="450" Width="650"
+        Title="إدخال نتيجة التحليل" Height="520" Width="950"
         WindowStartupLocation="CenterOwner"
         FlowDirection="RightToLeft"
         Background="#1E2A3A">
@@ -10,6 +10,26 @@
             <TextBlock Text="{Binding TestTypeName}" FontWeight="Bold" FontSize="16"
                        Foreground="#FFFFFF" Margin="0,0,0,4"/>
         </StackPanel>
+
+        <!-- Comment section -->
+        <Border DockPanel.Dock="Bottom" Background="#2A3F54" Padding="8" Margin="0,8,0,0"
+                CornerRadius="4" BorderBrush="#555" BorderThickness="1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="60"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Text="Comment:" Foreground="#AAAAAA" FontWeight="SemiBold"
+                           Margin="0,0,0,4"/>
+                <TextBox Grid.Row="1"
+                         Text="{Binding SelectedComponent.Comment, UpdateSourceTrigger=PropertyChanged}"
+                         Background="#1E2A3A" Foreground="#FFFFFF"
+                         BorderBrush="#555" BorderThickness="1"
+                         TextWrapping="Wrap" AcceptsReturn="True"
+                         VerticalScrollBarVisibility="Auto" Padding="4"/>
+            </Grid>
+        </Border>
+
         <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal"
                     HorizontalAlignment="Left" Margin="0,8,0,0">
             <Button Content="حفظ" Command="{Binding SaveCommand}" Width="100" Height="32"
@@ -21,15 +41,16 @@
         </StackPanel>
         <DataGrid ItemsSource="{Binding Components}" AutoGenerateColumns="False"
                   IsReadOnly="False" CanUserAddRows="False"
+                  SelectedItem="{Binding SelectedComponent}"
                   Background="#2A3F54" Foreground="#FFFFFF"
                   RowBackground="#2A3F54" AlternatingRowBackground="#1E2A3A"
                   BorderBrush="#3A5068" BorderThickness="1">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="الكود" Binding="{Binding ComponentCode}"
-                                    IsReadOnly="True" Width="80"/>
+                                    IsReadOnly="True" Width="70"/>
                 <DataGridTextColumn Header="المكوّن" Binding="{Binding ComponentName}"
                                     IsReadOnly="True" Width="*"/>
-                <DataGridTemplateColumn Header="النتيجة" Width="120">
+                <DataGridTemplateColumn Header="النتيجة" Width="100">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBox Text="{Binding ResultValue, UpdateSourceTrigger=PropertyChanged}"
@@ -39,11 +60,56 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTextColumn Header="الوحدة" Binding="{Binding SnapUnit}"
-                                    IsReadOnly="True" Width="70"/>
+                                    IsReadOnly="True" Width="60"/>
+                <DataGridTemplateColumn Header="L/H" Width="45" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding LOrH}" FontWeight="Bold"
+                                       HorizontalAlignment="Center" FontSize="12">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding LOrH}" Value="H">
+                                                <Setter Property="Foreground" Value="#F44336"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding LOrH}" Value="L">
+                                                <Setter Property="Foreground" Value="#2196F3"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding LOrH}" Value="HH">
+                                                <Setter Property="Foreground" Value="#FF0000"/>
+                                                <Setter Property="Text" Value="!!H"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding LOrH}" Value="LL">
+                                                <Setter Property="Foreground" Value="#0000FF"/>
+                                                <Setter Property="Text" Value="!!L"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
                 <DataGridTextColumn Header="المدى" Binding="{Binding SnapNormalText}"
                                     IsReadOnly="True" Width="100"/>
+                <DataGridTemplateColumn Header="Verified" Width="60" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding IsVerified}"
+                                      IsEnabled="False" HorizontalAlignment="Center"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Print" Width="50">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding IsPrintEnabled, Mode=TwoWay}"
+                                      HorizontalAlignment="Center"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
                 <DataGridTextColumn Header="الحالة" Binding="{Binding ResultStatus}"
-                                    IsReadOnly="True" Width="80"/>
+                                    IsReadOnly="True" Width="70"/>
             </DataGrid.Columns>
         </DataGrid>
     </DockPanel>
