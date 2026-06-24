@@ -5,7 +5,7 @@
         WindowState="Maximized"
         WindowStartupLocation="CenterScreen"
         FlowDirection="RightToLeft"
-        Background="#123A42"
+        Background="#0D2137"
         Loaded="Window_Loaded">
     <Window.Resources>
         <!-- Status color mapping -->
@@ -64,80 +64,39 @@
     </Window.Resources>
 
     <DockPanel>
-        <!-- شريط الفلاتر (Top) -->
-        <Border DockPanel.Dock="Top" Background="#0A252C" Padding="6">
-            <WrapPanel Orientation="Horizontal">
-                <RadioButton Content="الكل" GroupName="Filter" IsChecked="True"
-                             Foreground="#FFFFFF" Margin="8,0"
-                             Command="{Binding ClearFilterCommand}"/>
-                <RadioButton Content="غير مكتوب" GroupName="Filter"
-                             Foreground="#FF8C00" Margin="8,0"
-                             Command="{Binding ApplyFilterCommand}"
-                             CommandParameter="HasUnwrittenResults"/>
-                <RadioButton Content="غير مراجَع" GroupName="Filter"
-                             Foreground="#FFD700" Margin="8,0"
-                             Command="{Binding ApplyFilterCommand}"
-                             CommandParameter="HasUnreviewedResults"/>
-                <RadioButton Content="VIP" GroupName="Filter"
-                             Foreground="#FF4444" Margin="8,0"
-                             Command="{Binding ApplyFilterCommand}"
-                             CommandParameter="VIP"/>
-                <RadioButton Content="خارجي" GroupName="Filter"
-                             Foreground="#4FC3F7" Margin="8,0"
-                             Command="{Binding ApplyFilterCommand}"
-                             CommandParameter="External"/>
-
-                <Separator Background="#3A5068" Width="1" Margin="8,2" Height="20"/>
-
-                <Button Content="◀" Command="{Binding NavigateDayCommand}" CommandParameter="-1"
-                        Width="28" Height="24" Background="#3A5068" Foreground="#FFFFFF"
-                        Margin="3,0" BorderThickness="0" FontSize="12"/>
-                <TextBlock Text="{Binding SelectedDateDisplay}" Foreground="#FFFFFF"
-                           VerticalAlignment="Center" Margin="4,0" FontWeight="SemiBold"/>
-                <Button Content="▶" Command="{Binding NavigateDayCommand}" CommandParameter="1"
-                        Width="28" Height="24" Background="#3A5068" Foreground="#FFFFFF"
-                        Margin="3,0" BorderThickness="0" FontSize="12"/>
-
-                <Separator Background="#3A5068" Width="1" Margin="8,2" Height="20"/>
-
-                <TextBox Width="180" Height="24" Margin="4,0"
-                         Background="#1A4A52" Foreground="#FFFFFF"
-                         BorderBrush="#3A5068" BorderThickness="1"
-                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                         VerticalContentAlignment="Center" Padding="4,2"/>
-            </WrapPanel>
-        </Border>
-
         <!-- شريط التنقل السفلي -->
         <Border DockPanel.Dock="Bottom" Background="#0A252C" Padding="6">
             <WrapPanel Orientation="Horizontal">
                 <Button Content="بيانات المرضى" Command="{Binding OpenPatientDataCommand}"
                         Style="{StaticResource BottomBarButton}"
                         Background="#2A5A62"/>
+
+                <Separator Background="#3A5068" Width="1" Margin="6,2" Height="20"/>
+
                 <Button Content="طباعة ظرف" Command="{Binding PrintEnvelopeCommand}"
                         Style="{StaticResource BottomBarButton}"
-                        Background="#2A5A62"/>
+                        Background="#FFC107" Foreground="#0A252C"/>
                 <Button Content="تقرير فارغ" Command="{Binding PrintBlankReportCommand}"
                         Style="{StaticResource BottomBarButton}"
-                        Background="#2A5A62"/>
+                        Background="#FFC107" Foreground="#0A252C"/>
                 <Button Content="التاريخ المرضي" Command="{Binding PrintMedicalHistoryCommand}"
                         Style="{StaticResource BottomBarButton}"
-                        Background="#2A5A62"/>
+                        Background="#FFC107" Foreground="#0A252C"/>
 
                 <Separator Background="#3A5068" Width="1" Margin="6,2" Height="20"/>
 
                 <Button Content="طباعة" Command="{Binding PrintCompositeReportCommand}"
                         Style="{StaticResource BottomBarButton}"
-                        Background="#2A5A62" IsEnabled="{Binding CanPrint}"/>
+                        Background="#FFC107" Foreground="#0A252C" IsEnabled="{Binding CanPrint}"/>
                 <Button Content="تقرير مجمع" Command="{Binding PrintCompositeReportCommand}"
                         Style="{StaticResource BottomBarButton}"
-                        Background="#2A5A62"/>
+                        Background="#FFC107" Foreground="#0A252C"/>
 
                 <Separator Background="#3A5068" Width="1" Margin="6,2" Height="20"/>
 
                 <Button Content="العودة للرئيسية" Command="{Binding ReturnToMainCommand}"
-                        Height="30" Margin="4,0" Padding="10,0"
-                        Background="#F44336" Foreground="White" BorderThickness="0"/>
+                        Style="{StaticResource BottomBarButton}"
+                        Background="#F44336"/>
             </WrapPanel>
         </Border>
 
@@ -154,62 +113,24 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
+                <!-- Header: العنوان + العداد + البحث -->
                 <Border Grid.Row="0" Background="#1A4A52" Padding="6">
                     <StackPanel>
-                        <TextBlock Text="مرضى اليوم" FontWeight="Bold" FontSize="14"
-                                   Foreground="#FFFFFF" HorizontalAlignment="Center" Margin="0,0,0,4"/>
-                        <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                            <Button Content="الكل"
-                                    Command="{Binding SetPatientTypeCommand}"
-                                    CommandParameter="All"
-                                    Width="50" Height="22" Margin="2,0"
-                                    Background="{Binding SelectedPatientType, Converter={StaticResource StringEqualsConverter}, ConverterParameter=All}"
-                                    Foreground="#FFFFFF" FontSize="10" BorderThickness="1"
-                                    BorderBrush="#3A5068" Cursor="Hand"/>
-                            <Button Content="Individual"
-                                    Command="{Binding SetPatientTypeCommand}"
-                                    CommandParameter="Individual"
-                                    Width="70" Height="22" Margin="2,0"
-                                    Background="{Binding SelectedPatientType, Converter={StaticResource StringEqualsConverter}, ConverterParameter=Individual}"
-                                    Foreground="#FFFFFF" FontSize="10" BorderThickness="1"
-                                    BorderBrush="#3A5068" Cursor="Hand"/>
-                            <Button Content="LabToLak"
-                                    Command="{Binding SetPatientTypeCommand}"
-                                    CommandParameter="LabToLak"
-                                    Width="65" Height="22" Margin="2,0"
-                                    Background="{Binding SelectedPatientType, Converter={StaticResource StringEqualsConverter}, ConverterParameter=LabToLak}"
-                                    Foreground="#FFFFFF" FontSize="10" BorderThickness="1"
-                                    BorderBrush="#3A5068" Cursor="Hand"/>
-                            <Button Content="Contracts"
-                                    Command="{Binding SetPatientTypeCommand}"
-                                    CommandParameter="Contracts"
-                                    Width="68" Height="22" Margin="2,0"
-                                    Background="{Binding SelectedPatientType, Converter={StaticResource StringEqualsConverter}, ConverterParameter=Contracts}"
-                                    Foreground="#FFFFFF" FontSize="10" BorderThickness="1"
-                                    BorderBrush="#3A5068" Cursor="Hand"/>
-                            <Button Content="VIP"
-                                    Command="{Binding SetPatientTypeCommand}"
-                                    CommandParameter="VIP"
-                                    Width="40" Height="22" Margin="2,0"
-                                    Background="{Binding SelectedPatientType, Converter={StaticResource StringEqualsConverter}, ConverterParameter=VIP}"
-                                    Foreground="#FFFFFF" FontSize="10" BorderThickness="1"
-                                    BorderBrush="#3A5068" Cursor="Hand"/>
-                            <Button Content="Free"
-                                    Command="{Binding SetPatientTypeCommand}"
-                                    CommandParameter="Free"
-                                    Width="40" Height="22" Margin="2,0"
-                                    Background="{Binding SelectedPatientType, Converter={StaticResource StringEqualsConverter}, ConverterParameter=Free}"
-                                    Foreground="#FFFFFF" FontSize="10" BorderThickness="1"
-                                    BorderBrush="#3A5068" Cursor="Hand"/>
-                            <Button Content="&#x21BB;"
-                                    Command="{Binding RefreshCommand}"
-                                    Width="28" Height="22" Margin="4,0,0,0"
-                                    Background="#2A5A62" Foreground="#FFFFFF" FontSize="12"
-                                    BorderThickness="1" BorderBrush="#3A5068" Cursor="Hand"
-                                    ToolTip="تحديث"/>
-                        </WrapPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,4">
+                            <TextBlock Text="عدد المرضى اليوم" FontWeight="Bold" FontSize="13"
+                                       Foreground="#FFFFFF" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <TextBlock Text="{Binding PatientCount}" Foreground="#4FC3F7" FontSize="18" FontWeight="Bold"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <TextBox Width="200" Height="26" Margin="0,0,0,4"
+                                 Background="#FFFFFF" Foreground="#333333"
+                                 BorderBrush="#3A5068" BorderThickness="1"
+                                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalContentAlignment="Center" Padding="4,2" FontSize="12"
+                                 FlowDirection="RightToLeft"/>
                     </StackPanel>
                 </Border>
 
@@ -254,6 +175,62 @@
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
+
+                <!-- أزرار الفلاتر أسفل القائمة -->
+                <Border Grid.Row="2" Background="#0A252C" Padding="6,4" Margin="0">
+                    <StackPanel HorizontalAlignment="Center">
+                        <Button Content="&#x21BB; Refresh"
+                                Command="{Binding RefreshCommand}"
+                                MinWidth="90" Height="30" Margin="0,0,0,4"
+                                Background="#4CAF50" Foreground="White" FontSize="13"
+                                FontWeight="SemiBold" BorderThickness="0" Cursor="Hand"
+                                HorizontalAlignment="Center"/>
+                        <UniformGrid Rows="2" Columns="3" HorizontalAlignment="Center">
+                            <Button Content="Individual"
+                                    Command="{Binding SetPatientTypeCommand}"
+                                    CommandParameter="Individual"
+                                    Width="70" Height="24" Margin="2"
+                                    Background="{Binding SelectedPatientType, Converter={StaticResource StringEqualsConverter}, ConverterParameter=Individual}"
+                                    Foreground="#FFFFFF" FontSize="11" BorderThickness="1"
+                                    BorderBrush="#3A5068" Cursor="Hand"/>
+                            <Button Content="LabToLak"
+                                    Command="{Binding SetPatientTypeCommand}"
+                                    CommandParameter="LabToLak"
+                                    Width="65" Height="24" Margin="2"
+                                    Background="{Binding SelectedPatientType, Converter={StaticResource StringEqualsConverter}, ConverterParameter=LabToLak}"
+                                    Foreground="#FFFFFF" FontSize="11" BorderThickness="1"
+                                    BorderBrush="#3A5068" Cursor="Hand"/>
+                            <Button Content="Contracts"
+                                    Command="{Binding SetPatientTypeCommand}"
+                                    CommandParameter="Contracts"
+                                    Width="68" Height="24" Margin="2"
+                                    Background="{Binding SelectedPatientType, Converter={StaticResource StringEqualsConverter}, ConverterParameter=Contracts}"
+                                    Foreground="#FFFFFF" FontSize="11" BorderThickness="1"
+                                    BorderBrush="#3A5068" Cursor="Hand"/>
+                            <Button Content="VIP"
+                                    Command="{Binding SetPatientTypeCommand}"
+                                    CommandParameter="VIP"
+                                    Width="40" Height="24" Margin="2"
+                                    Background="{Binding SelectedPatientType, Converter={StaticResource StringEqualsConverter}, ConverterParameter=VIP}"
+                                    Foreground="#FFFFFF" FontSize="11" BorderThickness="1"
+                                    BorderBrush="#3A5068" Cursor="Hand"/>
+                            <Button Content="Free"
+                                    Command="{Binding SetPatientTypeCommand}"
+                                    CommandParameter="Free"
+                                    Width="40" Height="24" Margin="2"
+                                    Background="{Binding SelectedPatientType, Converter={StaticResource StringEqualsConverter}, ConverterParameter=Free}"
+                                    Foreground="#FFFFFF" FontSize="11" BorderThickness="1"
+                                    BorderBrush="#3A5068" Cursor="Hand"/>
+                            <Button Content="الكل"
+                                    Command="{Binding SetPatientTypeCommand}"
+                                    CommandParameter="All"
+                                    Width="50" Height="24" Margin="2"
+                                    Background="{Binding SelectedPatientType, Converter={StaticResource StringEqualsConverter}, ConverterParameter=All}"
+                                    Foreground="#FFFFFF" FontSize="11" BorderThickness="1"
+                                    BorderBrush="#3A5068" Cursor="Hand"/>
+                        </UniformGrid>
+                    </StackPanel>
+                </Border>
             </Grid>
 
             <!-- GridSplitter -->
@@ -269,106 +246,144 @@
                 </Grid.RowDefinitions>
 
                 <!-- بيانات المريض (الجزء العلوي) -->
-                <Border Grid.Row="0" Background="#0E2830" Padding="8"
+                <Border Grid.Row="0" Background="#FFD700" Padding="8"
                         BorderBrush="#3A5068" BorderThickness="0,0,0,1">
                     <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- صورة المريض (عنصر زخرفي) -->
-                        <Border Grid.Column="0" Background="#2A4A5A" CornerRadius="4"
-                                Width="48" Height="48" Margin="0,0,8,0"
+                        <!-- صورة المريض (تمتد صفّين) -->
+                        <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="0"
+                                Background="#2A4A5A" CornerRadius="4"
+                                Width="52" Height="52" Margin="0,0,10,0"
                                 VerticalAlignment="Center">
-                            <TextBlock Text="&#x1F464;" FontSize="24"
+                            <TextBlock Text="&#x1F464;" FontFamily="Segoe UI Emoji" FontSize="24"
                                        HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
 
-                        <!-- الجنس -->
-                        <Border Grid.Column="1" Background="#FF9800" CornerRadius="4"
-                                Padding="10,4" Margin="0,0,8,0">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="الجنس:" Foreground="#FFFFFF" FontWeight="Bold"
-                                           Margin="0,0,4,0" VerticalAlignment="Center"/>
-                                <TextBlock Text="{Binding CurrentPatientInfo.Sex, FallbackValue='--'}"
-                                           Foreground="#FFFFFF" FontWeight="Bold"
-                                           VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </Border>
-
-                        <!-- المعلومات الأساسية -->
-                        <Grid Grid.Column="2">
+                        <!-- الصف العلوي: الكود | الاسم | الجنس -->
+                        <Grid Grid.Row="0" Grid.Column="1" FlowDirection="RightToLeft">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
+                            <!-- الجنس -->
+                            <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="8,0">
+                                <Border Background="#1976D2" CornerRadius="3" Padding="4,2"
+                                        VerticalAlignment="Center">
+                                    <TextBlock Text="الجنس" Foreground="#FFFFFF" FontWeight="Bold" FontSize="10"/>
+                                </Border>
+                                <Border Background="White" BorderBrush="#CCCCCC" BorderThickness="1"
+                                        CornerRadius="2" Padding="4,2" MinWidth="40"
+                                        VerticalAlignment="Center" Margin="4,0,0,0">
+                                    <TextBlock Text="{Binding CurrentPatientInfo.Sex, FallbackValue='--'}"
+                                               Foreground="#333333" FontWeight="Bold" FontSize="12"/>
+                                </Border>
+                            </StackPanel>
+
                             <!-- الاسم -->
-                            <StackPanel Grid.Column="0" Margin="8,0">
-                                <TextBlock Text="الاسم:" Foreground="#88AAAAAA" FontSize="11"/>
-                                <TextBlock Text="{Binding CurrentPatientInfo.FullNameAr, FallbackValue='--'}"
-                                           Foreground="#FFFFFF" FontWeight="Bold" FontSize="13"/>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="8,0">
+                                <Border Background="#1976D2" CornerRadius="3" Padding="4,2"
+                                        VerticalAlignment="Center">
+                                    <TextBlock Text="الاسم" Foreground="#FFFFFF" FontWeight="Bold" FontSize="10"/>
+                                </Border>
+                                <Border Background="White" BorderBrush="#CCCCCC" BorderThickness="1"
+                                        CornerRadius="2" Padding="4,2" MinWidth="120"
+                                        VerticalAlignment="Center" Margin="4,0,0,0">
+                                    <TextBlock Text="{Binding CurrentPatientInfo.FullNameAr, FallbackValue='--'}"
+                                               Foreground="#333333" FontWeight="Bold" FontSize="12"
+                                               TextTrimming="CharacterEllipsis" MaxWidth="200"/>
+                                </Border>
                             </StackPanel>
 
                             <!-- الكود -->
-                            <StackPanel Grid.Column="1" Margin="8,0">
-                                <TextBlock Text="الكود:" Foreground="#88AAAAAA" FontSize="11"/>
-                                <TextBlock Text="{Binding CurrentPatientInfo.PatientCode, FallbackValue='--'}"
-                                           Foreground="#FFFFFF" FontWeight="Bold" FontSize="13"
-                                           Cursor="Hand"
-                                           TextDecorations="Underline">
-                                    <TextBlock.InputBindings>
+                            <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="8,0">
+                                <Border Background="#1976D2" CornerRadius="3" Padding="4,2"
+                                        VerticalAlignment="Center">
+                                    <TextBlock Text="الكود" Foreground="#FFFFFF" FontWeight="Bold" FontSize="10"/>
+                                </Border>
+                                <Border Background="White" BorderBrush="#CCCCCC" BorderThickness="1"
+                                        CornerRadius="2" Padding="4,2" MinWidth="100"
+                                        VerticalAlignment="Center" Margin="4,0,0,0" Cursor="Hand">
+                                    <Border.InputBindings>
                                         <MouseBinding MouseAction="LeftClick"
                                                       Command="{Binding CopyCodeCommand}"/>
-                                    </TextBlock.InputBindings>
-                                </TextBlock>
-                            </StackPanel>
-
-                            <!-- العمر -->
-                            <StackPanel Grid.Column="2" Margin="8,0">
-                                <TextBlock Text="العمر:" Foreground="#88AAAAAA" FontSize="11"/>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding CurrentPatientInfo.ApproxAge, FallbackValue='--'}"
-                                               Foreground="#FFFFFF" FontWeight="Bold" FontSize="13"/>
-                                    <TextBlock Text="{Binding CurrentPatientInfo.ApproxAgeUnit, FallbackValue='Years'}"
-                                               Foreground="#88AAAAAA" FontSize="11" Margin="4,0,0,0"/>
-                                </StackPanel>
-                            </StackPanel>
-
-                            <!-- الجهة -->
-                            <StackPanel Grid.Column="3" Margin="8,0">
-                                <TextBlock Text="الجهة:" Foreground="#88AAAAAA" FontSize="11"/>
-                                <TextBlock Text="{Binding CurrentPatientInfo.ReferralName, FallbackValue='--'}"
-                                           Foreground="#FFFFFF" FontWeight="Bold" FontSize="13"
-                                           MaxWidth="200" TextTrimming="CharacterEllipsis"/>
+                                    </Border.InputBindings>
+                                    <TextBlock Text="{Binding CurrentPatientInfo.PatientCode, FallbackValue='--'}"
+                                               Foreground="#333333" FontWeight="Bold" FontSize="12"/>
+                                </Border>
                             </StackPanel>
                         </Grid>
 
-                        <!-- Lab ID + عدد الزيارات -->
-                        <StackPanel Grid.Column="3" Orientation="Horizontal"
-                                    VerticalAlignment="Center">
-                            <StackPanel Margin="8,0">
-                                <TextBlock Text="Lab ID:" Foreground="#88AAAAAA" FontSize="11"/>
-                                <TextBlock Text="{Binding CurrentPatientInfo.VisitCode, FallbackValue='--'}"
-                                           Foreground="#FFFFFF" FontWeight="Bold" FontSize="13"/>
+                        <!-- الصف السفلي: الجهة | Lab ID | العمر -->
+                        <Grid Grid.Row="1" Grid.Column="1" FlowDirection="RightToLeft" Margin="0,4,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- العمر -->
+                            <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="8,0">
+                                <Border Background="#1976D2" CornerRadius="3" Padding="4,2"
+                                        VerticalAlignment="Center">
+                                    <TextBlock Text="العمر" Foreground="#FFFFFF" FontWeight="Bold" FontSize="10"/>
+                                </Border>
+                                <Border Background="White" BorderBrush="#CCCCCC" BorderThickness="1"
+                                        CornerRadius="2" Padding="4,2" MinWidth="60"
+                                        VerticalAlignment="Center" Margin="4,0,0,0">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding CurrentPatientInfo.ApproxAge, FallbackValue='--'}"
+                                                   Foreground="#333333" FontWeight="Bold" FontSize="12"/>
+                                        <TextBlock Text="{Binding CurrentPatientInfo.ApproxAgeUnit, FallbackValue='Years'}"
+                                                   Foreground="#666666" FontSize="10" Margin="4,0,0,0"/>
+                                    </StackPanel>
+                                </Border>
                             </StackPanel>
-                            <Border Background="#2A5A62" CornerRadius="4" Padding="8,4"
-                                    VerticalAlignment="Center">
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="عدد الزيارات: " Foreground="#88AAAAAA"
-                                               VerticalAlignment="Center" FontSize="11"/>
+
+                            <!-- Lab ID -->
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="8,0">
+                                <Border Background="#4CAF50" CornerRadius="3" Padding="4,2"
+                                        VerticalAlignment="Center">
+                                    <TextBlock Text="Lab ID" Foreground="#FFFFFF" FontWeight="Bold" FontSize="10"/>
+                                </Border>
+                                <Border Background="White" BorderBrush="#CCCCCC" BorderThickness="1"
+                                        CornerRadius="2" Padding="4,2" MinWidth="50"
+                                        VerticalAlignment="Center" Margin="4,0,0,0">
+                                    <TextBlock Text="{Binding CurrentPatientInfo.VisitCode, FallbackValue='--'}"
+                                               Foreground="#333333" FontWeight="Bold" FontSize="12"/>
+                                </Border>
+                                <Border Background="#4CAF50" CornerRadius="4" Padding="10,4"
+                                        VerticalAlignment="Center" Margin="6,0,0,0">
                                     <TextBlock Text="{Binding CurrentPatientInfo.SelectedTests.Count, FallbackValue='0'}"
-                                               Foreground="#FFFFFF" FontWeight="Bold"
-                                               VerticalAlignment="Center"/>
-                                </StackPanel>
-                            </Border>
-                        </StackPanel>
+                                               Foreground="#FFFFFF" FontWeight="Bold" FontSize="14"
+                                               VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                </Border>
+                            </StackPanel>
+
+                            <!-- الجهة -->
+                            <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="8,0">
+                                <Border Background="#1976D2" CornerRadius="3" Padding="4,2"
+                                        VerticalAlignment="Center">
+                                    <TextBlock Text="الجهة" Foreground="#FFFFFF" FontWeight="Bold" FontSize="10"/>
+                                </Border>
+                                <Border Background="White" BorderBrush="#CCCCCC" BorderThickness="1"
+                                        CornerRadius="2" Padding="4,2" MinWidth="100"
+                                        VerticalAlignment="Center" Margin="4,0,0,0">
+                                    <TextBlock Text="{Binding CurrentPatientInfo.ReferralName, FallbackValue='--'}"
+                                               Foreground="#333333" FontWeight="Bold" FontSize="12"
+                                               MaxWidth="180" TextTrimming="CharacterEllipsis"/>
+                                </Border>
+                            </StackPanel>
+                        </Grid>
                     </Grid>
                 </Border>
 
@@ -378,13 +393,14 @@
                           SelectedItem="{Binding SelectedTest}"
                           AutoGenerateColumns="False" IsReadOnly="False"
                           CanUserAddRows="False"
+                          FlowDirection="LeftToRight"
                           RowDetailsVisibilityMode="VisibleWhenSelected"
-                          Background="#1A3A44" Foreground="#FFFFFF"
-                          RowBackground="#1A3A44" AlternatingRowBackground="#152E36"
-                          BorderBrush="#3A5068" BorderThickness="1"
+                          Background="#FFFFFF" Foreground="#333333"
+                          RowBackground="#FFFFFF" AlternatingRowBackground="#F5F5F5"
+                          BorderBrush="#E0E0E0" BorderThickness="1"
                           HeadersVisibility="Column"
                           GridLinesVisibility="Horizontal"
-                          HorizontalGridLinesBrush="#2A4A54"
+                          HorizontalGridLinesBrush="#E0E0E0"
                           Margin="4">
                     <DataGrid.InputBindings>
                         <MouseBinding MouseAction="LeftDoubleClick"
@@ -393,9 +409,17 @@
                                     Command="{Binding HandleRowActivateCommand}"/>
                     </DataGrid.InputBindings>
                     <DataGrid.Resources>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="Background" Value="#E0E0E0"/>
+                            <Setter Property="Foreground" Value="#333333"/>
+                            <Setter Property="FontWeight" Value="SemiBold"/>
+                            <Setter Property="BorderBrush" Value="#CCCCCC"/>
+                            <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                            <Setter Property="Padding" Value="6,4"/>
+                        </Style>
                         <Style TargetType="DataGridCell">
                             <Setter Property="Background" Value="Transparent"/>
-                            <Setter Property="Foreground" Value="#FFFFFF"/>
+                            <Setter Property="Foreground" Value="#333333"/>
                             <Setter Property="BorderThickness" Value="0"/>
                             <Setter Property="Padding" Value="4,2"/>
                             <Style.Triggers>
@@ -416,7 +440,7 @@
                     </DataGrid.Resources>
                     <DataGrid.Columns>
                         <!-- 1. التحليل + أزرار P/T في الرأس -->
-                        <DataGridTemplateColumn Header="التحليل" Width="*">
+                        <DataGridTemplateColumn Header="Test Abbreviation" Width="*">
                             <DataGridTemplateColumn.HeaderTemplate>
                                 <DataTemplate>
                                     <DockPanel>
@@ -455,12 +479,8 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
-                        <!-- 2. الكود -->
-                        <DataGridTextColumn Header="الكود" Binding="{Binding TestTypeCode}"
-                                            IsReadOnly="True" Width="70"/>
-
                         <!-- 3. النتيجة (قابل للتعديل لأحادي المكوّن فقط) -->
-                        <DataGridTemplateColumn Header="النتيجة" Width="110">
+                        <DataGridTemplateColumn Header="Result" Width="110">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                      <TextBox Text="{Binding SingleComponentResultValue,
@@ -476,7 +496,7 @@
                         </DataGridTemplateColumn>
 
                         <!-- 4. الحالة -->
-                        <DataGridTemplateColumn Header="الحالة" Width="80" IsReadOnly="True">
+                        <DataGridTemplateColumn Header="Status" Width="80" IsReadOnly="True">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding SingleComponentStatus}"
@@ -486,7 +506,7 @@
                         </DataGridTemplateColumn>
 
                         <!-- 5. مكتمل (Finish) -->
-                        <DataGridTemplateColumn Header="مكتمل" Width="55" IsReadOnly="True">
+                        <DataGridTemplateColumn Header="Finish" Width="55" IsReadOnly="True">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <CheckBox IsChecked="{Binding IsManuallyOverridden}"
@@ -497,7 +517,7 @@
                         </DataGridTemplateColumn>
 
                         <!-- 6. مُراجَع (Verify) -->
-                        <DataGridTemplateColumn Header="مُراجَع" Width="55" IsReadOnly="True">
+                        <DataGridTemplateColumn Header="Verify" Width="55" IsReadOnly="True">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <CheckBox IsChecked="{Binding IsAllReviewed, Mode=OneWay}"
@@ -508,7 +528,7 @@
                         </DataGridTemplateColumn>
 
                         <!-- 7. مطبوع (Print) -->
-                        <DataGridTemplateColumn Header="مطبوع" Width="55" IsReadOnly="True">
+                        <DataGridTemplateColumn Header="Print" Width="55" IsReadOnly="True">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <CheckBox IsChecked="{Binding IsPrinted}"
@@ -519,7 +539,7 @@
                         </DataGridTemplateColumn>
 
                         <!-- 8. مُصدَّر (Export) -->
-                        <DataGridTemplateColumn Header="مُصدَّر" Width="55" IsReadOnly="True">
+                        <DataGridTemplateColumn Header="Export" Width="55" IsReadOnly="True">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <CheckBox IsChecked="{Binding IsExported, Mode=OneWay}"
@@ -536,8 +556,8 @@
                     <!-- RowDetailsTemplate: المكوّنات (للتحاليل متعددة المكوّنات فقط) -->
                     <DataGrid.RowDetailsTemplate>
                         <DataTemplate>
-                            <Border Background="#152E36" Padding="8" Margin="4,4,4,8"
-                                    BorderBrush="#3A5068" BorderThickness="1">
+                            <Border Background="#F0F0F0" Padding="8" Margin="4,4,4,8"
+                                    BorderBrush="#E0E0E0" BorderThickness="1">
                                 <Border.Style>
                                     <Style TargetType="Border">
                                         <Style.Triggers>
@@ -553,13 +573,13 @@
                                         <RowDefinition Height="*"/>
                                     </Grid.RowDefinitions>
                                     <TextBlock Grid.Row="0" Text="المكوّنات:"
-                                               Foreground="#88AAAAAA" FontWeight="SemiBold"
+                                               Foreground="#666666" FontWeight="SemiBold"
                                                Margin="0,0,0,4"/>
                                     <ItemsControl Grid.Row="1" ItemsSource="{Binding ComponentResults}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <Border Background="#1A3A44" CornerRadius="4"
-                                                        Padding="8,6" Margin="2">
+                                                <Border Background="#F9F9F9" CornerRadius="4"
+                                                        Padding="8,6" Margin="2" BorderBrush="#E0E0E0" BorderThickness="1">
                                                     <Grid>
                                                         <Grid.ColumnDefinitions>
                                                             <ColumnDefinition Width="150"/>
@@ -569,9 +589,9 @@
                                                             <ColumnDefinition Width="60"/>
                                                         </Grid.ColumnDefinitions>
                                                         <TextBlock Grid.Column="0" Text="{Binding ComponentName}"
-                                                                   FontWeight="SemiBold" Foreground="#FFFFFF"/>
+                                                                   FontWeight="SemiBold" Foreground="#333333"/>
                                                         <TextBlock Grid.Column="1" Text="{Binding ResultValue}"
-                                                                   FontWeight="Bold" Foreground="#4FC3F7"/>
+                                                                   FontWeight="Bold" Foreground="#1976D2"/>
                                                         <TextBlock Grid.Column="2" Text="{Binding ResultStatus}"
                                                                    FontWeight="Bold">
                                                             <TextBlock.Style>
@@ -597,9 +617,9 @@
                                                             </TextBlock.Style>
                                                         </TextBlock>
                                                         <TextBlock Grid.Column="3" Text="{Binding SnapNormalText}"
-                                                                   Foreground="#88AAAAAA"/>
+                                                                   Foreground="#888888"/>
                                                         <TextBlock Grid.Column="4" Text="{Binding SnapUnit}"
-                                                                   Foreground="#88AAAAAA"/>
+                                                                   Foreground="#888888"/>
                                                     </Grid>
                                                 </Border>
                                             </DataTemplate>
@@ -613,7 +633,7 @@
 
                 <!-- أزرار الإجراءات أسفل الجدول -->
                 <Border Grid.Row="2" Background="#0A252C" Padding="6,4" Margin="4,0">
-                    <Grid>
+                    <Grid FlowDirection="LeftToRight">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
@@ -628,19 +648,19 @@
                         <Button Grid.Column="0" Content="طبعت"
                                 Command="{Binding TogglePrintCommand}"
                                 Style="{StaticResource RowActionButton}"
-                                Background="#2A5A62"/>
+                                Background="#FFC107" Foreground="#333333"/>
 
                         <!-- مراجعة -->
                         <Button Grid.Column="1" Content="مراجعة"
                                 Command="{Binding MarkReviewedCommand}"
                                 Style="{StaticResource RowActionButton}"
-                                Background="#2A5A62"/>
+                                Background="#FFC107" Foreground="#333333"/>
 
                         <!-- تمت -->
                         <Button Grid.Column="2" Content="تمت"
                                 Command="{Binding ManualOverrideCommand}"
                                 Style="{StaticResource RowActionButton}"
-                                Background="#FF9800"/>
+                                Background="#FFC107" Foreground="#333333"/>
 
                         <!-- تراجع -->
                         <Button Grid.Column="3" Content="تراجع"

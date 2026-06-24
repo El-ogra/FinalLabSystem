@@ -52,7 +52,7 @@ public sealed class NullToVisibilityConverter : IValueConverter
 public sealed class AbnormalStatusToBrushConverter : IValueConverter
 {
     private static readonly SolidColorBrush AbnormalBrush = new(Color.FromRgb(0xFF, 0x8C, 0x00));
-    private static readonly SolidColorBrush NormalBrush = new(Colors.White);
+    private static readonly SolidColorBrush NormalBrush = new(Color.FromRgb(0xFF, 0x8C, 0x00));
 
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {

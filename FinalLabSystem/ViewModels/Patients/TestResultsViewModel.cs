@@ -231,9 +231,14 @@ public sealed class TestResultsViewModel : ViewModelBase
         set
         {
             if (SetProperty(ref _selectedPatientType, value))
+            {
                 PatientsView.Refresh();
+                OnPropertyChanged(nameof(PatientCount));
+            }
         }
     }
+
+    public int PatientCount => PatientsView.Cast<object>().Count();
 
     public bool CanPrint => HasSelectedPatient &&
         PatientTests.Count > 0 &&
@@ -283,6 +288,7 @@ public sealed class TestResultsViewModel : ViewModelBase
                     _currentUserSession.CurrentUser.StaffId, "RESULTS.VIEW_AUDIT");
 
             PatientsView.Refresh();
+            OnPropertyChanged(nameof(PatientCount));
         }
         finally
         {
