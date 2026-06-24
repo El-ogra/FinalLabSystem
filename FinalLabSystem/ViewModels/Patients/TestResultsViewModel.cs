@@ -45,6 +45,7 @@ public sealed class TestResultsViewModel : ViewModelBase
     private VisitTestItemDto? _editingTest;
     private string _inlineResultValue = string.Empty;
     private string _quickNoteText = string.Empty;
+    private string _selectedPatientType = "All";
 
     public TestResultsViewModel(
         IVisitService visitService,
@@ -99,6 +100,8 @@ public sealed class TestResultsViewModel : ViewModelBase
         TogglePrintCommand = new AsyncRelayCommand(async _ => await TogglePrintAsync(), _ => SelectedTest != null && HasSelectedPatient);
         ToggleExportCommand = new AsyncRelayCommand(async _ => await ToggleExportAsync(), _ => SelectedTest != null && HasSelectedPatient);
         MarkReviewedCommand = new AsyncRelayCommand(async _ => await MarkReviewedAsync(), _ => SelectedTest != null && HasSelectedPatient);
+        SaveQuickNoteCommand = new AsyncRelayCommand(async _ => await SaveQuickNoteAsync(), _ => HasSelectedPatient);
+        SetPatientTypeCommand = new RelayCommand(param => SelectedPatientType = param as string ?? "All");
     }
 
     public ObservableCollection<TodayPatientWithStatusDto> AllPatients
@@ -222,6 +225,16 @@ public sealed class TestResultsViewModel : ViewModelBase
         set => SetProperty(ref _quickNoteText, value);
     }
 
+    public string SelectedPatientType
+    {
+        get => _selectedPatientType;
+        set
+        {
+            if (SetProperty(ref _selectedPatientType, value))
+                PatientsView.Refresh();
+        }
+    }
+
     public bool CanPrint => HasSelectedPatient &&
         PatientTests.Count > 0 &&
         PatientTests.All(t => t.ComponentResults.All(
@@ -252,6 +265,8 @@ public sealed class TestResultsViewModel : ViewModelBase
     public ICommand TogglePrintCommand { get; }
     public ICommand ToggleExportCommand { get; }
     public ICommand MarkReviewedCommand { get; }
+    public ICommand SaveQuickNoteCommand { get; }
+    public ICommand SetPatientTypeCommand { get; }
 
     public async Task LoadAsync()
     {
@@ -372,6 +387,12 @@ public sealed class TestResultsViewModel : ViewModelBase
             if (!patient.PatientCode.Contains(term, StringComparison.OrdinalIgnoreCase) &&
                 !patient.FullNameAr.Contains(term, StringComparison.OrdinalIgnoreCase) &&
                 !(patient.VisitCode?.Contains(term, StringComparison.OrdinalIgnoreCase) == true))
+                return false;
+        }
+
+        if (!string.Equals(SelectedPatientType, "All", StringComparison.OrdinalIgnoreCase))
+        {
+            if (!string.Equals(patient.PatientType, SelectedPatientType, StringComparison.OrdinalIgnoreCase))
                 return false;
         }
 
@@ -667,6 +688,14 @@ public sealed class TestResultsViewModel : ViewModelBase
     {
         if (CurrentPatientInfo != null)
             Clipboard.SetText(CurrentPatientInfo.PatientCode);
+    }
+
+    private async Task SaveQuickNoteAsync()
+    {
+        if (CurrentPatientInfo == null) return;
+
+        await _visitService.UpdateVisitNotesAsync(CurrentPatientInfo.VisitId, QuickNoteText);
+        CurrentPatientInfo.VisitNotes = QuickNoteText;
     }
 
     private async Task ShowAuditPAsync()

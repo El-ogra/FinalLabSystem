@@ -39,4 +39,6 @@ public sealed class TodayPatientWithStatusDto
     public string? VisitNotes { get; set; }
 
     public string? VisitCode { get; set; }
+
+    public string PatientType { get; set; } = "Individual";
 }

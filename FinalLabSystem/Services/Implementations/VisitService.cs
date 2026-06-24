@@ -252,6 +252,7 @@ public class VisitService : IVisitService
         {
             PatientId = visit.PatientId,
             VisitId = visit.VisitId,
+            VisitCode = visit.VisitCode,
             PatientCode = visit.Patient.PatientCode,
             FullNameAr = visit.Patient.FullNameAr,
             Title = visit.Patient.Title,
@@ -496,7 +497,8 @@ public class VisitService : IVisitService
                 StatusColor = GetStatusColor(status),
                 BalanceDue = v.BalanceDue,
                 PaymentStatus = v.PaymentStatus,
-                VisitNotes = v.Notes
+                VisitNotes = v.Notes,
+                PatientType = v.Patient.PatientType
             };
         }).ToList();
     }
@@ -504,6 +506,16 @@ public class VisitService : IVisitService
     public async Task<int> GetPatientVisitCountAsync(int patientId)
     {
         return await _context.Visits.CountAsync(v => v.PatientId == patientId);
+    }
+
+    public async Task UpdateVisitNotesAsync(int visitId, string? notes)
+    {
+        var visit = await _context.Visits.FindAsync(visitId);
+        if (visit != null)
+        {
+            visit.Notes = notes;
+            await _context.SaveChangesAsync();
+        }
     }
 
     private static PatientVisitStatus ComputeVisitStatus(Visit visit)
@@ -543,14 +555,14 @@ public class VisitService : IVisitService
 
     private static string GetStatusIcon(PatientVisitStatus status) => status switch
     {
-        PatientVisitStatus.NewNoResults => "○",
-        PatientVisitStatus.HasUnwrittenResults => "◐",
-        PatientVisitStatus.HasUnreviewedResults => "◑",
-        PatientVisitStatus.HasUnprintedResults => "◉",
-        PatientVisitStatus.HasUndeliveredResults => "◎",
-        PatientVisitStatus.CompleteWithBalance => "$",
-        PatientVisitStatus.FullyComplete => "✓",
-        _ => "○"
+        PatientVisitStatus.NewNoResults => "\U0001F6D2",
+        PatientVisitStatus.HasUnwrittenResults => "\U0001F6D2",
+        PatientVisitStatus.HasUnreviewedResults => "\U0001F3C5",
+        PatientVisitStatus.HasUnprintedResults => "\U0001F4C4",
+        PatientVisitStatus.HasUndeliveredResults => "\U0001F5A8",
+        PatientVisitStatus.CompleteWithBalance => "\U0001F4B2",
+        PatientVisitStatus.FullyComplete => "\u2705",
+        _ => "\U0001F6D2"
     };
 
     private static string GetStatusColor(PatientVisitStatus status) => status switch

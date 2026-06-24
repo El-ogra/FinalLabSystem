@@ -5,4 +5,6 @@
     <BooleanToVisibilityConverter x:Key="BoolToVisConverter"/>
     <local:BoolToCheckConverter x:Key="BoolToCheckConverter"/>
     <local:NullToVisibilityConverter x:Key="NullToVisConverter"/>
+    <local:AbnormalStatusToBrushConverter x:Key="AbnormalStatusToBrushConverter"/>
+    <local:StringEqualsConverter x:Key="StringEqualsConverter"/>
 </ResourceDictionary>

@@ -91,4 +91,11 @@ public interface IVisitService
     /// Gets the visit count for a patient.
     /// </summary>
     Task<int> GetPatientVisitCountAsync(int patientId);
+
+    /// <summary>
+    /// Updates the notes field of an existing visit.
+    /// </summary>
+    /// <param name="visitId">The visit identifier.</param>
+    /// <param name="notes">The notes to save.</param>
+    Task UpdateVisitNotesAsync(int visitId, string? notes);
 }

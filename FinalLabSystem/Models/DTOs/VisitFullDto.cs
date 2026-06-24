@@ -6,6 +6,8 @@ public sealed class VisitFullDto
 
     public int VisitId { get; set; }
 
+    public string? VisitCode { get; set; }
+
     public string PatientCode { get; set; } = string.Empty;
 
     public string FullNameAr { get; set; } = string.Empty;

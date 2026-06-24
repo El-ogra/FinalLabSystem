@@ -144,9 +144,9 @@
         <!-- المحتوى الرئيسي -->
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1.2*"/>
+                <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="4"/>
-                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="2.5*"/>
             </Grid.ColumnDefinitions>
 
             <!-- العمود الأيمن: قائمة المرضى -->
@@ -157,8 +157,60 @@
                 </Grid.RowDefinitions>
 
                 <Border Grid.Row="0" Background="#1A4A52" Padding="6">
-                    <TextBlock Text="مرضى اليوم" FontWeight="Bold" FontSize="14"
-                               Foreground="#FFFFFF" HorizontalAlignment="Center"/>
+                    <StackPanel>
+                        <TextBlock Text="مرضى اليوم" FontWeight="Bold" FontSize="14"
+                                   Foreground="#FFFFFF" HorizontalAlignment="Center" Margin="0,0,0,4"/>
+                        <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <Button Content="الكل"
+                                    Command="{Binding SetPatientTypeCommand}"
+                                    CommandParameter="All"
+                                    Width="50" Height="22" Margin="2,0"
+                                    Background="{Binding SelectedPatientType, Converter={StaticResource StringEqualsConverter}, ConverterParameter=All}"
+                                    Foreground="#FFFFFF" FontSize="10" BorderThickness="1"
+                                    BorderBrush="#3A5068" Cursor="Hand"/>
+                            <Button Content="Individual"
+                                    Command="{Binding SetPatientTypeCommand}"
+                                    CommandParameter="Individual"
+                                    Width="70" Height="22" Margin="2,0"
+                                    Background="{Binding SelectedPatientType, Converter={StaticResource StringEqualsConverter}, ConverterParameter=Individual}"
+                                    Foreground="#FFFFFF" FontSize="10" BorderThickness="1"
+                                    BorderBrush="#3A5068" Cursor="Hand"/>
+                            <Button Content="LabToLak"
+                                    Command="{Binding SetPatientTypeCommand}"
+                                    CommandParameter="LabToLak"
+                                    Width="65" Height="22" Margin="2,0"
+                                    Background="{Binding SelectedPatientType, Converter={StaticResource StringEqualsConverter}, ConverterParameter=LabToLak}"
+                                    Foreground="#FFFFFF" FontSize="10" BorderThickness="1"
+                                    BorderBrush="#3A5068" Cursor="Hand"/>
+                            <Button Content="Contracts"
+                                    Command="{Binding SetPatientTypeCommand}"
+                                    CommandParameter="Contracts"
+                                    Width="68" Height="22" Margin="2,0"
+                                    Background="{Binding SelectedPatientType, Converter={StaticResource StringEqualsConverter}, ConverterParameter=Contracts}"
+                                    Foreground="#FFFFFF" FontSize="10" BorderThickness="1"
+                                    BorderBrush="#3A5068" Cursor="Hand"/>
+                            <Button Content="VIP"
+                                    Command="{Binding SetPatientTypeCommand}"
+                                    CommandParameter="VIP"
+                                    Width="40" Height="22" Margin="2,0"
+                                    Background="{Binding SelectedPatientType, Converter={StaticResource StringEqualsConverter}, ConverterParameter=VIP}"
+                                    Foreground="#FFFFFF" FontSize="10" BorderThickness="1"
+                                    BorderBrush="#3A5068" Cursor="Hand"/>
+                            <Button Content="Free"
+                                    Command="{Binding SetPatientTypeCommand}"
+                                    CommandParameter="Free"
+                                    Width="40" Height="22" Margin="2,0"
+                                    Background="{Binding SelectedPatientType, Converter={StaticResource StringEqualsConverter}, ConverterParameter=Free}"
+                                    Foreground="#FFFFFF" FontSize="10" BorderThickness="1"
+                                    BorderBrush="#3A5068" Cursor="Hand"/>
+                            <Button Content="&#x21BB;"
+                                    Command="{Binding RefreshCommand}"
+                                    Width="28" Height="22" Margin="4,0,0,0"
+                                    Background="#2A5A62" Foreground="#FFFFFF" FontSize="12"
+                                    BorderThickness="1" BorderBrush="#3A5068" Cursor="Hand"
+                                    ToolTip="تحديث"/>
+                        </WrapPanel>
+                    </StackPanel>
                 </Border>
 
                 <ListView Grid.Row="1" ItemsSource="{Binding PatientsView}"
@@ -173,7 +225,7 @@
                             <Setter Property="Padding" Value="6,4"/>
                             <Style.Triggers>
                                 <Trigger Property="IsSelected" Value="True">
-                                    <Setter Property="Background" Value="#1A6EA8"/>
+                                    <Setter Property="Background" Value="#1976D2"/>
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
@@ -183,6 +235,7 @@
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="{Binding StatusIcon}"
                                            Foreground="{Binding StatusColor}"
+                                           FontFamily="Segoe UI Emoji"
                                            FontSize="18" FontWeight="Bold"
                                            Width="28" TextAlignment="Center"
                                            VerticalAlignment="Center"/>
@@ -221,12 +274,21 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
+                        <!-- صورة المريض (عنصر زخرفي) -->
+                        <Border Grid.Column="0" Background="#2A4A5A" CornerRadius="4"
+                                Width="48" Height="48" Margin="0,0,8,0"
+                                VerticalAlignment="Center">
+                            <TextBlock Text="&#x1F464;" FontSize="24"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+
                         <!-- الجنس -->
-                        <Border Grid.Column="0" Background="#FF9800" CornerRadius="4"
+                        <Border Grid.Column="1" Background="#FF9800" CornerRadius="4"
                                 Padding="10,4" Margin="0,0,8,0">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="الجنس:" Foreground="#FFFFFF" FontWeight="Bold"
@@ -238,7 +300,7 @@
                         </Border>
 
                         <!-- المعلومات الأساسية -->
-                        <Grid Grid.Column="1">
+                        <Grid Grid.Column="2">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
@@ -259,8 +321,13 @@
                                 <TextBlock Text="الكود:" Foreground="#88AAAAAA" FontSize="11"/>
                                 <TextBlock Text="{Binding CurrentPatientInfo.PatientCode, FallbackValue='--'}"
                                            Foreground="#FFFFFF" FontWeight="Bold" FontSize="13"
-                                           Cursor="Hand" MouseLeftButtonDown="CopyCode_Click"
-                                           TextDecorations="Underline"/>
+                                           Cursor="Hand"
+                                           TextDecorations="Underline">
+                                    <TextBlock.InputBindings>
+                                        <MouseBinding MouseAction="LeftClick"
+                                                      Command="{Binding CopyCodeCommand}"/>
+                                    </TextBlock.InputBindings>
+                                </TextBlock>
                             </StackPanel>
 
                             <!-- العمر -->
@@ -284,7 +351,7 @@
                         </Grid>
 
                         <!-- Lab ID + عدد الزيارات -->
-                        <StackPanel Grid.Column="2" Orientation="Horizontal"
+                        <StackPanel Grid.Column="3" Orientation="Horizontal"
                                     VerticalAlignment="Center">
                             <StackPanel Margin="8,0">
                                 <TextBlock Text="Lab ID:" Foreground="#88AAAAAA" FontSize="11"/>
@@ -333,7 +400,7 @@
                             <Setter Property="Padding" Value="4,2"/>
                             <Style.Triggers>
                                 <Trigger Property="IsSelected" Value="True">
-                                    <Setter Property="Background" Value="#1A6EA8"/>
+                                    <Setter Property="Background" Value="#1976D2"/>
                                     <Setter Property="Foreground" Value="#FFFFFF"/>
                                 </Trigger>
                             </Style.Triggers>
@@ -341,7 +408,8 @@
                         <Style TargetType="DataGridRow">
                             <Style.Triggers>
                                 <Trigger Property="IsSelected" Value="True">
-                                    <Setter Property="Background" Value="#1A6EA8"/>
+                                    <Setter Property="Background" Value="#1976D2"/>
+                                    <Setter Property="Foreground" Value="#FFFFFF"/>
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
@@ -378,7 +446,9 @@
                             </DataGridTemplateColumn.HeaderTemplate>
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding TestTypeName}" Foreground="#FFFFFF"
+                                    <TextBlock Text="{Binding TestTypeName}"
+                                               Foreground="{Binding SingleComponentStatus,
+                                                   Converter={StaticResource AbnormalStatusToBrushConverter}}"
                                                TextTrimming="CharacterEllipsis"
                                                ToolTip="{Binding TestTypeName}"/>
                                 </DataTemplate>
@@ -393,13 +463,14 @@
                         <DataGridTemplateColumn Header="النتيجة" Width="110">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Text="{Binding SingleComponentResultValue,
+                                     <TextBox Text="{Binding SingleComponentResultValue,
                                                  Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                             BorderThickness="0" Background="Transparent"
-                                             Foreground="#4FC3F7" FontWeight="Bold"
-                                             Padding="4,2" VerticalContentAlignment="Center"
-                                             ToolTip="{Binding SingleComponentResultValue}"
-                                             KeyDown="ResultTextBox_KeyDown"/>
+                                              BorderThickness="1" Background="#FFFFFF"
+                                              Foreground="#0A252C" BorderBrush="#3A5068"
+                                              FontWeight="Bold"
+                                              Padding="4,2" VerticalContentAlignment="Center"
+                                              ToolTip="{Binding SingleComponentResultValue}"
+                                              KeyDown="ResultTextBox_KeyDown"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -451,9 +522,12 @@
                         <DataGridTemplateColumn Header="مُصدَّر" Width="55" IsReadOnly="True">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <CheckBox IsChecked="{Binding IsExported}"
+                                    <CheckBox IsChecked="{Binding IsExported, Mode=OneWay}"
                                               Style="{StaticResource DataGridCheckBox}"
-                                              IsEnabled="False"/>
+                                              IsEnabled="True"
+                                              Command="{Binding DataContext.ToggleExportCommand,
+                                                  RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                              CommandParameter="{Binding}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -586,7 +660,12 @@
                                  Background="#1A4A52" Foreground="#FFFFFF"
                                  BorderBrush="#3A5068" BorderThickness="1"
                                  Margin="6,0" VerticalContentAlignment="Center"
-                                 Padding="4,2" FontSize="11"/>
+                                 Padding="4,2" FontSize="11">
+                            <TextBox.InputBindings>
+                                <KeyBinding Key="Enter"
+                                            Command="{Binding SaveQuickNoteCommand}"/>
+                            </TextBox.InputBindings>
+                        </TextBox>
 
                         <!-- زر ملاحظات -->
                         <Button Grid.Column="6" Content="ملاحظات"
