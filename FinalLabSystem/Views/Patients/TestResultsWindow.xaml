@@ -776,6 +776,33 @@
             </Grid>
         </Grid>
 
+        <!-- Keyboard shortcuts status bar -->
+        <Border DockPanel.Dock="Bottom" Background="#1A4A52" Padding="4,2">
+            <TextBlock Foreground="#88AAAAAA" FontSize="10" FlowDirection="LeftToRight">
+                <Run Text="F2:Patient Data"/>
+                <Run Text=" | "/>
+                <Run Text="F3:Search"/>
+                <Run Text=" | "/>
+                <Run Text="F4:Results"/>
+                <Run Text=" | "/>
+                <Run Text="F5:Refresh"/>
+                <Run Text=" | "/>
+                <Run Text="F6:Delivery"/>
+                <Run Text=" | "/>
+                <Run Text="F7:External"/>
+                <Run Text=" | "/>
+                <Run Text="F8:Edit Patient"/>
+                <Run Text=" | "/>
+                <Run Text="F12:Print Receipt"/>
+                <Run Text=" | "/>
+                <Run Text="Ctrl+R:Review"/>
+                <Run Text=" | "/>
+                <Run Text="Ctrl+F:Finish"/>
+                <Run Text=" | "/>
+                <Run Text="Ctrl+P:Print"/>
+            </TextBlock>
+        </Border>
+
         <!-- Busy overlay -->
         <Border Grid.Row="0" Grid.ColumnSpan="3"
                 Background="#80000000"
@@ -791,11 +818,15 @@
     <Window.InputBindings>
         <KeyBinding Key="F2" Command="{Binding OpenPatientDataCommand}"/>
         <KeyBinding Key="F3" Command="{Binding OpenSearchCommand}"/>
+        <KeyBinding Key="F4" Command="{Binding NavigateToResultEntryCommand}"/>
         <KeyBinding Key="F5" Command="{Binding RefreshCommand}"/>
         <KeyBinding Key="F6" Command="{Binding OpenDeliveryCommand}"/>
-        <KeyBinding Key="F8" Command="{Binding ToggleReviewStatusCommand}"/>
-        <KeyBinding Key="F9" Command="{Binding ToggleFinishStatusCommand}"/>
-        <KeyBinding Key="F12" Command="{Binding TogglePrintStatusCommand}"/>
+        <KeyBinding Key="F7" Command="{Binding NavigateToExternalSamplesCommand}"/>
+        <KeyBinding Key="F8" Command="{Binding EditSelectedPatientCommand}"/>
+        <KeyBinding Key="F12" Command="{Binding PrintReceiptCommand}"/>
+        <KeyBinding Key="R" Modifiers="Ctrl" Command="{Binding ToggleReviewStatusCommand}"/>
+        <KeyBinding Key="F" Modifiers="Ctrl" Command="{Binding ToggleFinishStatusCommand}"/>
+        <KeyBinding Key="P" Modifiers="Ctrl" Command="{Binding TogglePrintStatusCommand}"/>
         <KeyBinding Key="Escape" Command="{Binding ReturnToMainCommand}"/>
     </Window.InputBindings>
 </Window>

@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Pre-commit hook: reject commits that contain backup files
+# Install: git config core.hooksPath .githooks
+
+# Get the list of staged files
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM)
+
+# Check for forbidden patterns
+FORBIDDEN=$(echo "$STAGED_FILES" | grep -E '\.(bak|bak2|orig|swp)$')
+
+if [ -n "$FORBIDDEN" ]; then
+    echo "ERROR: Commit rejected. The following backup files are staged:"
+    echo "$FORBIDDEN"
+    echo ""
+    echo "Remove them from staging with: git reset HEAD <file>"
+    echo "They are ignored by .gitignore and should never be committed."
+    exit 1
+fi
+
+exit 0

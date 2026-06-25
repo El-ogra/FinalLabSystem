@@ -5,6 +5,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using FinalLabSystem.Infrastructure;
 using FinalLabSystem.Models.DTOs;
+using FinalLabSystem.Models.Enums;
 using FinalLabSystem.Services.Interfaces;
 
 namespace FinalLabSystem.ViewModels.Patients;
@@ -13,7 +14,7 @@ public sealed class TodayPatientsDialogViewModel : ViewModelBase
 {
     private readonly IVisitService _visitService;
     private string _searchText = string.Empty;
-    private TodayPatientDto? _selectedPatient;
+    private TodayPatientWithStatusDto? _selectedPatient;
 
     public TodayPatientsDialogViewModel(IVisitService visitService)
     {
@@ -25,7 +26,7 @@ public sealed class TodayPatientsDialogViewModel : ViewModelBase
         CancelCommand = new RelayCommand(_ => Cancel());
     }
 
-    public ObservableCollection<TodayPatientDto> AllPatients { get; } = new();
+    public ObservableCollection<TodayPatientWithStatusDto> AllPatients { get; } = new();
 
     public ICollectionView PatientsView { get; }
 
@@ -39,7 +40,7 @@ public sealed class TodayPatientsDialogViewModel : ViewModelBase
         }
     }
 
-    public TodayPatientDto? SelectedPatient
+    public TodayPatientWithStatusDto? SelectedPatient
     {
         get => _selectedPatient;
         set => SetProperty(ref _selectedPatient, value);
@@ -53,14 +54,14 @@ public sealed class TodayPatientsDialogViewModel : ViewModelBase
     public async Task LoadAsync()
     {
         AllPatients.Clear();
-        var patients = await _visitService.GetTodayPatientListAsync();
+        var patients = await _visitService.GetTodayPatientsWithStatusAsync();
         foreach (var patient in patients)
             AllPatients.Add(patient);
     }
 
     private bool FilterPatient(object item)
     {
-        if (item is not TodayPatientDto patient)
+        if (item is not TodayPatientWithStatusDto patient)
             return false;
 
         var term = SearchText?.Trim();

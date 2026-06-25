@@ -41,7 +41,7 @@ public sealed class ResultEntryViewModel : ViewModelBase
         _components = components;
 
         SaveCommand = new AsyncRelayCommand(async _ => await SaveAsync(), _ => !IsSaving);
-        CancelCommand = new RelayCommand(_ => { });
+        CancelCommand = new RelayCommand(_ => RequestClose?.Invoke(), _ => !IsSaving);
     }
 
     public int VisitTestId { get; }
@@ -69,6 +69,7 @@ public sealed class ResultEntryViewModel : ViewModelBase
     public ICommand CancelCommand { get; }
 
     public event EventHandler? SaveCompleted;
+    public Action? RequestClose { get; set; }
 
     private async Task SaveAsync()
     {
@@ -95,6 +96,7 @@ public sealed class ResultEntryViewModel : ViewModelBase
             }
 
             SaveCompleted?.Invoke(this, EventArgs.Empty);
+            RequestClose?.Invoke();
         }
         finally
         {

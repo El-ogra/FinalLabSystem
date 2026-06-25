@@ -8,6 +8,7 @@ using FinalLabSystem.ViewModels;
 using FinalLabSystem.ViewModels.Patients;
 using FinalLabSystem.ViewModels.Patients.Delivery;
 using FinalLabSystem.ViewModels.Patients.Search;
+using FinalLabSystem.ViewModels.Menu;
 using FinalLabSystem.ViewModels.Settings;
 using FinalLabSystem.Views;
 using FinalLabSystem.Views.Patients;
@@ -96,6 +97,8 @@ public partial class App : Application
             navigation.RegisterWindow<TestDataManagementViewModel, TestDataManagementWindow>();
             navigation.RegisterWindow<NormalRangeWindowViewModel, NormalRangesWindow>();
             navigation.RegisterWindow<CategoriesGroupsViewModel, CategoriesGroupsWindow>();
+            navigation.RegisterWindow<AuditTrailViewModel, AuditTrailWindow>();
+            navigation.RegisterWindow<ResultEntryViewModel, ResultEntryWindow>();
 
             using (var scope = ServiceProvider.CreateScope())
             {
@@ -164,6 +167,8 @@ public partial class App : Application
         services.AddSingleton<IDialogService, DialogService>();
         services.AddScoped<IPrintService, WpfFlowDocumentPrintService>();
         services.AddSingleton<ILabelPrintService, WpfLabelPrintService>();
+        services.AddSingleton<IAuditTrailDialogService, AuditTrailDialogService>();
+        services.AddSingleton<IResultEntryDialogService, ResultEntryDialogService>();
 
         services.AddTransient<LoginViewModel>();
         services.AddTransient<LoginView>();
@@ -211,6 +216,19 @@ public partial class App : Application
         services.AddTransient<TestDataManagementWindow>();
         services.AddTransient<NormalRangesWindow>();
         services.AddTransient<CategoriesGroupsWindow>();
+
+        services.AddTransient<HomeMenuViewModel>();
+        services.AddTransient<PatientsMenuViewModel>();
+        services.AddTransient<ResultsMenuViewModel>();
+        services.AddTransient<DeliveryMenuViewModel>();
+        services.AddTransient<SearchMenuViewModel>();
+        services.AddTransient<ExternalSamplesMenuViewModel>();
+        services.AddTransient<AccountsMenuViewModel>();
+        services.AddTransient<BackupMenuViewModel>();
+        services.AddTransient<TestDataMenuViewModel>();
+        services.AddTransient<NormalRangesMenuViewModel>();
+        services.AddTransient<ReportSettingsMenuViewModel>();
+        services.AddTransient<SystemSettingsMenuViewModel>();
     }
 
     protected override void OnExit(ExitEventArgs e)

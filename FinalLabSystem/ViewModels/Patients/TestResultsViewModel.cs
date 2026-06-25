@@ -31,6 +31,9 @@ public sealed class TestResultsViewModel : ViewModelBase
     private readonly ICurrentUserSession _currentUserSession;
     private readonly INavigationService _navigationService;
     private readonly IPrintService _printService;
+    private readonly IReceiptService _receiptService;
+    private readonly IAuditTrailDialogService _auditTrailDialogService;
+    private readonly IResultEntryDialogService _resultEntryDialogService;
 
     private ObservableCollection<TodayPatientWithStatusDto> _allPatients = new();
     private TodayPatientWithStatusDto? _selectedPatient;
@@ -58,7 +61,10 @@ public sealed class TestResultsViewModel : ViewModelBase
         IDialogService dialogService,
         ICurrentUserSession currentUserSession,
         INavigationService navigationService,
-        IPrintService printService)
+        IPrintService printService,
+        IReceiptService receiptService,
+        IAuditTrailDialogService auditTrailDialogService,
+        IResultEntryDialogService resultEntryDialogService)
     {
         _visitService = visitService;
         _routineResultService = routineResultService;
@@ -69,6 +75,9 @@ public sealed class TestResultsViewModel : ViewModelBase
         _currentUserSession = currentUserSession;
         _navigationService = navigationService;
         _printService = printService;
+        _receiptService = receiptService;
+        _auditTrailDialogService = auditTrailDialogService;
+        _resultEntryDialogService = resultEntryDialogService;
 
         PatientsView = CollectionViewSource.GetDefaultView(AllPatients);
         PatientsView.Filter = FilterPatient;
@@ -111,6 +120,11 @@ public sealed class TestResultsViewModel : ViewModelBase
         TogglePrintStatusCommand = new AsyncRelayCommand(async _ => await TogglePrintStatusAsync(), _ => SelectedTest != null && HasSelectedPatient);
         PreviewReportCommand = new AsyncRelayCommand(async _ => await PreviewReportAsync(), _ => HasSelectedPatient);
         SendSmsCommand = new AsyncRelayCommand(async _ => await SendSmsAsync(), _ => HasSelectedPatient);
+
+        EditSelectedPatientCommand = new AsyncRelayCommand(async _ => await EditSelectedPatientAsync(), _ => HasSelectedPatient);
+        PrintReceiptCommand = new AsyncRelayCommand(async _ => await PrintReceiptAsync(), _ => HasSelectedPatient);
+        NavigateToResultEntryCommand = new RelayCommand(_ => _navigationService.OpenTaskWindow<TestResultsViewModel>());
+        NavigateToExternalSamplesCommand = new RelayCommand(_ => _dialogService.ShowMessage("سيتم تفعيل هذه الميزة في المرحلة 4", "قريباً"));
     }
 
     public ObservableCollection<TodayPatientWithStatusDto> AllPatients
@@ -288,6 +302,10 @@ public sealed class TestResultsViewModel : ViewModelBase
     public ICommand TogglePrintStatusCommand { get; }
     public ICommand PreviewReportCommand { get; }
     public ICommand SendSmsCommand { get; }
+    public ICommand EditSelectedPatientCommand { get; }
+    public ICommand PrintReceiptCommand { get; }
+    public ICommand NavigateToResultEntryCommand { get; }
+    public ICommand NavigateToExternalSamplesCommand { get; }
 
     public async Task LoadAsync()
     {
@@ -625,30 +643,16 @@ public sealed class TestResultsViewModel : ViewModelBase
 
     private async Task OpenMultiComponentEditorAsync(VisitTestItemDto test)
     {
-        var staffId = _currentUserSession.CurrentUser?.StaffId ?? 0;
         var patientId = CurrentPatientInfo?.PatientId ?? 0;
 
-        var vm = new ResultEntryViewModel(
-            _routineResultService,
-            _visitService,
-            _auditService,
-            _currentUserSession,
+        var saved = await _resultEntryDialogService.OpenAsync(
             test.VisitTestId,
             patientId,
             test.TestTypeName,
             new ObservableCollection<TestComponentResultDto>(test.ComponentResults));
 
-        var window = new Views.Patients.ResultEntryWindow
-        {
-            DataContext = vm,
-            Owner = Application.Current.MainWindow
-        };
-
-        if (window.ShowDialog() == true)
-        {
-            if (SelectedPatient != null)
-                await SelectPatientAsync(SelectedPatient);
-        }
+        if (saved && SelectedPatient != null)
+            await SelectPatientAsync(SelectedPatient);
     }
 
     private async Task ManualOverrideAsync()
@@ -789,13 +793,7 @@ public sealed class TestResultsViewModel : ViewModelBase
         var logs = await _auditService.GetTableAuditHistoryAsync(
             "Visit", CurrentPatientInfo.VisitId);
 
-        var vm = new AuditTrailViewModel("سجل تدقيق الزيارة", logs);
-        var window = new Views.Patients.AuditTrailWindow
-        {
-            DataContext = vm,
-            Owner = Application.Current.MainWindow
-        };
-        window.ShowDialog();
+        _auditTrailDialogService.ShowGeneralAudit("سجل تدقيق الزيارة", logs);
     }
 
     private async Task ShowAuditTAsync()
@@ -804,13 +802,7 @@ public sealed class TestResultsViewModel : ViewModelBase
 
         var logs = await _auditService.GetResultModificationsAsync(SelectedTest.VisitTestId);
 
-        var vm = new AuditTrailViewModel("سجل تدقيق التحليل", logs);
-        var window = new Views.Patients.AuditTrailWindow
-        {
-            DataContext = vm,
-            Owner = Application.Current.MainWindow
-        };
-        window.ShowDialog();
+        _auditTrailDialogService.ShowResultAudit("سجل تدقيق التحليل", logs);
     }
 
     private async Task PrintCompositeReportAsync()
@@ -898,5 +890,46 @@ public sealed class TestResultsViewModel : ViewModelBase
             $"إرسال SMS إلى:\n{phone}\n\n{message}", "إرسال رسالة نصية");
 
         await System.Threading.Tasks.Task.CompletedTask;
+    }
+
+    private async Task EditSelectedPatientAsync()
+    {
+        if (SelectedPatient == null) return;
+        _navigationService.OpenTaskWindow<PatientRegistrationViewModel>(vm =>
+        {
+            _ = vm.LoadVisitForEditAsync(SelectedPatient.VisitId);
+        });
+    }
+
+    private async Task PrintReceiptAsync()
+    {
+        if (CurrentPatientInfo == null) return;
+
+        var staffId = _currentUserSession.CurrentUser?.StaffId ?? 0;
+        if (staffId == 0) return;
+
+        try
+        {
+            var canPrint = await _receiptService.CanPrintReceiptAsync(CurrentPatientInfo.VisitId, staffId);
+            if (!canPrint)
+            {
+                _dialogService.ShowWarning("تم طباعة الإيصال مسبقاً لهذا الحالة المالية.", "طباعة الإيصال");
+                return;
+            }
+
+            var groupedTests = await _receiptService.GetGroupedTestsForReceiptAsync(CurrentPatientInfo.VisitId);
+            await _printService.PrintAsync("Receipt", new { CurrentPatientInfo, Tests = groupedTests });
+
+            await _receiptService.LogPrintEventAsync(new Models.ReceiptPrintLog
+            {
+                VisitId = CurrentPatientInfo.VisitId,
+                StaffId = staffId,
+                PrintedAt = DateTime.UtcNow
+            });
+        }
+        catch (Exception ex)
+        {
+            _dialogService.ShowError($"خطأ في طباعة الإيصال: {ex.Message}");
+        }
     }
 }

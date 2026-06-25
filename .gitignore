@@ -270,6 +270,12 @@ UpgradeLog*.htm
 ServiceFabricBackup/
 *.rptproj.bak
 
+# Backup files - never commit
+*.bak
+*.bak2
+*.orig
+*.swp
+
 # SQL Server files
 *.mdf
 *.ldf

@@ -106,8 +106,145 @@
 
 ---
 
-## Phase 2: Patient Search & Identity
-**Status:** ⏳ في الانتظار
+## Phase 2: Patient Identity & Workflow Stabilization
+
+**Status:** ✅ مكتملة  
+**Date:** 2026-06-25  
+**Total files created:** 17  
+**Total files modified:** 12  
+**Total files deleted:** 3  
+**Tests:** 280 / 280 — ✅ جميع الاختبارات ناجحة  
+**Build:** ✅ ناجح — 0 أخطاء
+
+---
+
+### Task 2.7 — Technical Debt Cleanup
+
+**Status:** ✅ مكتملة
+
+**Files deleted:**
+- `Services/Implementations/NullPrintService.cs` — حذف خدمة طباعة ميتة (لا توجد references خارجية)
+- `Views/Patients/TestSelectionView.xaml.bak` — حذف ملف نسخ احتياطي
+- `Views/Patients/TestSelectionView.xaml.bak2` — حذف ملف نسخ احتياطي
+
+**Files modified:**
+- `Services/Interfaces/IPrintService.cs` — تحديث تعليق `<see cref>` للإشارة إلى `WpfFlowDocumentPrintService`
+- `.gitignore` (root) — إضافة قواعد `*.bak`, `*.bak2`, `*.orig`, `*.swp`
+
+**Files created:**
+- `.githooks/pre-commit` — git hook للتحقق من البناء قبل الـ commit
+- `tools/install-hooks.sh` — سكربت تثبيت الـ hooks
+
+---
+
+### Task 2.1 — DI Registration & Navigation
+
+**Status:** ✅ مكتملة
+
+**Files created:**
+- `Services/Interfaces/IAuditTrailDialogService.cs` — واجهة خدمة فتح نافذة Audit Trail
+- `Services/Interfaces/IResultEntryDialogService.cs` — واجهة خدمة فتح نافذة Result Entry
+- `Services/Implementations/AuditTrailDialogService.cs` — تنفيذ Factory Pattern لـ AuditTrailWindow
+- `Services/Implementations/ResultEntryDialogService.cs` — تنفيذ Factory Pattern لـ ResultEntryWindow
+
+**Files modified:**
+- `App.xaml.cs` — تسجيل `IAuditTrailDialogService` + `IResultEntryDialogService` كـ Singleton، إضافة 12 Transient registration لـ Menu VMs + navigation mappings
+
+---
+
+### Task 2.2 — AuditTrailWindow Factory Pattern
+
+**Status:** ✅ مكتملة
+
+**Files modified:**
+- `ViewModels/Patients/TestResultsViewModel.cs` — حقن `IAuditTrailDialogService`، استبدال استدعاءات `new AuditTrailWindow()` المباشرة بـ `ShowAuditPAsync` و `ShowAuditTAsync` عبر Dialog Service
+
+---
+
+### Task 2.3 — ResultEntryWindow Factory Pattern + CancelCommand
+
+**Status:** ✅ مكتملة
+
+**Files modified:**
+- `ViewModels/Patients/ResultEntryViewModel.cs` — إضافة `RequestClose` property + تفعيل `CancelCommand` مع `!IsSaving` guard + استدعاء `RequestClose?.Invoke()` بعد `SaveCompleted`
+- `ViewModels/Patients/TestResultsViewModel.cs` — حقن `IResultEntryDialogService`، استبدال `OpenMultiComponentEditorAsync` بـ Dialog Service
+- `Services/Implementations/ResultEntryDialogService.cs` — ربط `vm.RequestClose` لإغلاق النافذة
+
+---
+
+### Task 2.5 — Main Dashboard 12-Icon Toolbar
+
+**Status:** ✅ مكتملة
+
+**Files created:**
+- `ViewModels/Menu/HomeMenuViewModel.cs` — قائمة الصفحة الرئيسية
+- `ViewModels/Menu/PatientsMenuViewModel.cs` — قائمة المرضى (مستخرج من MainViewModel)
+- `ViewModels/Menu/ResultsMenuViewModel.cs` — قائمة النتائج
+- `ViewModels/Menu/DeliveryMenuViewModel.cs` — قائمة التسليم
+- `ViewModels/Menu/SearchMenuViewModel.cs` — قائمة البحث
+- `ViewModels/Menu/ExternalSamplesMenuViewModel.cs` — placeholder Phase 4
+- `ViewModels/Menu/AccountsMenuViewModel.cs` — placeholder Phase 5
+- `ViewModels/Menu/BackupMenuViewModel.cs` — placeholder Phase 6
+- `ViewModels/Menu/TestDataMenuViewModel.cs` — قائمة بيانات الاختبارات
+- `ViewModels/Menu/NormalRangesMenuViewModel.cs` — قائمة النطاقات الطبيعية
+- `ViewModels/Menu/ReportSettingsMenuViewModel.cs` — placeholder Phase 6
+
+**Files modified:**
+- `ViewModels/MainViewModel.cs` — إعادة كتابة: 14 أمر، استخراج `PatientsMenuViewModel` من كلاس متداخل
+- `MainWindow.xaml` — إعادة كتابة: 12 أيقونة toolbar + 8 DataTemplates
+
+---
+
+### Task 2.6 — Patient Status Icons Generalization
+
+**Status:** ✅ مكتملة
+
+**Files modified:**
+- `ViewModels/Patients/PatientRegistrationViewModel.cs` — تغيير `ObservableCollection<TodayPatientDto>` إلى `TodayPatientWithStatusDto`
+- `ViewModels/Patients/TodayPatientsDialogViewModel.cs` — تحديث نوع القائمة + استدعاء `GetTodayPatientsWithStatusAsync()` + تحديث filter cast
+- `Views/Patients/TodayPatientsDialog.xaml.cs` — تحديث نوع `SelectedPatient` للإرجاع
+- `Views/Patients/TodayPatientsDialog.xaml` — إضافة عمود StatusIcon بـ `FontFamily="Segoe UI Emoji"`
+
+---
+
+### Task 2.4 — F-Key Semantic Remapping
+
+**Status:** ✅ مكتملة
+
+**Files modified:**
+- `Infrastructure/Navigation/INavigationService.cs` — إضافة overload `OpenTaskWindow<TViewModel>(Action<TViewModel>?)`
+- `Infrastructure/Navigation/NavigationService.cs` — تنفيذ الـ overload مع `configure` callback + `window.Show()`
+- `Infrastructure/Settings/IUserSettingsService.cs` — إضافة `KeyboardShortcutsNoticeShown` property
+- `Infrastructure/Settings/JsonUserSettingsService.cs` — تنفيذ الـ flag مع `lock` + `SaveSettingsAsync`
+- `ViewModels/Patients/PatientRegistrationViewModel.cs` — إضافة `_navigationService` field + 5 أوامر تنقل جديدة (NavigateToPatientData, NavigateToSearch, NavigateToResultEntry, NavigateToDelivery, NavigateToExternalSamples)
+- `ViewModels/Patients/TestResultsViewModel.cs` — إضافة `_receiptService` field + 4 أوامر جديدة (EditSelectedPatient, PrintReceipt, NavigateToResultEntry, NavigateToExternalSamples) + handler methods
+- `Views/Patients/PatientRegistrationWindow.xaml` — إضافة `Window.InputBindings` بـ 13 KeyBinding (F1–F12 + Escape)
+- `Views/Patients/TestResultsWindow.xaml` — تعديل 3 KeyBindings (F8→Edit, F12→Receipt) + إضافة 4 جديدة (F4, F7, Ctrl+R, Ctrl+F, Ctrl+P) + شريط اختصارات أسفل النافذة
+
+---
+
+### Task 2.8 — Complete Test Suite
+
+**Status:** ✅ مكتملة
+
+**Test files created (13 ملف، 87 اختبار جديد):**
+
+| ملف الاختبار | عدد الاختبارات |
+|-------------|---------------|
+| `Tests/ViewModels/AuditTrailViewModelTests.cs` | 8 |
+| `Tests/Services/AuditTrailDialogServiceTests.cs` | 3 |
+| `Tests/ViewModels/ResultEntryViewModelTests.cs` | 15 |
+| `Tests/Services/ResultEntryDialogServiceTests.cs` | 3 |
+| `Tests/ViewModels/MainViewModelTests.cs` | 16 |
+| `Tests/ViewModels/Menu/PatientsMenuViewModelTests.cs` | 4 |
+| `Tests/ViewModels/Menu/PlaceholderMenusTests.cs` | 4 |
+| `Tests/ViewModels/Patients/TodayPatientsStatusDisplayTests.cs` | 4 |
+| `Tests/Services/PatientStatusComputationTests.cs` | 7 |
+| `Tests/ViewModels/Patients/PatientRegistrationFKeyTests.cs` | 12 |
+| `Tests/ViewModels/TestResultsFKeyRemappingTests.cs` | 7 |
+| `Tests/Services/AuditTrailWindowRegistrationTests.cs` | 2 |
+| `Tests/Services/ResultEntryWindowRegistrationTests.cs` | 2 |
+| **الإجمالي** | **87** |
 
 ---
 

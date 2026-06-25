@@ -41,6 +41,17 @@
                   SelectionMode="Single">
             <ListView.View>
                 <GridView>
+                    <GridViewColumn Header="" Width="35">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding StatusIcon}"
+                                           Foreground="{Binding StatusColor}"
+                                           FontFamily="Segoe UI Emoji"
+                                           FontSize="16" FontWeight="Bold"
+                                           HorizontalAlignment="Center"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
                     <GridViewColumn Header="كود المريض"
                                     Width="150"
                                     DisplayMemberBinding="{Binding PatientCode}"/>

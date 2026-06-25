@@ -52,6 +52,11 @@ public sealed class NavigationService : INavigationService
 
     public void OpenTaskWindow<TViewModel>() where TViewModel : class
     {
+        OpenTaskWindow<TViewModel>(null);
+    }
+
+    public void OpenTaskWindow<TViewModel>(Action<TViewModel>? configure) where TViewModel : class
+    {
         if (!_viewModelToWindowMap.TryGetValue(typeof(TViewModel), out var windowType))
             throw new InvalidOperationException(
                 $"No window is registered for ViewModel '{typeof(TViewModel).Name}'.");
@@ -59,6 +64,9 @@ public sealed class NavigationService : INavigationService
         if (_serviceProvider.GetService(windowType) is not Window window)
             throw new InvalidOperationException(
                 $"Window '{windowType.Name}' is not registered in the DI container.");
+
+        if (window.DataContext is TViewModel vm)
+            configure?.Invoke(vm);
 
         _mainWindow?.Hide();
         _activeTaskWindow = window;

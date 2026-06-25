@@ -16,7 +16,7 @@ public partial class TodayPatientsDialog : Window
 
     public TodayPatientsDialogViewModel ViewModel { get; }
 
-    public TodayPatientDto? SelectedPatient => ViewModel.SelectedPatient;
+    public TodayPatientWithStatusDto? SelectedPatient => ViewModel.SelectedPatient;
 
     private void OnCloseRequested(object? sender, bool result)
     {

@@ -2,7 +2,7 @@ namespace FinalLabSystem.Services.Interfaces;
 
 /// <summary>
 /// Abstraction for document printing and export operations.
-/// Replace <see cref="FinalLabSystem.Services.Implementations.NullPrintService"/> with a real implementation when printing is required.
+/// Default implementation: <see cref="FinalLabSystem.Services.Implementations.WpfFlowDocumentPrintService"/>.
 /// </summary>
 public interface IPrintService
 {

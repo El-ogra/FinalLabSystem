@@ -5,4 +5,8 @@ public interface IUserSettingsService
     string? RememberedUsername { get; }
 
     void SetRememberedUsername(string? username);
+
+    bool KeyboardShortcutsNoticeShown { get; }
+
+    void SetKeyboardShortcutsNoticeShown();
 }

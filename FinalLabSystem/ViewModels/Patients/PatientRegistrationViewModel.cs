@@ -8,6 +8,8 @@ using FinalLabSystem.Models;
 using FinalLabSystem.Models.DTOs;
 using FinalLabSystem.Models.Enums;
 using FinalLabSystem.Services.Interfaces;
+using FinalLabSystem.ViewModels.Patients.Delivery;
+using FinalLabSystem.ViewModels.Patients.Search;
 using FinalLabSystem.Views.Patients;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -53,7 +55,7 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
         _navigationService = navigationService;
         _currentUserSession = currentUserSession;
         _dialogService = dialogService;
-        TodayPatients = new ObservableCollection<TodayPatientDto>();
+        TodayPatients = new ObservableCollection<TodayPatientWithStatusDto>();
 
         TestSelection.TestsChanged += (_, _) =>
         {
@@ -69,6 +71,12 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
         ReceiptCommand = new AsyncRelayCommand(ReceiptAsync, () => CurrentVisitId > 0);
         ReturnToMainCommand = new RelayCommand(_ => ReturnToMain());
         LoadTodayPatientsCommand = new AsyncRelayCommand(LoadTodayPatientsAsync);
+
+        NavigateToPatientDataCommand = new RelayCommand(_ => _navigationService.OpenTaskWindow<PatientRegistrationViewModel>());
+        NavigateToSearchCommand = new RelayCommand(_ => _navigationService.OpenTaskWindow<PatientSearchViewModel>());
+        NavigateToResultEntryCommand = new RelayCommand(_ => _navigationService.OpenTaskWindow<TestResultsViewModel>());
+        NavigateToDeliveryCommand = new RelayCommand(_ => _navigationService.OpenTaskWindow<DeliveryViewModel>());
+        NavigateToExternalSamplesCommand = new RelayCommand(_ => _dialogService.ShowMessage("سيتم تفعيل هذه الميزة في المرحلة 4", "قريباً"));
     }
 
     public async Task InitializeAsync()
@@ -96,7 +104,7 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
 
     public FinancialViewModel Financial { get; }
 
-    public ObservableCollection<TodayPatientDto> TodayPatients { get; }
+    public ObservableCollection<TodayPatientWithStatusDto> TodayPatients { get; }
 
     public int CurrentPatientId
     {
@@ -170,6 +178,12 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
     public ICommand ReturnToMainCommand { get; }
 
     public ICommand LoadTodayPatientsCommand { get; }
+
+    public ICommand NavigateToPatientDataCommand { get; }
+    public ICommand NavigateToSearchCommand { get; }
+    public ICommand NavigateToResultEntryCommand { get; }
+    public ICommand NavigateToDeliveryCommand { get; }
+    public ICommand NavigateToExternalSamplesCommand { get; }
 
     private async Task ClearFormAsync()
     {
@@ -355,7 +369,7 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
 
     private async Task LoadTodayPatientsAsync()
     {
-        var patients = await _visitService.GetTodayPatientListAsync();
+        var patients = await _visitService.GetTodayPatientsWithStatusAsync();
         TodayPatients.Clear();
         foreach (var patient in patients)
             TodayPatients.Add(patient);

@@ -159,4 +159,20 @@
             <patients:FinancialSectionView Grid.Row="2" DataContext="{Binding Financial}" Margin="4,0,4,0"/>
         </Grid>
     </Grid>
+
+    <Window.InputBindings>
+        <KeyBinding Key="F1"  Command="{Binding AddNewCommand}"/>
+        <KeyBinding Key="F2"  Command="{Binding NavigateToPatientDataCommand}"/>
+        <KeyBinding Key="F3"  Command="{Binding NavigateToSearchCommand}"/>
+        <KeyBinding Key="F4"  Command="{Binding NavigateToResultEntryCommand}"/>
+        <KeyBinding Key="F5"  Command="{Binding LoadTodayPatientsCommand}"/>
+        <KeyBinding Key="F6"  Command="{Binding NavigateToDeliveryCommand}"/>
+        <KeyBinding Key="F7"  Command="{Binding NavigateToExternalSamplesCommand}"/>
+        <KeyBinding Key="F8"  Command="{Binding EditCommand}"/>
+        <KeyBinding Key="F9"  Command="{Binding SaveCommand}"/>
+        <KeyBinding Key="F10" Command="{Binding DeleteCommand}"/>
+        <KeyBinding Key="F11" Command="{Binding BarcodeCommand}"/>
+        <KeyBinding Key="F12" Command="{Binding ReceiptCommand}"/>
+        <KeyBinding Key="Escape" Command="{Binding ReturnToMainCommand}"/>
+    </Window.InputBindings>
 </Window>

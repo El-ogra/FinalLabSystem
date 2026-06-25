@@ -23,6 +23,17 @@ public sealed class JsonUserSettingsService : IUserSettingsService
 
     public string? RememberedUsername => _settings.RememberedUsername;
 
+    public bool KeyboardShortcutsNoticeShown => _settings.KeyboardShortcutsNoticeShown;
+
+    public void SetKeyboardShortcutsNoticeShown()
+    {
+        lock (_syncRoot)
+        {
+            _settings.KeyboardShortcutsNoticeShown = true;
+            Save();
+        }
+    }
+
     public void SetRememberedUsername(string? username)
     {
         lock (_syncRoot)
@@ -57,5 +68,6 @@ public sealed class JsonUserSettingsService : IUserSettingsService
     private sealed class UserSettingsModel
     {
         public string? RememberedUsername { get; set; }
+        public bool KeyboardShortcutsNoticeShown { get; set; }
     }
 }
