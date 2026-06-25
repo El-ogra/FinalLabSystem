@@ -18,15 +18,18 @@ public class RoutineResultService : IRoutineResultService
     private readonly FinalLabDbContext _context;
     private readonly ILogger<RoutineResultService> _logger;
     private readonly IFeatureToggleService _featureToggleService;
+    private readonly IReportCommentEngine _commentEngine;
 
     public RoutineResultService(
         FinalLabDbContext context,
         ILogger<RoutineResultService> logger,
-        IFeatureToggleService featureToggleService)
+        IFeatureToggleService featureToggleService,
+        IReportCommentEngine commentEngine)
     {
         _context = context;
         _logger = logger;
         _featureToggleService = featureToggleService;
+        _commentEngine = commentEngine;
     }
 
     public async Task SaveNumericOrTextResultsAsync(List<TestResult> results, int patientId, int staffId)
@@ -121,6 +124,12 @@ public class RoutineResultService : IRoutineResultService
                     else
                         result.ResultStatus = "NORMAL";
                 }
+            }
+
+            if (visitTests.TryGetValue(result.VisitTestId, out var visitTest))
+            {
+                var testtypeId = visitTest.Testtype?.TesttypeId ?? visitTest.TesttypeId;
+                await _commentEngine.ApplyAutoCommentAsync(result, testtypeId);
             }
 
             var key = (result.VisitTestId, result.ComponentId);
@@ -241,5 +250,22 @@ public class RoutineResultService : IRoutineResultService
 
         await _context.SaveChangesAsync();
         return vt.IsExported;
+    }
+
+    public async Task<bool> ToggleReviewStatusAsync(int visitTestId, int staffId)
+    {
+        var results = await _context.TestResults
+            .Where(r => r.VisitTestId == visitTestId &&
+                        r.ValidationStatus < Models.Enums.ResultValidationStatus.Reviewed)
+            .ToListAsync();
+
+        if (results.Count == 0)
+            return false;
+
+        foreach (var result in results)
+            result.ValidationStatus = Models.Enums.ResultValidationStatus.Reviewed;
+
+        await _context.SaveChangesAsync();
+        return true;
     }
 }

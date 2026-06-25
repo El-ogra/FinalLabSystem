@@ -19,6 +19,8 @@ public partial class ReportCommentTemplate
 
     public string CommentLang { get; set; } = null!;
 
+    public string? TriggerCondition { get; set; }
+
     public bool IsActive { get; set; }
 
     public short SortOrder { get; set; }

@@ -1,0 +1,154 @@
+<Window x:Class="FinalLabSystem.Views.Settings.TestProfileWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="إدارة البروفايلات"
+        Width="1100"
+        Height="780"
+        WindowStartupLocation="CenterScreen"
+        FlowDirection="RightToLeft">
+    <Window.Resources>
+        <Style x:Key="ActionButtonStyle" TargetType="Button">
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="MinWidth" Value="102"/>
+            <Setter Property="Margin" Value="4"/>
+            <Setter Property="Background" Value="#A8E000"/>
+            <Setter Property="Foreground" Value="#001A20"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Padding" Value="12,4"/>
+        </Style>
+        <Style x:Key="SectionHeaderStyle" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#123A42"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Margin" Value="0,10,0,6"/>
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Height" Value="28"/>
+            <Setter Property="Margin" Value="4"/>
+            <Setter Property="Padding" Value="6,2"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style TargetType="ComboBox">
+            <Setter Property="Height" Value="28"/>
+            <Setter Property="Margin" Value="4"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Background="#F5F7FA" Margin="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <TextBlock Grid.Row="0" Text="إدارة البروفايلات (الباقات)" Style="{StaticResource SectionHeaderStyle}"/>
+
+        <!-- Main content -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="40*"/>
+                <ColumnDefinition Width="60*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Left: Profile list -->
+            <Border Grid.Column="0" Background="White" BorderBrush="#CFD8DC" BorderThickness="1" Padding="8" Margin="0,0,6,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <DataGrid Grid.Row="0"
+                              ItemsSource="{Binding Profiles}"
+                              SelectedItem="{Binding SelectedProfile}"
+                              IsReadOnly="True"
+                              SelectionMode="Single"
+                              AutoGenerateColumns="False"
+                              HeadersVisibility="Column"
+                              CanUserAddRows="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="الاسم (عربي)" Binding="{Binding ProfileNameAr}" Width="*"/>
+                            <DataGridTextColumn Header="العدد" Binding="{Binding ItemCount}" Width="50"/>
+                            <DataGridCheckBoxColumn Header="نشط" Binding="{Binding IsActive, Mode=OneWay}" Width="50"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,8,0,0">
+                        <Button Content="جديد" Command="{Binding NewProfileCommand}" Style="{StaticResource ActionButtonStyle}"/>
+                        <Button Content="حفظ" Command="{Binding SaveProfileCommand}" Style="{StaticResource ActionButtonStyle}" Background="#8BC34A"/>
+                        <Button Content="حذف" Command="{Binding DeleteProfileCommand}" Style="{StaticResource ActionButtonStyle}" Background="#F44336"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Right: Profile detail + items -->
+            <Border Grid.Column="1" Background="White" BorderBrush="#CFD8DC" BorderThickness="1" Padding="10" Margin="6,0,0,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Profile detail form -->
+                    <StackPanel Grid.Row="0">
+                        <TextBlock Text="اسم البروفايل (عربي)"/>
+                        <TextBox Text="{Binding EditableProfileNameAr, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Text="اسم البروفايل (إنجليزي)"/>
+                        <TextBox Text="{Binding EditableProfileNameEn, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Text="الوصف"/>
+                        <TextBox Text="{Binding EditableDescription, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+
+                    <!-- Profile items -->
+                    <Grid Grid.Row="1" Margin="0,12,0,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Text="التحاليل المضافة" Style="{StaticResource SectionHeaderStyle}"/>
+
+                        <DataGrid Grid.Row="1"
+                                  ItemsSource="{Binding ProfileItems}"
+                                  IsReadOnly="True"
+                                  SelectionMode="Single"
+                                  AutoGenerateColumns="False"
+                                  HeadersVisibility="Column"
+                                  CanUserAddRows="False">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="الكود" Binding="{Binding TestTypeCode}" Width="80"/>
+                                <DataGridTextColumn Header="اسم التحليل" Binding="{Binding TestTypeName}" Width="*"/>
+                                <DataGridTextColumn Header="الترتيب" Binding="{Binding SortOrder}" Width="60"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <Grid Grid.Row="2" Margin="0,8,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <ComboBox Grid.Column="0"
+                                      ItemsSource="{Binding AvailableTests}"
+                                      SelectedValuePath="TesttypeId"
+                                      DisplayMemberPath="TypeNameEn"
+                                      SelectedItem="{Binding SelectedAvailableTest}"
+                                      Margin="0,0,8,0"/>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <Button Content="إضافة" Command="{Binding AddTestCommand}" Style="{StaticResource ActionButtonStyle}" Background="#2196F3"/>
+                                <Button Content="إزالة" Command="{Binding RemoveTestCommand}" Style="{StaticResource ActionButtonStyle}" Background="#FF9800"/>
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Bottom toolbar -->
+        <Border Grid.Row="2" Background="#123A42" Padding="8" Margin="0,8,0,0">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Content="تحديث" Command="{Binding RefreshCommand}" Style="{StaticResource ActionButtonStyle}"/>
+                <Button Content="إغلاق" Command="{Binding CloseCommand}" Style="{StaticResource ActionButtonStyle}" CommandParameter="{RelativeSource AncestorType=Window}"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

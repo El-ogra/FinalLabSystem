@@ -1,15 +1,16 @@
 using System.Windows.Input;
 using FinalLabSystem.Infrastructure;
-using FinalLabSystem.Services.Interfaces;
+using FinalLabSystem.Infrastructure.Navigation;
+using FinalLabSystem.ViewModels.Settings;
 
 namespace FinalLabSystem.ViewModels.Menu;
 
 public sealed class ReportSettingsMenuViewModel : ViewModelBase
 {
-    public ReportSettingsMenuViewModel(IDialogService dialogService)
+    public ReportSettingsMenuViewModel(INavigationService navigationService)
     {
-        PlaceholderCommand = new RelayCommand(_ => dialogService.ShowMessage("سيتم تفعيل هذه الميزة في المرحلة 6", "قريباً"));
+        ManageTemplatesCommand = new RelayCommand(_ => navigationService.OpenTaskWindow<ReportCommentTemplateViewModel>());
     }
 
-    public ICommand PlaceholderCommand { get; }
+    public ICommand ManageTemplatesCommand { get; }
 }

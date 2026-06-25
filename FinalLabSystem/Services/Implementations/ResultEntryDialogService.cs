@@ -19,7 +19,8 @@ public sealed class ResultEntryDialogService : IResultEntryDialogService
     }
 
     public Task<bool> OpenAsync(int visitTestId, int patientId, string testTypeName,
-                                ObservableCollection<TestComponentResultDto> components)
+                                ObservableCollection<TestComponentResultDto> components,
+                                int patientAgeDays, string patientGender, bool isPregnant)
     {
         var tcs = new TaskCompletionSource<bool>();
 
@@ -29,16 +30,21 @@ public sealed class ResultEntryDialogService : IResultEntryDialogService
             var visitService = (IVisitService)_serviceProvider.GetService(typeof(IVisitService))!;
             var auditService = (IAuditService)_serviceProvider.GetService(typeof(IAuditService))!;
             var currentUserSession = (ICurrentUserSession)_serviceProvider.GetService(typeof(ICurrentUserSession))!;
+            var dialogService = (IDialogService)_serviceProvider.GetService(typeof(IDialogService))!;
 
             var vm = new ResultEntryViewModel(
                 routineResultService,
                 visitService,
                 auditService,
                 currentUserSession,
+                dialogService,
                 visitTestId,
                 patientId,
                 testTypeName,
-                components);
+                components,
+                patientAgeDays,
+                patientGender,
+                isPregnant);
 
             var window = new Views.Patients.ResultEntryWindow
             {

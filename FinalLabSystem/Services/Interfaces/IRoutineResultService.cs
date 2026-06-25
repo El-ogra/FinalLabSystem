@@ -15,4 +15,6 @@ public interface IRoutineResultService
     Task<bool> TogglePrintStatusAsync(int visitTestId, int staffId);
 
     Task<bool> ToggleExportStatusAsync(int visitTestId, int staffId);
+
+    Task<bool> ToggleReviewStatusAsync(int visitTestId, int staffId);
 }

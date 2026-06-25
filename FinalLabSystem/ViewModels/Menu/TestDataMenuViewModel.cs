@@ -11,9 +11,12 @@ public sealed class TestDataMenuViewModel : ViewModelBase
     {
         NavigateToTestDataCommand = new RelayCommand(_ => navigationService.OpenTaskWindow<TestDataManagementViewModel>());
         NavigateToCategoriesGroupsCommand = new RelayCommand(_ => navigationService.OpenTaskWindow<CategoriesGroupsViewModel>());
+        NavigateToProfilesCommand = new RelayCommand(_ => navigationService.OpenTaskWindow<TestProfileWindowViewModel>());
     }
 
     public ICommand NavigateToTestDataCommand { get; }
 
     public ICommand NavigateToCategoriesGroupsCommand { get; }
+
+    public ICommand NavigateToProfilesCommand { get; }
 }

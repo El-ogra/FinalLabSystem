@@ -1,3 +1,4 @@
+using FinalLabSystem.Infrastructure.Navigation;
 using FinalLabSystem.Services.Interfaces;
 using FinalLabSystem.ViewModels.Menu;
 using Moq;
@@ -30,12 +31,12 @@ public class PlaceholderMenusTests
         return (vm, mockDialog);
     }
 
-    private static (ReportSettingsMenuViewModel vm, Mock<IDialogService> mockDialog)
+    private static (ReportSettingsMenuViewModel vm, Mock<INavigationService> mockNavigation)
         CreateReportSettingsVM()
     {
-        var mockDialog = new Mock<IDialogService>();
-        var vm = new ReportSettingsMenuViewModel(mockDialog.Object);
-        return (vm, mockDialog);
+        var mockNavigation = new Mock<INavigationService>();
+        var vm = new ReportSettingsMenuViewModel(mockNavigation.Object);
+        return (vm, mockNavigation);
     }
 
     [Fact]
@@ -75,14 +76,12 @@ public class PlaceholderMenusTests
     }
 
     [Fact]
-    public void ReportSettings_PlaceholderCommand_ShowsPhase6Dialog()
+    public void ReportSettings_ManageTemplatesCommand_OpensNavigation()
     {
-        var (vm, mockDialog) = CreateReportSettingsVM();
+        var (vm, mockNavigation) = CreateReportSettingsVM();
 
-        vm.PlaceholderCommand.Execute(null);
+        vm.ManageTemplatesCommand.Execute(null);
 
-        mockDialog.Verify(d => d.ShowMessage(
-            It.Is<string>(s => s.Contains("المرحلة 6")),
-            It.IsAny<string>()), Times.Once);
+        mockNavigation.Verify(n => n.OpenTaskWindow<FinalLabSystem.ViewModels.Settings.ReportCommentTemplateViewModel>(), Times.Once);
     }
 }

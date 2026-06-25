@@ -730,4 +730,86 @@ public class TestCatalogService : ITestCatalogService
             .ThenBy(r => r.AgeFromDays)
             .ToListAsync();
     }
+
+    public async Task<List<TestProfile>> GetAllProfilesAsync()
+    {
+        return await _context.TestProfiles
+            .Include(p => p.TestProfileItems)
+                .ThenInclude(tpi => tpi.TestType)
+            .OrderBy(p => p.ProfileNameEn)
+            .ToListAsync();
+    }
+
+    public async Task<TestProfile> CreateProfileAsync(TestProfile profile)
+    {
+        profile.CreatedAt = DateTime.UtcNow;
+        profile.IsActive = true;
+
+        _context.TestProfiles.Add(profile);
+        await _context.SaveChangesAsync();
+        return profile;
+    }
+
+    public async Task UpdateProfileAsync(TestProfile profile)
+    {
+        var existing = await _context.TestProfiles.FindAsync(profile.ProfileId);
+        if (existing == null)
+            throw new InvalidOperationException("Profile not found.");
+
+        existing.ProfileNameAr = profile.ProfileNameAr;
+        existing.ProfileNameEn = profile.ProfileNameEn;
+        existing.Description = profile.Description;
+        existing.IsActive = profile.IsActive;
+
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task DeleteProfileAsync(int profileId)
+    {
+        var existing = await _context.TestProfiles.FindAsync(profileId);
+        if (existing == null)
+            throw new InvalidOperationException("Profile not found.");
+
+        existing.IsActive = false;
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task AddProfileItemAsync(int profileId, int testTypeId, int? sortOrder)
+    {
+        var exists = await _context.TestProfileItems
+            .AnyAsync(i => i.ProfileId == profileId && i.TestTypeId == testTypeId);
+
+        if (exists)
+            return;
+
+        var item = new TestProfileItem
+        {
+            ProfileId = profileId,
+            TestTypeId = testTypeId,
+            SortOrder = sortOrder
+        };
+
+        _context.TestProfileItems.Add(item);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task RemoveProfileItemAsync(int profileItemId)
+    {
+        var existing = await _context.TestProfileItems.FindAsync(profileItemId);
+        if (existing == null)
+            throw new InvalidOperationException("Profile item not found.");
+
+        _context.TestProfileItems.Remove(existing);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task UpdateProfileItemSortOrderAsync(int profileItemId, int sortOrder)
+    {
+        var existing = await _context.TestProfileItems.FindAsync(profileItemId);
+        if (existing == null)
+            throw new InvalidOperationException("Profile item not found.");
+
+        existing.SortOrder = sortOrder;
+        await _context.SaveChangesAsync();
+    }
 }

@@ -878,6 +878,10 @@ public partial class FinalLabDbContext : DbContext
             entity.Property(e => e.Title)
                 .HasMaxLength(150)
                 .HasColumnName("title");
+            entity.Property(e => e.TriggerCondition)
+                .HasMaxLength(20)
+                .HasDefaultValue("Manual")
+                .HasColumnName("trigger_condition");
 
             entity.HasOne(d => d.Category).WithMany(p => p.ReportCommentTemplates)
                 .HasForeignKey(d => d.CategoryId)

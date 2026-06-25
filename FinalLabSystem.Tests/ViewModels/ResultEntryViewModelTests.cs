@@ -38,10 +38,14 @@ public class ResultEntryViewModelTests
             mockVisit.Object,
             mockAudit.Object,
             mockSession.Object,
+            mockDialog.Object,
             visitTestId,
             patientId,
             testTypeName,
-            components);
+            components,
+            0,
+            "U",
+            false);
 
         return (vm, mockRoutine, mockSession, mockDialog);
     }
@@ -116,8 +120,8 @@ public class ResultEntryViewModelTests
         };
 
         var vm = new ResultEntryViewModel(
-            mockRoutine.Object, mockVisit.Object, mockAudit.Object, mockSession.Object,
-            1, 1, "CBC", components);
+            mockRoutine.Object, mockVisit.Object, mockAudit.Object, mockSession.Object, mockDialog.Object,
+            1, 1, "CBC", components, 0, "U", false);
 
         vm.SaveCommand.Execute(null);
         await Task.Delay(100);

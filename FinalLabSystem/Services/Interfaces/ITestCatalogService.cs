@@ -309,4 +309,39 @@ public interface ITestCatalogService
     /// Deletes a tube material if it is not in use by test type sample tubes.
     /// </summary>
     Task<bool> DeleteTubeMaterialAsync(int tubeMaterialId);
+
+    /// <summary>
+    /// Gets all profiles including items.
+    /// </summary>
+    Task<List<TestProfile>> GetAllProfilesAsync();
+
+    /// <summary>
+    /// Creates a new test profile.
+    /// </summary>
+    Task<TestProfile> CreateProfileAsync(TestProfile profile);
+
+    /// <summary>
+    /// Updates an existing test profile.
+    /// </summary>
+    Task UpdateProfileAsync(TestProfile profile);
+
+    /// <summary>
+    /// Soft-deletes a test profile by setting IsActive = false.
+    /// </summary>
+    Task DeleteProfileAsync(int profileId);
+
+    /// <summary>
+    /// Adds a test to a profile.
+    /// </summary>
+    Task AddProfileItemAsync(int profileId, int testTypeId, int? sortOrder);
+
+    /// <summary>
+    /// Removes a test from a profile.
+    /// </summary>
+    Task RemoveProfileItemAsync(int profileItemId);
+
+    /// <summary>
+    /// Updates the sort order of a profile item.
+    /// </summary>
+    Task UpdateProfileItemSortOrderAsync(int profileItemId, int sortOrder);
 }

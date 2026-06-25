@@ -29,7 +29,8 @@ public class RoutineResultServiceGuardTests
         return new RoutineResultService(
             context,
             Mock.Of<ILogger<RoutineResultService>>(),
-            featureToggleService.Object);
+            featureToggleService.Object,
+            Mock.Of<IReportCommentEngine>());
     }
     private static async Task<int> SeedVisitTestWithResultsAsync(FinalLabDbContext context, params ResultValidationStatus[] statuses)
     {

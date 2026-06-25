@@ -177,6 +177,16 @@
                         Foreground="#001A20"
                         FontWeight="Bold"/>
 
+                <Button Grid.Column="1"
+                        Content="Apply Profile"
+                        Command="{Binding ApplyProfileCommand}"
+                        Height="30"
+                        HorizontalAlignment="Stretch"
+                        Background="#2196F3"
+                        Foreground="White"
+                        FontWeight="Bold"
+                        Margin="2,0,0,0"/>
+
                 <Grid Grid.Column="2">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>

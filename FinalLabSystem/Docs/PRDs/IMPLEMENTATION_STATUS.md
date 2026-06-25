@@ -249,7 +249,166 @@
 ---
 
 ## Phase 3: Result Editor Alignment
-**Status:** ⏳ في الانتظار
+
+**Status:** ✅ مكتملة  
+**Date:** 2026-06-25  
+**Total files created:** 27  
+**Total files modified:** 25  
+**Total files deleted:** 0  
+**Tests:** 347 / 347 — ✅ جميع الاختبارات ناجحة  
+**Build:** ✅ ناجح — 0 أخطاء
+
+---
+
+### Task 3.3 — ReportCommentTemplate Management Foundation/UI
+
+**Status:** ✅ مكتملة
+
+**Files created:**
+- `Models/Enums/ReportCommentTrigger.cs` — قائمة مرجعية للمحفّزات: None, Low, High, Critical, Manual
+- `Services/Interfaces/IReportCommentTemplateService.cs` — واجهة CRUD + بحث القوالب
+- `Services/Implementations/ReportCommentTemplateService.cs` — تنفيذ: استعلام نشطة، بحث بمحفّز، إنشاء/تعديل/حذف(soft)
+- `ViewModels/Settings/ReportCommentTemplateViewModel.cs` — نموذج إدارة القوالب مع فلترة وحفظ
+- `Views/Settings/ReportCommentTemplateWindow.xaml` — نافذة إدارة القوالب (Master-Detail)
+- `Views/Settings/ReportCommentTemplateWindow.xaml.cs` — تهيئة النافذة
+
+**Files modified:**
+- `Models/ReportCommentTemplate.cs` — إضافة خاصية `string? TriggerCondition`
+- `Data/FinalLabDbContext.cs` — تعيين `TriggerCondition` مع القيمة الافتراضية "Manual"
+- `ViewModels/Menu/ReportSettingsMenuViewModel.cs` — استبدال `IDialogService` بـ `INavigationService` لفتح نافذة القوالب
+- `ViewModels/MainViewModel.cs` — تمرير `INavigationService` بدلاً من `IDialogService`
+- `App.xaml.cs` — تسجيل `ReportCommentTemplateViewModel` / `ReportCommentTemplateWindow` في Navigation
+
+---
+
+### Task 3.4 — Auto-Comment Injection Logic
+
+**Status:** ✅ مكتملة
+
+**Files created:**
+- `Services/Interfaces/IReportCommentEngine.cs` — واجهة تطبيق التعليقات التلقائية
+- `Services/Implementations/ReportCommentEngine.cs` — تنفيذ: تحويل ResultStatus إلى ReportCommentTrigger + بحث قالب + تطبيق
+
+**Files modified:**
+- `Services/Implementations/RoutineResultService.cs` — حقن `IReportCommentEngine` + استدعاء `ApplyAutoCommentAsync` بعد حساب ResultStatus وقبل SaveChanges
+- `App.xaml.cs` — تسجيل `ReportCommentEngine` كـ Scoped
+
+---
+
+### Task 3.2 — TestProfile Management UI
+
+**Status:** ✅ مكتملة
+
+**Files created:**
+- `ViewModels/Settings/TestProfileWindowViewModel.cs` — نموذج إدارة البروفايلات مع Master-Detail
+- `ViewModels/Settings/TestProfileRowViewModel.cs` — نموذج صف البروفايل
+- `ViewModels/Settings/TestProfileItemRowViewModel.cs` — نموذج عنصر البروفايل مع ترتيب
+- `Views/Settings/TestProfileWindow.xaml` — نافذة إدارة البروفايلات
+- `Views/Settings/TestProfileWindow.xaml.cs` — تهيئة النافذة
+
+**Files modified:**
+- `Services/Interfaces/ITestCatalogService.cs` — إضافة 7 طرق CRUD للبروفايلات (GetAllProfiles, Create, Update, Delete, AddItem, RemoveItem, UpdateItemSortOrder)
+- `Services/Implementations/TestCatalogService.cs` — تنفيذ طرق البروفايلات مع soft delete
+- `ViewModels/Menu/TestDataMenuViewModel.cs` — إضافة `NavigateToProfilesCommand` عبر `INavigationService`
+- `App.xaml.cs` — تسجيل `TestProfileWindowViewModel` / `TestProfileWindow` في Navigation
+
+---
+
+### Task 3.5 — TestProfile Expansion on Patient Registration
+
+**Status:** ✅ مكتملة
+
+**Files created:**
+- `Views/Patients/ProfileSelectionDialog.xaml` — نافذة اختيار البروفايل مع قائمة + زر اختيار/إلغاء
+- `Views/Patients/ProfileSelectionDialog.xaml.cs` — معالجة النقر المزدوج والاختيار
+
+**Files modified:**
+- `ViewModels/Patients/TestSelectionViewModel.cs` — إضافة `ApplyProfileCommand` + `ApplyProfileAsync` (إضافة تحاليل البروفايل مع تخطي المكررات + DefaultPrice)
+- `Views/Patients/TestSelectionView.xaml` — إضافة زر "تطبيق بروفايل"
+
+---
+
+### Task 3.1 — ResultEntryWindow Full Integration
+
+**Status:** ✅ مكتملة
+
+#### Task 3.1a — ResultClinicalStatus + Live Validation
+
+**Files created:**
+- `Models/Enums/ResultClinicalStatus.cs` — قائمة: Normal, Low, High, Critical
+
+**Files modified:**
+- `Models/DTOs/TestComponentResultDto.cs` — إضافة `SnapLowCritical`, `SnapHighCritical`, `ClinicalStatus` + تطبيق `INotifyPropertyChanged`
+- `ViewModels/Patients/ResultEntryViewModel.cs` — إضافة `patientAgeDays`, `patientGender`, `isPregnant` للمُنشئ + `RecomputeClinicalStatus` لحظي
+- `Services/Interfaces/IResultEntryDialogService.cs` — توسيع `OpenAsync` بمعاملات المريض
+- `Services/Implementations/ResultEntryDialogService.cs` — تمرير بيانات المريض إلى ViewModel
+- `ViewModels/Patients/TestResultsViewModel.cs` — تمرير SnapLowCritical/SnapHighCritical + بيانات المريض عند فتح المحرر
+- `Views/Converters.cs` — إضافة `ClinicalStatusToBrushConverter` (أخضر/أزرق/أحمر/أحمر غامق)
+- `Views/Patients/ResultEntryWindow.xaml` — إضافة عمود ClinicalStatus مع ألوان + تمديد العرض
+
+#### Task 3.1b — Row Save-Selection + Partial Save
+
+**Files modified:**
+- `Models/DTOs/TestComponentResultDto.cs` — إضافة `IsSelectedForSave` (INotifyPropertyChanged, default: true)
+- `ViewModels/Patients/ResultEntryViewModel.cs` — تعديل `SaveAsync` لفلترة `.Where(c => c.IsSelectedForSave)`
+- `Views/Patients/ResultEntryWindow.xaml` — إضافة عمود "حفظ" (CheckBox) كأول عمود
+
+#### Task 3.1c — Save & Review Command
+
+**Files modified:**
+- `Services/Interfaces/IRoutineResultService.cs` — إضافة `Task<bool> ToggleReviewStatusAsync(int visitTestId, int staffId)`
+- `Services/Implementations/RoutineResultService.cs` — تنفيذ: تحديث ValidationStatus من Entered إلى Reviewed
+- `ViewModels/Patients/ResultEntryViewModel.cs` — إضافة `SaveAndReviewCommand` + `SaveAndReviewAsync`
+- `Views/Patients/ResultEntryWindow.xaml` — إضافة زر "حفظ و مراجعة" (أزرق)
+
+#### Task 3.1d — Critical-Value Confirmation Dialog
+
+**Files modified:**
+- `ViewModels/Patients/ResultEntryViewModel.cs` — حقن `IDialogService` + `HasCriticalValues()` + `ConfirmCriticalSave()` + فحص قبل الحفظ في `SaveAsync` و `SaveAndReviewAsync`
+- `Services/Implementations/ResultEntryDialogService.cs` — تمرير `IDialogService` إلى ViewModel
+- `ViewModels/ResultEntryViewModelTests.cs` — تحديث استدعاءات المُنشئ بمعامل `mockDialog.Object`
+
+#### Task 3.1e — ContentPresenter Placeholder
+
+**Files modified:**
+- `Views/Patients/ResultEntryWindow.xaml` — إضافة `ContentPresenter` مربوط بـ `CustomEditorContent` (Phase 7 placeholder)
+- `ViewModels/Patients/ResultEntryViewModel.cs` — إضافة خاصية `CustomEditorContent`
+
+---
+
+### Task 3.6 — Phase 3 Complete Test Suite
+
+**Status:** ✅ مكتملة
+
+**Test files created (9 ملفات، 67 اختبار جديد):**
+
+| ملف الاختبار | عدد الاختبارات |
+|-------------|---------------|
+| `Tests/Services/RoutineResultServiceLiveValidationTests.cs` | 7 |
+| `Tests/Services/ReportCommentEngineTests.cs` | 8 |
+| `Tests/Services/ReportCommentTemplateServiceTests.cs` | 10 |
+| `Tests/Services/TestCatalogService_ProfileCrudTests.cs` | 8 |
+| `Tests/ViewModels/Settings/TestProfileWindowViewModelTests.cs` | 5 |
+| `Tests/ViewModels/Settings/ReportCommentTemplateViewModelTests.cs` | 7 |
+| `Tests/ViewModels/ResultEntryViewModelLiveValidationTests.cs` | 12 |
+| `Tests/ViewModels/TestSelectionViewModelProfileApplyTests.cs` | 5 |
+| `Tests/Integration/AutoCommentEndToEndTests.cs` | 5 |
+| **الإجمالي** | **67** |
+
+---
+
+### Migration — AddReportCommentTemplate_TriggerCondition
+
+**Status:** ✅ مكتملة
+
+**Files created:**
+- `Migrations/20260625222151_AddReportCommentTemplate_TriggerCondition.cs` — إضافة عمود `trigger_condition` (nvarchar(20), nullable, defaultValue: "Manual") + UPDATE للسجلات الموجودة
+- `Migrations/20260625222151_AddReportCommentTemplate_TriggerCondition.Designer.cs` — تصميم الترحيل
+
+**Files modified:**
+- `Migrations/FinalLabDbContextModelSnapshot.cs` — تحديث Snapshot
+
+**Database:** ✅ مُطبق على FinalLab (.\SQLEXPRESS)
 
 ---
 

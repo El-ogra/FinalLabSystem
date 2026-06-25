@@ -372,6 +372,8 @@ public sealed class TestResultsViewModel : ViewModelBase
                                 SnapUnit = result?.SnapUnit,
                                 SnapLowNormal = result?.SnapLowNormal,
                                 SnapHighNormal = result?.SnapHighNormal,
+                                SnapLowCritical = result?.SnapLowCritical,
+                                SnapHighCritical = result?.SnapHighCritical,
                                 SnapNormalText = result?.SnapNormalText,
                                 ValidationStatus = result?.ValidationStatus ?? ResultValidationStatus.Entered,
                                 EnteredByName = result?.EnteredByNavigation?.DisplayName,
@@ -645,11 +647,21 @@ public sealed class TestResultsViewModel : ViewModelBase
     {
         var patientId = CurrentPatientInfo?.PatientId ?? 0;
 
+        int patientAgeDays = 0;
+        if (CurrentPatientInfo != null)
+        {
+            var years = CurrentPatientInfo.ApproxAge ?? 0;
+            patientAgeDays = years * 365;
+        }
+
         var saved = await _resultEntryDialogService.OpenAsync(
             test.VisitTestId,
             patientId,
             test.TestTypeName,
-            new ObservableCollection<TestComponentResultDto>(test.ComponentResults));
+            new ObservableCollection<TestComponentResultDto>(test.ComponentResults),
+            patientAgeDays,
+            CurrentPatientInfo?.Sex ?? "U",
+            CurrentPatientInfo?.IsPregnant ?? false);
 
         if (saved && SelectedPatient != null)
             await SelectPatientAsync(SelectedPatient);
@@ -892,13 +904,14 @@ public sealed class TestResultsViewModel : ViewModelBase
         await System.Threading.Tasks.Task.CompletedTask;
     }
 
-    private async Task EditSelectedPatientAsync()
+    private Task EditSelectedPatientAsync()
     {
-        if (SelectedPatient == null) return;
+        if (SelectedPatient == null) return Task.CompletedTask;
         _navigationService.OpenTaskWindow<PatientRegistrationViewModel>(vm =>
         {
             _ = vm.LoadVisitForEditAsync(SelectedPatient.VisitId);
         });
+        return Task.CompletedTask;
     }
 
     private async Task PrintReceiptAsync()

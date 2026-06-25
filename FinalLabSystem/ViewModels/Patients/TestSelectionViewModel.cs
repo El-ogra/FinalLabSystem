@@ -1,9 +1,11 @@
 using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Input;
 using FinalLabSystem.Infrastructure;
 using FinalLabSystem.Models;
 using FinalLabSystem.Models.DTOs;
 using FinalLabSystem.Services.Interfaces;
+using FinalLabSystem.Views.Patients;
 
 namespace FinalLabSystem.ViewModels.Patients;
 
@@ -26,6 +28,7 @@ public sealed class TestSelectionViewModel : ViewModelBase, IAsyncInitializable
         RemoveTestCommand = new RelayCommand(parameter => RemoveTest(parameter as SelectedTestItem ?? SelectedTest));
         RemoveAllCommand = new RelayCommand(_ => RemoveAll());
         SetFilterCommand = new RelayCommand(parameter => ActiveFilter = parameter?.ToString() ?? "RoutineTests");
+        ApplyProfileCommand = new AsyncRelayCommand(ApplyProfileAsync);
     }
 
     public async Task InitializeAsync()
@@ -133,6 +136,8 @@ public sealed class TestSelectionViewModel : ViewModelBase, IAsyncInitializable
 
     public ICommand SetFilterCommand { get; }
 
+    public ICommand ApplyProfileCommand { get; }
+
     public List<int> GetSelectedTestTypeIds() => SelectedTests.Select(test => test.TestTypeId).Distinct().ToList();
 
     public List<decimal> GetSelectedPrices() => SelectedTests.Select(test => test.Price).ToList();
@@ -234,6 +239,49 @@ public sealed class TestSelectionViewModel : ViewModelBase, IAsyncInitializable
         SelectedTests.Clear();
         OnPropertyChanged(nameof(SelectedTestsCount));
         TestsChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    private async Task ApplyProfileAsync()
+    {
+        var profiles = await _testCatalogService.GetActiveProfilesAsync();
+        if (profiles.Count == 0)
+        {
+            MessageBox.Show("لا توجد بروفايلات نشطة", "تنبيه", MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+
+        var dialog = new ProfileSelectionDialog();
+        dialog.LoadProfiles(profiles);
+        dialog.Owner = Application.Current.MainWindow;
+
+        if (dialog.ShowDialog() != true || dialog.SelectedProfile == null)
+            return;
+
+        var profileTests = await _testCatalogService.GetProfileTestsAsync(dialog.SelectedProfile.ProfileId);
+
+        int addedCount = 0;
+        foreach (var test in profileTests.Where(test => test.IsActive))
+        {
+            if (SelectedTests.Any(s => s.TestTypeId == test.TesttypeId))
+                continue;
+
+            var price = Convert.ToDecimal(test.DefaultPrice);
+            SelectedTests.Add(new SelectedTestItem(
+                test.TesttypeId,
+                test.TypeCode,
+                test.TypeNameAr ?? test.TypeNameEn,
+                price,
+                test.SampleType));
+            addedCount++;
+        }
+
+        OnPropertyChanged(nameof(SelectedTestsCount));
+        TestsChanged?.Invoke(this, EventArgs.Empty);
+
+        if (addedCount > 0)
+            MessageBox.Show($"تم إضافة {addedCount} تحليل من البروفايل", "تم", MessageBoxButton.OK, MessageBoxImage.Information);
+        else
+            MessageBox.Show("جميع تحاليل البروفايل مضافة مسبقاً", "تنبيه", MessageBoxButton.OK, MessageBoxImage.Information);
     }
 }
 

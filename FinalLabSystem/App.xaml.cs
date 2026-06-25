@@ -99,6 +99,8 @@ public partial class App : Application
             navigation.RegisterWindow<CategoriesGroupsViewModel, CategoriesGroupsWindow>();
             navigation.RegisterWindow<AuditTrailViewModel, AuditTrailWindow>();
             navigation.RegisterWindow<ResultEntryViewModel, ResultEntryWindow>();
+            navigation.RegisterWindow<ReportCommentTemplateViewModel, ReportCommentTemplateWindow>();
+            navigation.RegisterWindow<TestProfileWindowViewModel, TestProfileWindow>();
 
             using (var scope = ServiceProvider.CreateScope())
             {
@@ -154,6 +156,8 @@ public partial class App : Application
         services.AddScoped<IRoutineResultService, RoutineResultService>();
         services.AddScoped<IReportingService, ReportingService>();
         services.AddScoped<IResultEditorFactory, DefaultResultEditorFactory>();
+        services.AddScoped<IReportCommentTemplateService, ReportCommentTemplateService>();
+        services.AddScoped<IReportCommentEngine, ReportCommentEngine>();
 
         services.AddLogging(builder =>
         {
@@ -228,6 +232,10 @@ public partial class App : Application
         services.AddTransient<TestDataMenuViewModel>();
         services.AddTransient<NormalRangesMenuViewModel>();
         services.AddTransient<ReportSettingsMenuViewModel>();
+        services.AddTransient<ReportCommentTemplateViewModel>();
+        services.AddTransient<ReportCommentTemplateWindow>();
+        services.AddTransient<TestProfileWindowViewModel>();
+        services.AddTransient<TestProfileWindow>();
         services.AddTransient<SystemSettingsMenuViewModel>();
     }
 
