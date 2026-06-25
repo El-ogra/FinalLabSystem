@@ -6,6 +6,8 @@ using FinalLabSystem.Services.Implementations;
 using FinalLabSystem.Services.Interfaces;
 using FinalLabSystem.ViewModels;
 using FinalLabSystem.ViewModels.Patients;
+using FinalLabSystem.ViewModels.Patients.Delivery;
+using FinalLabSystem.ViewModels.Patients.Search;
 using FinalLabSystem.ViewModels.Settings;
 using FinalLabSystem.Views;
 using FinalLabSystem.Views.Patients;
@@ -134,6 +136,8 @@ public partial class App : Application
             ServiceLifetime.Scoped,
             ServiceLifetime.Scoped);
 
+        services.AddScoped<ISettingsService, SettingsService>();
+        services.AddScoped<IFeatureToggleService, FeatureToggleService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IPatientService, PatientService>();
         services.AddScoped<IReferralService, ReferralService>();
@@ -158,7 +162,7 @@ public partial class App : Application
         services.AddSingleton<ICurrentUserSession, CurrentUserSession>();
         services.AddSingleton<INavigationService, NavigationService>();
         services.AddSingleton<IDialogService, DialogService>();
-        services.AddSingleton<IPrintService, NullPrintService>();
+        services.AddScoped<IPrintService, WpfFlowDocumentPrintService>();
         services.AddSingleton<ILabelPrintService, WpfLabelPrintService>();
 
         services.AddTransient<LoginViewModel>();

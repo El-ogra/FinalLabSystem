@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using FinalLabSystem.Models.Enums;
 
 namespace FinalLabSystem.Models;
@@ -103,4 +105,15 @@ public partial class VisitTest
     public int? ExportedBy { get; set; }
 
     public virtual Staff? ExportedByNavigation { get; set; }
+
+    [NotMapped]
+    public ResultValidationStatus AggregateValidationStatus
+    {
+        get
+        {
+            if (TestResults == null || TestResults.Count == 0)
+                return ResultValidationStatus.Entered;
+            return TestResults.Min(tr => tr.ValidationStatus);
+        }
+    }
 }

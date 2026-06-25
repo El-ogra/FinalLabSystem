@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using FinalLabSystem.Data;
 
 namespace FinalLabSystem.Models;
 
@@ -7,6 +8,7 @@ namespace FinalLabSystem.Models;
 /// External Shipment - Manifests for samples sent to external reference labs
 /// V4.0 New Table
 /// </summary>
+[Auditable]
 public partial class ExternalShipment
 {
     public int ShipmentId { get; set; }

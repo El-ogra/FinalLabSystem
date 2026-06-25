@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -13,6 +13,7 @@ namespace FinalLabSystem.Data;
 public partial class FinalLabDbContext : DbContext
 {
     private readonly ICurrentUserSession? _session;
+    private readonly AsyncLocal<bool> _auditingFlag = new();
 
     public FinalLabDbContext()
     {
@@ -31,54 +32,89 @@ public partial class FinalLabDbContext : DbContext
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        var auditableEntries = ChangeTracker.Entries()
-            .Where(e => e.State is EntityState.Added or EntityState.Modified or EntityState.Deleted
-                && e.Entity.GetType().GetCustomAttributes(typeof(AuditableAttribute), false).Length > 0)
-            .ToList();
+        if (_auditingFlag.Value)
+            return await base.SaveChangesAsync(cancellationToken);
 
-        var result = await base.SaveChangesAsync(cancellationToken);
-
-        if (auditableEntries.Count == 0 || _session is null)
-            return result;
-
-        var staffId = _session.CurrentUser?.StaffId;
-        var now = DateTime.UtcNow;
-
-        foreach (var entry in auditableEntries)
+        _auditingFlag.Value = true;
+        try
         {
-            var tableName = entry.Metadata.GetTableName() ?? entry.Metadata.Name;
-            var key = entry.Metadata.FindPrimaryKey();
-            var recordId = key?.Properties
-                .Select(p => Convert.ToInt32(entry.Property(p.Name).CurrentValue))
-                .FirstOrDefault() ?? 0;
-
-            foreach (var property in entry.Properties)
-            {
-                if (!property.IsModified && entry.State != EntityState.Added)
-                    continue;
-
-                AuditLogs.Add(new AuditLog
+            var snapshot = ChangeTracker.Entries()
+                .Where(e => e.State is EntityState.Added or EntityState.Modified or EntityState.Deleted
+                    && e.Entity.GetType().GetCustomAttributes(typeof(AuditableAttribute), false).Length > 0)
+                .Select(e => new
                 {
-                    TableName = tableName,
-                    RecordId = recordId,
-                    Action = entry.State switch
+                    State = e.State,
+                    TableName = e.Metadata.GetTableName() ?? e.Metadata.Name,
+                    RecordId = e.Metadata.FindPrimaryKey()?.Properties
+                        .Select(p => Convert.ToInt32(e.Property(p.Name).CurrentValue))
+                        .FirstOrDefault() ?? 0,
+                    Properties = e.Properties.Select(p => new
                     {
-                        EntityState.Added => "A",
-                        EntityState.Modified => "M",
-                        EntityState.Deleted => "D",
-                        _ => "U"
-                    },
-                    FieldName = property.Metadata.Name,
-                    OldValue = entry.State == EntityState.Added ? null : property.OriginalValue?.ToString(),
-                    NewValue = property.CurrentValue?.ToString(),
-                    ChangedBy = staffId,
-                    ChangedAt = now
-                });
-            }
-        }
+                        p.Metadata.Name,
+                        p.IsModified,
+                        OriginalValue = p.OriginalValue,
+                        CurrentValue = p.CurrentValue
+                    }).ToList()
+                })
+                .ToList();
 
-        await base.SaveChangesAsync(cancellationToken);
-        return result;
+            var result = await base.SaveChangesAsync(cancellationToken);
+
+            if (snapshot.Count == 0 || _session is null)
+                return result;
+
+            var staffId = _session.CurrentUser?.StaffId;
+            var now = DateTime.UtcNow;
+
+            foreach (var item in snapshot)
+            {
+                foreach (var prop in item.Properties)
+                {
+                    if (!prop.IsModified && item.State == EntityState.Modified)
+                        continue;
+
+                    AuditLogs.Add(new AuditLog
+                    {
+                        TableName = item.TableName,
+                        RecordId = item.RecordId,
+                        Action = item.State switch
+                        {
+                            EntityState.Added => "A",
+                            EntityState.Modified => "M",
+                            EntityState.Deleted => "D",
+                            _ => "U"
+                        },
+                        FieldName = prop.Name,
+                        OldValue = item.State == EntityState.Added ? null : prop.OriginalValue?.ToString(),
+                        NewValue = prop.CurrentValue?.ToString(),
+                        ChangedBy = staffId,
+                        ChangedAt = now
+                    });
+                }
+            }
+
+            await base.SaveChangesAsync(cancellationToken);
+            return result;
+        }
+        finally
+        {
+            _auditingFlag.Value = false;
+        }
+    }
+
+    public override int SaveChanges()
+    {
+        return SaveChangesAsync(CancellationToken.None).GetAwaiter().GetResult();
+    }
+
+    public override int SaveChanges(bool acceptAllChangesOnSuccess)
+    {
+        return SaveChangesAsync(CancellationToken.None).GetAwaiter().GetResult();
+    }
+
+    public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+    {
+        return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
     }
 
     public virtual DbSet<AuditLog> AuditLogs { get; set; }
@@ -409,6 +445,8 @@ public partial class FinalLabDbContext : DbContext
                 .HasMaxLength(50)
                 .HasColumnName("setting_group");
             entity.Property(e => e.SettingValue).HasColumnName("setting_value");
+            entity.Property(e => e.EnforceStageGating).HasColumnName("enforce_stage_gating");
+            entity.Property(e => e.EnableServerPrinting).HasColumnName("enable_server_printing");
 
             entity.HasOne(d => d.LastUpdatedByNavigation).WithMany(p => p.LabSettings)
                 .HasForeignKey(d => d.LastUpdatedBy)
@@ -1724,7 +1762,10 @@ public partial class FinalLabDbContext : DbContext
         {
             entity.HasKey(e => e.VisitId).HasName("PK__Visit__375A75E1798EC5C4");
 
-            entity.ToTable("Visit");
+            entity.ToTable("Visit", tb =>
+                {
+                    tb.HasCheckConstraint("CK_Visit_DiscountExclusivity", "NOT (discount_amount > 0 AND discount_percent > 0)");
+                });
 
             entity.HasIndex(e => e.CompanyId, "IX_Visit_Company");
 
@@ -1886,6 +1927,7 @@ public partial class FinalLabDbContext : DbContext
             entity.HasOne(d => d.Scheme).WithMany(p => p.Visits)
                 .HasForeignKey(d => d.SchemeId)
                 .HasConstraintName("FK_Visit_Scheme");
+
         });
 
         modelBuilder.Entity<VisitTest>(entity =>

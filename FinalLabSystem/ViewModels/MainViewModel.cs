@@ -2,6 +2,8 @@ using System.Windows.Input;
 using FinalLabSystem.Infrastructure;
 using FinalLabSystem.Infrastructure.Navigation;
 using FinalLabSystem.ViewModels.Patients;
+using FinalLabSystem.ViewModels.Patients.Delivery;
+using FinalLabSystem.ViewModels.Patients.Search;
 using FinalLabSystem.ViewModels.Settings;
 
 namespace FinalLabSystem.ViewModels;

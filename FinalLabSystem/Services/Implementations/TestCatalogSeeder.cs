@@ -412,10 +412,33 @@ public class TestCatalogSeeder : ITestCatalogSeeder
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            // ── Step 10: Commit the transaction ──
+            // ── Step 10: Seed feature toggles ──
+            var defaultSetting = await _context.LabSettings.FirstOrDefaultAsync(cancellationToken);
+            if (defaultSetting == null)
+            {
+                _context.LabSettings.Add(new LabSetting
+                {
+                    SettingKey = "System",
+                    SettingValue = "System Settings",
+                    EnforceStageGating = true,
+                    EnableServerPrinting = false,
+                    LastUpdatedAt = DateTime.UtcNow
+                });
+                _logger.LogInformation("Seeded default LabSetting with feature toggles.");
+            }
+            else
+            {
+                // Ensure default values if not explicitly handled elsewhere
+                // Not overriding existing values to respect user changes if any, but since we are seeding,
+                // we'll leave it as is if it exists, or maybe we don't change existing.
+            }
+
+            await _context.SaveChangesAsync(cancellationToken);
+
+            // ── Step 11: Commit the transaction ──
             await transaction.CommitAsync(cancellationToken);
 
-            // ── Step 11: Log summary ──
+            // ── Step 12: Log summary ──
             _logger.LogInformation(
                 "Test catalog seeding complete: Categories ({CatIns} inserted, {CatUpd} updated), " +
                 "Groups ({GrpIns} inserted, {GrpUpd} updated), " +

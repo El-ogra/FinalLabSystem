@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using FinalLabSystem.Data;
 using FinalLabSystem.Models.Enums;
 
 namespace FinalLabSystem.Models;
 
+[Auditable]
 public partial class TestResult
 {
     public int ResultId { get; set; }

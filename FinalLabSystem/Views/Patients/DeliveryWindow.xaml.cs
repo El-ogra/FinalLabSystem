@@ -1,5 +1,5 @@
 using System.Windows;
-using FinalLabSystem.ViewModels.Patients;
+using FinalLabSystem.ViewModels.Patients.Delivery;
 
 namespace FinalLabSystem.Views.Patients;
 

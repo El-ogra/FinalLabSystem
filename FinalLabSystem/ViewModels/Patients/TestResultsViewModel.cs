@@ -15,6 +15,8 @@ using FinalLabSystem.Models;
 using FinalLabSystem.Models.DTOs;
 using FinalLabSystem.Models.Enums;
 using FinalLabSystem.Services.Interfaces;
+using FinalLabSystem.ViewModels.Patients.Delivery;
+using FinalLabSystem.ViewModels.Patients.Search;
 
 namespace FinalLabSystem.ViewModels.Patients;
 

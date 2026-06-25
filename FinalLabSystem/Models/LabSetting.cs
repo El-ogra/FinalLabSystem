@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace FinalLabSystem.Models;
@@ -20,4 +20,7 @@ public partial class LabSetting
     public DateTime? LastUpdatedAt { get; set; }
 
     public virtual Staff? LastUpdatedByNavigation { get; set; }
+
+    public bool EnforceStageGating { get; set; } = true;
+    public bool EnableServerPrinting { get; set; } = false;
 }

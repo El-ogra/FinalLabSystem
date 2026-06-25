@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using FinalLabSystem.Data;
 
 namespace FinalLabSystem.Models;
 
@@ -7,6 +8,7 @@ namespace FinalLabSystem.Models;
 /// External Shipment Item - Line items detailing individual samples in each shipment
 /// V4.0 New Table
 /// </summary>
+[Auditable]
 public partial class ExternalShipmentItem
 {
     public int ShipmentItemId { get; set; }

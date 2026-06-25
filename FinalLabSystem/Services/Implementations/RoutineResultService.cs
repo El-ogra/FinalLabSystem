@@ -4,7 +4,9 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using FinalLabSystem.Data;
+using FinalLabSystem.Infrastructure;
 using FinalLabSystem.Models;
+using FinalLabSystem.Services;
 using FinalLabSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -15,11 +17,16 @@ public class RoutineResultService : IRoutineResultService
 {
     private readonly FinalLabDbContext _context;
     private readonly ILogger<RoutineResultService> _logger;
+    private readonly IFeatureToggleService _featureToggleService;
 
-    public RoutineResultService(FinalLabDbContext context, ILogger<RoutineResultService> logger)
+    public RoutineResultService(
+        FinalLabDbContext context,
+        ILogger<RoutineResultService> logger,
+        IFeatureToggleService featureToggleService)
     {
         _context = context;
         _logger = logger;
+        _featureToggleService = featureToggleService;
     }
 
     public async Task SaveNumericOrTextResultsAsync(List<TestResult> results, int patientId, int staffId)
@@ -172,8 +179,19 @@ public class RoutineResultService : IRoutineResultService
 
     public async Task<bool> TogglePrintStatusAsync(int visitTestId, int staffId)
     {
-        var vt = await _context.VisitTests.FindAsync(visitTestId);
+        var vt = await _context.VisitTests
+            .Include(v => v.TestResults)
+            .FirstOrDefaultAsync(v => v.VisitTestId == visitTestId);
         if (vt == null) return false;
+
+        var enforceGating = await _featureToggleService
+            .IsEnabledAsync(FeatureToggles.EnforceStageGating, defaultValue: false);
+
+        if (enforceGating)
+        {
+            if (!ResultStageRules.CanPrint(vt))
+                throw new InvalidOperationException("يجب مراجعة النتائج قبل الطباعة");
+        }
 
         vt.IsPrinted = !vt.IsPrinted;
         vt.PrintedAt = vt.IsPrinted ? DateTime.UtcNow : null;
@@ -194,8 +212,19 @@ public class RoutineResultService : IRoutineResultService
 
     public async Task<bool> ToggleExportStatusAsync(int visitTestId, int staffId)
     {
-        var vt = await _context.VisitTests.FindAsync(visitTestId);
+        var vt = await _context.VisitTests
+            .Include(v => v.TestResults)
+            .FirstOrDefaultAsync(v => v.VisitTestId == visitTestId);
         if (vt == null) return false;
+
+        var enforceGating = await _featureToggleService
+            .IsEnabledAsync(FeatureToggles.EnforceStageGating, defaultValue: false);
+
+        if (enforceGating)
+        {
+            if (!ResultStageRules.CanExport(vt))
+                throw new InvalidOperationException("يجب طباعة النتائج قبل التسليم");
+        }
 
         vt.IsExported = !vt.IsExported;
         vt.ExportedAt = vt.IsExported ? DateTime.UtcNow : null;

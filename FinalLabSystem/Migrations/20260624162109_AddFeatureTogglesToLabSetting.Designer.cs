@@ -4,6 +4,7 @@ using FinalLabSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinalLabSystem.Migrations
 {
     [DbContext(typeof(FinalLabDbContext))]
-    partial class FinalLabDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260624162109_AddFeatureTogglesToLabSetting")]
+    partial class AddFeatureTogglesToLabSetting
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -662,12 +665,10 @@ namespace FinalLabSystem.Migrations
                         .HasColumnName("setting_key");
 
                     b.Property<bool>("EnableServerPrinting")
-                        .HasColumnType("bit")
-                        .HasColumnName("enable_server_printing");
+                        .HasColumnType("bit");
 
                     b.Property<bool>("EnforceStageGating")
-                        .HasColumnType("bit")
-                        .HasColumnName("enforce_stage_gating");
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsRequired")
                         .HasColumnType("bit")
@@ -3422,7 +3423,7 @@ namespace FinalLabSystem.Migrations
 
                     b.ToTable("Visit", null, t =>
                         {
-                            t.HasCheckConstraint("CK_Visit_DiscountExclusivity", "NOT (discount_amount > 0 AND discount_percent > 0)");
+                            t.HasCheckConstraint("CK_Visit_DiscountExclusivity", "NOT (DiscountAmount > 0 AND DiscountPercent > 0)");
                         });
                 });
 

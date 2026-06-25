@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using FinalLabSystem.Data;
 
 namespace FinalLabSystem.Models;
 
@@ -7,6 +8,7 @@ namespace FinalLabSystem.Models;
 /// Visit Charge - Additional charges beyond tests (e.g., home collection, rush fee)
 /// V4.0 New Table
 /// </summary>
+[Auditable]
 public partial class VisitCharge
 {
     public int ChargeId { get; set; }

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using FinalLabSystem.Data;
 
 namespace FinalLabSystem.Models;
 
+[Auditable]
 public partial class TestWorkflow
 {
     public int WorkflowId { get; set; }

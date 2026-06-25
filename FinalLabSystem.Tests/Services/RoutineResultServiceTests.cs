@@ -1,6 +1,8 @@
 using FinalLabSystem.Data;
 using FinalLabSystem.Models;
+using FinalLabSystem.Services;
 using FinalLabSystem.Services.Implementations;
+using FinalLabSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Logging;
@@ -10,6 +12,19 @@ namespace FinalLabSystem.Tests.Services;
 
 public class RoutineResultServiceTests
 {
+
+    private static RoutineResultService CreateService(FinalLabDbContext context, bool enforceStageGating = true)
+    {
+        var featureToggleService = new Mock<IFeatureToggleService>();
+        featureToggleService
+            .Setup(s => s.IsEnabledAsync(FeatureToggles.EnforceStageGating, false))
+            .ReturnsAsync(enforceStageGating);
+
+        return new RoutineResultService(
+            context,
+            Mock.Of<ILogger<RoutineResultService>>(),
+            featureToggleService.Object);
+    }
     private static DbContextOptions<FinalLabDbContext> CreateOptions(string dbName)
         => new DbContextOptionsBuilder<FinalLabDbContext>()
             .UseInMemoryDatabase(dbName)
@@ -136,8 +151,7 @@ public class RoutineResultServiceTests
     {
         var dbName = Guid.NewGuid().ToString();
         using var context = new FinalLabDbContext(CreateOptions(dbName));
-        var logger = Mock.Of<ILogger<RoutineResultService>>();
-        var service = new RoutineResultService(context, logger);
+        var service = CreateService(context);
 
         var (component, _) = await SeedRangeAsync(context);
         var (patientId, visitTestId) = await SeedPatientAndVisitAsync(context);
@@ -165,8 +179,7 @@ public class RoutineResultServiceTests
     {
         var dbName = Guid.NewGuid().ToString();
         using var context = new FinalLabDbContext(CreateOptions(dbName));
-        var logger = Mock.Of<ILogger<RoutineResultService>>();
-        var service = new RoutineResultService(context, logger);
+        var service = CreateService(context);
 
         var (component, _) = await SeedRangeAsync(context);
         var (patientId, visitTestId) = await SeedPatientAndVisitAsync(context);
@@ -192,8 +205,7 @@ public class RoutineResultServiceTests
     {
         var dbName = Guid.NewGuid().ToString();
         using var context = new FinalLabDbContext(CreateOptions(dbName));
-        var logger = Mock.Of<ILogger<RoutineResultService>>();
-        var service = new RoutineResultService(context, logger);
+        var service = CreateService(context);
 
         var (component, _) = await SeedRangeAsync(context);
         var (patientId, visitTestId) = await SeedPatientAndVisitAsync(context);
@@ -219,8 +231,7 @@ public class RoutineResultServiceTests
     {
         var dbName = Guid.NewGuid().ToString();
         using var context = new FinalLabDbContext(CreateOptions(dbName));
-        var logger = Mock.Of<ILogger<RoutineResultService>>();
-        var service = new RoutineResultService(context, logger);
+        var service = CreateService(context);
 
         var (component, _) = await SeedRangeAsync(context, highCritical: 2.5);
         var (patientId, visitTestId) = await SeedPatientAndVisitAsync(context);
@@ -246,8 +257,7 @@ public class RoutineResultServiceTests
     {
         var dbName = Guid.NewGuid().ToString();
         using var context = new FinalLabDbContext(CreateOptions(dbName));
-        var logger = Mock.Of<ILogger<RoutineResultService>>();
-        var service = new RoutineResultService(context, logger);
+        var service = CreateService(context);
 
         var (component, _) = await SeedRangeAsync(context, lowCritical: 0.2);
         var (patientId, visitTestId) = await SeedPatientAndVisitAsync(context);
@@ -273,8 +283,7 @@ public class RoutineResultServiceTests
     {
         var dbName = Guid.NewGuid().ToString();
         using var context = new FinalLabDbContext(CreateOptions(dbName));
-        var logger = Mock.Of<ILogger<RoutineResultService>>();
-        var service = new RoutineResultService(context, logger);
+        var service = CreateService(context);
 
         var (component, _) = await SeedRangeAsync(context, sex: "M");
         var (patientId, visitTestId) = await SeedPatientAndVisitAsync(context, sex: "M");
@@ -301,8 +310,7 @@ public class RoutineResultServiceTests
     {
         var dbName = Guid.NewGuid().ToString();
         using var context = new FinalLabDbContext(CreateOptions(dbName));
-        var logger = Mock.Of<ILogger<RoutineResultService>>();
-        var service = new RoutineResultService(context, logger);
+        var service = CreateService(context);
 
         var (component, _) = await SeedRangeAsync(context, sex: "F");
         var (patientId, visitTestId) = await SeedPatientAndVisitAsync(context, sex: "M");
@@ -328,8 +336,7 @@ public class RoutineResultServiceTests
     {
         var dbName = Guid.NewGuid().ToString();
         using var context = new FinalLabDbContext(CreateOptions(dbName));
-        var logger = Mock.Of<ILogger<RoutineResultService>>();
-        var service = new RoutineResultService(context, logger);
+        var service = CreateService(context);
 
         var (component, _) = await SeedRangeAsync(context, sex: "B");
         var (patientId, visitTestId) = await SeedPatientAndVisitAsync(context, sex: "F");
@@ -356,8 +363,7 @@ public class RoutineResultServiceTests
     {
         var dbName = Guid.NewGuid().ToString();
         using var context = new FinalLabDbContext(CreateOptions(dbName));
-        var logger = Mock.Of<ILogger<RoutineResultService>>();
-        var service = new RoutineResultService(context, logger);
+        var service = CreateService(context);
 
         var component = new TestComponent
         {
@@ -421,8 +427,7 @@ public class RoutineResultServiceTests
     {
         var dbName = Guid.NewGuid().ToString();
         using var context = new FinalLabDbContext(CreateOptions(dbName));
-        var logger = Mock.Of<ILogger<RoutineResultService>>();
-        var service = new RoutineResultService(context, logger);
+        var service = CreateService(context);
 
         var (component, _) = await SeedRangeAsync(context, sex: "B", forPregnantOnly: true,
             lowNormal: 5.0, highNormal: 10.0);
@@ -450,8 +455,7 @@ public class RoutineResultServiceTests
     {
         var dbName = Guid.NewGuid().ToString();
         using var context = new FinalLabDbContext(CreateOptions(dbName));
-        var logger = Mock.Of<ILogger<RoutineResultService>>();
-        var service = new RoutineResultService(context, logger);
+        var service = CreateService(context);
 
         var (component, _) = await SeedRangeAsync(context, sex: "B", forPregnantOnly: true,
             lowNormal: 5.0, highNormal: 10.0);
@@ -478,8 +482,7 @@ public class RoutineResultServiceTests
     {
         var dbName = Guid.NewGuid().ToString();
         using var context = new FinalLabDbContext(CreateOptions(dbName));
-        var logger = Mock.Of<ILogger<RoutineResultService>>();
-        var service = new RoutineResultService(context, logger);
+        var service = CreateService(context);
 
         var (component, _) = await SeedRangeAsync(context, sex: "B",
             ageFrom: 0, ageTo: 3650);
@@ -507,8 +510,7 @@ public class RoutineResultServiceTests
     {
         var dbName = Guid.NewGuid().ToString();
         using var context = new FinalLabDbContext(CreateOptions(dbName));
-        var logger = Mock.Of<ILogger<RoutineResultService>>();
-        var service = new RoutineResultService(context, logger);
+        var service = CreateService(context);
 
         var (component, _) = await SeedRangeAsync(context, sex: "B",
             lowNormal: 0.5, highNormal: 1.5);
@@ -540,8 +542,7 @@ public class RoutineResultServiceTests
     {
         var dbName = Guid.NewGuid().ToString();
         using var context = new FinalLabDbContext(CreateOptions(dbName));
-        var logger = Mock.Of<ILogger<RoutineResultService>>();
-        var service = new RoutineResultService(context, logger);
+        var service = CreateService(context);
 
         var (component, range) = await SeedRangeAsync(context, sex: "B",
             lowNormal: 0.5, highNormal: 1.5);
