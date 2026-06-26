@@ -3,6 +3,10 @@ using FinalLabSystem.Models;
 
 namespace FinalLabSystem.Services.Interfaces;
 
+/// <summary>
+/// Deprecated: استخدم ICompanyService و IInvoiceService بدلاً من هذا الواجهة.
+/// سيُحذف هذا الواجهة في Phase 7.
+/// </summary>
 public interface IContractService
 {
     /// <summary>

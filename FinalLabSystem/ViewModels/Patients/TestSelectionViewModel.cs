@@ -12,15 +12,18 @@ namespace FinalLabSystem.ViewModels.Patients;
 public sealed class TestSelectionViewModel : ViewModelBase, IAsyncInitializable
 {
     private readonly ITestCatalogService _testCatalogService;
+    private readonly TestPricingEngine _pricingEngine;
     private readonly List<TestDisplayItem> _allTests = new();
     private string _activeFilter = "RoutineTests";
     private string? _searchText;
     private TestDisplayItem? _selectedAvailableTest;
     private SelectedTestItem? _selectedTest;
+    private int? _schemeId;
 
-    public TestSelectionViewModel(ITestCatalogService testCatalogService)
+    public TestSelectionViewModel(ITestCatalogService testCatalogService, TestPricingEngine pricingEngine)
     {
         _testCatalogService = testCatalogService;
+        _pricingEngine = pricingEngine;
         AvailableTests = new ObservableCollection<TestDisplayItem>();
         SelectedTests = new ObservableCollection<SelectedTestItem>();
         Filters = new ObservableCollection<string> { "RoutineTests", "Profiles", "ByGroup", "ByCategory" };
@@ -31,28 +34,52 @@ public sealed class TestSelectionViewModel : ViewModelBase, IAsyncInitializable
         ApplyProfileCommand = new AsyncRelayCommand(ApplyProfileAsync);
     }
 
+    public int? SchemeId
+    {
+        get => _schemeId;
+        set => SetProperty(ref _schemeId, value);
+    }
+
     public async Task InitializeAsync()
     {
         try
         {
             var categories = await _testCatalogService.GetFullHierarchyAsync();
             _allTests.Clear();
+
+            var allTestTypeIds = new List<int>();
             foreach (var category in categories)
             {
                 foreach (var group in category.TestGroups.Where(group => group.IsActive))
                 {
                     foreach (var test in group.TestTypes.Where(test => test.IsActive))
                     {
+                        allTestTypeIds.Add(test.TesttypeId);
+                    }
+                }
+            }
+
+            var pricingResults = await _pricingEngine.GetPricingSummaryAsync(allTestTypeIds, SchemeId);
+            var pricingLookup = pricingResults.ToDictionary(r => r.TestTypeId);
+
+            foreach (var category in categories)
+            {
+                foreach (var group in category.TestGroups.Where(group => group.IsActive))
+                {
+                    foreach (var test in group.TestTypes.Where(test => test.IsActive))
+                    {
+                        var pricing = pricingLookup[test.TesttypeId];
                         _allTests.Add(new TestDisplayItem(
                             test.TesttypeId,
                             test.TypeCode,
                             test.TypeNameAr ?? test.TypeNameEn,
                             test.TypeNameEn,
-                            Convert.ToDecimal(test.DefaultPrice),
+                            pricing.Price,
                             test.SampleType,
                             group.GroupNameAr ?? group.GroupNameEn,
                             category.CategoryNameAr ?? category.CategoryNameEn,
-                            "RoutineTests"));
+                            "RoutineTests",
+                            pricing.IsFallback));
                     }
                 }
             }
@@ -61,18 +88,24 @@ public sealed class TestSelectionViewModel : ViewModelBase, IAsyncInitializable
             foreach (var profile in profiles)
             {
                 var profileTests = await _testCatalogService.GetProfileTestsAsync(profile.ProfileId);
+                var profileTestIds = profileTests.Where(test => test.IsActive).Select(t => t.TesttypeId).ToList();
+                var profilePricing = await _pricingEngine.GetPricingSummaryAsync(profileTestIds, SchemeId);
+                var profilePricingLookup = profilePricing.ToDictionary(r => r.TestTypeId);
+
                 foreach (var test in profileTests.Where(test => test.IsActive))
                 {
+                    var pricing = profilePricingLookup[test.TesttypeId];
                     _allTests.Add(new TestDisplayItem(
                         test.TesttypeId,
                         test.TypeCode,
                         $"{profile.ProfileNameAr ?? profile.ProfileNameEn} - {test.TypeNameAr ?? test.TypeNameEn}",
                         test.TypeNameEn,
-                        Convert.ToDecimal(test.DefaultPrice),
+                        pricing.Price,
                         test.SampleType,
                         "Profiles",
                         "Profiles",
-                        "Profiles"));
+                        "Profiles",
+                        pricing.IsFallback));
                 }
             }
 
@@ -153,7 +186,8 @@ public sealed class TestSelectionViewModel : ViewModelBase, IAsyncInitializable
                 testType.TypeCode,
                 testType.TypeNameAr ?? testType.TypeNameEn,
                 Convert.ToDecimal(visitTest.PriceCharged),
-                testType.SampleType));
+                testType.SampleType,
+                false));
         }
 
         OnPropertyChanged(nameof(SelectedTestsCount));
@@ -170,7 +204,8 @@ public sealed class TestSelectionViewModel : ViewModelBase, IAsyncInitializable
                 test.TestCode,
                 test.TestName,
                 test.Price,
-                test.SampleType));
+                test.SampleType,
+                false));
         }
 
         OnPropertyChanged(nameof(SelectedTestsCount));
@@ -219,7 +254,7 @@ public sealed class TestSelectionViewModel : ViewModelBase, IAsyncInitializable
         if (test is null || SelectedTests.Any(selected => selected.TestTypeId == test.TestTypeId))
             return;
 
-        SelectedTests.Add(new SelectedTestItem(test.TestTypeId, test.Code, test.Name, test.Price, test.SampleType));
+        SelectedTests.Add(new SelectedTestItem(test.TestTypeId, test.Code, test.Name, test.Price, test.SampleType, test.IsFallback));
         OnPropertyChanged(nameof(SelectedTestsCount));
         TestsChanged?.Invoke(this, EventArgs.Empty);
     }
@@ -265,13 +300,14 @@ public sealed class TestSelectionViewModel : ViewModelBase, IAsyncInitializable
             if (SelectedTests.Any(s => s.TestTypeId == test.TesttypeId))
                 continue;
 
-            var price = Convert.ToDecimal(test.DefaultPrice);
+            var pricing = await _pricingEngine.ResolvePriceAsync(test.TesttypeId, SchemeId);
             SelectedTests.Add(new SelectedTestItem(
                 test.TesttypeId,
                 test.TypeCode,
                 test.TypeNameAr ?? test.TypeNameEn,
-                price,
-                test.SampleType));
+                pricing.Price,
+                test.SampleType,
+                pricing.IsFallback));
             addedCount++;
         }
 
@@ -294,6 +330,7 @@ public sealed record TestDisplayItem(
     string? SampleType,
     string GroupName,
     string CategoryName,
-    string FilterKind);
+    string FilterKind,
+    bool IsFallback = false);
 
-public sealed record SelectedTestItem(int TestTypeId, string Code, string Name, decimal Price, string? SampleType);
+public sealed record SelectedTestItem(int TestTypeId, string Code, string Name, decimal Price, string? SampleType, bool IsFallback = false);

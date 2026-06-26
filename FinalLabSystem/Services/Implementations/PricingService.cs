@@ -52,4 +52,31 @@ public class PricingService : IPricingService
 
         await _context.SaveChangesAsync();
     }
+
+    public async Task<PriceScheme?> GetSchemeByIdAsync(int id)
+    {
+        return await _context.PriceSchemes.FindAsync(id);
+    }
+
+    public async Task<PriceScheme> CreateSchemeAsync(PriceScheme scheme)
+    {
+        scheme.CreatedAt = System.DateTime.UtcNow;
+        _context.PriceSchemes.Add(scheme);
+        await _context.SaveChangesAsync();
+        return scheme;
+    }
+
+    public async Task UpdateSchemeAsync(PriceScheme scheme)
+    {
+        var existing = await _context.PriceSchemes.FindAsync(scheme.SchemeId);
+        if (existing is null)
+            return;
+
+        existing.SchemeName = scheme.SchemeName;
+        existing.Description = scheme.Description;
+        existing.IsDefault = scheme.IsDefault;
+        existing.IsActive = scheme.IsActive;
+
+        await _context.SaveChangesAsync();
+    }
 }

@@ -24,8 +24,8 @@ public sealed class MainViewModel : ViewModelBase
         ShowHomeMenuCommand = new RelayCommand(_ => CurrentView = new HomeMenuViewModel());
         ShowPatientsMenuCommand = new RelayCommand(_ => ShowPatientsMenu());
         ShowSystemSettingsMenuCommand = new RelayCommand(_ => ShowSystemSettingsMenu());
-        ShowExternalSamplesMenuCommand = new RelayCommand(_ => CurrentView = new ExternalSamplesMenuViewModel(_dialogService));
-        ShowAccountsMenuCommand = new RelayCommand(_ => CurrentView = new AccountsMenuViewModel(_dialogService));
+        ShowExternalSamplesMenuCommand = new RelayCommand(_ => CurrentView = new ExternalSamplesMenuViewModel(_navigationService));
+        ShowAccountsMenuCommand = new RelayCommand(_ => CurrentView = new AccountsMenuViewModel(_navigationService));
         ShowBackupMenuCommand = new RelayCommand(_ => CurrentView = new BackupMenuViewModel(_dialogService));
         ShowReportSettingsMenuCommand = new RelayCommand(_ => CurrentView = new ReportSettingsMenuViewModel(_navigationService));
 

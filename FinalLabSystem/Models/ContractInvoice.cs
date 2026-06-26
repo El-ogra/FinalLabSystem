@@ -23,7 +23,7 @@ public partial class ContractInvoice
 
     public decimal PaidAmount { get; set; } = 0;
 
-    public string Status { get; set; } = "DRAFT"; // DRAFT, ISSUED, PAID
+    public string Status { get; set; } = "Pending"; // القيم المعتمدة: Pending / Partial / Paid
 
     public int? CreatedBy { get; set; }
 

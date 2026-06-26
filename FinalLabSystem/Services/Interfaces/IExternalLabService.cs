@@ -4,6 +4,10 @@ using FinalLabSystem.Models;
 
 namespace FinalLabSystem.Services.Interfaces;
 
+/// <summary>
+/// Deprecated: استخدم IExternalLabRegistryService و IExternalShipmentService بدلاً من هذا الواجهة.
+/// سيُحذف هذا الواجهة في Phase 7.
+/// </summary>
 public interface IExternalLabService
 {
     /// <summary>

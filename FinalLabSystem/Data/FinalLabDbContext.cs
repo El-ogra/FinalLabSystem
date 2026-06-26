@@ -306,6 +306,13 @@ public partial class FinalLabDbContext : DbContext
                 .HasMaxLength(20)
                 .HasColumnName("phone2");
             entity.Property(e => e.SchemeId).HasColumnName("scheme_id");
+            entity.Property(e => e.ContractStartDate)
+                .HasColumnName("contract_start_date");
+            entity.Property(e => e.ContractEndDate)
+                .HasColumnName("contract_end_date");
+            entity.Property(e => e.BillingPeriodicity)
+                .HasMaxLength(20)
+                .HasColumnName("billing_periodicity");
 
             entity.HasOne(d => d.Scheme).WithMany(p => p.Companies)
                 .HasForeignKey(d => d.SchemeId)

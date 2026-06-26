@@ -228,6 +228,11 @@ namespace FinalLabSystem.Migrations
                         .HasColumnType("nvarchar(250)")
                         .HasColumnName("address");
 
+                    b.Property<string>("BillingPeriodicity")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasColumnName("billing_periodicity");
+
                     b.Property<string>("CompanyName")
                         .IsRequired()
                         .HasMaxLength(150)
@@ -246,6 +251,14 @@ namespace FinalLabSystem.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)")
                         .HasColumnName("contact_person");
+
+                    b.Property<DateOnly?>("ContractEndDate")
+                        .HasColumnType("date")
+                        .HasColumnName("contract_end_date");
+
+                    b.Property<DateOnly?>("ContractStartDate")
+                        .HasColumnType("date")
+                        .HasColumnName("contract_start_date");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()

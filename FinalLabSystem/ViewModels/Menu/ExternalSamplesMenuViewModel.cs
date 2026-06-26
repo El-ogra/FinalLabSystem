@@ -1,15 +1,16 @@
 using System.Windows.Input;
 using FinalLabSystem.Infrastructure;
-using FinalLabSystem.Services.Interfaces;
+using FinalLabSystem.Infrastructure.Navigation;
+using FinalLabSystem.ViewModels.Settings;
 
 namespace FinalLabSystem.ViewModels.Menu;
 
 public sealed class ExternalSamplesMenuViewModel : ViewModelBase
 {
-    public ExternalSamplesMenuViewModel(IDialogService dialogService)
+    public ExternalSamplesMenuViewModel(INavigationService navigationService)
     {
-        PlaceholderCommand = new RelayCommand(_ => dialogService.ShowMessage("سيتم تفعيل هذه الميزة في المرحلة 4", "قريباً"));
+        NavigateToExternalLabsCommand = new RelayCommand(_ => navigationService.OpenTaskWindow<ExternalLabsWindowViewModel>());
     }
 
-    public ICommand PlaceholderCommand { get; }
+    public ICommand NavigateToExternalLabsCommand { get; }
 }

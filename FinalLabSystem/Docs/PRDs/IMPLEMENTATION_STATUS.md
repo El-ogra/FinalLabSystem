@@ -413,7 +413,164 @@
 ---
 
 ## Phase 4: Billing & Contracts
-**Status:** ⏳ في الانتظار
+
+**Status:** ✅ مكتملة  
+**Date:** 2026-06-26  
+**Total files created:** 27  
+**Total files modified:** 8  
+**Tests:** 431 / 431 — ✅ جميع الاختبارات ناجحة  
+**Build:** ✅ ناجح — 0 أخطاء
+
+---
+
+### Slice 1 — Company Management Foundation
+
+**Status:** ✅ مكتملة
+
+**Files created:**
+- `Services/Interfaces/ICompanyService.cs` — واجهة إدارة الشركات
+- `Services/Implementations/CompanyService.cs` — تنفيذ CRUD الشركات
+- `ViewModels/Settings/CompaniesWindowViewModel.cs` — نموذج إدارة الشركات
+- `ViewModels/Settings/CompanyRowViewModel.cs` — نموذج صف الشركة
+- `Views/Settings/CompaniesWindow.xaml` — نافذة إدارة الشركات
+- `Views/Settings/CompaniesWindow.xaml.cs` — تهيئة النافذة
+- `Tests/Services/CompanyServiceTests.cs` — 8 اختبارات
+
+**Files modified:**
+- `Models/Company.cs` — إضافة `ContractStartDate?`, `ContractEndDate?`, `BillingPeriodicity?`
+- `Data/FinalLabDbContext.cs` — Fluent API للحقول الجديدة
+- `App.xaml.cs` — تسجيل `ICompanyService` في DI + Navigation
+
+**Migration:** `AddCompanyContractFields` — 3 أعمدة nullable
+
+---
+
+### Slice 2 — Pricing Integration
+
+**Status:** ✅ مكتملة
+
+**Files created:**
+- `Models/DTOs/TestPricingResultDto.cs` — DTO نتيجة التسعير
+- `Infrastructure/TestPricingEngine.cs` — محرك التسعير مع fallback
+- `ViewModels/Settings/PriceSchemeWindowViewModel.cs` — نموذج إدارة أسعار التسعير
+- `ViewModels/Settings/PriceSchemeWindow.xaml` — نافذة إدارة التسعير
+- `ViewModels/Settings/PriceSchemeWindow.xaml.cs` — تهيئة النافذة
+- `Tests/Services/PricingServiceTests.cs` — 4 اختبارات
+- `Tests/Infrastructure/TestPricingEngineTests.cs` — 6 اختبارات
+
+**Files modified:**
+- `Services/Interfaces/IPricingService.cs` — إضافة `GetSchemeByIdAsync`, `CreateSchemeAsync`, `UpdateSchemeAsync`
+- `Services/Implementations/PricingService.cs` — تنفيذ الطرق الجديدة
+- `ViewModels/Patients/TestSelectionViewModel.cs` — استبدال `DefaultPrice` بـ `TestPricingEngine`
+- `App.xaml.cs` — تسجيل `TestPricingEngine` + Navigation
+
+---
+
+### Slice 3 — Invoice Workflow
+
+**Status:** ✅ مكتملة
+
+**Files created:**
+- `Services/Interfaces/IInvoiceService.cs` — 5 طرق للفواتير
+- `Services/Implementations/InvoiceService.cs` — مع Transaction في RecordPaymentAsync
+- `Services/Printing/ContractInvoiceTemplate.cs` — قالب طباعة الفاتورة
+- `ViewModels/Settings/ContractInvoiceWindowViewModel.cs` — نموذج إدارة الفواتير
+- `ViewModels/Settings/InvoiceRowViewModel.cs` — نموذج صف الفاتورة
+- `ViewModels/Settings/PaymentRowViewModel.cs` — نموذج صف الدفعة
+- `Views/Settings/ContractInvoiceWindow.xaml` — نافذة إدارة الفواتير
+- `Views/Settings/ContractInvoiceWindow.xaml.cs` — تهيئة النافذة
+- `Tests/Services/InvoiceServiceTests.cs` — 8 اختبارات
+- `Tests/ViewModels/ContractInvoiceWindowViewModelTests.cs` — 6 اختبارات
+
+**Files modified:**
+- `Models/ContractInvoice.cs` — تغيير القيمة الافتراضية للحالة إلى "Pending"
+- `Services/Implementations/ContractService.cs` — تحويل إلى Adapter يستدعي IInvoiceService
+- `App.xaml.cs` — تسجيل `IInvoiceService` + Navigation
+
+---
+
+### Slice 4 — External Labs Management & Shipments
+
+**Status:** ✅ مكتملة
+
+**Files created:**
+- `Services/Interfaces/IExternalLabRegistryService.cs` — واجهة إدارة المعامل الخارجية
+- `Services/Implementations/ExternalLabRegistryService.cs` — تنفيذ CRUD المعامل
+- `Services/Interfaces/IExternalShipmentService.cs` — واجهة الشحنات
+- `Services/Implementations/ExternalShipmentService.cs` — تنفيذ الشحنات مع Transaction
+- `ViewModels/Settings/ExternalLabsWindowViewModel.cs` — نموذج إدارة المعامل (4 تبويبات)
+- `ViewModels/Settings/ExternalLabRowViewModel.cs` — نموذج صف المختبر
+- `ViewModels/Settings/ShipmentRowViewModel.cs` — نموذج صف الشحنة + العناصر
+- `Views/Settings/ExternalLabsWindow.xaml` — نافذة إدارة المعامل
+- `Views/Settings/ExternalLabsWindow.xaml.cs` — تهيئة النافذة
+- `Tests/Services/ExternalLabRegistryServiceTests.cs` — 6 اختبارات
+- `Tests/Services/ExternalShipmentServiceTests.cs` — 8 اختبارات
+
+**Files modified:**
+- `Services/Implementations/ExternalLabService.cs` — تحويل إلى Adapter يستدعي IExternalShipmentService
+- `App.xaml.cs` — تسجيل الخدمات الجديدة + Navigation
+
+---
+
+### Slice 5 — Menu Activation + F7 Wire-up
+
+**Status:** ✅ مكتملة
+
+**Files created:**
+- `Tests/ViewModels/Menu/AccountsMenuViewModelTests.cs` — 4 اختبارات
+- `Tests/ViewModels/Settings/ExternalLabsWindowViewModelTests.cs` — اختبارات F7
+
+**Files modified:**
+- `ViewModels/Menu/AccountsMenuViewModel.cs` — 3 أوامر حقيقية (Companies, Pricing, Invoices) + Cash Drawer placeholder
+- `ViewModels/Menu/ExternalSamplesMenuViewModel.cs` — أمر حقيقي (NavigateToExternalLabs)
+- `ViewModels/MainViewModel.cs` — تمرير INavigationService بدلاً من IDialogService
+- `ViewModels/Patients/PatientRegistrationViewModel.cs` — F7 يفتح ExternalLabsWindow
+- `ViewModels/Patients/TestResultsViewModel.cs` — F7 يفتح ExternalLabsWindow
+- `Tests/ViewModels/Menu/PlaceholderMenusTests.cs` — تحديث ل构造ors الجديدة
+
+---
+
+### Slice 6 — Test Coverage + Cleanup + Status Update
+
+**Status:** ✅ مكتملة
+
+**Files created:**
+- `Tests/ViewModels/Settings/CompaniesWindowViewModelTests.cs` — 6 اختبارات
+- `Tests/ViewModels/Settings/PriceSchemeWindowViewModelTests.cs` — 6 اختبارات
+- `Tests/ViewModels/Patients/TestSelectionViewModelPricingTests.cs` — 6 اختبارات
+- `Tests/Integration/InvoiceWorkflowEndToEndTests.cs` — 5 اختبارات
+- `Tests/Integration/ExternalShipmentEndToEndTests.cs` — 5 اختبارات
+- `Tests/Validation/CompanyContractFieldsValidationTests.cs` — 4 اختبارات
+
+**Files modified:**
+- `Services/Interfaces/IContractService.cs` — إضافة XML doc Deprecated
+- `Services/Interfaces/IExternalLabService.cs` — إضافة XML doc Deprecated
+- `Services/Implementations/ExternalLabService.cs` — تحويل إلى Adapter
+- `Docs/PRDs/IMPLEMENTATION_STATUS.md` — تحديث هذا الملف
+
+---
+
+### Migration — AddCompanyContractFields
+
+**Status:** ✅ مكتملة
+
+**Files created:**
+- `Migrations/20260626032417_AddCompanyContractFields.cs` — 3 أعمدة nullable
+- `Migrations/20260626032417_AddCompanyContractFields.Designer.cs`
+
+**Files modified:**
+- `Migrations/FinalLabDbContextModelSnapshot.cs` — تحديث Snapshot
+
+---
+
+### Tech Debt من Phase 4
+
+| TD | الوصف | الحالة |
+|----|-------|--------|
+| TD-1 | لا حماية من فاتورة مكرّرة (D8 — مخالف لـ V4 سطر 856) | مُوثَّق — مقرر في Phase 7 |
+| TD-2 | إرسال الفاتورة بالإيميل مؤجّل لـ Phase 6 | مُوثَّق — مقرر في Phase 6 |
+| TD-3 | Company.DiscountRate هو double (مقبول) | مُوثَّق — مقبول |
+| TD-4 | IContractService و IExternalLabService لم يُحذفا — محوَّلان إلى Adapters | مُوثَّق — مقرر حذفهما في Phase 7 |
 
 ---
 

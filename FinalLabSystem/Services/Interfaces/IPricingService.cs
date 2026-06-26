@@ -26,4 +26,10 @@ public interface IPricingService
     /// <param name="schemeId">The pricing scheme identifier.</param>
     /// <param name="prices">The test prices to save.</param>
     Task UpdateSchemePricesAsync(int schemeId, List<TestTypePrice> prices);
+
+    Task<PriceScheme?> GetSchemeByIdAsync(int id);
+
+    Task<PriceScheme> CreateSchemeAsync(PriceScheme scheme);
+
+    Task UpdateSchemeAsync(PriceScheme scheme);
 }

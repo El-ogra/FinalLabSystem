@@ -7,20 +7,20 @@ namespace FinalLabSystem.Tests.ViewModels;
 
 public class PlaceholderMenusTests
 {
-    private static (ExternalSamplesMenuViewModel vm, Mock<IDialogService> mockDialog)
+    private static (ExternalSamplesMenuViewModel vm, Mock<INavigationService> mockNav)
         CreateExternalSamplesVM()
     {
-        var mockDialog = new Mock<IDialogService>();
-        var vm = new ExternalSamplesMenuViewModel(mockDialog.Object);
-        return (vm, mockDialog);
+        var mockNav = new Mock<INavigationService>();
+        var vm = new ExternalSamplesMenuViewModel(mockNav.Object);
+        return (vm, mockNav);
     }
 
-    private static (AccountsMenuViewModel vm, Mock<IDialogService> mockDialog)
+    private static (AccountsMenuViewModel vm, Mock<INavigationService> mockNav)
         CreateAccountsVM()
     {
-        var mockDialog = new Mock<IDialogService>();
-        var vm = new AccountsMenuViewModel(mockDialog.Object);
-        return (vm, mockDialog);
+        var mockNav = new Mock<INavigationService>();
+        var vm = new AccountsMenuViewModel(mockNav.Object);
+        return (vm, mockNav);
     }
 
     private static (BackupMenuViewModel vm, Mock<IDialogService> mockDialog)
@@ -40,27 +40,23 @@ public class PlaceholderMenusTests
     }
 
     [Fact]
-    public void ExternalSamples_PlaceholderCommand_ShowsPhase4Dialog()
+    public void ExternalSamples_NavigateToExternalLabsCommand_OpensNavigation()
     {
-        var (vm, mockDialog) = CreateExternalSamplesVM();
+        var (vm, mockNav) = CreateExternalSamplesVM();
 
-        vm.PlaceholderCommand.Execute(null);
+        vm.NavigateToExternalLabsCommand.Execute(null);
 
-        mockDialog.Verify(d => d.ShowMessage(
-            It.Is<string>(s => s.Contains("المرحلة 4")),
-            It.IsAny<string>()), Times.Once);
+        mockNav.Verify(n => n.OpenTaskWindow<FinalLabSystem.ViewModels.Settings.ExternalLabsWindowViewModel>(), Times.Once);
     }
 
     [Fact]
-    public void Accounts_PlaceholderCommand_ShowsPhase5Dialog()
+    public void Accounts_PlaceholderCommand_DoesNotCallNavigation()
     {
-        var (vm, mockDialog) = CreateAccountsVM();
+        var (vm, mockNav) = CreateAccountsVM();
 
         vm.PlaceholderCommand.Execute(null);
 
-        mockDialog.Verify(d => d.ShowMessage(
-            It.Is<string>(s => s.Contains("المرحلة 5")),
-            It.IsAny<string>()), Times.Once);
+        mockNav.Verify(n => n.OpenTaskWindow<It.IsAnyType>(), Times.Never);
     }
 
     [Fact]

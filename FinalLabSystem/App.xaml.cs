@@ -1,4 +1,5 @@
 using FinalLabSystem.Data;
+using FinalLabSystem.Infrastructure;
 using FinalLabSystem.Infrastructure.Navigation;
 using FinalLabSystem.Infrastructure.Session;
 using FinalLabSystem.Infrastructure.Settings;
@@ -101,6 +102,10 @@ public partial class App : Application
             navigation.RegisterWindow<ResultEntryViewModel, ResultEntryWindow>();
             navigation.RegisterWindow<ReportCommentTemplateViewModel, ReportCommentTemplateWindow>();
             navigation.RegisterWindow<TestProfileWindowViewModel, TestProfileWindow>();
+            navigation.RegisterWindow<CompaniesWindowViewModel, CompaniesWindow>();
+            navigation.RegisterWindow<PriceSchemeWindowViewModel, PriceSchemeWindow>();
+            navigation.RegisterWindow<ContractInvoiceWindowViewModel, ContractInvoiceWindow>();
+            navigation.RegisterWindow<ExternalLabsWindowViewModel, ExternalLabsWindow>();
 
             using (var scope = ServiceProvider.CreateScope())
             {
@@ -158,6 +163,12 @@ public partial class App : Application
         services.AddScoped<IResultEditorFactory, DefaultResultEditorFactory>();
         services.AddScoped<IReportCommentTemplateService, ReportCommentTemplateService>();
         services.AddScoped<IReportCommentEngine, ReportCommentEngine>();
+        services.AddScoped<ICompanyService, CompanyService>();
+        services.AddScoped<IPricingService, PricingService>();
+        services.AddScoped<TestPricingEngine>();
+        services.AddScoped<IInvoiceService, InvoiceService>();
+        services.AddScoped<IExternalLabRegistryService, ExternalLabRegistryService>();
+        services.AddScoped<IExternalShipmentService, ExternalShipmentService>();
 
         services.AddLogging(builder =>
         {
@@ -237,6 +248,18 @@ public partial class App : Application
         services.AddTransient<TestProfileWindowViewModel>();
         services.AddTransient<TestProfileWindow>();
         services.AddTransient<SystemSettingsMenuViewModel>();
+
+        services.AddTransient<CompaniesWindowViewModel>();
+        services.AddTransient<CompaniesWindow>();
+
+        services.AddTransient<PriceSchemeWindowViewModel>();
+        services.AddTransient<PriceSchemeWindow>();
+
+        services.AddTransient<ContractInvoiceWindowViewModel>();
+        services.AddTransient<ContractInvoiceWindow>();
+
+        services.AddTransient<ExternalLabsWindowViewModel>();
+        services.AddTransient<ExternalLabsWindow>();
     }
 
     protected override void OnExit(ExitEventArgs e)

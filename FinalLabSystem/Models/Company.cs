@@ -29,6 +29,12 @@ public partial class Company
 
     public string? PaymentTerms { get; set; }
 
+    public DateOnly? ContractStartDate { get; set; }
+
+    public DateOnly? ContractEndDate { get; set; }
+
+    public string? BillingPeriodicity { get; set; }
+
     public bool IsActive { get; set; }
 
     public string? Notes { get; set; }

@@ -8,6 +8,7 @@ using FinalLabSystem.Models;
 using FinalLabSystem.Models.DTOs;
 using FinalLabSystem.Models.Enums;
 using FinalLabSystem.Services.Interfaces;
+using FinalLabSystem.ViewModels.Settings;
 using FinalLabSystem.ViewModels.Patients.Delivery;
 using FinalLabSystem.ViewModels.Patients.Search;
 using FinalLabSystem.Views.Patients;
@@ -76,7 +77,7 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
         NavigateToSearchCommand = new RelayCommand(_ => _navigationService.OpenTaskWindow<PatientSearchViewModel>());
         NavigateToResultEntryCommand = new RelayCommand(_ => _navigationService.OpenTaskWindow<TestResultsViewModel>());
         NavigateToDeliveryCommand = new RelayCommand(_ => _navigationService.OpenTaskWindow<DeliveryViewModel>());
-        NavigateToExternalSamplesCommand = new RelayCommand(_ => _dialogService.ShowMessage("سيتم تفعيل هذه الميزة في المرحلة 4", "قريباً"));
+        NavigateToExternalSamplesCommand = new RelayCommand(_ => _navigationService.OpenTaskWindow<ExternalLabsWindowViewModel>());
     }
 
     public async Task InitializeAsync()

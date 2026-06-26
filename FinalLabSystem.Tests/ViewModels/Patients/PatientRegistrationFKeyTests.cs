@@ -1,3 +1,4 @@
+using FinalLabSystem.Infrastructure;
 using FinalLabSystem.Infrastructure.Navigation;
 using FinalLabSystem.Infrastructure.Session;
 using FinalLabSystem.Services.Interfaces;
@@ -19,11 +20,13 @@ public class PatientRegistrationFKeyTests
         var mockReferralService = new Mock<IReferralService>();
         var mockTestCatalogService = new Mock<ITestCatalogService>();
         var mockFinancialService = new Mock<IFinancialService>();
+        var mockPricingService = new Mock<IPricingService>();
 
         var patientInfo = new PatientInfoViewModel(mockPatientService.Object);
         var referral = new ReferralViewModel(mockReferralService.Object);
         var medicalHistory = new MedicalHistoryViewModel();
-        var testSelection = new TestSelectionViewModel(mockTestCatalogService.Object);
+        var pricingEngine = new TestPricingEngine(mockPricingService.Object);
+        var testSelection = new TestSelectionViewModel(mockTestCatalogService.Object, pricingEngine);
         var financial = new FinancialViewModel(mockFinancialService.Object, mockDialog.Object);
 
         return new PatientRegistrationViewModel(

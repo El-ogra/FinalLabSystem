@@ -17,6 +17,7 @@ using FinalLabSystem.Models.Enums;
 using FinalLabSystem.Services.Interfaces;
 using FinalLabSystem.ViewModels.Patients.Delivery;
 using FinalLabSystem.ViewModels.Patients.Search;
+using FinalLabSystem.ViewModels.Settings;
 
 namespace FinalLabSystem.ViewModels.Patients;
 
@@ -124,7 +125,7 @@ public sealed class TestResultsViewModel : ViewModelBase
         EditSelectedPatientCommand = new AsyncRelayCommand(async _ => await EditSelectedPatientAsync(), _ => HasSelectedPatient);
         PrintReceiptCommand = new AsyncRelayCommand(async _ => await PrintReceiptAsync(), _ => HasSelectedPatient);
         NavigateToResultEntryCommand = new RelayCommand(_ => _navigationService.OpenTaskWindow<TestResultsViewModel>());
-        NavigateToExternalSamplesCommand = new RelayCommand(_ => _dialogService.ShowMessage("سيتم تفعيل هذه الميزة في المرحلة 4", "قريباً"));
+        NavigateToExternalSamplesCommand = new RelayCommand(_ => _navigationService.OpenTaskWindow<ExternalLabsWindowViewModel>());
     }
 
     public ObservableCollection<TodayPatientWithStatusDto> AllPatients
