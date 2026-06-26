@@ -54,7 +54,7 @@ public class ExternalLabsWindowViewModelTests
     }
 
     [Fact]
-    public async Task CreateLabCommand_ShouldCallCreateAndRefresh()
+    public void CreateLabCommand_ShouldCallCreateAndRefresh()
     {
         var (vm, labMock, _) = CreateVM();
         labMock.Setup(l => l.GetAllAsync()).ReturnsAsync(new List<ExternalLab>());

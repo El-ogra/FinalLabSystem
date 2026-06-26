@@ -30,7 +30,7 @@ public class CompaniesWindowViewModelTests
     }
 
     [Fact]
-    public async Task AddCommand_ShouldSetIsEditing()
+    public void AddCommand_ShouldSetIsEditing()
     {
         var (vm, _) = CreateVM();
 
@@ -57,14 +57,14 @@ public class CompaniesWindowViewModelTests
     }
 
     [Fact]
-    public void SaveCommand_ShouldCallUpdate_WhenExistingCompany()
+    public async Task SaveCommand_ShouldCallUpdate_WhenExistingCompany()
     {
         var (vm, mock) = CreateVM();
         mock.Setup(c => c.GetAllAsync()).ReturnsAsync(new List<Company>
         {
             new() { CompanyId = 1, CompanyName = "Old Name", CompanyType = "CORPORATE" }
         });
-        vm.LoadAsync().GetAwaiter().GetResult();
+        await vm.LoadAsync();
         vm.SelectedCompany = vm.Companies[0];
 
         vm.EditModel.CompanyName = "Updated Name";

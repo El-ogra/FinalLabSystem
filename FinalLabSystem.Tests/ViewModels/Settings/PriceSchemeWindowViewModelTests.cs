@@ -59,7 +59,7 @@ public class PriceSchemeWindowViewModelTests
     }
 
     [Fact]
-    public void SaveCommand_ShouldCallUpdate_WhenExistingScheme()
+    public async Task SaveCommand_ShouldCallUpdate_WhenExistingScheme()
     {
         var (vm, pricingMock, catalogMock) = CreateVM();
         pricingMock.Setup(p => p.GetAllSchemesAsync()).ReturnsAsync(new List<PriceScheme>
@@ -67,7 +67,7 @@ public class PriceSchemeWindowViewModelTests
             new() { SchemeId = 1, SchemeName = "Old", IsDefault = true, IsActive = true }
         });
         catalogMock.Setup(c => c.GetAllTestTypesAsync()).ReturnsAsync(new List<TestType>());
-        vm.LoadAsync().GetAwaiter().GetResult();
+        await vm.LoadAsync();
 
         vm.EditModel.SchemeId = 1;
         vm.EditModel.SchemeName = "Updated";
