@@ -36,7 +36,7 @@ public class CashDrawerServiceTests : IDisposable
         var patient = new Patient { PatientId = 1, FullNameAr = "أحمد", PatientCode = "P001", Sex = "M" };
         _context.Patients.Add(patient);
 
-        var staff = new Staff { StaffId = 1, DisplayName = "موظف", IsActive = true };
+        var staff = new Staff { StaffId = 1, DisplayName = "موظف", Username = "testuser", PasswordHash = "hash", IsActive = true };
         _context.Staff.Add(staff);
 
         var visit = new Visit

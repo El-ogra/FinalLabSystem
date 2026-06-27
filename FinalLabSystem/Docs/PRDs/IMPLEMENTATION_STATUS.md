@@ -575,7 +575,195 @@
 ---
 
 ## Phase 5: Inventory & Cash Drawer
-**Status:** ⏳ في الانتظار
+**Status:** ✅ مكتملة  
+**Date:** 2026-06-27  
+**Total files created:** 38  
+**Total files modified:** 14  
+**Tests:** 544 / 544 — ✅ جميع الاختبارات ناجحة  
+**Build:** ✅ ناجح — 0 أخطاء, 0 تحذيرات
+
+---
+
+### Slice 1 — Attendance Foundation
+
+**Status:** ✅ مكتملة
+
+**Files created:**
+- `Services/Interfaces/IAttendanceService.cs` — 10 دوال (6 جديدة)
+- `Services/Implementations/AttendanceService.cs` — تنفيذ الدوال الجديدة
+- `ViewModels/Settings/AttendanceWindowViewModel.cs` — نموذج إدارة الحضور
+- `ViewModels/Settings/AttendanceRowViewModel.cs` — نموذج صف الحضور
+- `ViewModels/Settings/WorkShiftRowViewModel.cs` — نموذج صف الوردية
+- `Views/Settings/AttendanceWindow.xaml` — نافذة إدارة الحضور (TabControl)
+- `Views/Settings/AttendanceWindow.xaml.cs` — تهيئة النافذة
+- `Tests/Services/AttendanceServiceTests.cs` — 10 اختبارات
+- `Tests/ViewModels/Settings/AttendanceWindowViewModelTests.cs` — 6 اختبارات
+- `Tests/Services/AttendanceServiceRegistrationTests.cs` — 1 اختبار
+
+**Files modified:**
+- `App.xaml.cs` — تسجيل IAttendanceService + VM + Window + Navigation
+
+**Tests:** +17 (من 434 إلى 451)  
+**Validation Gate G5.1:** ✅ 451
+
+---
+
+### Slice 2 — Cash Drawer
+
+**Status:** ✅ مكتملة
+
+**Files created:**
+- `Models/DTOs/CashDrawerSummaryDto.cs` — DTO ملخص الدرج
+- `Models/DTOs/CashDrawerFilterDto.cs` — DTO الفلتر
+- `Services/Interfaces/ICashDrawerService.cs` — 6 دوال
+- `Services/Implementations/CashDrawerService.cs` — مع PasswordHasher
+- `Views/Settings/CashDrawerUnlockDialog.xaml` — نافذة طلب كلمة المرور
+- `Views/Settings/CashDrawerUnlockDialog.xaml.cs` — تهيئة
+- `Views/Settings/CashDrawerChangePasswordDialog.xaml` — نافذة تغيير كلمة المرور
+- `Views/Settings/CashDrawerChangePasswordDialog.xaml.cs` — تهيئة
+- `ViewModels/Settings/CashDrawerWindowViewModel.cs` — نموذج إدارة الدرج
+- `Views/Settings/CashDrawerWindow.xaml` — نافذة إدارة الدرج
+- `Views/Settings/CashDrawerWindow.xaml.cs` — تهيئة
+- `Services/Printing/CashDrawerSummaryTemplate.cs` — قالب طباعة الملخص
+- `Tests/Services/CashDrawerServiceTests.cs` — 10 اختبارات
+- `Tests/ViewModels/Settings/CashDrawerWindowViewModelTests.cs` — 8 اختبارات
+- `Tests/Services/CashDrawerServiceRegistrationTests.cs` — 1 اختبار
+
+**Files modified:**
+- `App.xaml.cs` — تسجيل ICashDrawerService + VMs + Windows + Navigation
+- `ViewModels/Menu/AccountsMenuViewModel.cs` — استبدال Placeholder بزر Cash Drawer
+- `MainWindow.xaml` — تحديث DataTemplate
+
+**Tests:** +18 (من 451 إلى 469)  
+**Validation Gate G5.2:** ✅ 469
+
+---
+
+### Slice 3 — Inventory + Low-Stock Alert + Barcode Warning
+
+**Status:** ✅ مكتملة
+
+**Files created:**
+- `Services/Interfaces/IInventoryService.cs` — 6 دوال
+- `Services/Implementations/InventoryService.cs` — مع IsLowStock + GetLowStockCount
+- `ViewModels/Settings/InventoryWindowViewModel.cs` — نموذج إدارة المخزون
+- `ViewModels/Settings/InventoryRowViewModel.cs` — نموذج صف المخزون
+- `Views/Settings/InventoryWindow.xaml` — نافذة إدارة المخزون
+- `Views/Settings/InventoryWindow.xaml.cs` — تهيئة
+- `Views/Settings/StockAdjustmentDialog.xaml` — نافذة تعديل المخزون
+- `Views/Settings/StockAdjustmentDialog.xaml.cs` — تهيئة
+- `Tests/Services/InventoryServiceTests.cs` — 10 اختبارات
+- `Tests/ViewModels/Settings/InventoryWindowViewModelTests.cs` — 6 اختبارات
+- `Tests/ViewModels/Menu/HomeMenuViewModelLowStockTests.cs` — 4 اختبارات
+- `Tests/Validation/TubeMaterialStockMigrationTests.cs` — 3 اختبارات
+- `Tests/Services/InventoryServiceRegistrationTests.cs` — 2 اختبارات
+- `Tests/Patients/BarcodeDialogLowStockWarningTests.cs` — 4 اختبارات
+
+**Files modified:**
+- `Models/TubeMaterial.cs` — إضافة CurrentStock + MinimumStock
+- `Data/FinalLabDbContext.cs` — Fluent mapping للحقلين
+- `Migrations/` — AddTubeMaterialStockFields
+- `ViewModels/Menu/HomeMenuViewModel.cs` — إضافة LowStockCount
+- `ViewModels/MainViewModel.cs` — تمرير IInventoryService
+- `MainWindow.xaml` — low-stock banner
+- `Views/Converters.cs` — LowStockTextConverter + LowStockBrushConverter
+- `ViewModels/Patients/BarcodeDialogViewModel.cs` — فحص المخزون قبل طباعة الملصق
+- `App.xaml.cs` — تسجيل IInventoryService + VMs + Windows + Navigation
+- `Tests/Services/CashDrawerServiceTests.cs` — إصلاح 3 اختبارات (PasswordHash)
+
+**Decision:** فتح InventoryWindow من الواجهة — مؤجّل لمرحلة لاحقة  
+**Tests:** +32 (من 469 إلى 501 — يشمل إصلاح 3 اختبارات سابقة)  
+**Validation Gate G5.3:** ✅ 501
+
+---
+
+### Slice 4 — Referral Commission Report
+
+**Status:** ✅ مكتملة
+
+**Files created:**
+- `Models/DTOs/CommissionReportRow.cs` — DTO بـ 11 حقل
+- `Services/Interfaces/ICommissionReportService.cs` — GetCommissionReportAsync
+- `Services/Implementations/CommissionReportService.cs` — AsNoTracking + date filter
+- `Services/Printing/CommissionReportTemplate.cs` — WPF Table template
+- `ViewModels/Settings/CommissionReportWindowViewModel.cs` — Load + Print + filters
+- `Views/Settings/CommissionReportWindow.xaml` — RTL UI مع DataGrid
+- `Views/Settings/CommissionReportWindow.xaml.cs` — تهيئة
+- `Tests/Services/CommissionReportServiceTests.cs` — 6 اختبارات
+- `Tests/ViewModels/Settings/CommissionReportWindowViewModelTests.cs` — 5 اختبارات
+- `Tests/Services/CommissionReportServiceRegistrationTests.cs` — 2 اختبارات
+
+**Files modified:**
+- `ViewModels/Menu/AccountsMenuViewModel.cs` — إضافة NavigateToCommissionReportCommand
+- `MainWindow.xaml` — زر "تقرير العمولات"
+- `App.xaml.cs` — تسجيل ICommissionReportService + VM + Window + Navigation
+
+**Tests:** +13 (من 501 إلى 514)  
+**Validation Gate G5.4:** ✅ 514
+
+---
+
+### Slice 5 — Outstanding Balance Report
+
+**Status:** ✅ مكتملة
+
+**Files created:**
+- `Models/DTOs/OutstandingBalanceReportRow.cs` — DTO بـ 12 حقل
+- `Services/Interfaces/IOutstandingBalanceReportService.cs` — GetOutstandingBalancesAsync
+- `Services/Implementations/OutstandingBalanceReportService.cs` — AsNoTracking + date filter
+- `Services/Printing/OutstandingBalanceReportTemplate.cs` — WPF Table template
+- `ViewModels/Settings/OutstandingBalanceWindowViewModel.cs` — Load + Print + TotalOutstanding + filters
+- `Views/Settings/OutstandingBalanceWindow.xaml` — RTL UI مع DataGrid
+- `Views/Settings/OutstandingBalanceWindow.xaml.cs` — تهيئة
+- `Tests/Services/OutstandingBalanceReportServiceTests.cs` — 5 اختبارات
+- `Tests/ViewModels/Settings/OutstandingBalanceWindowViewModelTests.cs` — 5 اختبارات
+- `Tests/Services/OutstandingBalanceReportServiceRegistrationTests.cs` — 2 اختبارات
+
+**Files modified:**
+- `ViewModels/Menu/AccountsMenuViewModel.cs` — إضافة NavigateToOutstandingBalanceCommand (زر سادس)
+- `MainWindow.xaml` — زر "الأرصدة المستحقة" مع خلفية #00695C
+- `App.xaml.cs` — تسجيل IOutstandingBalanceReportService + VM + Window + Navigation
+- `Tests/ViewModels/Menu/AccountsMenuViewModelTests.cs` — +2 اختبارات (CommissionReport + OutstandingBalance)
+
+**Tests:** +14 (من 514 إلى 528)  
+**Validation Gate G5.5:** ✅ 528
+
+---
+
+### Slice 6 — Integration Tests + Status Update
+
+**Status:** ✅ مكتملة
+
+**Files created:**
+- `Tests/Integration/AttendanceWorkflowEndToEndTests.cs` — 4 اختبارات (ClockIn/Out, DateRange, HoursWorked, CreateShift)
+- `Tests/Integration/CashDrawerEndToEndTests.cs` — 5 اختبارات (SetPassword, WrongPassword, DailySummary, ChangePassword, IsPasswordSet)
+- `Tests/Integration/InventoryAlertEndToEndTests.cs` — 4 اختبارات (UpdateStock, GetLowStock, IsLowStock, GetLowStockCount)
+- `Tests/Integration/Phase5BuildVerificationTests.cs` — 3 اختبارات (Services, ViewModels, Windows)
+
+**Files modified:**
+- `Docs/PRDs/IMPLEMENTATION_STATUS.md` — هذا الملف
+- `Docs/PRDs/PHASE5-Plan.md` — تحديث Validation Gate + قرارات التنفيذ
+
+**Decisions during execution:**
+- `Staff.PasswordHash` مطلوب في InMemory DB — أُضيف لكل seed data
+- `Payment.PaymentType` مطلوب في InMemory DB — أُضيف لـ seed data
+- Window types لا يمكن الوصول إليها مباشرة في test project (`UseWPF=false`) — استخدام reflection
+- `IDialogService` + `IPrintService` مُسجَّلان كـ Mock في BuildVerification
+
+**Tests:** +16 (من 528 إلى 544)  
+**Validation Gate G5.6:** ✅ 544
+
+---
+
+### Phase 5 — الإجمالي النهائي
+
+| البند | العدد |
+|-------|-------|
+| اختبارات Phase 5 المضافة | 110 |
+| إجمالي الاختبارات | **544** |
+| Build | ✅ 0 أخطاء, 0 تحذيرات |
+| الملفات المُنشأة | 38 |
+| الملفات المُعدَّلة | 14 |
 
 ---
 

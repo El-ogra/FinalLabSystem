@@ -1124,6 +1124,8 @@ public partial class FinalLabDbContext : DbContext
             entity.Property(e => e.TubeColor).HasMaxLength(20).HasColumnName("tube_color");
             entity.Property(e => e.IsActive).HasDefaultValue(true).HasColumnName("is_active");
             entity.Property(e => e.SortOrder).HasColumnName("sort_order");
+            entity.Property(e => e.CurrentStock).HasDefaultValue(0).HasColumnName("current_stock");
+            entity.Property(e => e.MinimumStock).HasDefaultValue(0).HasColumnName("minimum_stock");
         });
 
         modelBuilder.Entity<CollectionType>(entity =>

@@ -4,17 +4,37 @@
         xmlns:vm="clr-namespace:FinalLabSystem.ViewModels"
         xmlns:menu="clr-namespace:FinalLabSystem.ViewModels.Menu"
         xmlns:svm="clr-namespace:FinalLabSystem.ViewModels.Settings"
+        xmlns:conv="clr-namespace:FinalLabSystem.Views"
         Title="FinalLab" Height="720" Width="1100"
         WindowStartupLocation="CenterScreen"
         FlowDirection="RightToLeft">
     <Window.Resources>
+        <conv:IntToVisibilityConverter x:Key="IntToVisibilityConverter"/>
+        <conv:LowStockTextConverter x:Key="LowStockTextConverter"/>
+        <conv:LowStockBrushConverter x:Key="LowStockBrushConverter"/>
+
         <!-- Home menu -->
         <DataTemplate DataType="{x:Type menu:HomeMenuViewModel}">
             <Grid Background="#F5F7FA">
-                <TextBlock Text="{Binding WelcomeMessage}"
-                           FontSize="28" FontWeight="Bold"
-                           HorizontalAlignment="Center" VerticalAlignment="Center"
-                           Foreground="#1A4A52"/>
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding WelcomeMessage}"
+                               FontSize="28" FontWeight="Bold"
+                               HorizontalAlignment="Center"
+                               Foreground="#1A4A52"/>
+                    <Border Background="#FFF3E0" Padding="16,10" Margin="0,24,0,0"
+                            CornerRadius="8"
+                            Visibility="{Binding LowStockCount, Converter={StaticResource IntToVisibilityConverter}}">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <TextBlock Text="&#x26A0;" FontSize="18" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                            <TextBlock Foreground="#E65100" FontSize="16" FontWeight="SemiBold"
+                                       VerticalAlignment="Center">
+                                <Run Text="تنبيه: يوجد"/>
+                                <Run Text="{Binding LowStockCount, Mode=OneWay}"/>
+                                <Run Text="أنواع أنابيب مخزونها منخفض — يُرجى المراجعة"/>
+                            </TextBlock>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
             </Grid>
         </DataTemplate>
 
@@ -77,11 +97,11 @@
             </Grid>
         </DataTemplate>
 
-        <!-- Accounts placeholder -->
+        <!-- Accounts -->
         <DataTemplate DataType="{x:Type menu:AccountsMenuViewModel}">
             <Grid Background="#F5F7FA">
-                <UniformGrid Rows="2" Columns="2"
-                             Width="760" Height="360"
+                <UniformGrid Rows="3" Columns="2"
+                             Width="760" Height="520"
                              HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Button Content="شركات التأمين"
                             Command="{Binding NavigateToCompaniesCommand}"
@@ -99,6 +119,14 @@
                             Command="{Binding NavigateToCashDrawerCommand}"
                             Margin="12" FontSize="22" FontWeight="SemiBold"
                             Background="#E65100" Foreground="White"/>
+                    <Button Content="تقرير العمولات"
+                            Command="{Binding NavigateToCommissionReportCommand}"
+                            Margin="12" FontSize="22" FontWeight="SemiBold"
+                            Background="#6A1B9A" Foreground="White"/>
+                    <Button Content="الأرصدة المستحقة"
+                            Command="{Binding NavigateToOutstandingBalanceCommand}"
+                            Margin="12" FontSize="22" FontWeight="SemiBold"
+                            Background="#00695C" Foreground="White"/>
                 </UniformGrid>
             </Grid>
         </DataTemplate>

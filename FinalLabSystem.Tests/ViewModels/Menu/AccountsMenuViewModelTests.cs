@@ -51,4 +51,26 @@ public class AccountsMenuViewModelTests
 
         navMock.Verify(n => n.OpenTaskWindow<CashDrawerWindowViewModel>(), Times.Once);
     }
+
+    [Fact]
+    public void NavigateToCommissionReportCommand_ShouldCallOpenTaskWindow()
+    {
+        var navMock = new Mock<INavigationService>();
+        var vm = new AccountsMenuViewModel(navMock.Object);
+
+        vm.NavigateToCommissionReportCommand.Execute(null);
+
+        navMock.Verify(n => n.OpenTaskWindow<CommissionReportWindowViewModel>(), Times.Once);
+    }
+
+    [Fact]
+    public void NavigateToOutstandingBalanceCommand_ShouldCallOpenTaskWindow()
+    {
+        var navMock = new Mock<INavigationService>();
+        var vm = new AccountsMenuViewModel(navMock.Object);
+
+        vm.NavigateToOutstandingBalanceCommand.Execute(null);
+
+        navMock.Verify(n => n.OpenTaskWindow<OutstandingBalanceWindowViewModel>(), Times.Once);
+    }
 }

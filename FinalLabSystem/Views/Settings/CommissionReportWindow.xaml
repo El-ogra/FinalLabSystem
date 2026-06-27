@@ -1,0 +1,68 @@
+<Window x:Class="FinalLabSystem.Views.Settings.CommissionReportWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:FinalLabSystem.ViewModels.Settings"
+        Title="تقرير عمولات الإحالات" Height="600" Width="950"
+        WindowStartupLocation="CenterOwner"
+        FlowDirection="RightToLeft"
+        Background="#F5F7FA">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="تقرير عمولات الإحالات"
+                   FontSize="20" FontWeight="Bold"
+                   Foreground="#1A4A52"
+                   HorizontalAlignment="Center"
+                   Margin="0,0,0,12"/>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal"
+                    HorizontalAlignment="Center" Margin="0,0,0,12">
+            <TextBlock Text="من تاريخ:" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="14"/>
+            <DatePicker SelectedDate="{Binding StartDate}" Width="160" Margin="0,0,16,0" FontSize="14"/>
+            <TextBlock Text="إلى تاريخ:" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="14"/>
+            <DatePicker SelectedDate="{Binding EndDate}" Width="160" Margin="0,0,16,0" FontSize="14"/>
+            <Button Content="تحميل"
+                    Command="{Binding LoadCommand}"
+                    Width="100" Height="32" FontSize="14"
+                    Background="#1976D2" Foreground="White"
+                    Margin="0,0,8,0"/>
+            <Button Content="طباعة"
+                    Command="{Binding PrintCommand}"
+                    Width="100" Height="32" FontSize="14"
+                    Background="#2E7D32" Foreground="White"/>
+        </StackPanel>
+
+        <DataGrid Grid.Row="2"
+                  ItemsSource="{Binding Rows}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  Background="White"
+                  FontSize="13"
+                  GridLinesVisibility="Horizontal"
+                  HeadersVisibility="Column"
+                  BorderBrush="#CCCCCC"
+                  BorderThickness="1">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="المحيل" Binding="{Binding ReferralName}" Width="130"/>
+                <DataGridTextColumn Header="النوع" Binding="{Binding SourceType}" Width="80"/>
+                <DataGridTextColumn Header="المريض" Binding="{Binding PatientName}" Width="120"/>
+                <DataGridTextColumn Header="الكود" Binding="{Binding VisitCode}" Width="90"/>
+                <DataGridTextColumn Header="التاريخ" Binding="{Binding VisitDate, StringFormat=yyyy/MM/dd}" Width="90"/>
+                <DataGridTextColumn Header="الإجمالي" Binding="{Binding VisitTotal, StringFormat=N2}" Width="80"/>
+                <DataGridTextColumn Header="المدفوع" Binding="{Binding TotalPaid, StringFormat=N2}" Width="80"/>
+                <DataGridTextColumn Header="العمولة" Binding="{Binding CommissionDue, StringFormat=N2}" Width="80"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <TextBlock Grid.Row="3"
+                   Text="{Binding StatusMessage}"
+                   FontSize="13" Foreground="#666"
+                   HorizontalAlignment="Center"
+                   Margin="0,8,0,0"/>
+    </Grid>
+</Window>

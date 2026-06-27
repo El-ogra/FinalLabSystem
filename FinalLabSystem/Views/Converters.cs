@@ -137,3 +137,36 @@ public sealed class IntToVisibilityConverter : IValueConverter
         throw new NotImplementedException();
     }
 }
+
+public sealed class LowStockTextConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is bool isLow)
+            return isLow ? "منخفض" : "مقبول";
+        return "مقبول";
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public sealed class LowStockBrushConverter : IValueConverter
+{
+    private static readonly SolidColorBrush LowBrush = new(Color.FromRgb(0xD3, 0x2F, 0x2F));
+    private static readonly SolidColorBrush OkBrush = new(Color.FromRgb(0x2E, 0x7D, 0x32));
+
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is bool isLow)
+            return isLow ? LowBrush : OkBrush;
+        return OkBrush;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}

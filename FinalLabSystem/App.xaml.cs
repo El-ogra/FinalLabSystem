@@ -108,6 +108,9 @@ public partial class App : Application
             navigation.RegisterWindow<ExternalLabsWindowViewModel, ExternalLabsWindow>();
             navigation.RegisterWindow<AttendanceWindowViewModel, AttendanceWindow>();
             navigation.RegisterWindow<CashDrawerWindowViewModel, CashDrawerWindow>();
+            navigation.RegisterWindow<InventoryWindowViewModel, InventoryWindow>();
+            navigation.RegisterWindow<CommissionReportWindowViewModel, CommissionReportWindow>();
+            navigation.RegisterWindow<OutstandingBalanceWindowViewModel, OutstandingBalanceWindow>();
 
             using (var scope = ServiceProvider.CreateScope())
             {
@@ -173,6 +176,9 @@ public partial class App : Application
         services.AddScoped<IExternalShipmentService, ExternalShipmentService>();
         services.AddScoped<IAttendanceService, AttendanceService>();
         services.AddScoped<ICashDrawerService, CashDrawerService>();
+        services.AddScoped<IInventoryService, InventoryService>();
+        services.AddScoped<ICommissionReportService, CommissionReportService>();
+        services.AddScoped<IOutstandingBalanceReportService, OutstandingBalanceReportService>();
 
         services.AddLogging(builder =>
         {
@@ -270,6 +276,16 @@ public partial class App : Application
 
         services.AddTransient<CashDrawerWindowViewModel>();
         services.AddTransient<CashDrawerWindow>();
+
+        services.AddTransient<InventoryWindowViewModel>();
+        services.AddTransient<InventoryWindow>();
+        services.AddTransient<StockAdjustmentDialog>();
+
+        services.AddTransient<CommissionReportWindowViewModel>();
+        services.AddTransient<CommissionReportWindow>();
+
+        services.AddTransient<OutstandingBalanceWindowViewModel>();
+        services.AddTransient<OutstandingBalanceWindow>();
     }
 
     protected override void OnExit(ExitEventArgs e)

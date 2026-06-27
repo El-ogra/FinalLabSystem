@@ -14,7 +14,8 @@ public class MainViewModelTests
     {
         var mockNav = new Mock<INavigationService>();
         var mockDialog = new Mock<IDialogService>();
-        var vm = new MainViewModel(mockNav.Object, mockDialog.Object);
+        var mockInventory = new Mock<IInventoryService>();
+        var vm = new MainViewModel(mockNav.Object, mockDialog.Object, mockInventory.Object);
         return (vm, mockNav, mockDialog);
     }
 

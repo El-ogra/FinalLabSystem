@@ -14,14 +14,16 @@ public sealed class MainViewModel : ViewModelBase
 {
     private readonly INavigationService _navigationService;
     private readonly IDialogService _dialogService;
+    private readonly IInventoryService _inventoryService;
     private object? _currentView;
 
-    public MainViewModel(INavigationService navigationService, IDialogService dialogService)
+    public MainViewModel(INavigationService navigationService, IDialogService dialogService, IInventoryService inventoryService)
     {
         _navigationService = navigationService;
         _dialogService = dialogService;
+        _inventoryService = inventoryService;
 
-        ShowHomeMenuCommand = new RelayCommand(_ => CurrentView = new HomeMenuViewModel());
+        ShowHomeMenuCommand = new RelayCommand(_ => CurrentView = new HomeMenuViewModel(_inventoryService));
         ShowPatientsMenuCommand = new RelayCommand(_ => ShowPatientsMenu());
         ShowSystemSettingsMenuCommand = new RelayCommand(_ => ShowSystemSettingsMenu());
         ShowExternalSamplesMenuCommand = new RelayCommand(_ => CurrentView = new ExternalSamplesMenuViewModel(_navigationService));
