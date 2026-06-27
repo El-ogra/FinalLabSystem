@@ -2,6 +2,7 @@ using FinalLabSystem.Infrastructure.Navigation;
 using FinalLabSystem.Services.Interfaces;
 using FinalLabSystem.ViewModels.Menu;
 using Moq;
+using Xunit;
 
 namespace FinalLabSystem.Tests.ViewModels;
 
@@ -50,13 +51,13 @@ public class PlaceholderMenusTests
     }
 
     [Fact]
-    public void Accounts_PlaceholderCommand_DoesNotCallNavigation()
+    public void Accounts_NavigateToCashDrawerCommand_OpensNavigation()
     {
         var (vm, mockNav) = CreateAccountsVM();
 
-        vm.PlaceholderCommand.Execute(null);
+        vm.NavigateToCashDrawerCommand.Execute(null);
 
-        mockNav.Verify(n => n.OpenTaskWindow<It.IsAnyType>(), Times.Never);
+        mockNav.Verify(n => n.OpenTaskWindow<FinalLabSystem.ViewModels.Settings.CashDrawerWindowViewModel>(), Times.Once);
     }
 
     [Fact]

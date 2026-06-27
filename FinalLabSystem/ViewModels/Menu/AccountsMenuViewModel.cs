@@ -12,11 +12,11 @@ public sealed class AccountsMenuViewModel : ViewModelBase
         NavigateToCompaniesCommand = new RelayCommand(_ => navigationService.OpenTaskWindow<CompaniesWindowViewModel>());
         NavigateToPricingCommand = new RelayCommand(_ => navigationService.OpenTaskWindow<PriceSchemeWindowViewModel>());
         NavigateToInvoicesCommand = new RelayCommand(_ => navigationService.OpenTaskWindow<ContractInvoiceWindowViewModel>());
-        PlaceholderCommand = new RelayCommand(_ => { });
+        NavigateToCashDrawerCommand = new RelayCommand(_ => navigationService.OpenTaskWindow<CashDrawerWindowViewModel>());
     }
 
     public ICommand NavigateToCompaniesCommand { get; }
     public ICommand NavigateToPricingCommand { get; }
     public ICommand NavigateToInvoicesCommand { get; }
-    public ICommand PlaceholderCommand { get; }
+    public ICommand NavigateToCashDrawerCommand { get; }
 }

@@ -43,6 +43,7 @@ public class WpfFlowDocumentPrintService : IPrintService
             "Envelope" => new EnvelopeTemplate(),
             "MedicalHistory" => new MedicalHistoryTemplate(),
             "BlankReport" => new BlankReportTemplate(),
+            "CashDrawerSummary" => new CashDrawerSummaryTemplate(),
             _ => throw new NotSupportedException($"Document type '{documentType}' is not supported.")
         };
 

@@ -1,6 +1,8 @@
 using FinalLabSystem.Infrastructure.Navigation;
 using FinalLabSystem.ViewModels.Menu;
+using FinalLabSystem.ViewModels.Settings;
 using Moq;
+using Xunit;
 
 namespace FinalLabSystem.Tests.ViewModels.Menu;
 
@@ -14,7 +16,7 @@ public class AccountsMenuViewModelTests
 
         vm.NavigateToCompaniesCommand.Execute(null);
 
-        navMock.Verify(n => n.OpenTaskWindow<FinalLabSystem.ViewModels.Settings.CompaniesWindowViewModel>(), Times.Once);
+        navMock.Verify(n => n.OpenTaskWindow<CompaniesWindowViewModel>(), Times.Once);
     }
 
     [Fact]
@@ -25,7 +27,7 @@ public class AccountsMenuViewModelTests
 
         vm.NavigateToPricingCommand.Execute(null);
 
-        navMock.Verify(n => n.OpenTaskWindow<FinalLabSystem.ViewModels.Settings.PriceSchemeWindowViewModel>(), Times.Once);
+        navMock.Verify(n => n.OpenTaskWindow<PriceSchemeWindowViewModel>(), Times.Once);
     }
 
     [Fact]
@@ -36,17 +38,17 @@ public class AccountsMenuViewModelTests
 
         vm.NavigateToInvoicesCommand.Execute(null);
 
-        navMock.Verify(n => n.OpenTaskWindow<FinalLabSystem.ViewModels.Settings.ContractInvoiceWindowViewModel>(), Times.Once);
+        navMock.Verify(n => n.OpenTaskWindow<ContractInvoiceWindowViewModel>(), Times.Once);
     }
 
     [Fact]
-    public void PlaceholderCommand_ShouldNotCallNavigation()
+    public void NavigateToCashDrawerCommand_ShouldCallOpenTaskWindow()
     {
         var navMock = new Mock<INavigationService>();
         var vm = new AccountsMenuViewModel(navMock.Object);
 
-        vm.PlaceholderCommand.Execute(null);
+        vm.NavigateToCashDrawerCommand.Execute(null);
 
-        navMock.Verify(n => n.OpenTaskWindow<It.IsAnyType>(), Times.Never);
+        navMock.Verify(n => n.OpenTaskWindow<CashDrawerWindowViewModel>(), Times.Once);
     }
 }

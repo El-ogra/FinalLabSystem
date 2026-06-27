@@ -1,0 +1,125 @@
+<Window x:Class="FinalLabSystem.Views.Settings.CashDrawerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="درج النقدية"
+        Height="700" Width="1100"
+        WindowStartupLocation="CenterOwner"
+        FlowDirection="RightToLeft">
+    <Window.Resources>
+        <Style x:Key="DrawerButtonStyle" TargetType="Button">
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="MinWidth" Value="100"/>
+            <Setter Property="Margin" Value="4"/>
+            <Setter Property="Padding" Value="10,4"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Background="#E3F2FD">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Toolbar -->
+        <Border Grid.Row="0" Background="#1565C0">
+            <StackPanel Orientation="Horizontal" Margin="8,6">
+                <Button Content="تحديث" Command="{Binding RefreshCommand}"
+                        Style="{StaticResource DrawerButtonStyle}"
+                        Background="#1E88E5" Foreground="White"/>
+                <Button Content="طباعة الملخص" Command="{Binding PrintCommand}"
+                        Style="{StaticResource DrawerButtonStyle}"
+                        Background="#43A047" Foreground="White"/>
+                <Button Content="تغيير كلمة المرور" Command="{Binding ChangePasswordCommand}"
+                        Style="{StaticResource DrawerButtonStyle}"
+                        Background="#FF8F00" Foreground="White"/>
+                <Separator Margin="8,0" Background="White"/>
+                <TextBlock Text="التاريخ:" Foreground="White" VerticalAlignment="Center" Margin="4,0"/>
+                <DatePicker SelectedDate="{Binding SelectedDate}"
+                            Width="160" Height="28" Margin="4"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Summary Cards -->
+        <Grid Grid.Row="1" Margin="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="250"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Payments Table -->
+            <DataGrid Grid.Column="0"
+                      ItemsSource="{Binding Payments}"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      CanUserAddRows="False"
+                      AlternatingRowBackground="#F5F5F5"
+                      GridLinesVisibility="Horizontal"
+                      BorderBrush="#CCC"
+                      Margin="0,0,8,0">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="رقم العملية" Binding="{Binding PaymentId}" Width="80"/>
+                    <DataGridTextColumn Header="المريض" Binding="{Binding PatientName}" Width="200"/>
+                    <DataGridTextColumn Header="كود الزيارة" Binding="{Binding VisitCode}" Width="120"/>
+                    <DataGridTextColumn Header="المبلغ" Binding="{Binding Amount, StringFormat=C}" Width="120"/>
+                    <DataGridTextColumn Header="طريقة الدفع" Binding="{Binding PaymentMethod}" Width="100"/>
+                    <DataGridTextColumn Header="التاريخ" Binding="{Binding PaymentDate, StringFormat=yyyy/MM/dd HH:mm}" Width="140"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <!-- Summary Panel -->
+            <Border Grid.Column="1" Background="White" BorderBrush="#CCC"
+                    BorderThickness="1" CornerRadius="4" Padding="12">
+                <StackPanel>
+                    <TextBlock Text="ملخص درج النقدية" FontSize="18" FontWeight="Bold"
+                               Foreground="#1565C0" Margin="0,0,0,16"
+                               HorizontalAlignment="Center"/>
+
+                    <Border Background="#E8F5E9" CornerRadius="4" Padding="12" Margin="0,0,0,12">
+                        <StackPanel>
+                            <TextBlock Text="الكاش" FontSize="14" FontWeight="Bold" Foreground="#2E7D32"/>
+                            <TextBlock Text="{Binding Summary.TotalCashReceived, StringFormat=C}"
+                                       FontSize="22" FontWeight="Bold" Foreground="#1B5E20"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Background="#E3F2FD" CornerRadius="4" Padding="12" Margin="0,0,0,12">
+                        <StackPanel>
+                            <TextBlock Text="التأمين" FontSize="14" FontWeight="Bold" Foreground="#1565C0"/>
+                            <TextBlock Text="{Binding Summary.TotalInsuranceReceived, StringFormat=C}"
+                                       FontSize="22" FontWeight="Bold" Foreground="#0D47A1"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Background="#FFF3E0" CornerRadius="4" Padding="12" Margin="0,0,0,12">
+                        <StackPanel>
+                            <TextBlock Text="العقود" FontSize="14" FontWeight="Bold" Foreground="#E65100"/>
+                            <TextBlock Text="{Binding Summary.TotalContractReceived, StringFormat=C}"
+                                       FontSize="22" FontWeight="Bold" Foreground="#BF360C"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Background="#F3E5F5" CornerRadius="4" Padding="12" Margin="0,0,0,12">
+                        <StackPanel>
+                            <TextBlock Text="الإجمالي" FontSize="14" FontWeight="Bold" Foreground="#6A1B9A"/>
+                            <TextBlock Text="{Binding Summary.GrandTotal, StringFormat=C}"
+                                       FontSize="24" FontWeight="Bold" Foreground="#4A148C"/>
+                        </StackPanel>
+                    </Border>
+
+                    <TextBlock HorizontalAlignment="Center" FontSize="12" Foreground="#666"
+                               Margin="0,8,0,0">
+                        <Run Text="عدد العمليات: "/>
+                        <Run Text="{Binding Summary.PaymentCount, Mode=OneWay}" FontWeight="Bold"/>
+                    </TextBlock>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- Status Bar -->
+        <Border Grid.Row="2" Background="#1565C0" Padding="8,4">
+            <TextBlock Text="{Binding StatusMessage}" Foreground="White" FontSize="12"/>
+        </Border>
+    </Grid>
+</Window>

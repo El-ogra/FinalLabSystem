@@ -7,4 +7,6 @@
     <local:NullToVisibilityConverter x:Key="NullToVisConverter"/>
     <local:AbnormalStatusToBrushConverter x:Key="AbnormalStatusToBrushConverter"/>
     <local:StringEqualsConverter x:Key="StringEqualsConverter"/>
+    <local:DateOnlyConverter x:Key="DateOnlyConverter"/>
+    <local:IntToVisibilityConverter x:Key="IntToVisibilityConverter"/>
 </ResourceDictionary>

@@ -72,4 +72,70 @@ public class AttendanceService : IAttendanceService
         attendance.ClockOut = DateTime.UtcNow;
         await _context.SaveChangesAsync();
     }
+
+    public async Task<List<Attendance>> GetAttendanceByDateRangeAsync(DateOnly from, DateOnly to, int? staffId = null)
+    {
+        var query = _context.Attendances
+            .Include(a => a.Staff)
+            .Include(a => a.Shift)
+            .Where(a => a.AttendanceDate >= from && a.AttendanceDate <= to);
+
+        if (staffId.HasValue)
+            query = query.Where(a => a.StaffId == staffId.Value);
+
+        return await query.OrderByDescending(a => a.AttendanceDate).ThenByDescending(a => a.ClockIn).ToListAsync();
+    }
+
+    public async Task<TimeSpan> GetTotalHoursWorkedAsync(int staffId, DateOnly from, DateOnly to)
+    {
+        var records = await _context.Attendances
+            .Where(a => a.StaffId == staffId
+                     && a.AttendanceDate >= from
+                     && a.AttendanceDate <= to
+                     && a.ClockOut != null)
+            .ToListAsync();
+
+        var total = TimeSpan.Zero;
+        foreach (var r in records)
+            total += r.ClockOut!.Value - r.ClockIn;
+
+        return total;
+    }
+
+    public async Task<Attendance?> GetActiveAttendanceAsync(int staffId)
+    {
+        return await _context.Attendances
+            .Include(a => a.Shift)
+            .Where(a => a.StaffId == staffId && a.ClockOut == null)
+            .OrderByDescending(a => a.ClockIn)
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task<List<WorkShift>> GetAllShiftsAsync()
+    {
+        return await _context.WorkShifts
+            .OrderBy(s => s.ShiftName)
+            .ToListAsync();
+    }
+
+    public async Task<WorkShift> CreateShiftAsync(WorkShift shift)
+    {
+        _context.WorkShifts.Add(shift);
+        await _context.SaveChangesAsync();
+        return shift;
+    }
+
+    public async Task UpdateShiftAsync(WorkShift shift)
+    {
+        _context.WorkShifts.Update(shift);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<List<Staff>> GetAllActiveStaffAsync()
+    {
+        return await _context.Staff
+            .Where(s => s.IsActive)
+            .OrderBy(s => s.DisplayName)
+            .ToListAsync();
+    }
 }

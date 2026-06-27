@@ -106,6 +106,8 @@ public partial class App : Application
             navigation.RegisterWindow<PriceSchemeWindowViewModel, PriceSchemeWindow>();
             navigation.RegisterWindow<ContractInvoiceWindowViewModel, ContractInvoiceWindow>();
             navigation.RegisterWindow<ExternalLabsWindowViewModel, ExternalLabsWindow>();
+            navigation.RegisterWindow<AttendanceWindowViewModel, AttendanceWindow>();
+            navigation.RegisterWindow<CashDrawerWindowViewModel, CashDrawerWindow>();
 
             using (var scope = ServiceProvider.CreateScope())
             {
@@ -169,6 +171,8 @@ public partial class App : Application
         services.AddScoped<IInvoiceService, InvoiceService>();
         services.AddScoped<IExternalLabRegistryService, ExternalLabRegistryService>();
         services.AddScoped<IExternalShipmentService, ExternalShipmentService>();
+        services.AddScoped<IAttendanceService, AttendanceService>();
+        services.AddScoped<ICashDrawerService, CashDrawerService>();
 
         services.AddLogging(builder =>
         {
@@ -260,6 +264,12 @@ public partial class App : Application
 
         services.AddTransient<ExternalLabsWindowViewModel>();
         services.AddTransient<ExternalLabsWindow>();
+
+        services.AddTransient<AttendanceWindowViewModel>();
+        services.AddTransient<AttendanceWindow>();
+
+        services.AddTransient<CashDrawerWindowViewModel>();
+        services.AddTransient<CashDrawerWindow>();
     }
 
     protected override void OnExit(ExitEventArgs e)

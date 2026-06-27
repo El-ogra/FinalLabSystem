@@ -105,3 +105,35 @@ public sealed class ClinicalStatusToBrushConverter : IValueConverter
         return Binding.DoNothing;
     }
 }
+
+public sealed class DateOnlyConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is DateOnly dateOnly)
+            return dateOnly.ToDateTime(TimeOnly.MinValue);
+        return DateTime.Today;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is DateTime dateTime)
+            return DateOnly.FromDateTime(dateTime);
+        return DateOnly.FromDateTime(DateTime.Today);
+    }
+}
+
+public sealed class IntToVisibilityConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is int i)
+            return i > 0 ? Visibility.Visible : Visibility.Collapsed;
+        return Visibility.Collapsed;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}

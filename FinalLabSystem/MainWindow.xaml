@@ -80,15 +80,26 @@
         <!-- Accounts placeholder -->
         <DataTemplate DataType="{x:Type menu:AccountsMenuViewModel}">
             <Grid Background="#F5F7FA">
-                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <TextBlock Text="الحسابات" FontSize="24" FontWeight="Bold"
-                               Foreground="#666" Margin="0,0,0,12"/>
-                    <TextBlock Text="سيتم تفعيل هذه الميزة في المرحلة 5"
-                               FontSize="16" Foreground="#999" Margin="0,0,0,20"/>
-                    <Button Content="العودة للرئيسية"
-                            Command="{Binding DataContext.ShowHomeMenuCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                            Width="150" Height="36" FontSize="14"/>
-                </StackPanel>
+                <UniformGrid Rows="2" Columns="2"
+                             Width="760" Height="360"
+                             HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Button Content="شركات التأمين"
+                            Command="{Binding NavigateToCompaniesCommand}"
+                            Margin="12" FontSize="22" FontWeight="SemiBold"
+                            Background="#1976D2" Foreground="White"/>
+                    <Button Content="نظام التسعير"
+                            Command="{Binding NavigateToPricingCommand}"
+                            Margin="12" FontSize="22" FontWeight="SemiBold"
+                            Background="#455A64" Foreground="White"/>
+                    <Button Content="فواتير العقود"
+                            Command="{Binding NavigateToInvoicesCommand}"
+                            Margin="12" FontSize="22" FontWeight="SemiBold"
+                            Background="#2E7D32" Foreground="White"/>
+                    <Button Content="درج النقدية"
+                            Command="{Binding NavigateToCashDrawerCommand}"
+                            Margin="12" FontSize="22" FontWeight="SemiBold"
+                            Background="#E65100" Foreground="White"/>
+                </UniformGrid>
             </Grid>
         </DataTemplate>
 
