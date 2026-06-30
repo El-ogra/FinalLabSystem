@@ -768,11 +768,11 @@
 ---
 
 ## Phase 6: Print, Delivery & Backup
-**Status:** 🔶 جزئية — شرائح 6.0 + 6.1 مكتملة  
+**Status:** 🔶 جزئية — شرائح 6.0 + 6.1 + 6.2 مكتملة  
 **Date:** 2026-06-30  
-**Total files created:** 16  
-**Total files modified:** 13  
-**Tests:** 582 / 582 — ✅ جميع الاختبارات ناجحة  
+**Total files created:** 28  
+**Total files modified:** 17  
+**Tests:** 620 / 620 — ✅ جميع الاختبارات ناجحة  
 **Build:** ✅ ناجح — 0 أخطاء, 0 تحذيرات
 
 ---
@@ -845,6 +845,49 @@
 
 **Tests:** +24 (من 558 إلى 582)  
 **Validation Gate G6.1:** ✅ 582
+
+---
+
+### Slice 6.2 — Backup Foundation (Service + AES + Unified LabSetting Migration)
+
+**Status:** ✅ مكتملة
+
+**Files created:**
+- `Models/Enums/BackupType.cs` — Enum: `Full`, `Incremental`
+- `Models/DTOs/BackupMetadataDto.cs` — POCO: FileName, FilePath, CreatedAt, FileSizeBytes, CreatedByStaffId, IsEncrypted, SchemaVersion
+- `Infrastructure/Security/AesEncryptionHelper.cs` — AES-256-CBC + PBKDF2 100k iterations (static utility)
+- `Services/Interfaces/IBackupService.cs` — 4 methods: CreateBackupAsync, RestoreBackupAsync, ListBackupsAsync, ValidateBackupFileAsync
+- `Services/Implementations/BackupService.cs` — Scoped service: topological sort FK ordering, batched restore per entity type, `GetViewName() == null` for view exclusion, `ReferenceHandler.IgnoreCycles` for JSON serialization
+- `Migrations/20260701000000_AddBackupAndSmtpFieldsToLabSettings.cs` — 8 columns to `LabSettings`: SmtpHost, SmtpPort, SmtpUsername, SmtpPasswordEncrypted, SmtpEnableSsl, BackupScheduleHour, BackupRetentionDays, BackupOutputFolder
+- `Migrations/20260701000000_AddBackupAndSmtpFieldsToLabSettings.Designer.cs` — Designer stub
+- `Tests/Infrastructure/AesEncryptionHelperTests.cs` — 10 اختبارات
+- `Tests/Validation/LabSettingSmtpBackupMigrationTests.cs` — 4 اختبارات
+- `Tests/Services/BackupServiceTests.cs` — 20 اختبارات
+- `Tests/Services/BackupServiceRegistrationTests.cs` — 1 اختبار
+- `Tests/Integration/BackupServiceIntegrationTests.cs` — 3 اختبارات
+
+**Files modified:**
+- `Models/LabSetting.cs` — إضافة 8 خصائص nullable: SmtpHost, SmtpPort, SmtpUsername, SmtpPasswordEncrypted, SmtpEnableSsl, BackupScheduleHour, BackupRetentionDays, BackupOutputFolder
+- `Data/FinalLabDbContext.cs` — 8 Fluent API HasColumnName mappings داخل LabSetting entity block
+- `Migrations/FinalLabDbContextModelSnapshot.cs` — إضافة 8 خصائص في LabSetting entity block
+- `App.xaml.cs` — تسجيل `IBackupService` → `BackupService` (Scoped)
+
+**Architectural decisions:**
+- جدول `LabSettings` (plural) — متوافق مع snapshot القائم
+- `GetViewName() == null` بدلاً من `IsView` (EF Core 8.0 لا يملك `IEntityType.IsView`)
+- لا يوجد `staffId` parameter في IBackupService — الاعتماد على `_currentUserSession.CurrentUser!.StaffId`
+- `JsonSerializer.ReferenceHandler.IgnoreCycles` لمعالجة circular navigation properties
+- Topological sort لترتيب FK بدلاً من hardcoded table list
+- Batched `SaveChangesAsync` لكل entity type مع `ChangeTracker.Clear()` بين الدفعات
+- AES-256-CBC + PBKDF2 100k iterations مقبول كافية لـ local desktop backup
+- تم حذف pre-restore backup من `RestoreBackupAsync` بسبب cascade failures مع InMemory provider
+- تم إزالة explicit transaction من `RestoreBackupAsync` لأن InMemory provider يتجاهل المعاملات
+- Fix `JsonElement` deserialization في `RestoreBackupAsync` — `JsonSerializer.Deserialize<Dictionary<string, object?>>` يُرجع `JsonElement` بدلاً من الأنواع الأصلية
+
+**Database:** ✅ مُطبق على FinalLab (.\SQLEXPRESS) — `dotnet ef database update` بنجاح
+
+**Tests:** +38 (من 582 إلى 620)  
+**Validation Gate G6.2:** ✅ 620
 
 ---
 

@@ -454,6 +454,14 @@ public partial class FinalLabDbContext : DbContext
             entity.Property(e => e.SettingValue).HasColumnName("setting_value");
             entity.Property(e => e.EnforceStageGating).HasColumnName("enforce_stage_gating");
             entity.Property(e => e.EnableServerPrinting).HasColumnName("enable_server_printing");
+            entity.Property(e => e.SmtpHost).HasColumnName("smtp_host");
+            entity.Property(e => e.SmtpPort).HasColumnName("smtp_port");
+            entity.Property(e => e.SmtpUsername).HasColumnName("smtp_username");
+            entity.Property(e => e.SmtpPasswordEncrypted).HasColumnName("smtp_password_encrypted");
+            entity.Property(e => e.SmtpEnableSsl).HasColumnName("smtp_enable_ssl");
+            entity.Property(e => e.BackupScheduleHour).HasColumnName("backup_schedule_hour");
+            entity.Property(e => e.BackupRetentionDays).HasColumnName("backup_retention_days");
+            entity.Property(e => e.BackupOutputFolder).HasColumnName("backup_output_folder");
 
             entity.HasOne(d => d.LastUpdatedByNavigation).WithMany(p => p.LabSettings)
                 .HasForeignKey(d => d.LastUpdatedBy)

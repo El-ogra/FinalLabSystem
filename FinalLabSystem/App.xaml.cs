@@ -179,6 +179,7 @@ public partial class App : Application
         services.AddScoped<IInventoryService, InventoryService>();
         services.AddScoped<ICommissionReportService, CommissionReportService>();
         services.AddScoped<IOutstandingBalanceReportService, OutstandingBalanceReportService>();
+        services.AddScoped<IBackupService, BackupService>();
 
         services.AddLogging(builder =>
         {

@@ -23,4 +23,13 @@ public partial class LabSetting
 
     public bool EnforceStageGating { get; set; } = true;
     public bool EnableServerPrinting { get; set; } = false;
+
+    public string? SmtpHost { get; set; }
+    public int? SmtpPort { get; set; }
+    public string? SmtpUsername { get; set; }
+    public string? SmtpPasswordEncrypted { get; set; }
+    public bool? SmtpEnableSsl { get; set; }
+    public int? BackupScheduleHour { get; set; }
+    public int? BackupRetentionDays { get; set; }
+    public string? BackupOutputFolder { get; set; }
 }

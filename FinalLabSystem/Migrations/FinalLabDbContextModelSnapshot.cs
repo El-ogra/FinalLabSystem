@@ -709,6 +709,38 @@ namespace FinalLabSystem.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("setting_value");
 
+                    b.Property<string>("SmtpHost")
+                        .HasColumnType("nvarchar(200)")
+                        .HasColumnName("smtp_host");
+
+                    b.Property<int?>("SmtpPort")
+                        .HasColumnType("int")
+                        .HasColumnName("smtp_port");
+
+                    b.Property<string>("SmtpUsername")
+                        .HasColumnType("nvarchar(200)")
+                        .HasColumnName("smtp_username");
+
+                    b.Property<string>("SmtpPasswordEncrypted")
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnName("smtp_password_encrypted");
+
+                    b.Property<bool?>("SmtpEnableSsl")
+                        .HasColumnType("bit")
+                        .HasColumnName("smtp_enable_ssl");
+
+                    b.Property<int?>("BackupScheduleHour")
+                        .HasColumnType("int")
+                        .HasColumnName("backup_schedule_hour");
+
+                    b.Property<int?>("BackupRetentionDays")
+                        .HasColumnType("int")
+                        .HasColumnName("backup_retention_days");
+
+                    b.Property<string>("BackupOutputFolder")
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnName("backup_output_folder");
+
                     b.HasKey("SettingKey")
                         .HasName("PK__LabSetti__0DFAC426DE80F226");
 
