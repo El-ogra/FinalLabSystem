@@ -12,7 +12,7 @@ using FinalLabSystem.ViewModels.Settings;
 using FinalLabSystem.ViewModels.Patients.Delivery;
 using FinalLabSystem.ViewModels.Patients.Search;
 using FinalLabSystem.Views.Patients;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace FinalLabSystem.ViewModels.Patients;
 
@@ -24,6 +24,9 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
     private readonly INavigationService _navigationService;
     private readonly ICurrentUserSession _currentUserSession;
     private readonly IDialogService _dialogService;
+    private readonly IBarcodeDialogFactory _barcodeFactory;
+    private readonly IReceiptDialogFactory _receiptFactory;
+    private readonly ILogger<PatientRegistrationViewModel> _logger;
     private int _currentPatientId;
     private int _currentVisitId;
     private bool _isEditMode;
@@ -43,7 +46,10 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
         ISampleTrackingService sampleTrackingService,
         INavigationService navigationService,
         ICurrentUserSession currentUserSession,
-        IDialogService dialogService)
+        IDialogService dialogService,
+        IBarcodeDialogFactory barcodeFactory,
+        IReceiptDialogFactory receiptFactory,
+        ILogger<PatientRegistrationViewModel> logger)
     {
         PatientInfo = patientInfo;
         Referral = referral;
@@ -56,6 +62,9 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
         _navigationService = navigationService;
         _currentUserSession = currentUserSession;
         _dialogService = dialogService;
+        _barcodeFactory = barcodeFactory;
+        _receiptFactory = receiptFactory;
+        _logger = logger;
         TodayPatients = new ObservableCollection<TodayPatientWithStatusDto>();
 
         TestSelection.TestsChanged += (_, _) =>
@@ -89,8 +98,9 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
             await TestSelection.InitializeAsync();
             await ClearFormAsync();
         }
-        catch
+        catch (Exception ex)
         {
+            _logger.LogError(ex, "Failed to initialize PatientRegistrationViewModel");
             _dialogService.ShowError("حدث خطأ أثناء تهيئة النموذج.");
         }
     }
@@ -227,7 +237,8 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
         {
             var patient = PatientInfo.ToPatient();
             patient.PatientId = CurrentPatientId;
-            var staffId = _currentUserSession.CurrentUser?.StaffId ?? 1;
+            var staffId = _currentUserSession.CurrentUser?.StaffId
+                ?? throw new InvalidOperationException("لا يمكن حفظ الزيارة بدون جلسة مستخدم نشطة.");
             patient.CreatedBy = staffId;
 
             var visit = new Visit
@@ -340,32 +351,38 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
 
     private async Task BarcodeAsync()
     {
-        var staffId = _currentUserSession.CurrentUser?.StaffId ?? 1;
-        await _sampleTrackingService.GenerateBarcodesForVisitAsync(CurrentVisitId, staffId);
-        var viewModel = App.ServiceProvider.GetRequiredService<BarcodeDialogViewModel>();
-        await viewModel.LoadTubesAsync(CurrentVisitId);
-        var dialog = new BarcodeDialog(viewModel)
+        try
         {
-            Owner = Application.Current.Windows.OfType<Window>().FirstOrDefault(window => window.IsActive)
-        };
-        dialog.ShowDialog();
+            var staffId = _currentUserSession.CurrentUser?.StaffId
+                ?? throw new InvalidOperationException("لا يمكن إنشاء باركود بدون جلسة مستخدم نشطة.");
+            await _sampleTrackingService.GenerateBarcodesForVisitAsync(CurrentVisitId, staffId);
+            _barcodeFactory.Show(CurrentVisitId,
+                Application.Current.Windows.OfType<Window>().FirstOrDefault(window => window.IsActive));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to open BarcodeDialog for visit {VisitId}", CurrentVisitId);
+            _dialogService.ShowError("حدث خطأ أثناء فتح نافذة الباركود.");
+        }
     }
 
     private async Task ReceiptAsync()
     {
-        var dto = await _visitService.GetVisitFullDataAsync(CurrentVisitId);
-        var viewModel = App.ServiceProvider.GetRequiredService<ReceiptDialogViewModel>();
-        await viewModel.InitializeAsync(dto);
-        if (!viewModel.CanPrint)
+        try
         {
-            _dialogService.ShowWarning("تم طباعة الإيصال مسبقاً لهذا الحالة المالية.", "طباعة الإيصال");
-            return;
+            var dto = await _visitService.GetVisitFullDataAsync(CurrentVisitId);
+            var printed = _receiptFactory.Show(dto,
+                Application.Current.Windows.OfType<Window>().FirstOrDefault(window => window.IsActive));
+            if (!printed)
+            {
+                _dialogService.ShowWarning("تم طباعة الإيصال مسبقاً لهذا الحالة المالية.", "طباعة الإيصال");
+            }
         }
-        var dialog = new ReceiptDialog(viewModel)
+        catch (Exception ex)
         {
-            Owner = Application.Current.Windows.OfType<Window>().FirstOrDefault(window => window.IsActive)
-        };
-        dialog.ShowDialog();
+            _logger.LogError(ex, "Failed to open ReceiptDialog for visit {VisitId}", CurrentVisitId);
+            _dialogService.ShowError("حدث خطأ أثناء فتح نافذة الإيصال.");
+        }
     }
 
     private async Task LoadTodayPatientsAsync()

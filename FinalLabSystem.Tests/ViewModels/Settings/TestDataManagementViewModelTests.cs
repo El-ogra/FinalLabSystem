@@ -13,6 +13,7 @@ public class TestDataManagementViewModelTests
     private readonly Mock<IDialogService> _dialogServiceMock = new();
     private readonly Mock<INavigationService> _navigationServiceMock = new();
     private readonly Mock<ILogger<TestDataManagementViewModel>> _loggerMock = new();
+    private readonly Mock<INormalRangesWindowFactory> _normalRangesFactoryMock = new();
 
     private TestDataManagementViewModel CreateVm()
     {
@@ -24,7 +25,8 @@ public class TestDataManagementViewModelTests
             _catalogServiceMock.Object,
             _navigationServiceMock.Object,
             _loggerMock.Object,
-            _dialogServiceMock.Object);
+            _dialogServiceMock.Object,
+            _normalRangesFactoryMock.Object);
     }
 
     [Fact]
@@ -38,7 +40,8 @@ public class TestDataManagementViewModelTests
             _catalogServiceMock.Object,
             _navigationServiceMock.Object,
             _loggerMock.Object,
-            _dialogServiceMock.Object);
+            _dialogServiceMock.Object,
+            _normalRangesFactoryMock.Object);
 
         Assert.NotNull(vm.TestList);
         Assert.NotNull(vm.TestDetail);

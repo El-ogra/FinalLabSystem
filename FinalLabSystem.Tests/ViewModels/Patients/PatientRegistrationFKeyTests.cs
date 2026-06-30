@@ -3,6 +3,7 @@ using FinalLabSystem.Infrastructure.Navigation;
 using FinalLabSystem.Infrastructure.Session;
 using FinalLabSystem.Services.Interfaces;
 using FinalLabSystem.ViewModels.Patients;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace FinalLabSystem.Tests.ViewModels;
@@ -21,6 +22,9 @@ public class PatientRegistrationFKeyTests
         var mockTestCatalogService = new Mock<ITestCatalogService>();
         var mockFinancialService = new Mock<IFinancialService>();
         var mockPricingService = new Mock<IPricingService>();
+        var mockBarcodeFactory = new Mock<IBarcodeDialogFactory>();
+        var mockReceiptFactory = new Mock<IReceiptDialogFactory>();
+        var mockLogger = new Mock<ILogger<PatientRegistrationViewModel>>();
 
         var patientInfo = new PatientInfoViewModel(mockPatientService.Object);
         var referral = new ReferralViewModel(mockReferralService.Object);
@@ -40,7 +44,10 @@ public class PatientRegistrationFKeyTests
             mockSampleTracking.Object,
             mockNavigation.Object,
             mockSession.Object,
-            mockDialog.Object);
+            mockDialog.Object,
+            mockBarcodeFactory.Object,
+            mockReceiptFactory.Object,
+            mockLogger.Object);
     }
 
     [Fact]

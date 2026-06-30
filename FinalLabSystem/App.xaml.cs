@@ -194,6 +194,9 @@ public partial class App : Application
         services.AddSingleton<ILabelPrintService, WpfLabelPrintService>();
         services.AddSingleton<IAuditTrailDialogService, AuditTrailDialogService>();
         services.AddSingleton<IResultEntryDialogService, ResultEntryDialogService>();
+        services.AddSingleton<IBarcodeDialogFactory, BarcodeDialogFactory>();
+        services.AddSingleton<IReceiptDialogFactory, ReceiptDialogFactory>();
+        services.AddSingleton<INormalRangesWindowFactory, NormalRangesWindowFactory>();
 
         services.AddTransient<LoginViewModel>();
         services.AddTransient<LoginView>();

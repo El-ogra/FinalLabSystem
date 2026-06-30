@@ -3,8 +3,6 @@ using System.Windows.Input;
 using FinalLabSystem.Infrastructure;
 using FinalLabSystem.Infrastructure.Navigation;
 using FinalLabSystem.Services.Interfaces;
-using FinalLabSystem.Views.Settings;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace FinalLabSystem.ViewModels.Settings;
@@ -15,6 +13,7 @@ public sealed class TestDataManagementViewModel : ViewModelBase, IAsyncInitializ
     private readonly INavigationService _navigationService;
     private readonly ILogger<TestDataManagementViewModel> _logger;
     private readonly IDialogService _dialogService;
+    private readonly INormalRangesWindowFactory _normalRangesFactory;
     private bool _isAdding;
     private bool _isEditing;
     private bool _isBrowsing = true;
@@ -27,7 +26,8 @@ public sealed class TestDataManagementViewModel : ViewModelBase, IAsyncInitializ
         ITestCatalogService testCatalogService,
         INavigationService navigationService,
         ILogger<TestDataManagementViewModel> logger,
-        IDialogService dialogService)
+        IDialogService dialogService,
+        INormalRangesWindowFactory normalRangesFactory)
     {
         TestList = testList;
         TestDetail = testDetail;
@@ -35,6 +35,7 @@ public sealed class TestDataManagementViewModel : ViewModelBase, IAsyncInitializ
         _navigationService = navigationService;
         _logger = logger;
         _dialogService = dialogService;
+        _normalRangesFactory = normalRangesFactory;
 
         AddCommand = new RelayCommand(_ => Add(), _ => IsBrowsing);
         SaveCommand = new AsyncRelayCommand(SaveAsync, () => (IsAdding || IsEditing) && TestDetail.IsDirty);
@@ -190,7 +191,7 @@ public sealed class TestDataManagementViewModel : ViewModelBase, IAsyncInitializ
         }
     }
 
-    private async void OnOpenNormalRangesRequested(object? sender, EventArgs e)
+    private void OnOpenNormalRangesRequested(object? sender, EventArgs e)
     {
         try
         {
@@ -200,12 +201,8 @@ public sealed class TestDataManagementViewModel : ViewModelBase, IAsyncInitializ
                 return;
             }
 
-            var window = App.ServiceProvider.GetRequiredService<NormalRangesWindow>();
-            if (window.DataContext is NormalRangeWindowViewModel vm)
-                await vm.InitializeAsync(TestDetail.EditableTest);
-
-            window.Owner = Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive);
-            window.ShowDialog();
+            _normalRangesFactory.Open(TestDetail.EditableTest,
+                Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive));
         }
         catch (Exception ex)
         {

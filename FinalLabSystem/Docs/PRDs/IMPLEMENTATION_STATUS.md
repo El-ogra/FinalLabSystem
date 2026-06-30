@@ -768,7 +768,50 @@
 ---
 
 ## Phase 6: Print, Delivery & Backup
-**Status:** ⏳ في الانتظار
+**Status:** 🔶 جزئية — شريحة 6.0 مكتملة  
+**Date:** 2026-06-30  
+**Total files created:** 9  
+**Total files modified:** 5  
+**Tests:** 558 / 558 — ✅ جميع الاختبارات ناجحة  
+**Build:** ✅ ناجح — 0 أخطاء, 0 تحذيرات
+
+---
+
+### Slice 6.0 — Foundation Cleanup
+
+**Status:** ✅ مكتملة
+
+**Files created:**
+- `Services/Interfaces/IBarcodeDialogFactory.cs` — واجهة Factory لـ BarcodeDialog: `BarcodeDialogResult Show(int visitId, Window? owner)`
+- `Services/Implementations/BarcodeDialogFactory.cs` — تنفيذ بنمط `_serviceProvider.GetService` (Singleton، بدون `CreateScope()`)
+- `Services/Interfaces/IReceiptDialogFactory.cs` — واجهة Factory لـ ReceiptDialog: `bool Show(VisitFullDto dto, Window? owner)`
+- `Services/Implementations/ReceiptDialogFactory.cs` — تنفيذ: `InitializeAsync` + فحص `CanPrint` + `ShowDialog` (Singleton)
+- `Services/Interfaces/INormalRangesWindowFactory.cs` — واجهة Factory لـ NormalRangesWindow: `void Open(TestType editableTest, Window? owner)`
+- `Services/Implementations/NormalRangesWindowFactory.cs` — تنفيذ: `vm.InitializeAsync(editableTest)` + `ShowDialog` (Singleton)
+- `Models/Enums/BarcodeDialogResult.cs` — Enum: `Printed`, `Cancelled`
+- `Tests/Services/BarcodeDialogFactoryTests.cs` — 4 اختبارات
+- `Tests/Services/ReceiptDialogFactoryTests.cs` — 4 اختبارات
+- `Tests/Services/NormalRangesWindowFactoryTests.cs` — 3 اختبارات
+- `Tests/ViewModels/Patients/PatientRegistrationViewModelFoundationTests.cs` — 3 اختبارات
+
+**Files modified:**
+- `ViewModels/Patients/PatientRegistrationViewModel.cs` — حقن `IBarcodeDialogFactory` + `IReceiptDialogFactory` + `ILogger`؛ استبدال `App.ServiceProvider.GetRequiredService` بـ factories؛ استبدال `StaffId ?? 1` بـ `throw InvalidOperationException` في الموضعين 230 و 343؛ تحسين catch block في `InitializeAsync` مع `Exception ex` + `_logger.LogError`؛ إضافة `try/catch` في `BarcodeAsync` و `ReceiptAsync`
+- `ViewModels/Settings/TestDataManagementViewModel.cs` — استبدال `App.ServiceProvider.GetRequiredService<NormalRangesWindow>` بـ `_normalRangesFactory.Open()`؛ حذف `using Microsoft.Extensions.DependencyInjection` و `using FinalLabSystem.Views.Settings`؛ تغيير `async void OnOpenNormalRangesRequested` إلى `void`
+- `App.xaml.cs` — تسجيل `IBarcodeDialogFactory` → `BarcodeDialogFactory` (Singleton)، `IReceiptDialogFactory` → `ReceiptDialogFactory` (Singleton)، `INormalRangesWindowFactory` → `NormalRangesWindowFactory` (Singleton)
+- `Tests/ViewModels/Patients/PatientRegistrationFKeyTests.cs` — إضافة معاملات `barcodeFactory` + `receiptFactory` + `logger` المُوهمة
+- `Tests/ViewModels/Settings/TestDataManagementViewModelTests.cs` — إضافة معامل `normalRangesFactory` المُوهم
+
+**Architectural decisions:**
+- لا استخدام `CreateScope()` داخل الـ factories — اتساقاً مع نمط `IAuditTrailDialogService` و `IResultEntryDialogService` الحاليين
+- `Window.GetWindow(this)` لم يُستخدم (لا يعمل في ViewModel) — الاعتماد على `Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive)`
+- اختبارات WPF Window لا يمكن تشغيلها في بيئة `UseWPF=false` — الاختبارات تتحقق من حلّ ViewModel من DI فقط
+
+**Notes for Slice 6.1:**
+- `IPrintService` مُسجَّل Scoped (`App.xaml.cs:193`) — عند بناء `PrintPreviewDialogService` كـ Singleton، يجب استخدام `IServiceProvider.CreateScope()` داخله لحل `IPrintService` بشكل صحيح
+- نمط `CreateScope()` لم يُطبق بعد على أي خدمة حالية — إذا طُبِّق في 6.1، يجب تحديث `AuditTrailDialogService` و `ResultEntryDialogService` و الـ factories الثلاثة اتساقاً
+
+**Tests:** +14 (من 544 إلى 558)  
+**Validation Gate G6.0:** ✅ 558
 
 ---
 
