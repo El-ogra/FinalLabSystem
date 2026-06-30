@@ -768,11 +768,11 @@
 ---
 
 ## Phase 6: Print, Delivery & Backup
-**Status:** 🔶 جزئية — شريحة 6.0 مكتملة  
+**Status:** 🔶 جزئية — شرائح 6.0 + 6.1 مكتملة  
 **Date:** 2026-06-30  
-**Total files created:** 9  
-**Total files modified:** 5  
-**Tests:** 558 / 558 — ✅ جميع الاختبارات ناجحة  
+**Total files created:** 16  
+**Total files modified:** 13  
+**Tests:** 582 / 582 — ✅ جميع الاختبارات ناجحة  
 **Build:** ✅ ناجح — 0 أخطاء, 0 تحذيرات
 
 ---
@@ -812,6 +812,39 @@
 
 **Tests:** +14 (من 544 إلى 558)  
 **Validation Gate G6.0:** ✅ 558
+
+---
+
+### Slice 6.1 — PrintPreview MVVM Refactor
+
+**Status:** ✅ مكتملة
+
+**Files created:**
+- `ViewModels/Patients/PrintPreviewViewModel.cs` — ViewModel مع `Document`, `Description`, `PrintCommand`, `CloseCommand`, `RequestClose`
+- `Services/Interfaces/IPrintPreviewDialogService.cs` — واجهة خدمة فتح نافذة PrintPreview: `void Show(FlowDocument, string, Window? owner)`
+- `Services/Implementations/PrintPreviewDialogService.cs` — تنفيذ مع `IServiceProvider.CreateScope()` لحل `IPrintService` (Scoped) من Singleton
+- `Tests/Services/IPrintServiceExtensionTests.cs` — 4 اختبارات
+- `Tests/ViewModels/Patients/PrintPreviewViewModelTests.cs` — 7 اختبارات
+- `Tests/Services/PrintPreviewDialogServiceTests.cs` — 7 اختبارات
+- `Tests/ViewModels/Patients/PrintPreviewWindowMvvmPurityTests.cs` — 5 اختبارات
+
+**Files modified:**
+- `Services/Interfaces/IPrintService.cs` — إضافة `Task PrintFlowDocumentAsync(FlowDocument, string)`
+- `Services/Implementations/WpfFlowDocumentPrintService.cs` — إضافة `PrintFlowDocumentAsync` + استخراج `ShowPrintDialogAndPrintAsync` كـ `protected virtual` helper
+- `Views/Patients/PrintPreviewWindow.xaml` — استبدال `Click=` بـ `Command="{Binding ...}"` لـ PrintButton و CloseButton + ربط `Document` بـ `DocumentViewer`
+- `Views/Patients/PrintPreviewWindow.xaml.cs` — تقليص إلى constructor فقط (8 أسطر)
+- `ViewModels/Patients/ReceiptDialogViewModel.cs` — حقن `IPrintPreviewDialogService` كمعامل رابع + استبدال `new PrintPreviewWindow(document)` بـ `_printPreviewDialogService.Show(document, "إيصال المريض")`
+- `App.xaml.cs` — تسجيل `IPrintPreviewDialogService` (Singleton)، `PrintPreviewViewModel` (Transient)، `PrintPreviewWindow` (Transient)
+- `Tests/ViewModels/ReceiptDialogViewModelTests.cs` — تحديث `CreateViewModel` Helper بإضافة `Mock<IPrintPreviewDialogService>` الرابع
+- `Tests/Services/ReceiptDialogFactoryTests.cs` — تحديث إنشاء VM بإضافة `Mock<IPrintPreviewDialogService>`
+
+**Architectural decisions:**
+- `IPrintPreviewDialogService` كـ Singleton مع `CreateScope()` داخلياً — يخالف نمط 6.0 ولكنه ضروري لأن `IPrintService` مسجَّل Scoped
+- اختبارات WPF Window تستخدم Mock لـ `IServiceScopeFactory` بسلسلة 4 Moq متداخلة بدلاً من إنشاء Window حقيقي (يتطلب STA thread)
+- استبعاد اختبارات XAML النصية من النطاق — ليست اختبارات وحدة حقيقية
+
+**Tests:** +24 (من 558 إلى 582)  
+**Validation Gate G6.1:** ✅ 582
 
 ---
 

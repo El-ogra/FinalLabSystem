@@ -15,12 +15,12 @@
                     Width="110"
                     Height="34"
                     Margin="8,0,0,0"
-                    Click="PrintButton_OnClick"/>
+                    Command="{Binding PrintCommand}"/>
             <Button Content="إغلاق"
                     Width="110"
                     Height="34"
-                    Click="CloseButton_OnClick"/>
+                    Command="{Binding CloseCommand}"/>
         </StackPanel>
-        <DocumentViewer x:Name="PreviewViewer"/>
+        <DocumentViewer Document="{Binding Document}"/>
     </DockPanel>
 </Window>

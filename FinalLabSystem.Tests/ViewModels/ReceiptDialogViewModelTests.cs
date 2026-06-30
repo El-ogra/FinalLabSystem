@@ -19,6 +19,7 @@ public class ReceiptDialogViewModelTests
         var mockReceiptService = new Mock<IReceiptService>();
         var mockSession = new Mock<ICurrentUserSession>();
         var mockDialog = new Mock<IDialogService>();
+        var mockPrintPreview = new Mock<IPrintPreviewDialogService>();
 
         var staff = new Staff
         {
@@ -42,7 +43,8 @@ public class ReceiptDialogViewModelTests
         var vm = new ReceiptDialogViewModel(
             mockReceiptService.Object,
             mockSession.Object,
-            mockDialog.Object);
+            mockDialog.Object,
+            mockPrintPreview.Object);
 
         return (vm, mockReceiptService);
     }

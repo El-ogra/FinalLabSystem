@@ -12,7 +12,6 @@ using FinalLabSystem.Infrastructure.Session;
 using FinalLabSystem.Models;
 using FinalLabSystem.Models.DTOs;
 using FinalLabSystem.Services.Interfaces;
-using FinalLabSystem.Views.Patients;
 
 namespace FinalLabSystem.ViewModels.Patients;
 
@@ -21,6 +20,7 @@ public sealed class ReceiptDialogViewModel : ViewModelBase
     private readonly IReceiptService _receiptService;
     private readonly ICurrentUserSession _currentUserSession;
     private readonly IDialogService _dialogService;
+    private readonly IPrintPreviewDialogService _printPreviewDialogService;
 
     private VisitFullDto? _visitData;
     private string _selectedFormat = "A4";
@@ -31,11 +31,13 @@ public sealed class ReceiptDialogViewModel : ViewModelBase
     public ReceiptDialogViewModel(
         IReceiptService receiptService,
         ICurrentUserSession currentUserSession,
-        IDialogService dialogService)
+        IDialogService dialogService,
+        IPrintPreviewDialogService printPreviewDialogService)
     {
         _receiptService = receiptService;
         _currentUserSession = currentUserSession;
         _dialogService = dialogService;
+        _printPreviewDialogService = printPreviewDialogService;
 
         Formats = new ObservableCollection<string> { "A4", "Thermal" };
         PrintCommand = new AsyncRelayCommand(PrintAsync, () => CanPrint && VisitData is not null);
@@ -104,12 +106,7 @@ public sealed class ReceiptDialogViewModel : ViewModelBase
             ? BuildThermalDocument(VisitData, GroupedTests, ShowBreakdown)
             : BuildA4Document(VisitData, GroupedTests, ShowBreakdown);
 
-        var preview = new PrintPreviewWindow(document)
-        {
-            Owner = Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive)
-        };
-
-        preview.ShowDialog();
+        _printPreviewDialogService.Show(document, "إيصال المريض");
 
         var staffId = _currentUserSession.CurrentUser?.StaffId ?? 0;
         await _receiptService.LogPrintEventAsync(new ReceiptPrintLog

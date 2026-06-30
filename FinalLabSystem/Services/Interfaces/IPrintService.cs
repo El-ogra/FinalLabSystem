@@ -1,3 +1,5 @@
+using System.Windows.Documents;
+
 namespace FinalLabSystem.Services.Interfaces;
 
 /// <summary>
@@ -14,4 +16,11 @@ public interface IPrintService
     /// </param>
     /// <param name="data">The data object to render into the document.</param>
     Task PrintAsync(string documentType, object data);
+
+    /// <summary>
+    /// Prints a pre-built FlowDocument directly.
+    /// </summary>
+    /// <param name="document">The FlowDocument to print.</param>
+    /// <param name="description">A description/label for the print job.</param>
+    Task PrintFlowDocumentAsync(FlowDocument document, string description);
 }

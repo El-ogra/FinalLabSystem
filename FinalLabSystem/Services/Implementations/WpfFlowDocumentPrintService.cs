@@ -1,6 +1,7 @@
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Threading;
+using FinalLabSystem.Services;
 using FinalLabSystem.Services.Interfaces;
 using FinalLabSystem.Services.Printing;
 using Microsoft.Extensions.Logging;
@@ -27,8 +28,7 @@ public class WpfFlowDocumentPrintService : IPrintService
         if (data == null)
             throw new ArgumentNullException(nameof(data));
 
-        var enablePrinting = await _featureToggleService.IsEnabledAsync("EnableServerPrinting", false);
-        if (!enablePrinting)
+        if (!await IsPrintingEnabledAsync())
         {
             _logger.LogInformation("Printing disabled by EnableServerPrinting toggle. Document type: {DocType}", documentType);
             return;
@@ -54,7 +54,28 @@ public class WpfFlowDocumentPrintService : IPrintService
         await PrintDocumentAsync(documentType, document);
     }
 
+    public async Task PrintFlowDocumentAsync(FlowDocument document, string description)
+    {
+        if (document == null)
+            throw new ArgumentNullException(nameof(document));
+        if (string.IsNullOrEmpty(description))
+            throw new ArgumentNullException(nameof(description));
+
+        if (!await IsPrintingEnabledAsync())
+        {
+            _logger.LogInformation("Printing disabled by EnableServerPrinting toggle.");
+            return;
+        }
+
+        await ShowPrintDialogAndPrintAsync(document, description);
+    }
+
     protected virtual async Task PrintDocumentAsync(string documentType, FlowDocument document)
+    {
+        await ShowPrintDialogAndPrintAsync(document, documentType);
+    }
+
+    protected virtual async Task ShowPrintDialogAndPrintAsync(FlowDocument document, string description)
     {
         await Dispatcher.CurrentDispatcher.InvokeAsync(() =>
         {
@@ -62,9 +83,14 @@ public class WpfFlowDocumentPrintService : IPrintService
             if (dlg.ShowDialog() == true)
             {
                 var docSource = (IDocumentPaginatorSource)document;
-                dlg.PrintDocument(docSource.DocumentPaginator, documentType);
-                _logger.LogInformation("Printed document: {DocType}", documentType);
+                dlg.PrintDocument(docSource.DocumentPaginator, description);
+                _logger.LogInformation("Printed document: {Description}", description);
             }
         });
+    }
+
+    private async Task<bool> IsPrintingEnabledAsync()
+    {
+        return await _featureToggleService.IsEnabledAsync(FeatureToggles.EnableServerPrinting, false);
     }
 }

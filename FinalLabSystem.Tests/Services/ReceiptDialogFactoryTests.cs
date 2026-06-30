@@ -35,7 +35,7 @@ public class ReceiptDialogFactoryTests
         var mockSession = new Mock<ICurrentUserSession>();
         var mockDialog = new Mock<IDialogService>();
 
-        var vm = new ReceiptDialogViewModel(mockReceiptService.Object, mockSession.Object, mockDialog.Object);
+        var vm = new ReceiptDialogViewModel(mockReceiptService.Object, mockSession.Object, mockDialog.Object, Mock.Of<IPrintPreviewDialogService>());
 
         var mockServiceProvider = new Mock<IServiceProvider>();
         mockServiceProvider.Setup(sp => sp.GetService(typeof(ReceiptDialogViewModel)))

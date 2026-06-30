@@ -197,6 +197,7 @@ public partial class App : Application
         services.AddSingleton<IBarcodeDialogFactory, BarcodeDialogFactory>();
         services.AddSingleton<IReceiptDialogFactory, ReceiptDialogFactory>();
         services.AddSingleton<INormalRangesWindowFactory, NormalRangesWindowFactory>();
+        services.AddSingleton<IPrintPreviewDialogService, PrintPreviewDialogService>();
 
         services.AddTransient<LoginViewModel>();
         services.AddTransient<LoginView>();
@@ -217,6 +218,7 @@ public partial class App : Application
         services.AddTransient<FinancialViewModel>();
         services.AddTransient<BarcodeDialogViewModel>();
         services.AddTransient<ReceiptDialogViewModel>();
+        services.AddTransient<PrintPreviewViewModel>();
         services.AddTransient<TestResultsViewModel>();
         services.AddTransient<DeliveryViewModel>();
         services.AddTransient<PatientSearchViewModel>();
@@ -227,6 +229,7 @@ public partial class App : Application
         services.AddTransient<PatientSearchWindow>();
         services.AddTransient<BarcodeDialog>();
         services.AddTransient<ReceiptDialog>();
+        services.AddTransient<PrintPreviewWindow>();
         services.AddTransient<TodayPatientsDialogViewModel>();
         services.AddTransient<TodayPatientsDialog>();
 
