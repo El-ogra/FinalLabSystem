@@ -106,6 +106,21 @@
                 <Button Content="العودة للرئيسية" Command="{Binding ReturnToMainCommand}"
                         Style="{StaticResource BottomBarButton}"
                         Background="#F44336"/>
+
+                <!-- Print Queue -->
+                <Button Style="{StaticResource BottomBarButton}"
+                        Background="#FF9800"
+                        Foreground="White"
+                        Content="إضافة للقائمة"
+                        Command="{Binding AddToPrintQueueCommand}"
+                        ToolTip="إضافة إلى قائمة الطباعة (Ctrl+Q)" />
+
+                <Button Style="{StaticResource BottomBarButton}"
+                        Background="#FF9800"
+                        Foreground="White"
+                        Content="قائمة الطباعة"
+                        Command="{Binding OpenPrintQueueCommand}"
+                        ToolTip="فتح قائمة الطباعة (Ctrl+Shift+Q)" />
             </WrapPanel>
         </Border>
 
@@ -828,5 +843,7 @@
         <KeyBinding Key="F" Modifiers="Ctrl" Command="{Binding ToggleFinishStatusCommand}"/>
         <KeyBinding Key="P" Modifiers="Ctrl" Command="{Binding TogglePrintStatusCommand}"/>
         <KeyBinding Key="Escape" Command="{Binding ReturnToMainCommand}"/>
+        <KeyBinding Key="Q" Modifiers="Ctrl" Command="{Binding AddToPrintQueueCommand}" />
+        <KeyBinding Key="Q" Modifiers="Ctrl+Shift" Command="{Binding OpenPrintQueueCommand}" />
     </Window.InputBindings>
 </Window>

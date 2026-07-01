@@ -112,6 +112,7 @@ public partial class App : Application
             navigation.RegisterWindow<CommissionReportWindowViewModel, CommissionReportWindow>();
             navigation.RegisterWindow<OutstandingBalanceWindowViewModel, OutstandingBalanceWindow>();
             navigation.RegisterWindow<ReportSettingsWindowViewModel, ReportSettingsWindow>();
+            navigation.RegisterWindow<PrintQueueWindowViewModel, PrintQueueWindow>();
 
             using (var scope = ServiceProvider.CreateScope())
             {
@@ -202,6 +203,7 @@ public partial class App : Application
         services.AddSingleton<INormalRangesWindowFactory, NormalRangesWindowFactory>();
         services.AddSingleton<IPrintPreviewDialogService, PrintPreviewDialogService>();
         services.AddSingleton<IProcessService, ProcessService>();
+        services.AddSingleton<IPrintQueueService, PrintQueueService>();
 
         services.AddTransient<LoginViewModel>();
         services.AddTransient<LoginView>();
@@ -305,6 +307,10 @@ public partial class App : Application
         // Slice 6.4 — Report Settings UI
         services.AddTransient<ReportSettingsWindowViewModel>();
         services.AddTransient<ReportSettingsWindow>();
+
+        // Slice 6.5 — Print Queue / Batch Printing
+        services.AddTransient<PrintQueueWindowViewModel>();
+        services.AddTransient<PrintQueueWindow>();
     }
 
     protected override void OnExit(ExitEventArgs e)

@@ -23,6 +23,7 @@ public class TestResultsFKeyRemappingTests
         var mockReceipt = new Mock<IReceiptService>();
         var mockAuditTrail = new Mock<IAuditTrailDialogService>();
         var mockResultEntry = new Mock<IResultEntryDialogService>();
+        var mockPrintQueue = new Mock<IPrintQueueService>();
 
         return new TestResultsViewModel(
             mockVisitService.Object,
@@ -36,7 +37,8 @@ public class TestResultsFKeyRemappingTests
             mockPrint.Object,
             mockReceipt.Object,
             mockAuditTrail.Object,
-            mockResultEntry.Object);
+            mockResultEntry.Object,
+            mockPrintQueue.Object);
     }
 
     // ========== Ctrl+R / Ctrl+F / Ctrl+P = Legacy toggles ==========

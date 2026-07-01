@@ -35,6 +35,7 @@ public sealed class TestResultsViewModel : ViewModelBase
     private readonly IReceiptService _receiptService;
     private readonly IAuditTrailDialogService _auditTrailDialogService;
     private readonly IResultEntryDialogService _resultEntryDialogService;
+    private readonly IPrintQueueService _printQueueService;
 
     private ObservableCollection<TodayPatientWithStatusDto> _allPatients = new();
     private TodayPatientWithStatusDto? _selectedPatient;
@@ -65,7 +66,8 @@ public sealed class TestResultsViewModel : ViewModelBase
         IPrintService printService,
         IReceiptService receiptService,
         IAuditTrailDialogService auditTrailDialogService,
-        IResultEntryDialogService resultEntryDialogService)
+        IResultEntryDialogService resultEntryDialogService,
+        IPrintQueueService printQueueService)
     {
         _visitService = visitService;
         _routineResultService = routineResultService;
@@ -79,6 +81,7 @@ public sealed class TestResultsViewModel : ViewModelBase
         _receiptService = receiptService;
         _auditTrailDialogService = auditTrailDialogService;
         _resultEntryDialogService = resultEntryDialogService;
+        _printQueueService = printQueueService;
 
         PatientsView = CollectionViewSource.GetDefaultView(AllPatients);
         PatientsView.Filter = FilterPatient;
@@ -126,6 +129,9 @@ public sealed class TestResultsViewModel : ViewModelBase
         PrintReceiptCommand = new AsyncRelayCommand(async _ => await PrintReceiptAsync(), _ => HasSelectedPatient);
         NavigateToResultEntryCommand = new RelayCommand(_ => _navigationService.OpenTaskWindow<TestResultsViewModel>());
         NavigateToExternalSamplesCommand = new RelayCommand(_ => _navigationService.OpenTaskWindow<ExternalLabsWindowViewModel>());
+
+        AddToPrintQueueCommand = new AsyncRelayCommand(async _ => await AddToPrintQueueAsync(), _ => HasSelectedPatient);
+        OpenPrintQueueCommand = new RelayCommand(_ => OpenPrintQueue());
     }
 
     public ObservableCollection<TodayPatientWithStatusDto> AllPatients
@@ -307,6 +313,8 @@ public sealed class TestResultsViewModel : ViewModelBase
     public ICommand PrintReceiptCommand { get; }
     public ICommand NavigateToResultEntryCommand { get; }
     public ICommand NavigateToExternalSamplesCommand { get; }
+    public ICommand AddToPrintQueueCommand { get; }
+    public ICommand OpenPrintQueueCommand { get; }
 
     public async Task LoadAsync()
     {
@@ -945,5 +953,28 @@ public sealed class TestResultsViewModel : ViewModelBase
         {
             _dialogService.ShowError($"خطأ في طباعة الإيصال: {ex.Message}");
         }
+    }
+
+    private async Task AddToPrintQueueAsync()
+    {
+        if (SelectedPatient == null) return;
+
+        var dto = new PrintQueueItemDto
+        {
+            VisitId = SelectedPatient.VisitId,
+            PatientName = SelectedPatient.FullNameAr,
+            DocumentType = "CompositeReport",
+            Status = PrintQueueItemStatus.Pending,
+            AddedAt = DateTime.UtcNow
+        };
+
+        _printQueueService.Enqueue(dto);
+        _dialogService.ShowMessage("تمت الإضافة إلى قائمة الطباعة");
+        await System.Threading.Tasks.Task.CompletedTask;
+    }
+
+    private void OpenPrintQueue()
+    {
+        _navigationService.OpenTaskWindow<PrintQueueWindowViewModel>();
     }
 }
