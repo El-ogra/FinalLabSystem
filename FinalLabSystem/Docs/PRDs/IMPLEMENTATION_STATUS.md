@@ -772,7 +772,7 @@
 **Date:** 2026-06-30  
 **Total files created:** 28  
 **Total files modified:** 17  
-**Tests:** 620 / 620 — ✅ جميع الاختبارات ناجحة  
+**Tests:** 644 / 644 — ✅ جميع الاختبارات ناجحة  
 **Build:** ✅ ناجح — 0 أخطاء, 0 تحذيرات
 
 ---
@@ -888,6 +888,43 @@
 
 **Tests:** +38 (من 582 إلى 620)  
 **Validation Gate G6.2:** ✅ 620
+
+---
+
+### Slice 6.3 — Backup UI & Restore Workflow
+
+**Status:** ✅ مكتملة
+
+**Files created:**
+- `ViewModels/Settings/BackupRowViewModel.cs` — نموذج صف النسخة الاحتياطية مع `INotifyPropertyChanged` وتنسيق Bytes/Date
+- `ViewModels/Settings/BackupRestoreWindowViewModel.cs` — نموذج النافذة الرئيسية: 5 أوامر (Load, Create, Restore, BrowseFolder, OpenFolder) + `RequestShutdown` callback
+- `Views/Settings/BackupRestoreWindow.xaml` — واجهة النسخ الاحتياطي والاستعادة: DataGrid + شريط أدوات + شريط حالة
+- `Views/Settings/BackupRestoreWindow.xaml.cs` — code-behind: حقن ViewModel + ربط `RequestShutdown = () => navigationService.Shutdown()`
+- `Views/Settings/BackupPasswordDialog.xaml` — نافذة إدخال كلمة المرور مع تأكيد (2 PasswordBox)
+- `Views/Settings/BackupPasswordDialog.xaml.cs` — code-behind يتبع نمط `CashDrawerUnlockDialog`: التحقق من الفراغ +طول 8+ عدم التطابق
+
+**Files modified:**
+- `ViewModels/Menu/BackupMenuViewModel.cs` — استبدال `PlaceholderCommand` بـ `OpenBackupCommand` عبر `IDialogService.ShowCustomDialog<BackupRestoreWindow>()`
+- `Services/Interfaces/IDialogService.cs` — إضافة `T? ShowCustomDialog<T>() where T : Window`
+- `Services/Implementations/DialogService.cs` — حقن `IServiceProvider` + تنفيذ `ShowCustomDialog<T>` باستخدام `GetRequiredService<T>()`
+- `Services/Interfaces/IBackupService.cs` — إضافة `GetBackupOutputFolderAsync()` و `SaveBackupOutputFolderAsync(string, int)`
+- `Services/Implementations/BackupService.cs` — تنفيذ Methodين الجديدين: قراءة/كتابة `LabSettings` مع مفتاح `"BackupOutputFolder"`
+- `App.xaml.cs` — تسجيل 3 Transient: `BackupRestoreWindowViewModel`, `BackupRestoreWindow`, `BackupPasswordDialog`
+- `Tests/ViewModels/Menu/PlaceholderMenusTests.cs` — تحديث اختبار Backup من `PlaceholderCommand` إلى `OpenBackupCommand` + `ShowCustomDialog`
+
+**Test files created:**
+- `Tests/ViewModels/Settings/BackupRowViewModelTests.cs` — 3 اختبارات
+- `Tests/ViewModels/Settings/BackupRestoreWindowViewModelTests.cs` — 16 اختبارات
+- `Tests/ViewModels/Menu/BackupMenuViewModelTests.cs` — 1 اختبار
+- `Tests/ViewModels/Settings/BackupRestoreWindowRegistrationTests.cs` — 4 اختبارات
+
+**Architectural decisions:**
+- `BackupPasswordDialog` يُنشأ بـ `new` مباشرة في الـ ViewModel (code-behind pattern) — لا يمكن تموكيته في الاختبارات
+- اختبارات WPF Window (`DI_Resolves_BackupRestoreWindow`, `DI_Resolves_BackupPasswordDialog`) تتحقق من التسجيل فقط بدون إنشاء Window فعلي (يتطلب STA thread)
+- `OpenFolderCommand_DoesNotThrow` يستدعي `Process.Start("explorer.exe")` فعلياً — side effect معروف يتطلب `IProcessService` abstraction في Slice لاحق
+
+**Tests:** +24 (من 620 إلى 644)
+**Validation Gate G6.3:** ✅ 644
 
 ---
 

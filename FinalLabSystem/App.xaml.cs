@@ -199,6 +199,7 @@ public partial class App : Application
         services.AddSingleton<IReceiptDialogFactory, ReceiptDialogFactory>();
         services.AddSingleton<INormalRangesWindowFactory, NormalRangesWindowFactory>();
         services.AddSingleton<IPrintPreviewDialogService, PrintPreviewDialogService>();
+        services.AddSingleton<IProcessService, ProcessService>();
 
         services.AddTransient<LoginViewModel>();
         services.AddTransient<LoginView>();

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,6 +19,7 @@ public sealed class BackupRestoreWindowViewModel : ViewModelBase
     private readonly IBackupService _backupService;
     private readonly IDialogService _dialogService;
     private readonly ICurrentUserSession _currentUserSession;
+    private readonly IProcessService _processService;
 
     private string _targetFolder = string.Empty;
     private DateTime? _lastBackupAt;
@@ -28,11 +28,13 @@ public sealed class BackupRestoreWindowViewModel : ViewModelBase
     public BackupRestoreWindowViewModel(
         IBackupService backupService,
         IDialogService dialogService,
-        ICurrentUserSession currentUserSession)
+        ICurrentUserSession currentUserSession,
+        IProcessService processService)
     {
         _backupService = backupService;
         _dialogService = dialogService;
         _currentUserSession = currentUserSession;
+        _processService = processService;
 
         Backups = new ObservableCollection<BackupRowViewModel>();
 
@@ -266,10 +268,7 @@ public sealed class BackupRestoreWindowViewModel : ViewModelBase
     {
         try
         {
-            Process.Start(new ProcessStartInfo("explorer.exe", TargetFolder)
-            {
-                UseShellExecute = true
-            });
+            _processService.OpenFolder(TargetFolder);
         }
         catch (Exception ex)
         {

@@ -202,7 +202,7 @@ public class BackupServiceTests
         var dbName = Guid.NewGuid().ToString();
         var (service, context, tempDir, _) = CreateBackupService(dbName);
 
-        var invalidPath = @"C:\Windows\System32\not_exist_folder\backup.bak";
+        var invalidPath = @"X:\NonExistentDrive\backup.bak";
 
         await Assert.ThrowsAnyAsync<Exception>(
             () => service.CreateBackupAsync(invalidPath, TestPassword, BackupType.Full));

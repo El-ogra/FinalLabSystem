@@ -26,12 +26,14 @@ public class BackupRestoreWindowViewModelTests
     };
 
     private static (BackupRestoreWindowViewModel vm, Mock<IBackupService> mockBackup,
-        Mock<IDialogService> mockDialog, Mock<ICurrentUserSession> mockSession)
+        Mock<IDialogService> mockDialog, Mock<ICurrentUserSession> mockSession,
+        Mock<IProcessService> mockProcess)
         CreateViewModel(Staff? staff = null)
     {
         var mockBackup = new Mock<IBackupService>();
         var mockDialog = new Mock<IDialogService>();
         var mockSession = new Mock<ICurrentUserSession>();
+        var mockProcess = new Mock<IProcessService>();
 
         mockBackup.Setup(s => s.GetBackupOutputFolderAsync())
             .ReturnsAsync(@"C:\TestBackups");
@@ -43,15 +45,16 @@ public class BackupRestoreWindowViewModelTests
         var vm = new BackupRestoreWindowViewModel(
             mockBackup.Object,
             mockDialog.Object,
-            mockSession.Object);
+            mockSession.Object,
+            mockProcess.Object);
 
-        return (vm, mockBackup, mockDialog, mockSession);
+        return (vm, mockBackup, mockDialog, mockSession, mockProcess);
     }
 
     [Fact]
     public void LoadBackupsCommand_PopulatesCollection_FromService()
     {
-        var (vm, mockBackup, _, _) = CreateViewModel();
+        var (vm, mockBackup, _, _, _) = CreateViewModel();
         var dtos = new List<BackupMetadataDto>
         {
             new() { FileName = "b1.bak", FilePath = @"C:\b1.bak", FileSizeBytes = 100, CreatedAt = DateTime.UtcNow },
@@ -72,7 +75,7 @@ public class BackupRestoreWindowViewModelTests
     [Fact]
     public void CreateBackupCommand_NonAdmin_ShowsError_DoesNotCallService()
     {
-        var (vm, mockBackup, mockDialog, _) = CreateViewModel(CreateNonAdminStaff());
+        var (vm, mockBackup, mockDialog, _, _) = CreateViewModel(CreateNonAdminStaff());
 
         vm.CreateBackupCommand.Execute(null);
 
@@ -86,7 +89,7 @@ public class BackupRestoreWindowViewModelTests
     [Fact]
     public void RestoreCommand_NoSelection_ShowsWarning()
     {
-        var (vm, _, mockDialog, _) = CreateViewModel(CreateAdminStaff());
+        var (vm, _, mockDialog, _, _) = CreateViewModel(CreateAdminStaff());
 
         vm.RestoreCommand.Execute(null);
 
@@ -98,7 +101,7 @@ public class BackupRestoreWindowViewModelTests
     [Fact]
     public void RestoreCommand_NonAdmin_ShowsError()
     {
-        var (vm, _, mockDialog, _) = CreateViewModel(CreateNonAdminStaff());
+        var (vm, _, mockDialog, _, _) = CreateViewModel(CreateNonAdminStaff());
 
         vm.RestoreCommand.Execute(null);
 
@@ -110,7 +113,7 @@ public class BackupRestoreWindowViewModelTests
     [Fact]
     public void RestoreCommand_UserCancelsConfirmation_DoesNotCallService()
     {
-        var (vm, mockBackup, mockDialog, _) = CreateViewModel(CreateAdminStaff());
+        var (vm, mockBackup, mockDialog, _, _) = CreateViewModel(CreateAdminStaff());
 
         vm.Backups.Add(new BackupRowViewModel(new BackupMetadataDto
         {
@@ -133,18 +136,18 @@ public class BackupRestoreWindowViewModelTests
     [Fact]
     public void OpenFolderCommand_DoesNotThrow()
     {
-        var (vm, _, _, _) = CreateViewModel();
+        var (vm, _, _, _, mockProcess) = CreateViewModel();
         vm.TargetFolder = @"C:\Windows";
 
-        var exception = Record.Exception(() => vm.OpenFolderCommand.Execute(null));
+        vm.OpenFolderCommand.Execute(null);
 
-        Assert.Null(exception);
+        mockProcess.Verify(p => p.OpenFolder(@"C:\Windows"), Times.Once);
     }
 
     [Fact]
     public void IsBusy_FalseAfterInitializationCompletes()
     {
-        var (vm, _, _, _) = CreateViewModel();
+        var (vm, _, _, _, _) = CreateViewModel();
 
         Assert.False(vm.IsBusy);
     }
@@ -152,7 +155,7 @@ public class BackupRestoreWindowViewModelTests
     [Fact]
     public void TargetFolder_SetsCorrectly()
     {
-        var (vm, _, _, _) = CreateViewModel();
+        var (vm, _, _, _, _) = CreateViewModel();
 
         vm.TargetFolder = @"D:\NewBackups";
 
@@ -162,7 +165,7 @@ public class BackupRestoreWindowViewModelTests
     [Fact]
     public void Backups_InitiallyEmpty()
     {
-        var (vm, _, _, _) = CreateViewModel();
+        var (vm, _, _, _, _) = CreateViewModel();
 
         Assert.Empty(vm.Backups);
     }
@@ -170,7 +173,7 @@ public class BackupRestoreWindowViewModelTests
     [Fact]
     public void RequestShutdown_DefaultIsNull()
     {
-        var (vm, _, _, _) = CreateViewModel();
+        var (vm, _, _, _, _) = CreateViewModel();
 
         Assert.Null(vm.RequestShutdown);
     }
@@ -178,7 +181,7 @@ public class BackupRestoreWindowViewModelTests
     [Fact]
     public void LoadBackupsCommand_SetsLastBackupAt()
     {
-        var (vm, mockBackup, _, _) = CreateViewModel();
+        var (vm, mockBackup, _, _, _) = CreateViewModel();
         var later = DateTime.UtcNow;
         var earlier = later.AddHours(-1);
         var dtos = new List<BackupMetadataDto>
@@ -197,7 +200,7 @@ public class BackupRestoreWindowViewModelTests
     [Fact]
     public void LoadBackupsCommand_EmptyList_LastBackupAtIsNull()
     {
-        var (vm, mockBackup, _, _) = CreateViewModel();
+        var (vm, mockBackup, _, _, _) = CreateViewModel();
         mockBackup.Setup(s => s.ListBackupsAsync(It.IsAny<string>()))
             .ReturnsAsync(new List<BackupMetadataDto>());
 
@@ -209,7 +212,7 @@ public class BackupRestoreWindowViewModelTests
     [Fact]
     public void LoadBackupsCommand_ServiceException_ShowsError()
     {
-        var (vm, mockBackup, mockDialog, _) = CreateViewModel();
+        var (vm, mockBackup, mockDialog, _, _) = CreateViewModel();
         mockBackup.Setup(s => s.ListBackupsAsync(It.IsAny<string>()))
             .ThrowsAsync(new IOException("disk error"));
 
@@ -232,7 +235,8 @@ public class BackupRestoreWindowViewModelTests
         var vm = new BackupRestoreWindowViewModel(
             mockBackup.Object,
             Mock.Of<IDialogService>(),
-            Mock.Of<ICurrentUserSession>());
+            Mock.Of<ICurrentUserSession>(),
+            Mock.Of<IProcessService>());
 
         Assert.Equal(@"E:\CustomBackup", vm.TargetFolder);
     }
@@ -249,7 +253,8 @@ public class BackupRestoreWindowViewModelTests
         var vm = new BackupRestoreWindowViewModel(
             mockBackup.Object,
             Mock.Of<IDialogService>(),
-            Mock.Of<ICurrentUserSession>());
+            Mock.Of<ICurrentUserSession>(),
+            Mock.Of<IProcessService>());
 
         Assert.Contains("FinalLabBackups", vm.TargetFolder);
     }
@@ -257,7 +262,7 @@ public class BackupRestoreWindowViewModelTests
     [Fact]
     public void RestoreCommand_AdminWithSelection_NoError()
     {
-        var (vm, mockBackup, mockDialog, _) = CreateViewModel(CreateAdminStaff());
+        var (vm, mockBackup, mockDialog, _, _) = CreateViewModel(CreateAdminStaff());
 
         vm.Backups.Add(new BackupRowViewModel(new BackupMetadataDto
         {

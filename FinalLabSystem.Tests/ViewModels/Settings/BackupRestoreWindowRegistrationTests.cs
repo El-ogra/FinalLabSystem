@@ -25,6 +25,7 @@ public class BackupRestoreWindowRegistrationTests
         services.AddScoped<IAuditService, AuditService>();
         services.AddScoped<IBackupService, BackupService>();
         services.AddSingleton<IDialogService>(Mock.Of<IDialogService>());
+        services.AddSingleton<IProcessService>(Mock.Of<IProcessService>());
         services.AddTransient<BackupRestoreWindowViewModel>();
 
         var provider = services.BuildServiceProvider();
@@ -67,6 +68,7 @@ public class BackupRestoreWindowRegistrationTests
         var mockBackup = new Mock<IBackupService>();
         var mockDialog = new Mock<IDialogService>();
         var mockSession = new Mock<ICurrentUserSession>();
+        var mockProcess = new Mock<IProcessService>();
 
         mockBackup.Setup(s => s.GetBackupOutputFolderAsync())
             .ReturnsAsync(@"C:\Test");
@@ -76,7 +78,8 @@ public class BackupRestoreWindowRegistrationTests
         var viewModel = new BackupRestoreWindowViewModel(
             mockBackup.Object,
             mockDialog.Object,
-            mockSession.Object);
+            mockSession.Object,
+            mockProcess.Object);
 
         Assert.Null(viewModel.RequestShutdown);
 
