@@ -293,6 +293,11 @@ public partial class App : Application
 
         services.AddTransient<OutstandingBalanceWindowViewModel>();
         services.AddTransient<OutstandingBalanceWindow>();
+
+        // Slice 6.3 — Backup UI
+        services.AddTransient<BackupRestoreWindowViewModel>();
+        services.AddTransient<BackupRestoreWindow>();
+        services.AddTransient<BackupPasswordDialog>();
     }
 
     protected override void OnExit(ExitEventArgs e)

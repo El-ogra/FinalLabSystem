@@ -30,4 +30,11 @@ public interface IDialogService
     /// <param name="title">The dialog title.</param>
     /// <returns><c>true</c> when the user confirms; otherwise, <c>false</c>.</returns>
     bool ShowConfirmation(string message, string title = "تأكيد");
+
+    /// <summary>
+    /// Shows a modal dialog resolved from the DI container.
+    /// </summary>
+    /// <typeparam name="T">The Window type to show.</typeparam>
+    /// <returns>The dialog result, or <c>null</c> when cancelled.</returns>
+    T? ShowCustomDialog<T>() where T : System.Windows.Window;
 }

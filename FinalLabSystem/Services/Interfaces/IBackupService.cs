@@ -9,4 +9,6 @@ public interface IBackupService
     Task<bool> RestoreBackupAsync(string backupFilePath, string adminPassword);
     Task<List<BackupMetadataDto>> ListBackupsAsync(string folder);
     Task<bool> ValidateBackupFileAsync(string backupFilePath, string adminPassword);
+    Task<string> GetBackupOutputFolderAsync();
+    Task SaveBackupOutputFolderAsync(string folderPath, int staffId);
 }

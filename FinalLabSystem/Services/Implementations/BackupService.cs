@@ -310,4 +310,30 @@ public class BackupService : IBackupService
         visited.Add(clrType);
         sorted.Add(entityType);
     }
+
+    public async Task<string> GetBackupOutputFolderAsync()
+    {
+        var setting = await _context.LabSettings
+            .FirstOrDefaultAsync(s => s.SettingKey == "BackupOutputFolder");
+        return setting?.SettingValue
+            ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "FinalLabBackups");
+    }
+
+    public async Task SaveBackupOutputFolderAsync(string folderPath, int staffId)
+    {
+        var setting = await _context.LabSettings
+            .FirstOrDefaultAsync(s => s.SettingKey == "BackupOutputFolder");
+
+        if (setting is null)
+        {
+            setting = new Models.LabSetting { SettingKey = "BackupOutputFolder", SettingValue = folderPath };
+            _context.LabSettings.Add(setting);
+        }
+        else
+        {
+            setting.SettingValue = folderPath;
+        }
+
+        await _context.SaveChangesAsync();
+    }
 }

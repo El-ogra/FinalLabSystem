@@ -1,6 +1,7 @@
 using FinalLabSystem.Infrastructure.Navigation;
 using FinalLabSystem.Services.Interfaces;
 using FinalLabSystem.ViewModels.Menu;
+using FinalLabSystem.Views.Settings;
 using Moq;
 using Xunit;
 
@@ -61,15 +62,13 @@ public class PlaceholderMenusTests
     }
 
     [Fact]
-    public void Backup_PlaceholderCommand_ShowsPhase6Dialog()
+    public void Backup_OpenBackupCommand_ShowsCustomDialog()
     {
         var (vm, mockDialog) = CreateBackupVM();
 
-        vm.PlaceholderCommand.Execute(null);
+        vm.OpenBackupCommand.Execute(null);
 
-        mockDialog.Verify(d => d.ShowMessage(
-            It.Is<string>(s => s.Contains("المرحلة 6")),
-            It.IsAny<string>()), Times.Once);
+        mockDialog.Verify(d => d.ShowCustomDialog<BackupRestoreWindow>(), Times.Once);
     }
 
     [Fact]
