@@ -463,6 +463,30 @@ public partial class FinalLabDbContext : DbContext
             entity.Property(e => e.BackupRetentionDays).HasColumnName("backup_retention_days");
             entity.Property(e => e.BackupOutputFolder).HasColumnName("backup_output_folder");
 
+            // Report Layout Settings
+            entity.Property(e => e.ReportLabNameAr).HasColumnName("ReportLabNameAr").HasMaxLength(200);
+            entity.Property(e => e.ReportLabNameEn).HasColumnName("ReportLabNameEn").HasMaxLength(200);
+            entity.Property(e => e.ReportLogoPath).HasColumnName("ReportLogoPath").HasMaxLength(500);
+            entity.Property(e => e.ReportLogoWidth).HasColumnName("ReportLogoWidth");
+            entity.Property(e => e.ReportLogoHeight).HasColumnName("ReportLogoHeight");
+            entity.Property(e => e.ReportPrimaryColor).HasColumnName("ReportPrimaryColor").HasMaxLength(7);
+            entity.Property(e => e.ReportSecondaryColor).HasColumnName("ReportSecondaryColor").HasMaxLength(7);
+            entity.Property(e => e.ReportFontFamily).HasColumnName("ReportFontFamily").HasMaxLength(100);
+            entity.Property(e => e.ReportFontSize).HasColumnName("ReportFontSize").HasDefaultValue(12.0);
+            entity.Property(e => e.ReportHeaderFontSize).HasColumnName("ReportHeaderFontSize").HasDefaultValue(16.0);
+            entity.Property(e => e.ReportFooterFontSize).HasColumnName("ReportFooterFontSize").HasDefaultValue(10.0);
+            entity.Property(e => e.ReportMarginTop).HasColumnName("ReportMarginTop").HasDefaultValue(2m);
+            entity.Property(e => e.ReportMarginBottom).HasColumnName("ReportMarginBottom").HasDefaultValue(2m);
+            entity.Property(e => e.ReportMarginLeft).HasColumnName("ReportMarginLeft").HasDefaultValue(2m);
+            entity.Property(e => e.ReportMarginRight).HasColumnName("ReportMarginRight").HasDefaultValue(2m);
+            entity.Property(e => e.ReportShowHeader).HasColumnName("ReportShowHeader").HasDefaultValue(true);
+            entity.Property(e => e.ReportShowFooter).HasColumnName("ReportShowFooter").HasDefaultValue(true);
+            entity.Property(e => e.ReportShowStamp).HasColumnName("ReportShowStamp").HasDefaultValue(false);
+            entity.Property(e => e.ReportHeaderText).HasColumnName("ReportHeaderText").HasMaxLength(500);
+            entity.Property(e => e.ReportFooterText).HasColumnName("ReportFooterText").HasMaxLength(500);
+            entity.Property(e => e.ReportPageOrientation).HasColumnName("ReportPageOrientation").HasMaxLength(20);
+            entity.Property(e => e.ReportPaperSize).HasColumnName("ReportPaperSize").HasMaxLength(20);
+
             entity.HasOne(d => d.LastUpdatedByNavigation).WithMany(p => p.LabSettings)
                 .HasForeignKey(d => d.LastUpdatedBy)
                 .HasConstraintName("FK_LabSettings_Staff");

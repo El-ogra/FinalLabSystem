@@ -32,4 +32,28 @@ public partial class LabSetting
     public int? BackupScheduleHour { get; set; }
     public int? BackupRetentionDays { get; set; }
     public string? BackupOutputFolder { get; set; }
+
+    // === Report Layout Settings ===
+    public string? ReportLabNameAr { get; set; }
+    public string? ReportLabNameEn { get; set; }
+    public string? ReportLogoPath { get; set; }
+    public decimal? ReportLogoWidth { get; set; }
+    public decimal? ReportLogoHeight { get; set; }
+    public string? ReportPrimaryColor { get; set; }
+    public string? ReportSecondaryColor { get; set; }
+    public string? ReportFontFamily { get; set; }
+    public double ReportFontSize { get; set; } = 12;
+    public double ReportHeaderFontSize { get; set; } = 16;
+    public double ReportFooterFontSize { get; set; } = 10;
+    public decimal ReportMarginTop { get; set; } = 2;
+    public decimal ReportMarginBottom { get; set; } = 2;
+    public decimal ReportMarginLeft { get; set; } = 2;
+    public decimal ReportMarginRight { get; set; } = 2;
+    public bool ReportShowHeader { get; set; } = true;
+    public bool ReportShowFooter { get; set; } = true;
+    public bool ReportShowStamp { get; set; } = false;
+    public string? ReportHeaderText { get; set; }
+    public string? ReportFooterText { get; set; }
+    public string? ReportPageOrientation { get; set; }
+    public string? ReportPaperSize { get; set; }
 }

@@ -768,11 +768,11 @@
 ---
 
 ## Phase 6: Print, Delivery & Backup
-**Status:** 🔶 جزئية — شرائح 6.0 + 6.1 + 6.2 مكتملة  
-**Date:** 2026-06-30  
-**Total files created:** 28  
-**Total files modified:** 17  
-**Tests:** 644 / 644 — ✅ جميع الاختبارات ناجحة  
+**Status:** ✅ مكتملة  
+**Date:** 2026-07-01  
+**Total files created:** 41  
+**Total files modified:** 27  
+**Tests:** 669 / 669 — ✅ جميع الاختبارات ناجحة  
 **Build:** ✅ ناجح — 0 أخطاء, 0 تحذيرات
 
 ---
@@ -925,6 +925,51 @@
 
 **Tests:** +24 (من 620 إلى 644)
 **Validation Gate G6.3:** ✅ 644
+
+---
+
+### Slice 6.4 — Report Settings UI
+
+**Status:** ✅ مكتملة
+
+**Files created:**
+- `Infrastructure/Constants/ReportSettingKeys.cs` — 22 ثابت لخصائص إعدادات التقارير
+- `Models/DTOs/ReportLayoutDto.cs` — DTO بـ 22 حقل (Branding, Colors, Typography, Margins, Visibility, Text, PageSetup)
+- `Services/Interfaces/IReportLayoutService.cs` — واجهة 4 طرق (GetCurrentLayoutAsync, SaveLayoutAsync, ResetToDefaultsAsync, GetDefaults)
+- `Services/Implementations/ReportLayoutService.cs` — قراءة/كتابة الأعمدة المُنوّقة من LabSetting عبر FinalLabDbContext
+- `ViewModels/Settings/ReportSettingsWindowViewModel.cs` — نموذج النافذة مع 5 أوامر (Load, Save, ResetToDefaults, BrowseLogo, Preview)
+- `Views/Settings/ReportSettingsWindow.xaml` — واجهة إعدادات التقارير مع حقول إدخال لـ 22 خاصية
+- `Views/Settings/ReportSettingsWindow.xaml.cs` — code-behind: فقط InitializeComponent() + constructor (MVVM purity)
+- `Migrations/20260701010000_AddReportLayoutColumns.cs` — 22 AddColumn في Up() + 22 DropColumn في Down()
+- `Migrations/20260701010000_AddReportLayoutColumns.Designer.cs` — Designer stub
+- `Tests/Services/ReportLayoutServiceTests.cs` — 6 اختبارات
+- `Tests/ViewModels/Settings/ReportSettingsWindowViewModelTests.cs` — 6 اختبارات
+- `Tests/Services/Printing/DocumentTemplateBaseLayoutTests.cs` — 11 اختباراً
+- `Tests/ViewModels/Menu/ReportSettingsMenuViewModelTests.cs` — 2 اختباران
+
+**Files modified:**
+- `Models/LabSetting.cs` — إضافة 22 خاصية Report* (typed columns, لا key-value)
+- `Data/FinalLabDbContext.cs` — Fluent API mapping لـ 22 حقل جديد
+- `Services/Printing/DocumentTemplateBase.cs` — إضافة `internal virtual void ApplyLayout(FlowDocument, ReportLayoutDto?)`
+- `Services/Printing/ReceiptTemplate.cs` — override `ApplyLayout` مع تطبيق Typography + Margins + Colors
+- `Services/Printing/ResultReportTemplate.cs` — override `ApplyLayout` مع تطبيق Typography + Margins + Colors
+- `Services/Implementations/WpfFlowDocumentPrintService.cs` — overload جديد مع `ReportLayoutDto?` + استخراج `ResolveTemplate` method
+- `ViewModels/Menu/ReportSettingsMenuViewModel.cs` — إضافة `NavigateToReportSettingsCommand`
+- `MainWindow.xaml` — استبدال الـ DataTemplate الـ placeholder بأزرار فعلية
+- `App.xaml.cs` — تسجيل DI (IReportLayoutService Scoped, VM + Window Transient) + navigation.RegisterWindow
+- `FinalLabSystem.csproj` — إضافة `InternalsVisibleTo Include="FinalLabSystem.Tests"`
+- `Migrations/FinalLabDbContextModelSnapshot.cs` — تحديث الـ snapshot لإضافة 22 حقل Report*
+
+**Migration:** ✅ مُطبَّقة على FinalLab (.\SQLEXPRESS)
+
+**Tests:** +25 (من 644 إلى 669)
+**Build:** ✅ ناجح — 0 أخطاء, 0 تحذيرات
+**Validation Gate G6.4:** ✅ 669
+
+**Technical Notes:**
+- `ApplyLayout` يُستخدم `internal` بدلاً من `protected` مع `InternalsVisibleTo` لتمكين اختبارات المشروع الآخر
+- `ReportLayoutService.SaveLayoutAsync` يستخدم `SettingKey = "report_layout_settings"` عند إنشاء سجل جديد (إصلاح PK null مع InMemory provider)
+- `BrowseLogoCommand` placeholder — `IDialogService` لا يحتوي `OpenFileDialog`
 
 ---
 

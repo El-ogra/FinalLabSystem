@@ -1,4 +1,5 @@
 using System.Windows.Documents;
+using FinalLabSystem.Models.DTOs;
 
 namespace FinalLabSystem.Services.Printing;
 
@@ -24,5 +25,15 @@ public abstract class DocumentTemplateBase
             TextAlignment = System.Windows.TextAlignment.Center,
             Margin = new System.Windows.Thickness(0, 20, 0, 0)
         };
+    }
+
+    /// <summary>
+    /// يُستدعى بعد BuildDocument وليس قبله.
+    /// الـ default: no-op (لا يُغيّر المستند).
+    /// الـ overrides تُعدّل الـ FlowDocument المُمرَّر مباشرة.
+    /// </summary>
+    internal virtual void ApplyLayout(FlowDocument document, ReportLayoutDto? layout)
+    {
+        // Default no-op: لا يُغيّر سلوك أي template قائمة.
     }
 }

@@ -1,6 +1,7 @@
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Threading;
+using FinalLabSystem.Models.DTOs;
 using FinalLabSystem.Services;
 using FinalLabSystem.Services.Interfaces;
 using FinalLabSystem.Services.Printing;
@@ -21,6 +22,7 @@ public class WpfFlowDocumentPrintService : IPrintService
         _featureToggleService = featureToggleService;
     }
 
+    // === الـ overload الأصلي (بدون layout) — لا يتغير ===
     public async Task PrintAsync(string documentType, object data)
     {
         if (string.IsNullOrEmpty(documentType))
@@ -34,22 +36,30 @@ public class WpfFlowDocumentPrintService : IPrintService
             return;
         }
 
-        DocumentTemplateBase template = documentType switch
-        {
-            "ResultReport" => new ResultReportTemplate(),
-            "Receipt" => new ReceiptTemplate(),
-            "CompositeReport" => new CompositeReportTemplate(),
-            "Worksheet" => new WorksheetTemplate(),
-            "Envelope" => new EnvelopeTemplate(),
-            "MedicalHistory" => new MedicalHistoryTemplate(),
-            "BlankReport" => new BlankReportTemplate(),
-            "CashDrawerSummary" => new CashDrawerSummaryTemplate(),
-            "CommissionReport" => new CommissionReportTemplate(),
-            "OutstandingBalance" => new OutstandingBalanceReportTemplate(),
-            _ => throw new NotSupportedException($"Document type '{documentType}' is not supported.")
-        };
-
+        DocumentTemplateBase template = ResolveTemplate(documentType);
         var document = template.BuildDocument(data);
+        await PrintDocumentAsync(documentType, document);
+    }
+
+    // === الـ overload الجديد (مع layout) ===
+    public async Task PrintAsync(string documentType, object data, ReportLayoutDto? layout)
+    {
+        if (string.IsNullOrEmpty(documentType))
+            throw new ArgumentNullException(nameof(documentType));
+        if (data == null)
+            throw new ArgumentNullException(nameof(data));
+
+        if (!await IsPrintingEnabledAsync())
+        {
+            _logger.LogInformation("Printing disabled by EnableServerPrinting toggle. Document type: {DocType}", documentType);
+            return;
+        }
+
+        DocumentTemplateBase template = ResolveTemplate(documentType);
+
+        // ⚠️ التدفق الصحيح: BuildDocument أولاً، ثم ApplyLayout
+        var document = template.BuildDocument(data);
+        template.ApplyLayout(document, layout);
 
         await PrintDocumentAsync(documentType, document);
     }
@@ -68,6 +78,24 @@ public class WpfFlowDocumentPrintService : IPrintService
         }
 
         await ShowPrintDialogAndPrintAsync(document, description);
+    }
+
+    private DocumentTemplateBase ResolveTemplate(string documentType)
+    {
+        return documentType switch
+        {
+            "ResultReport" => new ResultReportTemplate(),
+            "Receipt" => new ReceiptTemplate(),
+            "CompositeReport" => new CompositeReportTemplate(),
+            "Worksheet" => new WorksheetTemplate(),
+            "Envelope" => new EnvelopeTemplate(),
+            "MedicalHistory" => new MedicalHistoryTemplate(),
+            "BlankReport" => new BlankReportTemplate(),
+            "CashDrawerSummary" => new CashDrawerSummaryTemplate(),
+            "CommissionReport" => new CommissionReportTemplate(),
+            "OutstandingBalance" => new OutstandingBalanceReportTemplate(),
+            _ => throw new NotSupportedException($"Document type '{documentType}' is not supported.")
+        };
     }
 
     protected virtual async Task PrintDocumentAsync(string documentType, FlowDocument document)

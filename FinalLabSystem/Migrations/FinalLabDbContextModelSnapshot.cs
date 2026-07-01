@@ -741,6 +741,104 @@ namespace FinalLabSystem.Migrations
                         .HasColumnType("nvarchar(500)")
                         .HasColumnName("backup_output_folder");
 
+                    b.Property<string>("ReportLabNameAr")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)")
+                        .HasColumnName("ReportLabNameAr");
+
+                    b.Property<string>("ReportLabNameEn")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)")
+                        .HasColumnName("ReportLabNameEn");
+
+                    b.Property<string>("ReportLogoPath")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnName("ReportLogoPath");
+
+                    b.Property<decimal?>("ReportLogoWidth")
+                        .HasColumnType("decimal(5,2)")
+                        .HasColumnName("ReportLogoWidth");
+
+                    b.Property<decimal?>("ReportLogoHeight")
+                        .HasColumnType("decimal(5,2)")
+                        .HasColumnName("ReportLogoHeight");
+
+                    b.Property<string>("ReportPrimaryColor")
+                        .HasMaxLength(7)
+                        .HasColumnType("nvarchar(7)")
+                        .HasColumnName("ReportPrimaryColor");
+
+                    b.Property<string>("ReportSecondaryColor")
+                        .HasMaxLength(7)
+                        .HasColumnType("nvarchar(7)")
+                        .HasColumnName("ReportSecondaryColor");
+
+                    b.Property<string>("ReportFontFamily")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("ReportFontFamily");
+
+                    b.Property<double>("ReportFontSize")
+                        .HasColumnType("float")
+                        .HasColumnName("ReportFontSize");
+
+                    b.Property<double>("ReportHeaderFontSize")
+                        .HasColumnType("float")
+                        .HasColumnName("ReportHeaderFontSize");
+
+                    b.Property<double>("ReportFooterFontSize")
+                        .HasColumnType("float")
+                        .HasColumnName("ReportFooterFontSize");
+
+                    b.Property<decimal>("ReportMarginTop")
+                        .HasColumnType("decimal(5,2)")
+                        .HasColumnName("ReportMarginTop");
+
+                    b.Property<decimal>("ReportMarginBottom")
+                        .HasColumnType("decimal(5,2)")
+                        .HasColumnName("ReportMarginBottom");
+
+                    b.Property<decimal>("ReportMarginLeft")
+                        .HasColumnType("decimal(5,2)")
+                        .HasColumnName("ReportMarginLeft");
+
+                    b.Property<decimal>("ReportMarginRight")
+                        .HasColumnType("decimal(5,2)")
+                        .HasColumnName("ReportMarginRight");
+
+                    b.Property<bool>("ReportShowHeader")
+                        .HasColumnType("bit")
+                        .HasColumnName("ReportShowHeader");
+
+                    b.Property<bool>("ReportShowFooter")
+                        .HasColumnType("bit")
+                        .HasColumnName("ReportShowFooter");
+
+                    b.Property<bool>("ReportShowStamp")
+                        .HasColumnType("bit")
+                        .HasColumnName("ReportShowStamp");
+
+                    b.Property<string>("ReportHeaderText")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnName("ReportHeaderText");
+
+                    b.Property<string>("ReportFooterText")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnName("ReportFooterText");
+
+                    b.Property<string>("ReportPageOrientation")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasColumnName("ReportPageOrientation");
+
+                    b.Property<string>("ReportPaperSize")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasColumnName("ReportPaperSize");
+
                     b.HasKey("SettingKey")
                         .HasName("PK__LabSetti__0DFAC426DE80F226");
 

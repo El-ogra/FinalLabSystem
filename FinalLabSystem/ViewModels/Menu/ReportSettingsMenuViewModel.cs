@@ -9,8 +9,14 @@ public sealed class ReportSettingsMenuViewModel : ViewModelBase
 {
     public ReportSettingsMenuViewModel(INavigationService navigationService)
     {
-        ManageTemplatesCommand = new RelayCommand(_ => navigationService.OpenTaskWindow<ReportCommentTemplateViewModel>());
+        ManageTemplatesCommand = new RelayCommand(_ =>
+            navigationService.OpenTaskWindow<ReportCommentTemplateViewModel>());
+
+        NavigateToReportSettingsCommand = new RelayCommand(_ =>
+            navigationService.OpenTaskWindow<ReportSettingsWindowViewModel>());
     }
 
     public ICommand ManageTemplatesCommand { get; }
+
+    public ICommand NavigateToReportSettingsCommand { get; }
 }

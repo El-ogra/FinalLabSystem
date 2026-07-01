@@ -111,6 +111,7 @@ public partial class App : Application
             navigation.RegisterWindow<InventoryWindowViewModel, InventoryWindow>();
             navigation.RegisterWindow<CommissionReportWindowViewModel, CommissionReportWindow>();
             navigation.RegisterWindow<OutstandingBalanceWindowViewModel, OutstandingBalanceWindow>();
+            navigation.RegisterWindow<ReportSettingsWindowViewModel, ReportSettingsWindow>();
 
             using (var scope = ServiceProvider.CreateScope())
             {
@@ -180,6 +181,7 @@ public partial class App : Application
         services.AddScoped<ICommissionReportService, CommissionReportService>();
         services.AddScoped<IOutstandingBalanceReportService, OutstandingBalanceReportService>();
         services.AddScoped<IBackupService, BackupService>();
+        services.AddScoped<IReportLayoutService, ReportLayoutService>();
 
         services.AddLogging(builder =>
         {
@@ -299,6 +301,10 @@ public partial class App : Application
         services.AddTransient<BackupRestoreWindowViewModel>();
         services.AddTransient<BackupRestoreWindow>();
         services.AddTransient<BackupPasswordDialog>();
+
+        // Slice 6.4 — Report Settings UI
+        services.AddTransient<ReportSettingsWindowViewModel>();
+        services.AddTransient<ReportSettingsWindow>();
     }
 
     protected override void OnExit(ExitEventArgs e)
