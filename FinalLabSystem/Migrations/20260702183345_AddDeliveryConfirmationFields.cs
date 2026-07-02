@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -18,17 +18,17 @@ namespace FinalLabSystem.Migrations
                 precision: 0,
                 nullable: true);
 
-            migrationBuilder.AddColumn<byte[]>(
-                name: "delivery_signature",
-                table: "Visit",
-                type: "varbinary(max)",
-                nullable: true);
-
             migrationBuilder.AddColumn<string>(
                 name: "delivery_otp_code",
                 table: "Visit",
                 type: "nvarchar(256)",
                 maxLength: 256,
+                nullable: true);
+
+            migrationBuilder.AddColumn<byte[]>(
+                name: "delivery_signature",
+                table: "Visit",
+                type: "varbinary(max)",
                 nullable: true);
 
             migrationBuilder.CreateTable(
@@ -49,26 +49,28 @@ namespace FinalLabSystem.Migrations
                 {
                     table.PrimaryKey("PK_DeliveryConfirmation", x => x.delivery_confirmation_id);
                     table.ForeignKey(
-                        name: "FK_DeliveryConfirmation_Visit",
-                        column: x => x.visit_id,
-                        principalTable: "Visit",
-                        principalColumn: "visit_id");
-                    table.ForeignKey(
                         name: "FK_DeliveryConfirmation_Staff",
                         column: x => x.staff_id,
                         principalTable: "Staff",
-                        principalColumn: "staff_id");
+                        principalColumn: "staff_id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DeliveryConfirmation_Visit",
+                        column: x => x.visit_id,
+                        principalTable: "Visit",
+                        principalColumn: "visit_id",
+                        onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_DeliveryConfirmation_VisitId",
-                table: "DeliveryConfirmation",
-                column: "visit_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DeliveryConfirmation_StaffId",
                 table: "DeliveryConfirmation",
                 column: "staff_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DeliveryConfirmation_VisitId",
+                table: "DeliveryConfirmation",
+                column: "visit_id");
         }
 
         /// <inheritdoc />
@@ -82,11 +84,11 @@ namespace FinalLabSystem.Migrations
                 table: "Visit");
 
             migrationBuilder.DropColumn(
-                name: "delivery_signature",
+                name: "delivery_otp_code",
                 table: "Visit");
 
             migrationBuilder.DropColumn(
-                name: "delivery_otp_code",
+                name: "delivery_signature",
                 table: "Visit");
         }
     }
