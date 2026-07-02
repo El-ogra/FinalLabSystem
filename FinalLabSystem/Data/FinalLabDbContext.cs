@@ -220,6 +220,8 @@ public partial class FinalLabDbContext : DbContext
 
     public virtual DbSet<WorkShift> WorkShifts { get; set; }
 
+    public virtual DbSet<DeliveryConfirmation> DeliveryConfirmations { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
     }
@@ -1973,6 +1975,16 @@ public partial class FinalLabDbContext : DbContext
                 .HasForeignKey(d => d.SchemeId)
                 .HasConstraintName("FK_Visit_Scheme");
 
+            entity.Property(e => e.DeliveryConfirmedAt)
+                .HasPrecision(0)
+                .HasColumnName("delivery_confirmed_at");
+            entity.Property(e => e.DeliverySignature)
+                .HasColumnType("varbinary(max)")
+                .HasColumnName("delivery_signature");
+            entity.Property(e => e.DeliveryOtpCode)
+                .HasMaxLength(256)
+                .HasColumnName("delivery_otp_code");
+
         });
 
         modelBuilder.Entity<VisitTest>(entity =>
@@ -2363,6 +2375,41 @@ public partial class FinalLabDbContext : DbContext
             entity.HasOne(d => d.Antibiotic).WithMany(p => p.OrganismAntibiotics)
                 .HasForeignKey(d => d.AntibioticCatalogId)
                 .HasConstraintName("FK_OrganismAntibiotic_AntibioticCatalog");
+        });
+
+        modelBuilder.Entity<DeliveryConfirmation>(entity =>
+        {
+            entity.HasKey(e => e.DeliveryConfirmationId).HasName("PK_DeliveryConfirmation");
+
+            entity.ToTable("DeliveryConfirmation");
+
+            entity.Property(e => e.DeliveryConfirmationId).HasColumnName("delivery_confirmation_id");
+            entity.Property(e => e.VisitId).HasColumnName("visit_id");
+            entity.Property(e => e.Method).HasColumnName("method");
+            entity.Property(e => e.ConfirmedAt)
+                .HasPrecision(0)
+                .HasColumnName("confirmed_at");
+            entity.Property(e => e.SignatureImage)
+                .HasColumnType("varbinary(max)")
+                .HasColumnName("signature_image");
+            entity.Property(e => e.OtpCodeHash)
+                .HasMaxLength(500)
+                .HasColumnName("otp_code_hash");
+            entity.Property(e => e.ReceivedByName)
+                .HasMaxLength(100)
+                .HasColumnName("received_by_name");
+            entity.Property(e => e.StaffId).HasColumnName("staff_id");
+
+            entity.HasOne(d => d.Visit).WithMany(p => p.DeliveryConfirmations)
+                .HasForeignKey(d => d.VisitId)
+                .HasConstraintName("FK_DeliveryConfirmation_Visit");
+
+            entity.HasOne(d => d.Staff).WithMany()
+                .HasForeignKey(d => d.StaffId)
+                .HasConstraintName("FK_DeliveryConfirmation_Staff");
+
+            entity.HasIndex(e => e.VisitId).HasDatabaseName("IX_DeliveryConfirmation_VisitId");
+            entity.HasIndex(e => e.StaffId).HasDatabaseName("IX_DeliveryConfirmation_StaffId");
         });
 
         OnModelCreatingPartial(modelBuilder);

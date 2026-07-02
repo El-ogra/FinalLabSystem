@@ -1,6 +1,7 @@
 using FinalLabSystem.Data;
 using FinalLabSystem.Infrastructure;
 using FinalLabSystem.Infrastructure.Navigation;
+using FinalLabSystem.Infrastructure.Security;
 using FinalLabSystem.Infrastructure.Session;
 using FinalLabSystem.Infrastructure.Settings;
 using FinalLabSystem.Services.Implementations;
@@ -13,6 +14,7 @@ using FinalLabSystem.ViewModels.Menu;
 using FinalLabSystem.ViewModels.Settings;
 using FinalLabSystem.Views;
 using FinalLabSystem.Views.Patients;
+using FinalLabSystem.Views.Patients.Delivery;
 using FinalLabSystem.Views.Settings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -311,6 +313,14 @@ public partial class App : Application
         // Slice 6.5 — Print Queue / Batch Printing
         services.AddTransient<PrintQueueWindowViewModel>();
         services.AddTransient<PrintQueueWindow>();
+
+        // Slice 6.6 — Delivery Confirmation (Signature + OTP)
+        services.AddScoped<IDeliveryConfirmationService, DeliveryConfirmationService>();
+        services.AddSingleton<IOtpGenerator, OtpGenerator>();
+        services.AddTransient<SignatureConfirmationDialogViewModel>();
+        services.AddTransient<SignatureConfirmationDialog>();
+        services.AddTransient<OtpVerificationDialogViewModel>();
+        services.AddTransient<OtpVerificationDialog>();
     }
 
     protected override void OnExit(ExitEventArgs e)

@@ -110,4 +110,13 @@ public partial class Visit
     public virtual ICollection<VisitTest> VisitTests { get; set; } = new List<VisitTest>();
 
     public virtual ICollection<VisitCharge> VisitCharges { get; set; } = new List<VisitCharge>();
+
+    public DateTime? DeliveryConfirmedAt { get; set; }
+
+    public byte[]? DeliverySignature { get; set; }
+
+    [StringLength(256)]
+    public string? DeliveryOtpCode { get; set; }
+
+    public virtual ICollection<DeliveryConfirmation> DeliveryConfirmations { get; set; } = new List<DeliveryConfirmation>();
 }

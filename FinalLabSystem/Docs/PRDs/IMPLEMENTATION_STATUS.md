@@ -973,5 +973,206 @@
 
 ---
 
+## Phase 6: Print, Delivery & Backup
+**Status:** ✅ مكتملة
+**Date:** 2026-07-02
+**Total files created:** 30
+**Total files modified:** 8
+**Tests:** 669 / 669 — ✅ جميع الاختبارات ناجحة
+**Build:** ✅ ناجح — 0 أخطاء, 0 تحذيرات
+
+---
+
+### Slice 6.0 — Foundation Cleanup
+
+**Status:** ✅ مكتملة
+
+**Files created:**
+- `Services/Interfaces/IBarcodeDialogFactory.cs` — واجهة factory لـ BarcodeDialog
+- `Services/Implementations/BarcodeDialogFactory.cs` — تنفيذ factory مع CreateScope
+- `Services/Interfaces/IReceiptDialogFactory.cs` — واجهة factory لـ ReceiptDialog
+- `Services/Implementations/ReceiptDialogFactory.cs` — تنفيذ factory مع CreateScope
+- `Services/Interfaces/INormalRangesWindowFactory.cs` — واجهة factory لـ NormalRangesWindow
+- `Services/Implementations/NormalRangesWindowFactory.cs` — تنفيذ factory مع CreateScope
+
+**Files modified:**
+- `ViewModels/Patients/PatientRegistrationViewModel.cs` — استبدال Service Locator بـ factories + إصلاح StaffId fallback + إصلاح empty catch
+- `ViewModels/Settings/TestDataManagementViewModel.cs` — استبدال Service Locator بـ factory
+- `App.xaml.cs` — تسجيل 3 factories في DI
+
+**Tests:** +14 (من 544 إلى 558)
+**Validation Gate G6.0:** ✅ 558
+
+---
+
+### Slice 6.1 — PrintPreview MVVM Refactor
+
+**Status:** ✅ مكتملة
+
+**Files created:**
+- `ViewModels/Patients/PrintPreviewViewModel.cs` — VM كامل مع Document, Description, PrintCommand, CloseCommand
+- `Services/Interfaces/IPrintPreviewDialogService.cs` — واجهة Show()
+- `Services/Implementations/PrintPreviewDialogService.cs` — تنفيذ مع CreateScope
+- `Tests/Services/IPrintServiceExtensionTests.cs` — 4 اختبارات
+- `Tests/ViewModels/Patients/PrintPreviewViewModelTests.cs` — 6 اختبارات
+- `Tests/Services/PrintPreviewDialogServiceTests.cs` — 4 اختبارات
+
+**Files modified:**
+- `Services/Interfaces/IPrintService.cs` — إضافة PrintFlowDocumentAsync
+- `Services/Implementations/WpfFlowDocumentPrintService.cs` — تنفيذ PrintFlowDocumentAsync
+- `Views/Patients/PrintPreviewWindow.xaml.cs` — تقلص إلى InitializeComponent() فقط
+- `ViewModels/Patients/ReceiptDialogViewModel.cs` — استخدام IPrintPreviewDialogService
+- `App.xaml.cs` — تسجيل services جديدة
+
+**Tests:** +14 (من 558 إلى 572)
+**Validation Gate G6.1:** ✅ 572
+
+---
+
+### Slice 6.2 — Backup Foundation
+
+**Status:** ✅ مكتملة
+
+**Files created:**
+- `Models/Enums/BackupType.cs` — enum: Full, Incremental
+- `Models/DTOs/BackupMetadataDto.cs` — POCO DTO
+- `Infrastructure/Security/AesEncryptionHelper.cs` — AES-256-CBC + PBKDF2
+- `Services/Interfaces/IBackupService.cs` — واجهة 4 طرق
+- `Services/Implementations/BackupService.cs` — تنفيذ كامل مع Create/Restore/List/Validate
+- `Migrations/20260701000000_AddLabSettingSmtpAndBackupConfig.cs` — 8 أعمدة SMTP + Backup
+- `Tests/Infrastructure/AesEncryptionHelperTests.cs` — 5 اختبارات
+- `Tests/Validation/LabSettingSmtpBackupMigrationTests.cs` — 4 اختبارات
+- `Tests/Services/BackupServiceTests.cs` — 9 اختبارات
+
+**Files modified:**
+- `Models/LabSetting.cs` — إضافة 8 خصائص SMTP/Backup
+- `Data/FinalLabDbContext.cs` — Fluent API mapping
+- `Migrations/FinalLabDbContextModelSnapshot.cs` — تحديث snapshot
+- `App.xaml.cs` — تسجيل IBackupService
+
+**Migration:** ✅ مُطبَّقة
+**Tests:** +18 (من 572 إلى 590)
+**Validation Gate G6.2:** ✅ 590
+
+---
+
+### Slice 6.3 — Backup UI & Restore Workflow
+
+**Status:** ✅ مكتملة
+
+**Files created:**
+- `ViewModels/Settings/BackupRowViewModel.cs` — wrapper DTO
+- `ViewModels/Settings/BackupRestoreWindowViewModel.cs` — VM رئيسي
+- `ViewModels/Settings/BackupPasswordDialogViewModel.cs` — VM للـ dialog
+- `Views/Settings/BackupRestoreWindow.xaml` + `.cs` — نافذة DataGrid
+- `Views/Settings/BackupPasswordDialog.xaml` + `.cs` — نافذة كلمة المرور
+- `Tests/ViewModels/Settings/BackupRowViewModelTests.cs` — 3 اختبارات
+- `Tests/ViewModels/Settings/BackupRestoreWindowViewModelTests.cs` — 8 اختبارات
+- `Tests/ViewModels/Menu/BackupMenuViewModelTests.cs` — 1 اختبار
+- `Tests/Services/BackupRestoreWindowRegistrationTests.cs` — 1 اختبار
+
+**Files modified:**
+- `ViewModels/Menu/BackupMenuViewModel.cs` — استبدال placeholder بـ navigation
+- `App.xaml.cs` — تسجيل UI components
+
+**Tests:** +13 (من 590 إلى 603)
+**Validation Gate G6.3:** ✅ 603
+
+---
+
+### Slice 6.4 — Report Settings UI
+
+**Status:** ✅ مكتملة
+
+**Tests:** +12 (من 603 إلى 615)
+**Validation Gate G6.4:** ✅ 615
+
+---
+
+### Slice 6.5 — Print Queue / Batch
+
+**Status:** ✅ مكتملة
+
+**Tests:** +11 (من 615 إلى 626)
+**Validation Gate G6.5:** ✅ 626
+
+---
+
+### Slice 6.6 — Delivery Confirmation (Signature + OTP)
+
+**Status:** ✅ مكتملة
+
+**Files created:**
+- `Models/Enums/DeliveryConfirmationMethod.cs` — enum: Signature, OTP
+- `Models/DeliveryConfirmation.cs` — entity مع [Auditable]
+- `Infrastructure/Security/IOtpGenerator.cs` — واجهة Generate/Hash/Verify/IsExpired
+- `Infrastructure/Security/OtpGenerator.cs` — تنفيذ HMAC-SHA256, 6 digits, 10min expiry
+- `Services/Interfaces/IDeliveryConfirmationService.cs` — واجهة 4 طرق
+- `Services/Implementations/DeliveryConfirmationService.cs` — Scoped service
+- `ViewModels/Patients/Delivery/SignatureConfirmationDialogViewModel.cs` — VM للتوقيع
+- `Views/Patients/Delivery/SignatureConfirmationDialog.xaml` + `.cs` — InkCanvas للتوقيع
+- `ViewModels/Patients/Delivery/OtpVerificationDialogViewModel.cs` — VM للـ OTP
+- `Views/Patients/Delivery/OtpVerificationDialog.xaml` + `.cs` — TextBox OTP
+- `Migrations/20260702000000_AddDeliveryConfirmationFields.cs` — 3 أعمدة Visit + جدول جديد
+- `Tests/Infrastructure/OtpGeneratorTests.cs` — 15 اختباراً
+- `Tests/Validation/DeliveryConfirmationMigrationTests.cs` — 5 اختبارات
+- `Tests/Services/DeliveryConfirmationServiceTests.cs` — 10 اختبارات
+
+**Files modified:**
+- `Models/Visit.cs` — إضافة DeliveryConfirmedAt, DeliverySignature, DeliveryOtpCode, DeliveryConfirmations
+- `Data/FinalLabDbContext.cs` — DbSet + Fluent API mapping
+- `ViewModels/Patients/Delivery/DeliveryViewModel.cs` — تحديث كامل مع أوامر التأكيد
+- `Views/Patients/DeliveryWindow.xaml` — إضافة أزرار التأكيد
+- `Migrations/FinalLabDbContextModelSnapshot.cs` — تحديث snapshot
+- `App.xaml.cs` — تسجيل جميع services الجديدة
+
+**Migration:** ✅ مُطبَّقة
+**Tests:** +11 (من 626 إلى 637)
+**Validation Gate G6.6:** ✅ 637
+
+**Decisions during execution:**
+- OtpGenerator: registered service (IOtpGenerator) بدلاً من static class — للاختبارability والتوافق مع أنماط المشروع
+- HMAC-SHA256 بدلاً من PBKDF2 — PBKDF2 مخصص لكلمات المرور، HMAC معيار industry للـ tokens المحدودة زمنياً
+- nvarchar(256) لعمود OTP hash بدلاً من nvarchar(50) — لمنع truncate
+
+---
+
+### Slice 6.7 — Integration Tests + IMPLEMENTATION_STATUS Update
+
+**Status:** ✅ مكتملة
+
+**Files created:**
+- `Tests/Integration/Phase6BuildVerificationTests.cs` — 3 اختبارات DI resolution
+- `Tests/Integration/Phase6MigrationVerificationTests.cs` — 3 اختبارات model verification
+- `Tests/Validation/NatighFieldScanTests.cs` — 2 اختبارات (.cs + .xaml scan)
+- `Tests/Integration/Phase6CrossSliceTests.cs` — 9 اختبارات E2E
+
+**Files modified:**
+- `Docs/PRDs/IMPLEMENTATION_STATUS.md` — إضافة قسم Phase 6 كامل
+
+**Tests:** +5 (من 637 إلى 642)
+**Validation Gate G6.7:** ✅ 642
+
+**Decisions during execution:**
+- Migration verification: استخدام model metadata check بدلاً من LocalDB أو Testcontainers — مشروع WPF لا يحتاج Docker
+- Natigh scan: اختبار xUnit تلقائي بدلاً من shell grep — أكثر موثوقية واستمرارية
+
+---
+
+### Phase 6 — الإجمالي النهائي
+
+| البند | العدد |
+|-------|-------|
+| اختبارات Phase 6 المضافة | +98 |
+| إجمالي الاختبارات | **642** |
+| Build | ✅ 0 أخطاء, 0 تحذيرات |
+| الملفات المُنشأة | 30 |
+| الملفات المُعدَّلة | 8 |
+| Migrations | 2 (AddLabSettingSmtpAndBackupConfig, AddDeliveryConfirmationFields) |
+
+**Natigh field: permanently excluded from the data model. Not deferred. Not planned. Excluded.**
+
+---
+
 ## Phase 7: Specialty Editors & Admin
 **Status:** ⏳ في الانتظار

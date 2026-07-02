@@ -3339,6 +3339,59 @@ namespace FinalLabSystem.Migrations
                     b.ToView("V_SampleTubeStatus", (string)null);
                 });
 
+            modelBuilder.Entity("FinalLabSystem.Models.DeliveryConfirmation", b =>
+                {
+                    b.Property<int>("DeliveryConfirmationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("delivery_confirmation_id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DeliveryConfirmationId"));
+
+                    b.Property<DateTime>("ConfirmedAt")
+                        .HasPrecision(0)
+                        .HasColumnType("datetime2(0)")
+                        .HasColumnName("confirmed_at");
+
+                    b.Property<int>("Method")
+                        .HasColumnType("int")
+                        .HasColumnName("method");
+
+                    b.Property<string>("OtpCodeHash")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnName("otp_code_hash");
+
+                    b.Property<string>("ReceivedByName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("received_by_name");
+
+                    b.Property<byte[]>("SignatureImage")
+                        .HasColumnType("varbinary(max)")
+                        .HasColumnName("signature_image");
+
+                    b.Property<int>("StaffId")
+                        .HasColumnType("int")
+                        .HasColumnName("staff_id");
+
+                    b.Property<int>("VisitId")
+                        .HasColumnType("int")
+                        .HasColumnName("visit_id");
+
+                    b.HasKey("DeliveryConfirmationId")
+                        .HasName("PK_DeliveryConfirmation");
+
+                    b.HasIndex("StaffId")
+                        .HasDatabaseName("IX_DeliveryConfirmation_StaffId");
+
+                    b.HasIndex("VisitId")
+                        .HasDatabaseName("IX_DeliveryConfirmation_VisitId");
+
+                    b.ToTable("DeliveryConfirmation", (string)null);
+                });
+
             modelBuilder.Entity("FinalLabSystem.Models.Visit", b =>
                 {
                     b.Property<int>("VisitId")
@@ -3561,6 +3614,20 @@ namespace FinalLabSystem.Migrations
                         .HasColumnType("nvarchar(30)")
                         .HasDefaultValue("Open")
                         .HasColumnName("visit_status");
+
+                    b.Property<DateTime?>("DeliveryConfirmedAt")
+                        .HasPrecision(0)
+                        .HasColumnType("datetime2(0)")
+                        .HasColumnName("delivery_confirmed_at");
+
+                    b.Property<byte[]>("DeliverySignature")
+                        .HasColumnType("varbinary(max)")
+                        .HasColumnName("delivery_signature");
+
+                    b.Property<string>("DeliveryOtpCode")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)")
+                        .HasColumnName("delivery_otp_code");
 
                     b.HasKey("VisitId")
                         .HasName("PK__Visit__375A75E1798EC5C4");
@@ -3812,6 +3879,25 @@ namespace FinalLabSystem.Migrations
                     b.Navigation("Shift");
 
                     b.Navigation("Staff");
+                });
+
+            modelBuilder.Entity("FinalLabSystem.Models.DeliveryConfirmation", b =>
+                {
+                    b.HasOne("FinalLabSystem.Models.Staff", "Staff")
+                        .WithMany()
+                        .HasForeignKey("StaffId")
+                        .IsRequired()
+                        .HasConstraintName("FK_DeliveryConfirmation_Staff");
+
+                    b.HasOne("FinalLabSystem.Models.Visit", "Visit")
+                        .WithMany("DeliveryConfirmations")
+                        .HasForeignKey("VisitId")
+                        .IsRequired()
+                        .HasConstraintName("FK_DeliveryConfirmation_Visit");
+
+                    b.Navigation("Staff");
+
+                    b.Navigation("Visit");
                 });
 
             modelBuilder.Entity("FinalLabSystem.Models.AuditLog", b =>
@@ -4669,6 +4755,8 @@ namespace FinalLabSystem.Migrations
 
             modelBuilder.Entity("FinalLabSystem.Models.Visit", b =>
                 {
+                    b.Navigation("DeliveryConfirmations");
+
                     b.Navigation("Payments");
 
                     b.Navigation("SampleTubes");
