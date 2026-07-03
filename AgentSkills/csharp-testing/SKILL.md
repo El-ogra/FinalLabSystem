@@ -1,322 +1,198 @@
 ---
 name: csharp-testing
-description: C# and .NET testing patterns with xUnit, FluentAssertions, mocking, integration tests, and test organization best practices.
+description: C# and .NET testing patterns with xUnit and Moq for WPF/MVVM desktop applications. Covers unit tests, EF Core InMemory integration tests, and DI registration tests.
 metadata:
   origin: ECC
 ---
 
 # C# Testing Patterns
 
-Comprehensive testing patterns for .NET applications using xUnit, FluentAssertions, and modern testing practices.
+> ⚠️ **تحذير مهم — خاص بمشروع FinalLabSystem:**
+> هذا المشروع يستخدم **xUnit + Moq + EF Core InMemory** حصراً.
+> - ❌ لا تستخدم **NSubstitute** — غير مثبّت ولن يعمل
+> - ❌ لا تستخدم **Testcontainers** — مشروع WPF لا يحتاجه
+> - ❌ لا تستخدم **WebApplicationFactory** — لا يوجد ASP.NET Core
+> - ❌ لا تستخدم **FluentAssertions** — استخدم xUnit assertions العادية
+> - ✅ استخدم **Moq** للـ mocking فقط
+> - ✅ استخدم **EF Core InMemory** لاختبارات قاعدة البيانات
 
-## When to Activate
+---
 
-- Writing new tests for C# code
-- Reviewing test quality and coverage
-- Setting up test infrastructure for .NET projects
-- Debugging flaky or slow tests
+## قواعد الاختبار الإلزامية في FinalLabSystem
 
-## Test Framework Stack
+| القاعدة | الصحيح | الخطأ |
+|---------|--------|-------|
+| التواريخ | `DateTime.UtcNow` | `DateTime.Now` أو `DateTime.Today` |
+| بيانات المريض | `Sex = "M"` إلزامياً | حذف حقل Sex |
+| Moq اختياري | `It.IsAny<string>()` | تمرير قيمة ثابتة لمعامل غير مهم |
+| DbContext | `UseInMemoryDatabase(Guid.NewGuid().ToString())` | Mock للـ DbContext |
+| الخدمات | `public` إلزامياً | `internal` — يسبب فشل الاختبار |
 
-| Tool | Purpose |
-|---|---|
-| **xUnit** | Test framework (preferred for .NET) |
-| **FluentAssertions** | Readable assertion syntax |
-| **NSubstitute** or **Moq** | Mocking dependencies |
-| **Testcontainers** | Real infrastructure in integration tests |
-| **WebApplicationFactory** | ASP.NET Core integration tests |
-| **Bogus** | Realistic test data generation |
+---
 
-## Unit Test Structure
-
-### Arrange-Act-Assert
+## هيكل الاختبار القياسي في المشروع
 
 ```csharp
-public sealed class OrderServiceTests
+public sealed class PatientServiceTests : IDisposable
 {
-    private readonly IOrderRepository _repository = Substitute.For<IOrderRepository>();
-    private readonly ILogger<OrderService> _logger = Substitute.For<ILogger<OrderService>>();
-    private readonly OrderService _sut;
+    private readonly FinalLabDbContext _db;
+    private readonly Mock<IAuditService> _audit = new();
+    private readonly Mock<ICurrentUserSession> _session = new();
+    private readonly PatientService _sut;
 
-    public OrderServiceTests()
+    public PatientServiceTests()
     {
-        _sut = new OrderService(_repository, _logger);
+        var options = new DbContextOptionsBuilder<FinalLabDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .Options;
+        _db = new FinalLabDbContext(options);
+        _session.Setup(s => s.CurrentUser)
+                .Returns(new Staff { StaffId = 1, IsAdmin = true, Sex = "M" });
+        _sut = new PatientService(_db, _audit.Object, _session.Object);
     }
 
-    [Fact]
-    public async Task PlaceOrderAsync_ReturnsSuccess_WhenRequestIsValid()
-    {
-        // Arrange
-        var request = new CreateOrderRequest
-        {
-            CustomerId = "cust-123",
-            Items = [new OrderItem("SKU-001", 2, 29.99m)]
-        };
-
-        // Act
-        var result = await _sut.PlaceOrderAsync(request, CancellationToken.None);
-
-        // Assert
-        result.IsSuccess.Should().BeTrue();
-        result.Value.Should().NotBeNull();
-        result.Value!.CustomerId.Should().Be("cust-123");
-    }
-
-    [Fact]
-    public async Task PlaceOrderAsync_ReturnsFailure_WhenNoItems()
-    {
-        // Arrange
-        var request = new CreateOrderRequest
-        {
-            CustomerId = "cust-123",
-            Items = []
-        };
-
-        // Act
-        var result = await _sut.PlaceOrderAsync(request, CancellationToken.None);
-
-        // Assert
-        result.IsSuccess.Should().BeFalse();
-        result.Error.Should().Contain("at least one item");
-    }
+    public void Dispose() => _db.Dispose();
 }
 ```
 
-### Parameterized Tests with Theory
+---
+
+## Seed Data — القالب القياسي
 
 ```csharp
-[Theory]
-[InlineData("", false)]
-[InlineData("a", false)]
-[InlineData("ab@c.d", false)]
-[InlineData("user@example.com", true)]
-[InlineData("user+tag@example.co.uk", true)]
-public void IsValidEmail_ReturnsExpected(string email, bool expected)
+// Patient — Sex = "M" إلزامي دائماً
+var patient = new Patient
 {
-    EmailValidator.IsValid(email).Should().Be(expected);
-}
+    PatientId   = 1,
+    FullName    = "أحمد محمد",
+    Sex         = "M",          // ⚠️ إلزامي — لا تحذفه
+    DateOfBirth = new DateTime(1990, 1, 1),
+    CreatedAt   = DateTime.UtcNow   // ⚠️ UtcNow دائماً
+};
 
-[Theory]
-[MemberData(nameof(InvalidOrderCases))]
-public async Task PlaceOrderAsync_RejectsInvalidOrders(CreateOrderRequest request, string expectedError)
+// Staff
+var staff = new Staff
 {
-    var result = await _sut.PlaceOrderAsync(request, CancellationToken.None);
+    StaffId      = 1,
+    FullName     = "موظف تجريبي",
+    Sex          = "M",
+    IsAdmin      = true,
+    PasswordHash = "hash",
+    Username     = "test_user"
+};
 
-    result.IsSuccess.Should().BeFalse();
-    result.Error.Should().Contain(expectedError);
-}
-
-public static TheoryData<CreateOrderRequest, string> InvalidOrderCases => new()
+// Visit
+var visit = new Visit
 {
-    { new() { CustomerId = "", Items = [ValidItem()] }, "CustomerId" },
-    { new() { CustomerId = "c1", Items = [] }, "at least one item" },
-    { new() { CustomerId = "c1", Items = [new("", 1, 10m)] }, "SKU" },
+    VisitId    = 1,
+    PatientId  = 1,
+    StaffId    = 1,
+    VisitDate  = DateTime.UtcNow,   // ⚠️ UtcNow دائماً
+    VisitCode  = "V20260703-0001"
 };
 ```
 
-## Mocking with NSubstitute
+---
+
+## Moq — الأنماط المعتمدة
 
 ```csharp
-[Fact]
-public async Task GetOrderAsync_ReturnsNull_WhenNotFound()
-{
-    // Arrange
-    var orderId = Guid.NewGuid();
-    _repository.FindByIdAsync(orderId, Arg.Any<CancellationToken>())
-        .Returns((Order?)null);
+// Setup
+_audit.Setup(a => a.LogActionAsync(
+        It.IsAny<string>(),   // tableName
+        It.IsAny<int>(),      // recordId
+        It.IsAny<string>(),   // action (حرف واحد: "C","U","D","B","R")
+        It.IsAny<int>(),      // staffId
+        It.IsAny<string>()))  // notes
+     .Returns(Task.CompletedTask);
 
-    // Act
-    var result = await _sut.GetOrderAsync(orderId, CancellationToken.None);
+// Verify — تحقق أن الدالة استُدعيت مرة واحدة
+_audit.Verify(a => a.LogActionAsync(
+        "Patient", patient.PatientId, "C",
+        It.IsAny<int>(), It.IsAny<string>()),
+    Times.Once);
 
-    // Assert
-    result.Should().BeNull();
-}
-
-[Fact]
-public async Task PlaceOrderAsync_PersistsOrder()
-{
-    // Arrange
-    var request = ValidOrderRequest();
-
-    // Act
-    await _sut.PlaceOrderAsync(request, CancellationToken.None);
-
-    // Assert — verify the repository was called
-    await _repository.Received(1).AddAsync(
-        Arg.Is<Order>(o => o.CustomerId == request.CustomerId),
-        Arg.Any<CancellationToken>());
-}
+// Verify — تحقق أنها لم تُستدعَ
+_audit.Verify(a => a.LogActionAsync(
+        It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>(),
+        It.IsAny<int>(), It.IsAny<string>()),
+    Times.Never);
 ```
 
-## ASP.NET Core Integration Tests
+---
 
-### WebApplicationFactory Setup
+## الاختبارات الثلاثة الإلزامية لكل Service جديدة
+
+كل Service جديدة في المشروع تحتاج **3 ملفات اختبار**:
+
+```
+Tests/
+  Services/
+    {Name}ServiceTests.cs          ← unit tests للمنطق
+    {Name}ServiceRegistrationTests.cs  ← DI registration test
+  Integration/
+    {Name}EndToEndTests.cs         ← E2E مع InMemory DB
+```
+
+### DI Registration Test — النمط القياسي
 
 ```csharp
-public sealed class OrderApiTests : IClassFixture<WebApplicationFactory<Program>>
+public sealed class BackupServiceRegistrationTests
 {
-    private readonly HttpClient _client;
-
-    public OrderApiTests(WebApplicationFactory<Program> factory)
+    [Fact]
+    public void IBackupService_IsRegistered_InDI()
     {
-        _client = factory.WithWebHostBuilder(builder =>
-        {
-            builder.ConfigureServices(services =>
-            {
-                // Replace real DB with in-memory for tests
-                services.RemoveAll<DbContextOptions<AppDbContext>>();
-                services.AddDbContext<AppDbContext>(options =>
-                    options.UseInMemoryDatabase("TestDb"));
-            });
-        }).CreateClient();
+        var services = new ServiceCollection();
+        // أضف ما يحتاجه الـ service
+        services.AddDbContext<FinalLabDbContext>(o =>
+            o.UseInMemoryDatabase("reg-test"));
+        services.AddScoped<IBackupService, BackupService>();
+
+        var provider = services.BuildServiceProvider();
+        var resolved = provider.GetService<IBackupService>();
+
+        Assert.NotNull(resolved);
     }
 
     [Fact]
-    public async Task GetOrder_Returns404_WhenNotFound()
+    public void BackupService_LifeTime_IsScoped()
     {
-        var response = await _client.GetAsync($"/api/orders/{Guid.NewGuid()}");
+        // تأكد أن الـ service Scoped وليس Singleton
+        var services = new ServiceCollection();
+        services.AddScoped<IBackupService, BackupService>();
+        var descriptor = services.First(d => d.ServiceType == typeof(IBackupService));
 
-        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
-    }
-
-    [Fact]
-    public async Task CreateOrder_Returns201_WithValidRequest()
-    {
-        var request = new CreateOrderRequest
-        {
-            CustomerId = "cust-1",
-            Items = [new("SKU-001", 1, 19.99m)]
-        };
-
-        var response = await _client.PostAsJsonAsync("/api/orders", request);
-
-        response.StatusCode.Should().Be(HttpStatusCode.Created);
-        response.Headers.Location.Should().NotBeNull();
+        Assert.Equal(ServiceLifetime.Scoped, descriptor.Lifetime);
     }
 }
 ```
 
-### Testing with Testcontainers
+---
 
-```csharp
-public sealed class PostgresOrderRepositoryTests : IAsyncLifetime
-{
-    private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder()
-        .WithImage("postgres:16-alpine")
-        .Build();
-
-    private AppDbContext _db = null!;
-
-    public async Task InitializeAsync()
-    {
-        await _postgres.StartAsync();
-        var options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseNpgsql(_postgres.GetConnectionString())
-            .Options;
-        _db = new AppDbContext(options);
-        await _db.Database.MigrateAsync();
-    }
-
-    public async Task DisposeAsync()
-    {
-        await _db.DisposeAsync();
-        await _postgres.DisposeAsync();
-    }
-
-    [Fact]
-    public async Task AddAsync_PersistsOrder()
-    {
-        var repo = new SqlOrderRepository(_db);
-        var order = Order.Create("cust-1", [new OrderItem("SKU-001", 2, 10m)]);
-
-        await repo.AddAsync(order, CancellationToken.None);
-
-        var found = await repo.FindByIdAsync(order.Id, CancellationToken.None);
-        found.Should().NotBeNull();
-        found!.Items.Should().HaveCount(1);
-    }
-}
-```
-
-## Test Organization
+## تسمية الاختبارات — المعيار المعتمد
 
 ```
-tests/
-  MyApp.UnitTests/
-    Services/
-      OrderServiceTests.cs
-      PaymentServiceTests.cs
-    Validators/
-      EmailValidatorTests.cs
-  MyApp.IntegrationTests/
-    Api/
-      OrderApiTests.cs
-    Repositories/
-      OrderRepositoryTests.cs
-  MyApp.TestHelpers/
-    Builders/
-      OrderBuilder.cs
-    Fixtures/
-      DatabaseFixture.cs
+MethodName_ExpectedResult_WhenCondition
 ```
 
-## Test Data Builders
-
-```csharp
-public sealed class OrderBuilder
-{
-    private string _customerId = "cust-default";
-    private readonly List<OrderItem> _items = [new("SKU-001", 1, 10m)];
-
-    public OrderBuilder WithCustomer(string customerId)
-    {
-        _customerId = customerId;
-        return this;
-    }
-
-    public OrderBuilder WithItem(string sku, int quantity, decimal price)
-    {
-        _items.Add(new OrderItem(sku, quantity, price));
-        return this;
-    }
-
-    public Order Build() => Order.Create(_customerId, _items);
-}
-
-// Usage in tests
-var order = new OrderBuilder()
-    .WithCustomer("cust-vip")
-    .WithItem("SKU-PREMIUM", 3, 99.99m)
-    .Build();
+أمثلة صحيحة من المشروع:
+```
+CreateBackupAsync_ThrowsUnauthorized_WhenUserIsNotAdmin
+GetPatientAsync_ReturnsNull_WhenPatientNotFound
+RestoreBackupAsync_CreatesPreRestoreBackup_BeforeRestoring
 ```
 
-## Common Anti-Patterns
+---
 
-| Anti-Pattern | Fix |
-|---|---|
-| Testing implementation details | Test behavior and outcomes |
-| Shared mutable test state | Fresh instance per test (xUnit does this via constructors) |
-| `Thread.Sleep` in async tests | Use `Task.Delay` with timeout, or polling helpers |
-| Asserting on `ToString()` output | Assert on typed properties |
-| One giant assertion per test | One logical assertion per test |
-| Test names describing implementation | Name by behavior: `Method_ExpectedResult_WhenCondition` |
-| Ignoring `CancellationToken` | Always pass and verify cancellation |
+## الأنماط المحظورة في هذا المشروع
 
-## Running Tests
+| المحظور | البديل الصحيح |
+|---------|--------------|
+| `Substitute.For<T>()` (NSubstitute) | `new Mock<T>()` (Moq) |
+| `DateTime.Now` في الاختبارات | `DateTime.UtcNow` |
+| `Mock<FinalLabDbContext>()` | `UseInMemoryDatabase(...)` |
+| `WebApplicationFactory` | لا يوجد ASP.NET هنا |
+| `PostgreSqlContainer` (Testcontainers) | `UseInMemoryDatabase(...)` |
+| اختبار code-behind في XAML | اختبر الـ ViewModel فقط |
+| `Thread.Sleep` في الاختبارات | `Task.Delay` |
 
-```bash
-# Run all tests
-dotnet test
-
-# Run with coverage
-dotnet test --collect:"XPlat Code Coverage"
-
-# Run specific project
-dotnet test tests/MyApp.UnitTests/
-
-# Filter by test name
-dotnet test --filter "FullyQualifiedName~OrderService"
-
-# Watch mode during development
-dotnet watch test --project tests/MyApp.UnitTests/
-```

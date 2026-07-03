@@ -5,6 +5,32 @@ description: 'CommunityToolkit.Mvvm (the MVVM Toolkit) core: source generators (
 
 # CommunityToolkit.Mvvm (core)
 
+> ⚠️ **تحذير حرج — خاص بمشروع FinalLabSystem:**
+>
+> هذا المشروع يستخدم **`ViewModelBase` مخصصاً** (موجود في `ViewModels/ViewModelBase.cs`) وليس `ObservableObject` من الـ Toolkit.
+>
+> - ❌ **لا تستبدل `ViewModelBase` بـ `ObservableObject`** — سيكسر كل الـ ViewModels
+> - ❌ **لا تضيف `[ObservableProperty]`** على ViewModel يرث من `ViewModelBase`
+> - ❌ **لا تستخدم `[RelayCommand]` من الـ Toolkit** إذا كان الـ ViewModel يرث `ViewModelBase`
+> - ✅ ورّث جميع الـ ViewModels الجديدة من `ViewModelBase` كما هو
+> - ✅ استخدم هذه المهارة **فقط** للاطلاع على مفاهيم الـ Toolkit أو إذا أنشأت ViewModel مستقلاً لا يرث `ViewModelBase`
+>
+> **قبل أي عمل على ViewModel، افتح `ViewModels/ViewModelBase.cs` وافهم ما تقدمه أولاً.**
+
+---
+
+## متى تستخدم هذه المهارة في FinalLabSystem
+
+| موقف | الإجراء |
+|------|---------|
+| إنشاء ViewModel جديد | ✅ ورّث `ViewModelBase` — لا تستخدم `ObservableObject` |
+| فهم مفهوم `RelayCommand` | ✅ هذه المهارة مرجع للفهم |
+| استخدام `[RelayCommand]` كـ attribute | ❌ ممنوع — المشروع يستخدم `RelayCommand` يدوياً |
+| استخدام `[ObservableProperty]` | ❌ ممنوع على ViewModels ترث `ViewModelBase` |
+| ViewModel مستقل (مثل dialog helper) | ⚠️ استشر أولاً هل يجب أن يرث `ViewModelBase` |
+
+---
+
 Use this skill when authoring or reviewing ViewModels, properties,
 commands, or validation in apps that use `CommunityToolkit.Mvvm` 8.x.
 
@@ -112,21 +138,6 @@ private string? lastName;
 public string FullName => $"{FirstName} {LastName}".Trim();
 ```
 
-### Wrapping a non-observable model
-
-```csharp
-public sealed class ObservableUser(User user) : ObservableObject
-{
-    public string Name
-    {
-        get => user.Name;
-        set => SetProperty(user.Name, value, user, (u, n) => u.Name = n);
-    }
-}
-```
-
-Pass a static lambda (no captured state) to keep the call allocation-free.
-
 ---
 
 ## Commands
@@ -155,122 +166,24 @@ private Task SaveAsync() => repo.SaveAsync(Name!);
 private bool CanSave() => !string.IsNullOrWhiteSpace(Name);
 ```
 
-Reach for manual `RelayCommand` / `AsyncRelayCommand` constructors only
-when you must own the command's lifetime explicitly or compose it from
-non-trivial sources. The attribute style covers ~95% of cases.
-
-See [`references/relaycommand-cookbook.md`](references/relaycommand-cookbook.md)
-for sync / async / cancellable / concurrency / error-surfacing recipes.
-
 ---
 
 ## Base class selection
 
 | Base class | Use when |
 |------------|---------|
-| `ObservableObject` | Default. `INotifyPropertyChanged` + `INotifyPropertyChanging` + `SetProperty` overloads + `SetPropertyAndNotifyOnCompletion` for `Task` properties |
+| `ObservableObject` | Default. `INotifyPropertyChanged` + `INotifyPropertyChanging` + `SetProperty` overloads |
 | `ObservableValidator` | The VM needs `INotifyDataErrorInfo` (forms, settings input) |
-| `ObservableRecipient` | The VM sends or receives `IMessenger` messages — see the **`mvvm-toolkit-messenger`** skill |
-
-C# is single-inheritance: `ObservableValidator` and `ObservableRecipient`
-both extend `ObservableObject`, so combining them requires composition
-(e.g., inject `IMessenger` into an `ObservableValidator`).
-
----
-
-## Validation
-
-```csharp
-using System.ComponentModel.DataAnnotations;
-
-public sealed partial class RegistrationViewModel : ObservableValidator
-{
-    [ObservableProperty]
-    [NotifyDataErrorInfo]
-    [Required, MinLength(2), MaxLength(100)]
-    private string? name;
-
-    [ObservableProperty]
-    [NotifyDataErrorInfo]
-    [Required, EmailAddress]
-    private string? email;
-
-    [RelayCommand]
-    private void Submit()
-    {
-        ValidateAllProperties();
-        if (HasErrors) return;
-        // submit...
-    }
-}
-```
-
-Other entry points: `TrySetProperty`, `ValidateProperty(value, name)`,
-`ClearAllErrors()`, `GetErrors(propertyName)`. Custom rules support
-`[CustomValidation]` methods and custom `ValidationAttribute` subclasses.
-
-See [`references/validation.md`](references/validation.md) for the full
-validator surface area.
+| `ObservableRecipient` | The VM sends or receives `IMessenger` messages |
 
 ---
 
 ## Top pitfalls
 
-1. **Forgetting `partial`.** Class (and every enclosing type) must be
-   `partial`. Compile error `MVVMTK0008` / `MVVMTK0042`.
-2. **PascalCase field name.** `[ObservableProperty] private string Name;`
-   collides with the generated property. Use `name`, `_name`, or `m_name`.
-3. **`async void` on `[RelayCommand]`.** The generator only wraps
-   `Task`-returning methods as `IAsyncRelayCommand`. `async void` becomes
-   a sync `RelayCommand` and exceptions are unobserved. Always return
-   `Task`.
-4. **Forgetting `[NotifyCanExecuteChangedFor]`.** The Save button stays
-   disabled even though `CanSave()` would now return `true`.
-5. **Mutating the same reference held by an `[ObservableProperty]`
-   field.** `EqualityComparer<T>.Default` returns `true`, no notification
-   fires. Replace the instance instead of mutating it.
-
-For the full diagnostic table (`MVVMTK0xxx`) and more pitfalls, see
-[`references/troubleshooting.md`](references/troubleshooting.md).
-
----
-
-## End-to-end mini walkthrough
-
-A two-pane Notes app demonstrating generators + commands +
-`[NotifyCanExecuteChangedFor]`:
-
-```csharp
-public sealed partial class NoteViewModel(INotesService notes,
-    IMessenger messenger) : ObservableRecipient(messenger)
-{
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(SaveCommand))]
-    [NotifyCanExecuteChangedFor(nameof(DeleteCommand))]
-    private string? filename;
-
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(SaveCommand))]
-    private string? text;
-
-    [RelayCommand(CanExecute = nameof(CanSave))]
-    private Task SaveAsync()
-    {
-        Messenger.Send(new NoteSavedMessage(Filename!));
-        return notes.SaveAsync(Filename!, Text!);
-    }
-
-    [RelayCommand(CanExecute = nameof(CanDelete))]
-    private Task DeleteAsync() => notes.DeleteAsync(Filename!);
-
-    private bool CanSave() =>
-        !string.IsNullOrWhiteSpace(Filename) && !string.IsNullOrEmpty(Text);
-    private bool CanDelete() => !string.IsNullOrWhiteSpace(Filename);
-}
-```
-
-For the full sample (DI wiring, View code-behind, XAML, unit tests), see
-[`references/end-to-end-walkthrough.md`](references/end-to-end-walkthrough.md).
+1. **Forgetting `partial`.** Class must be `partial`. Compile error `MVVMTK0008`.
+2. **PascalCase field name.** `[ObservableProperty] private string Name;` collides with the generated property. Use `name`, `_name`, or `m_name`.
+3. **`async void` on `[RelayCommand]`.** Always return `Task`.
+4. **Forgetting `[NotifyCanExecuteChangedFor]`.** The Save button stays disabled even though `CanSave()` would now return `true`.
 
 ---
 
@@ -281,14 +194,7 @@ For the full sample (DI wiring, View code-behind, XAML, unit tests), see
 | Source generator attribute reference | [`references/source-generators.md`](references/source-generators.md) |
 | RelayCommand recipes | [`references/relaycommand-cookbook.md`](references/relaycommand-cookbook.md) |
 | Validation deep dive | [`references/validation.md`](references/validation.md) |
-| Full Notes-app walkthrough | [`references/end-to-end-walkthrough.md`](references/end-to-end-walkthrough.md) |
-| `MVVMTK0xxx` diagnostics & pitfalls | [`references/troubleshooting.md`](references/troubleshooting.md) |
+| Full walkthrough | [`references/end-to-end-walkthrough.md`](references/end-to-end-walkthrough.md) |
+| `MVVMTK0xxx` diagnostics | [`references/troubleshooting.md`](references/troubleshooting.md) |
 | **Messenger pub/sub** | Companion skill: **`mvvm-toolkit-messenger`** |
-| **`Microsoft.Extensions.DependencyInjection` wiring** | Companion skill: **`mvvm-toolkit-di`** |
 
-External sources:
-
-- Toolkit overview: <https://learn.microsoft.com/en-us/dotnet/communitytoolkit/mvvm/>
-- WinUI MVVM Toolkit tutorial: <https://learn.microsoft.com/en-us/windows/apps/tutorials/winui-mvvm-toolkit/intro>
-- Source: <https://github.com/CommunityToolkit/dotnet>
-- Samples: <https://github.com/CommunityToolkit/MVVM-Samples>
