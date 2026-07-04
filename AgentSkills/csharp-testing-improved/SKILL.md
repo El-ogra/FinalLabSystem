@@ -1,5 +1,5 @@
 ---
-name: csharp-testing
+name: csharp-testing-improved
 description: C# and .NET testing patterns with xUnit and Moq for WPF/MVVM desktop applications. Covers unit tests, EF Core InMemory integration tests, and DI registration tests, tailored to FinalLabSystem's conventions.
 metadata:
   origin: ECC

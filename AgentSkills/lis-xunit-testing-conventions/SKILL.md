@@ -481,5 +481,5 @@ CreateBackup
 - `FinalLabSystem.Tests/Services/AttendanceServiceTests.cs` — نموذج لخدمة بسيطة
 - `FinalLabSystem.Tests/Services/AuthServiceTests.cs` — نموذج لخدمة بـ authorization
 - `FinalLabSystem.Tests/Integration/AttendanceWorkflowEndToEndTests.cs` — نموذج E2E
-- `AgentSkills/csharp-testing/SKILL.md` — المهارة العامة (محدّثة بدقّة في commit `cab1f46`)
+- `AgentSkills/csharp-testing-improved/SKILL.md` — المهارة العامة (تمّ تصحيح الإشارة من `csharp-testing` إلى `csharp-testing-improved` — المجلد الفعلي في المشروع)
 - `AgentSkills/audit-trail-conventions/SKILL.md` — كيف يعمل Audit التلقائي (لفهم الـ Verify)

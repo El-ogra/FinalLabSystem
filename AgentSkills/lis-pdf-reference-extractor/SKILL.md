@@ -318,10 +318,10 @@ def extract_pdf(pdf_path: str, output_md: str):
 - `FinalLabSystem/Models/` — الكيانات الموجودة
 - `FinalLabSystem/Services/Interfaces/` — الخدمات الموجودة
 - `FinalLabSystem/Migrations/` — آخر تغيير على قاعدة البيانات
-- `AgentSkills/csharp-testing/SKILL.md` — معايير كتابة الاختبارات
+- `AgentSkills/csharp-testing-improved/SKILL.md` — معايير كتابة الاختبارات (تمّ تصحيح المرجع من `csharp-testing` إلى `csharp-testing-improved` — المجلد الفعلي في المشروع)
 - `AgentSkills/ef-core-migration-safety/SKILL.md` — قواعد إنشاء migrations
 - `AgentSkills/di-and-navigation-registration/SKILL.md` — تسجيل DI والنوافذ
-- `AgentSkills/wp-mvvm-conventions/SKILL.md` — قواعد MVVM
+- `AgentSkills/wpf-mvvm-conventions/SKILL.md` — قواعد MVVM (تمّ تصحيح خطأ إملائي: `wp-mvvm-conventions` → `wpf-mvvm-conventions`)
 
 ---
 
@@ -335,3 +335,34 @@ def extract_pdf(pdf_path: str, output_md: str):
 | البدء بالتنفيذ قبل موافقة المطوّر | توقف عند المرحلة 6 وانتظر الموافقة |
 | إنشاء خطة عمل طويلة (>10 شرائح) | قسّمها إلى مراحل |
 | تجاهل «خارج النطاق» | حدد بوضوح ما لن يُنفّذ |
+
+---
+
+## 🔗 الربط مع المهارات الأخرى — الترتيب المعتمد للمهام
+
+هذه المهارة **الخطوة الأولى** في سلسلة تحليل نظام مرجعي، ولا تعمل بمعزل عنها:
+
+```
+1) lis-pdf-reference-extractor  ← أنت هنا (تستخدم أولاً)
+        │
+        ▼   (ينتج: PRD + خارطة الفجوات)
+2) lis-work-plan-with-validation-gates
+        │
+        ▼   (ينتج: Work Plan بشرائح + Validation Gates)
+3) implement  (لتنفيذ شريحة تلو شريحة بـ TDD)
+        │
+        ▼   (ينتج: كود + اختبارات + Handoff بعد كل شريحة)
+4) lis-session-handoff  (بعد كل شريحة تنفيذ)
+```
+
+### القاعدة الذهبية
+
+- **`lis-pdf-reference-extractor` تُستدعى أولاً** لأنها تنتج الـ PRD ووثيقة الفجوات.
+- **بعدها مباشرة، استدعِ `lis-work-plan-with-validation-gates`** لتحويل الفجوات إلى خطة تنفيذ.
+- لا تدخل مرحلة `implement` قبل أن يوافق المستخدم على مخرجات هاتين المهارتين.
+
+### تحويل صريح للمهارة التالية
+
+عند نهاية جلسة PDF Extractor، أنهِ ردّك بالجملة التالية حرفياً:
+
+> «انتهيت من مرحلة الاستخراج والمقارنة. لبدء خطة التنفيذ، استدعِ الآن مهارة **`lis-work-plan-with-validation-gates`** مع اسم الموديول المستهدف.»

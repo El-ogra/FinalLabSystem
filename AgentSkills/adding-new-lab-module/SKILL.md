@@ -11,7 +11,9 @@ A "module" is a coherent lab domain (e.g. Equipment maintenance, Vaccinations, R
 
 The codebase has 50+ entities, 60+ services, 60+ ViewModels, 44 Views, and 30+ migrations. Every module follows the same skeleton; missing one step (typically DI registration or navigation registration) produces a runtime null reference and a hard-to-diagnose crash.
 
-## The 11 steps
+## The 13 steps
+
+<!-- تصحيح: المهارة تحتوي فعلياً على 13 خطوة (1..13)، ليس 11. تم تصحيح الرقم للدقة. -->
 
 For a new module called `Equipment`:
 
@@ -188,6 +190,8 @@ See `FinalLabSystem.Tests/` for examples; the `InMemory` provider is configured 
 ## Order matters
 
 Do steps 1 → 6 in this exact order so the project compiles at every step. Steps 7 → 11 require step 9 to compile (the VM constructor depends on the service). Steps 12 → 13 are independent.
+
+> **ملخّص الترقيم:** المهارة تغطّي **13 خطوة مرقّمة من 1 إلى 13**، وليس 11 كما جاء في تقارير سابقة.
 
 ## Quick checklist
 

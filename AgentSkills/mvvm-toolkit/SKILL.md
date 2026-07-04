@@ -1,104 +1,43 @@
 ---
 name: mvvm-toolkit
-description: 'CommunityToolkit.Mvvm (the MVVM Toolkit) core: source generators ([ObservableProperty], [RelayCommand], [NotifyPropertyChangedFor], [NotifyCanExecuteChangedFor], [NotifyDataErrorInfo]), base classes (ObservableObject / ObservableValidator / ObservableRecipient), commands (RelayCommand / AsyncRelayCommand), and validation. Companion skills: mvvm-toolkit-messenger for pub/sub, mvvm-toolkit-di for Microsoft.Extensions.DependencyInjection wiring. Works across WPF, WinUI 3, MAUI, Uno, and Avalonia.'
+description: "FinalLabSystem-customized MVVM guidance. This project does NOT use CommunityToolkit.Mvvm patterns ([ObservableProperty] / ObservableObject / [RelayCommand]) — it uses the project's custom Infrastructure.ViewModelBase + Infrastructure.RelayCommand / AsyncRelayCommand. All ViewModel patterns below are rewritten to match the project's real conventions. Keep CommunityToolkit reference at the bottom for concept lookup ONLY."
 ---
 
-# CommunityToolkit.Mvvm (core)
+# MVVM Toolkit — FinalLabSystem Customized
 
-> ⚠️ **تحذير حرج — خاص بمشروع FinalLabSystem:**
+> 🛑 **تحذير حرج — يجب قراءته أولاً قبل أي كود:**
 >
-> هذا المشروع يستخدم **`ViewModelBase` مخصصاً** (موجود في `ViewModels/ViewModelBase.cs`) وليس `ObservableObject` من الـ Toolkit.
+> مشروع **FinalLabSystem** لا يتبع أنماط `CommunityToolkit.Mvvm` القياسية. رغم أن الحزمة قد تكون مُشار إليها في بعض الملفات، فإن **قواعد المشروع الملزمة** (المُوثّقة في `wpf-mvvm-conventions`) هي:
 >
-> - ❌ **لا تستبدل `ViewModelBase` بـ `ObservableObject`** — سيكسر كل الـ ViewModels
-> - ❌ **لا تضيف `[ObservableProperty]`** على ViewModel يرث من `ViewModelBase`
-> - ❌ **لا تستخدم `[RelayCommand]` من الـ Toolkit** إذا كان الـ ViewModel يرث `ViewModelBase`
-> - ✅ ورّث جميع الـ ViewModels الجديدة من `ViewModelBase` كما هو
-> - ✅ استخدم هذه المهارة **فقط** للاطلاع على مفاهيم الـ Toolkit أو إذا أنشأت ViewModel مستقلاً لا يرث `ViewModelBase`
+> | العنصر | القاعدة الملزمة في FinalLabSystem |
+> |---|---|
+> | فئة أساس ViewModel | `Infrastructure.ViewModelBase` (المخصصة) — **لا `ObservableObject`** |
+> | الأمر (Command) | `Infrastructure.RelayCommand` / `Infrastructure.AsyncRelayCommand` — **لا `CommunityToolkit.Mvvm.Input.RelayCommand`** |
+> | خصائص تُخطر بالتغيير | `SetProperty(ref _field, value)` يدوياً — **لا `[ObservableProperty]`** |
+> | التحقق (Validation) | `AddError` / `ClearErrors` من `ViewModelBase` (تنفّذ `INotifyDataErrorInfo`) — **لا `ObservableValidator`** |
+> | Source generators / attributes | ممنوعة — لا `[RelayCommand]`، لا `[NotifyPropertyChangedFor]` |
+> | Class `partial` من أجل Toolkit | غير مطلوبة — الفئات عادية (`public sealed class ...`) |
 >
-> **قبل أي عمل على ViewModel، افتح `ViewModels/ViewModelBase.cs` وافهم ما تقدمه أولاً.**
+> **راجع أولاً:** `AgentSkills/wpf-mvvm-conventions/SKILL.md` — هي المصدر المعتمد.
+> **افتح أيضاً:** `FinalLabSystem/Infrastructure/ViewModelBase.cs` لمعرفة الأعضاء المحمية (`SetProperty`, `AddError`, `ClearErrors`, `HasErrors`).
 
 ---
 
-## متى تستخدم هذه المهارة في FinalLabSystem
+## متى تستخدم هذه المهارة
 
-| موقف | الإجراء |
-|------|---------|
-| إنشاء ViewModel جديد | ✅ ورّث `ViewModelBase` — لا تستخدم `ObservableObject` |
-| فهم مفهوم `RelayCommand` | ✅ هذه المهارة مرجع للفهم |
-| استخدام `[RelayCommand]` كـ attribute | ❌ ممنوع — المشروع يستخدم `RelayCommand` يدوياً |
-| استخدام `[ObservableProperty]` | ❌ ممنوع على ViewModels ترث `ViewModelBase` |
-| ViewModel مستقل (مثل dialog helper) | ⚠️ استشر أولاً هل يجب أن يرث `ViewModelBase` |
-
----
-
-Use this skill when authoring or reviewing ViewModels, properties,
-commands, or validation in apps that use `CommunityToolkit.Mvvm` 8.x.
-
-> **Companion skills.** Load **`mvvm-toolkit-messenger`** for `IMessenger`
-> pub/sub patterns. Load **`mvvm-toolkit-di`** for
-> `Microsoft.Extensions.DependencyInjection` integration.
-
-> **Quick recap.** `[ObservableProperty]` on private fields in `partial`
-> classes; `[RelayCommand]` on instance methods; inherit from
-> `ObservableObject` (or `ObservableValidator` for input forms,
-> `ObservableRecipient` when using `IMessenger`).
+| موقف | استخدام هذه المهارة؟ |
+|------|----------------------|
+| إنشاء ViewModel جديد في FinalLabSystem | ✅ نعم — اتبع الأنماط أدناه فقط |
+| مراجعة كود ViewModel قائم | ✅ نعم — تحقق أنه يتّبع أنماط `ViewModelBase` |
+| فهم مفاهيم `CommunityToolkit.Mvvm` نظرياً لمقارنتها | ⚠️ نعم — لكن فقط قسم "المرجع النظري" في النهاية |
+| نسخ نمط `[ObservableProperty]` إلى المشروع | ❌ لا — سيُرفض في المراجعة |
+| اقتراح ترحيل الكود لأنماط Toolkit | ❌ لا — قرار معماري مغلق |
 
 ---
 
-## Package & setup
+## النمط المعتمد #1 — Simple Observable Property (بدلاً من `[ObservableProperty]`)
 
-```xml
-<ItemGroup>
-  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.*" />
-</ItemGroup>
-```
-
-Targets: `netstandard2.0`, `netstandard2.1`, `net6.0`+. Works on .NET, .NET
-Framework, Mono. Source generators ship in the same NuGet — no extra
-analyzer reference required.
-
-Namespaces:
-
-```csharp
-using CommunityToolkit.Mvvm.ComponentModel;   // ObservableObject, [ObservableProperty]
-using CommunityToolkit.Mvvm.Input;             // [RelayCommand], RelayCommand, AsyncRelayCommand
-```
-
-> **Universal rule.** Every type that uses `[ObservableProperty]` or
-> `[RelayCommand]` — and every enclosing type, if nested — must be
-> declared `partial`. Without it, the generators emit
-> `MVVMTK0008` / `MVVMTK0042`.
-
----
-
-## Source generators cheat sheet
-
-| Attribute | Applied to | Generates |
-|-----------|-----------|-----------|
-| `[ObservableProperty]` | private field | Public `INotifyPropertyChanged` property + `OnXxxChanging`/`OnXxxChanged` partial-method hooks |
-| `[NotifyPropertyChangedFor(nameof(Other))]` | observable field | Also raises `PropertyChanged` for the listed property |
-| `[NotifyCanExecuteChangedFor(nameof(MyCommand))]` | observable field | Calls `MyCommand.NotifyCanExecuteChanged()` on change |
-| `[NotifyDataErrorInfo]` | observable field on `ObservableValidator` | Calls `ValidateProperty(value)` from the setter |
-| `[NotifyPropertyChangedRecipients]` | observable field on `ObservableRecipient` | `Broadcast(old, new)` after the change |
-| `[RelayCommand]` | instance method | Lazy `RelayCommand` / `AsyncRelayCommand` exposed as `IRelayCommand` / `IAsyncRelayCommand` |
-| `[RelayCommand(CanExecute = nameof(CanX))]` | instance method | Wires `CanExecute` to a method or property |
-| `[RelayCommand(IncludeCancelCommand = true)]` | async method with `CancellationToken` | Also generates `XxxCancelCommand` |
-| `[RelayCommand(AllowConcurrentExecutions = true)]` | async method | Allows queued/parallel invocations (default disables while running) |
-| `[RelayCommand(FlowExceptionsToTaskScheduler = true)]` | async method | Surfaces exceptions via `ExecutionTask` instead of awaiting and rethrowing |
-| `[property: SomeAttr]` | observable field or `[RelayCommand]` method | Forwards `SomeAttr` onto the generated property (e.g., `[JsonIgnore]`) |
-
-**Naming.** Field `name` / `_name` / `m_name` → `Name`. Method `LoadAsync` →
-`LoadCommand` (the `Async` suffix is stripped; a leading `On` is also
-stripped).
-
-See [`references/source-generators.md`](references/source-generators.md) for
-the full attribute reference with generated-code samples.
-
----
-
-## ViewModel patterns
-
-### Simple observable property
+**❌ ممنوع في FinalLabSystem (نمط Toolkit التقليدي):**
 
 ```csharp
 public partial class ContactViewModel : ObservableObject
@@ -108,86 +47,326 @@ public partial class ContactViewModel : ObservableObject
 }
 ```
 
-### Hooks: `OnXxxChanging` / `OnXxxChanged`
+**✅ النمط الصحيح لمشروع FinalLabSystem:**
+
+```csharp
+using FinalLabSystem.Infrastructure;
+
+namespace FinalLabSystem.ViewModels.Contacts;
+
+public sealed class ContactViewModel : ViewModelBase
+{
+    private string? _name;
+    public string? Name
+    {
+        get => _name;
+        set => SetProperty(ref _name, value);
+    }
+}
+```
+
+**قواعد:**
+- الحقل يبدأ بـ `_` (underscore + camelCase).
+- الخاصية عامة `PascalCase`.
+- `SetProperty` من `ViewModelBase` تعيد `bool` تشير إن تغيّرت القيمة فعلاً.
+- لا `partial`، لا `[ObservableProperty]`.
+
+---
+
+## النمط المعتمد #2 — Property Change Hooks (بدلاً من `partial void OnXxxChanged`)
+
+**❌ ممنوع:**
 
 ```csharp
 [ObservableProperty]
 private string? name;
 
-partial void OnNameChanged(string? value) =>
-    Logger.LogInformation("Name changed to {Name}", value);
+partial void OnNameChanged(string? value) => _logger.LogInformation("...");
 ```
 
-Both single-arg `(value)` and two-arg `(oldValue, newValue)` overloads
-are available. Implement only the ones you need; unimplemented hooks are
-elided by the compiler (zero runtime cost).
+**✅ الصحيح:**
 
-### Dependent properties + dependent commands
+```csharp
+private string? _name;
+public string? Name
+{
+    get => _name;
+    set
+    {
+        if (SetProperty(ref _name, value))
+        {
+            OnNameChanged(value);
+        }
+    }
+}
+
+private void OnNameChanged(string? value)
+{
+    _logger.LogInformation("Name changed to {Name}", value);
+}
+```
+
+`SetProperty` تعيد `true` إذا تغيرت القيمة، فتستدعي الـ hook يدوياً. هذا يعطي نفس نتيجة `partial void` من الـ Toolkit، مع بقاء الفئة عادية غير `partial`.
+
+---
+
+## النمط المعتمد #3 — Dependent Properties (بدلاً من `[NotifyPropertyChangedFor]`)
+
+**❌ ممنوع:**
 
 ```csharp
 [ObservableProperty]
 [NotifyPropertyChangedFor(nameof(FullName))]
-[NotifyCanExecuteChangedFor(nameof(SaveCommand))]
 private string? firstName;
 
 [ObservableProperty]
 [NotifyPropertyChangedFor(nameof(FullName))]
-[NotifyCanExecuteChangedFor(nameof(SaveCommand))]
 private string? lastName;
 
 public string FullName => $"{FirstName} {LastName}".Trim();
 ```
 
+**✅ الصحيح:**
+
+```csharp
+private string? _firstName;
+public string? FirstName
+{
+    get => _firstName;
+    set
+    {
+        if (SetProperty(ref _firstName, value))
+        {
+            OnPropertyChanged(nameof(FullName));
+            SaveCommand.RaiseCanExecuteChanged();
+        }
+    }
+}
+
+private string? _lastName;
+public string? LastName
+{
+    get => _lastName;
+    set
+    {
+        if (SetProperty(ref _lastName, value))
+        {
+            OnPropertyChanged(nameof(FullName));
+            SaveCommand.RaiseCanExecuteChanged();
+        }
+    }
+}
+
+public string FullName => $"{FirstName} {LastName}".Trim();
+```
+
+- `OnPropertyChanged(nameof(...))` متاحة `protected` من `ViewModelBase`.
+- إعادة تقييم `CanExecute` للأوامر يتم بـ `RaiseCanExecuteChanged()` على مثيل الأمر.
+
 ---
 
-## Commands
+## النمط المعتمد #4 — Commands (بدلاً من `[RelayCommand]`)
+
+**❌ ممنوع:**
 
 ```csharp
 [RelayCommand]
-private void Refresh() => Items.Reset();
-
-[RelayCommand]
-private async Task LoadAsync()
-{
-    foreach (var item in await service.GetItemsAsync())
-        Items.Add(item);
-}
-
-[RelayCommand(IncludeCancelCommand = true)]
-private async Task DownloadAsync(CancellationToken token)
-{
-    await using var stream = await http.GetStreamAsync(url, token);
-    // ...
-}
+private async Task SaveAsync() { ... }
 
 [RelayCommand(CanExecute = nameof(CanSave))]
-private Task SaveAsync() => repo.SaveAsync(Name!);
-
-private bool CanSave() => !string.IsNullOrWhiteSpace(Name);
+private Task LoadAsync() { ... }
 ```
 
+**✅ الصحيح:**
+
+```csharp
+using FinalLabSystem.Infrastructure;
+
+public sealed class OrderViewModel : ViewModelBase
+{
+    private readonly IOrderService _orderService;
+
+    public AsyncRelayCommand SaveAsyncCommand { get; }
+    public AsyncRelayCommand LoadAsyncCommand { get; }
+    public RelayCommand RefreshCommand { get; }
+
+    public OrderViewModel(IOrderService orderService)
+    {
+        _orderService = orderService;
+
+        SaveAsyncCommand = new AsyncRelayCommand(SaveAsync, CanSave);
+        LoadAsyncCommand = new AsyncRelayCommand(LoadAsync);
+        RefreshCommand   = new RelayCommand(Refresh);
+    }
+
+    private bool CanSave() => !HasErrors && !IsBusy;
+
+    private async Task SaveAsync()   { await _orderService.SaveAsync(...); }
+    private async Task LoadAsync()   { /* ... */ }
+    private void      Refresh()      { /* ... */ }
+}
+```
+
+**قواعد:**
+- كل أمر يُعرَّف كـ `public ... Command { get; }` ويُبنى في المُنشئ (Constructor Injection).
+- `CanExecute` تُمرَّر كدالة `Func<bool>` (وليس اسم عبر attribute).
+- عند تغير الحالة، نادِ `SomeCommand.RaiseCanExecuteChanged()` يدوياً.
+
 ---
 
-## Base class selection
+## النمط المعتمد #5 — Validation (بدلاً من `ObservableValidator` + `[NotifyDataErrorInfo]`)
 
-| Base class | Use when |
-|------------|---------|
-| `ObservableObject` | Default. `INotifyPropertyChanged` + `INotifyPropertyChanging` + `SetProperty` overloads |
-| `ObservableValidator` | The VM needs `INotifyDataErrorInfo` (forms, settings input) |
-| `ObservableRecipient` | The VM sends or receives `IMessenger` messages |
+**❌ ممنوع:**
+
+```csharp
+public partial class SignupVm : ObservableValidator
+{
+    [ObservableProperty]
+    [NotifyDataErrorInfo]
+    [Required]
+    private string? email;
+}
+```
+
+**✅ الصحيح (يعتمد على `INotifyDataErrorInfo` المدمج في `ViewModelBase`):**
+
+```csharp
+public sealed class SignupViewModel : ViewModelBase
+{
+    private string? _email;
+    public string? Email
+    {
+        get => _email;
+        set
+        {
+            if (SetProperty(ref _email, value))
+            {
+                ValidateEmail();
+                SubmitCommand.RaiseCanExecuteChanged();
+            }
+        }
+    }
+
+    private void ValidateEmail()
+    {
+        ClearErrors(nameof(Email));
+        if (string.IsNullOrWhiteSpace(_email))
+        {
+            AddError(nameof(Email), "البريد الإلكتروني مطلوب");
+        }
+        else if (!_email.Contains('@'))
+        {
+            AddError(nameof(Email), "بريد إلكتروني غير صالح");
+        }
+    }
+
+    public AsyncRelayCommand SubmitCommand { get; }
+    public SignupViewModel() { SubmitCommand = new AsyncRelayCommand(SubmitAsync, () => !HasErrors); }
+    private Task SubmitAsync() { /* ... */ return Task.CompletedTask; }
+}
+```
+
+`ViewModelBase` يوفّر:
+- `AddError(propertyName, message)`
+- `ClearErrors(propertyName)`
+- `ClearAllErrors()`
+- `HasErrors` (property)
+- `GetErrors(propertyName)`
+
+هذا يحرك عرض علامات الخطأ في XAML عبر `Validation.ErrorTemplate` تلقائياً.
 
 ---
 
-## Top pitfalls
+## النمط المعتمد #6 — Cancelable Async Command (بدلاً من `IncludeCancelCommand`)
 
-1. **Forgetting `partial`.** Class must be `partial`. Compile error `MVVMTK0008`.
-2. **PascalCase field name.** `[ObservableProperty] private string Name;` collides with the generated property. Use `name`, `_name`, or `m_name`.
-3. **`async void` on `[RelayCommand]`.** Always return `Task`.
-4. **Forgetting `[NotifyCanExecuteChangedFor]`.** The Save button stays disabled even though `CanSave()` would now return `true`.
+**✅ الصحيح:**
+
+```csharp
+public AsyncRelayCommand DownloadCommand { get; }
+private CancellationTokenSource? _downloadCts;
+
+public MyViewModel()
+{
+    DownloadCommand = new AsyncRelayCommand(DownloadAsync);
+}
+
+private async Task DownloadAsync()
+{
+    _downloadCts?.Cancel();
+    _downloadCts = new CancellationTokenSource();
+    try
+    {
+        await _service.DownloadAsync(_downloadCts.Token);
+    }
+    catch (OperationCanceledException) { /* silent */ }
+}
+
+public void CancelDownload() => _downloadCts?.Cancel();
+```
+
+بديلاً يمكن استخدام `AsyncRelayCommand` مع دعم Cancellation إذا كانت النسخة المخصصة في `Infrastructure/` تدعم ذلك (راجع الملف مباشرةً قبل الاستخدام).
 
 ---
 
-## References & companion skills
+## قائمة مراجعة سريعة قبل الـ Commit
+
+- [ ] ViewModel يرث `Infrastructure.ViewModelBase` (لا `ObservableObject`)
+- [ ] لا يوجد `[ObservableProperty]` ولا `[RelayCommand]` في الملف
+- [ ] الفئة **ليست** `partial`
+- [ ] كل خاصية تستخدم `SetProperty(ref _field, value)`
+- [ ] الأوامر من `Infrastructure.RelayCommand` / `AsyncRelayCommand`
+- [ ] `CanExecute` دالة `Func<bool>` مُمرَّرة للمُنشئ
+- [ ] Validation عبر `AddError` / `ClearErrors`
+- [ ] Constructor Injection (لا `ServiceLocator`)
+- [ ] لا كود منطق أعمال في code-behind
+
+---
+
+## أخطاء شائعة يجب تجنبها
+
+| الخطأ | الأثر | البديل |
+|-------|-------|--------|
+| استخدام `ObservableObject` بجانب `ViewModelBase` | كسر `INotifyDataErrorInfo` وعطب Adorners | ورث `ViewModelBase` وحده |
+| نسيان `RaiseCanExecuteChanged` بعد تغيير خاصية | زر Save يبقى معطلاً/مفعّلاً بشكل خاطئ | نادِ `RaiseCanExecuteChanged()` صراحةً |
+| استدعاء `DbContext` مباشرة من ViewModel | كسر معمارية الطبقات | مرّر عبر خدمة (Service) بـ DI |
+| إعلان الفئة `partial` بلا سبب | إشارة أن المطوّر ينوي استخدام Toolkit | احذف `partial` |
+| ترك attribute `[ObservableProperty]` "للتنظيم فقط" | Source generator سينشئ خاصية متعارضة | احذف الـ attribute |
+
+---
+
+## المهارات المرتبطة
+
+- `wpf-mvvm-conventions` — **المصدر المعتمد** لقواعد MVVM في المشروع.
+- `di-and-navigation-registration` — لتسجيل ViewModel و View في `App.xaml.cs`.
+- `lis-xunit-testing-conventions` — لكتابة اختبارات ViewModels.
+- `adding-new-lab-module` — سياق كامل لإضافة موديول من الصفر.
+
+---
+
+## 📚 المرجع النظري لـ CommunityToolkit.Mvvm (للفهم فقط — لا للنسخ)
+
+> ⚠️ **الأقسام التالية موروثة من مرجع CommunityToolkit.Mvvm للفهم النظري فقط. لا تنقل هذه الأنماط إلى كود FinalLabSystem — استخدم الأنماط المخصصة أعلاه.**
+
+### Source generators cheat sheet (concept reference)
+
+| Attribute | Toolkit generates | Equivalent in FinalLabSystem |
+|-----------|-------------------|-------------------------------|
+| `[ObservableProperty]` | Property + change hooks | Manual `SetProperty(ref _f, value)` |
+| `[NotifyPropertyChangedFor]` | Also raises PropertyChanged for another | Manual `OnPropertyChanged(nameof(Other))` inside setter |
+| `[NotifyCanExecuteChangedFor]` | `Command.NotifyCanExecuteChanged()` | Manual `Command.RaiseCanExecuteChanged()` |
+| `[NotifyDataErrorInfo]` | Calls `ValidateProperty` | Manual `AddError` / `ClearErrors` |
+| `[RelayCommand]` | Lazy `IRelayCommand` from method | Explicit `new RelayCommand(fn, canFn)` in ctor |
+| `[RelayCommand(CanExecute=...)]` | Auto-wires CanExecute | Pass `Func<bool>` to command ctor |
+
+### Base classes (concept reference — do NOT use in FinalLabSystem)
+
+| Toolkit base class | Purpose | FinalLabSystem replacement |
+|-------------------|---------|----------------------------|
+| `ObservableObject` | INotifyPropertyChanged + SetProperty | `Infrastructure.ViewModelBase` |
+| `ObservableValidator` | Adds INotifyDataErrorInfo | Already in `Infrastructure.ViewModelBase` |
+| `ObservableRecipient` | IMessenger integration | Not used — the project doesn't use Toolkit's Messenger |
+
+### References (external, informational only)
 
 | Topic | Where |
 |-------|-------|
@@ -196,5 +375,5 @@ private bool CanSave() => !string.IsNullOrWhiteSpace(Name);
 | Validation deep dive | [`references/validation.md`](references/validation.md) |
 | Full walkthrough | [`references/end-to-end-walkthrough.md`](references/end-to-end-walkthrough.md) |
 | `MVVMTK0xxx` diagnostics | [`references/troubleshooting.md`](references/troubleshooting.md) |
-| **Messenger pub/sub** | Companion skill: **`mvvm-toolkit-messenger`** |
 
+> **تذكير أخير:** كل ما في مجلد `references/` هو مرجع خارجي عام. **لا تنسخ منه إلى كود FinalLabSystem** — استخدم الأنماط المخصصة في هذه المهارة وفي `wpf-mvvm-conventions`.

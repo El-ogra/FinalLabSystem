@@ -102,6 +102,6 @@ disable-model-invocation: true
 - `wpf-mvvm-conventions` — إذا كانت المهمة تشمل XAML أو ViewModel
 - `ef-core-migration-safety` — إذا كانت المهمة تشمل migration
 - `di-and-navigation-registration` — إذا كانت المهمة تشمل خدمة أو نافذة جديدة
-- `csharp-testing` — إذا كانت المهمة تشمل كتابة اختبارات
+- `csharp-testing-improved` — إذا كانت المهمة تشمل كتابة اختبارات
 ```
 

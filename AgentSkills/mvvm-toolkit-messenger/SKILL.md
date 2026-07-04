@@ -1,9 +1,91 @@
 ---
 name: mvvm-toolkit-messenger
-description: 'CommunityToolkit.Mvvm Messenger pub/sub for decoupled communication between ViewModels (or any objects). Covers WeakReferenceMessenger vs StrongReferenceMessenger, IRecipient<TMessage>, RequestMessage<T> / AsyncRequestMessage<T> / CollectionRequestMessage<T>, ValueChangedMessage<T>, channels (tokens), and the ObservableRecipient activation lifecycle. Use across WPF, WinUI 3, .NET MAUI, Uno, and Avalonia.'
+description: "CommunityToolkit.Mvvm Messenger reference for pub/sub concepts. FinalLabSystem does NOT use this pattern — it uses direct service calls (via DI) and event handlers on services instead of Messenger. This skill is kept for concept lookup ONLY; do not introduce Messenger patterns into the project."
 ---
 
-# CommunityToolkit.Mvvm Messenger
+# CommunityToolkit.Mvvm Messenger — Not used in FinalLabSystem
+
+> 🛑 **تحذير حرج — قرار معماري في مشروع FinalLabSystem:**
+>
+> مشروع FinalLabSystem **لا يستخدم** نمط `IMessenger` من CommunityToolkit.Mvvm إطلاقاً. القرار المعماري هو:
+>
+> | الحاجة | البديل المعتمد في FinalLabSystem |
+> |---|---|
+> | تواصل بين ViewModels | استدعاء مباشر عبر خدمة مشتركة (Service) مسجّلة بـ DI |
+> | إشعار عالمي (login, theme change, ...) | Event على واجهة خدمة (مثل `IAuthService.UserChanged`) + اشتراك في المُنشئ |
+> | Request/Reply بين VMs | استدعاء الخدمة المشتركة (Service) — لا messenger |
+> | تمرير رسائل عبر نوافذ | `NavigationService.OpenTaskWindow<VM>(configure)` مع تكوين قيم في lambda |
+>
+> **❌ لا تنشئ فئة Message جديدة.**
+> **❌ لا تستخدم `WeakReferenceMessenger.Default` أو `StrongReferenceMessenger.Default`.**
+> **❌ لا تجعل ViewModel يرث `ObservableRecipient`.**
+> **❌ لا تضف `IRecipient<TMessage>` إلى ViewModel.**
+>
+> **✅ استخدم Constructor Injection لخدمة مشتركة تحمل الأحداث المطلوبة.**
+>
+> **راجع:** `wpf-mvvm-conventions` و `di-and-navigation-registration` للأنماط المعتمدة.
+
+---
+
+## متى تفتح هذه المهارة
+
+| الموقف | القرار |
+|--------|--------|
+| تخطط لإضافة Messenger إلى FinalLabSystem | ❌ توقّف — استخدم خدمة مشتركة عبر DI |
+| تراجع كوداً موجوداً فيه Messenger | ⚠️ اقترح استبداله بخدمة مشتركة في PR منفصل |
+| تريد فهم Messenger نظرياً لمقارنته بحل المشروع | ✅ اقرأ الأقسام أدناه للفهم فقط |
+| تعمل على مشروع آخر (خارج FinalLabSystem) | ✅ المرجع صالح كما هو |
+
+---
+
+## النمط المعتمد في FinalLabSystem بدلاً من Messenger
+
+```csharp
+// 1) خدمة مشتركة تحمل الحدث
+public interface IAuthEvents
+{
+    event EventHandler<UserChangedEventArgs>? UserChanged;
+    void RaiseUserChanged(User newUser);
+}
+
+public sealed class AuthEvents : IAuthEvents
+{
+    public event EventHandler<UserChangedEventArgs>? UserChanged;
+    public void RaiseUserChanged(User u) => UserChanged?.Invoke(this, new UserChangedEventArgs(u));
+}
+
+// 2) تسجيل singleton في App.xaml.cs
+services.AddSingleton<IAuthEvents, AuthEvents>();
+
+// 3) ViewModel يستهلك الحدث
+public sealed class DashboardViewModel : ViewModelBase, IDisposable
+{
+    private readonly IAuthEvents _authEvents;
+
+    public DashboardViewModel(IAuthEvents authEvents)
+    {
+        _authEvents = authEvents;
+        _authEvents.UserChanged += OnUserChanged;
+    }
+
+    private void OnUserChanged(object? sender, UserChangedEventArgs e) { /* ... */ }
+
+    public void Dispose() => _authEvents.UserChanged -= OnUserChanged;
+}
+```
+
+هذا يحقّق نفس فوائد Messenger:
+- **Decoupling:** الـ VMs لا تحمل مراجع مباشرة لبعضها.
+- **Testability:** يمكن Mock الخدمة في الاختبار.
+- **Explicit contract:** واجهة الخدمة تُظهر بوضوح ما الأحداث المتاحة.
+
+وبدون تكاليف Messenger (weak references، channel tokens، lifetime bugs).
+
+---
+
+## 📚 المرجع النظري (للفهم فقط — لا للاستخدام)
+
+> ⚠️ **الأقسام التالية موروثة من مرجع CommunityToolkit.Mvvm Messenger للفهم النظري فقط. لا تنقل هذه الأنماط إلى FinalLabSystem.**
 
 Pub/sub messaging for ViewModels (or any objects) without forcing a shared
 reference graph. Part of `CommunityToolkit.Mvvm` 8.x.
@@ -26,7 +108,7 @@ reference graph. Part of `CommunityToolkit.Mvvm` 8.x.
 
 For source generators, base classes, and commands see the **`mvvm-toolkit`**
 skill. For DI wiring (registering an `IMessenger` instance), see
-**`mvvm-toolkit-di`**.
+**`mvvm-toolkit-di`** *(تنبيه: `mvvm-toolkit-di` غير موجودة في حزمة FinalLabSystem — أصلاً المشروع لا يستخدم Messenger. لتسجيل خدمات DI في المشروع راجع `di-and-navigation-registration`)*.
 
 ---
 

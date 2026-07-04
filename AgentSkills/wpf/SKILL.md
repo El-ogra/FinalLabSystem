@@ -6,9 +6,22 @@ compatibility: "Requires a WPF project on .NET or .NET Framework."
 
 # WPF
 
+> 🛑 **تحذير حرج — خاص بمشروع FinalLabSystem:**
+>
+> جميع أمثلة MVVM في هذه المهارة **تم تخصيصها** لمطابقة معايير المشروع:
+>
+> - **✅ ViewModelBase المخصص** (من `Infrastructure.ViewModelBase`) — **لا** `ObservableObject` من Toolkit
+> - **✅ `SetProperty` يدوياً** — **لا** `[ObservableProperty]`
+> - **✅ `RelayCommand`/`AsyncRelayCommand` من `Infrastructure`** — **لا** `[RelayCommand]` attribute
+> - **✅ FlowDirection="RightToLeft"** على كل نافذة (التطبيق عربي أولاً)
+> - **✅ DataContext** يُعيّن من `NavigationService.OpenTaskWindow<VM>()` — **لا** في XAML
+>
+> **المصدر المعتمد:** `wpf-mvvm-conventions` (إلزامي).
+> **لأمثلة Toolkit الأصلية (للفهم فقط):** راجع `mvvm-toolkit` قسم "المرجع النظري".
+
 ## Trigger On
 
-- working on WPF UI, MVVM, binding, commands, or desktop modernization
+- working on WPF UI, MVVM, binding, commands, or desktop modernization in FinalLabSystem
 - migrating WPF from .NET Framework to .NET
 - integrating newer Windows capabilities into a WPF app
 - implementing data binding, styles, templates, or control customization
@@ -17,7 +30,7 @@ compatibility: "Requires a WPF project on .NET or .NET Framework."
 
 - [WPF Overview](https://learn.microsoft.com/en-us/dotnet/desktop/wpf/overview/)
 - [Data Binding Overview](https://learn.microsoft.com/en-us/dotnet/desktop/wpf/data/)
-- [MVVM Toolkit Introduction](https://learn.microsoft.com/en-us/dotnet/communitytoolkit/mvvm/)
+- [MVVM Toolkit Introduction](https://learn.microsoft.com/en-us/dotnet/communitytoolkit/mvvm/) — ℹ️ مرجع نظري فقط؛ FinalLabSystem لا يستخدم Toolkit patterns مباشرة — راجع `wpf-mvvm-conventions`.
 - [Styles and Templates](https://learn.microsoft.com/en-us/dotnet/desktop/wpf/controls/styles-templates-overview)
 - [Migration Guide](https://learn.microsoft.com/en-us/dotnet/desktop/wpf/migration/)
 
@@ -57,31 +70,70 @@ MyWpfApp/
 └── MyWpfApp.Tests/
 ```
 
-## MVVM Pattern
+## MVVM Pattern (FinalLabSystem-specific)
 
-### ViewModel with MVVM Toolkit
+### ViewModel — النمط المعتمد لـ FinalLabSystem
+
 ```csharp
-public partial class CustomersViewModel : ObservableObject
+using FinalLabSystem.Infrastructure;
+using System.Collections.ObjectModel;
+
+namespace FinalLabSystem.ViewModels.Customers;
+
+public sealed class CustomersViewModel : ViewModelBase
 {
     private readonly ICustomerService _customerService;
+    private readonly ILogger<CustomersViewModel> _logger;
 
-    [ObservableProperty]
-    private ObservableCollection<Customer> _customers = [];
-
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(SaveCommand))]
-    private Customer? _selectedCustomer;
-
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(RefreshCommand))]
-    private bool _isLoading;
-
-    public CustomersViewModel(ICustomerService customerService)
+    private ObservableCollection<Customer> _customers = new();
+    public ObservableCollection<Customer> Customers
     {
-        _customerService = customerService;
+        get => _customers;
+        set => SetProperty(ref _customers, value);
     }
 
-    [RelayCommand(CanExecute = nameof(CanRefresh))]
+    private Customer? _selectedCustomer;
+    public Customer? SelectedCustomer
+    {
+        get => _selectedCustomer;
+        set
+        {
+            if (SetProperty(ref _selectedCustomer, value))
+            {
+                SaveAsyncCommand.RaiseCanExecuteChanged();
+            }
+        }
+    }
+
+    private bool _isLoading;
+    public bool IsLoading
+    {
+        get => _isLoading;
+        set
+        {
+            if (SetProperty(ref _isLoading, value))
+            {
+                RefreshAsyncCommand.RaiseCanExecuteChanged();
+            }
+        }
+    }
+
+    public AsyncRelayCommand RefreshAsyncCommand { get; }
+    public AsyncRelayCommand SaveAsyncCommand    { get; }
+
+    public CustomersViewModel(ICustomerService customerService,
+                               ILogger<CustomersViewModel> logger)
+    {
+        _customerService     = customerService;
+        _logger              = logger;
+
+        RefreshAsyncCommand = new AsyncRelayCommand(RefreshAsync, CanRefresh);
+        SaveAsyncCommand    = new AsyncRelayCommand(SaveAsync,    CanSave);
+    }
+
+    private bool CanRefresh() => !IsLoading;
+    private bool CanSave()    => SelectedCustomer is not null && !HasErrors;
+
     private async Task RefreshAsync()
     {
         IsLoading = true;
@@ -96,18 +148,18 @@ public partial class CustomersViewModel : ObservableObject
         }
     }
 
-    private bool CanRefresh() => !IsLoading;
-
-    [RelayCommand(CanExecute = nameof(CanSave))]
     private async Task SaveAsync()
     {
         if (SelectedCustomer is null) return;
         await _customerService.SaveAsync(SelectedCustomer);
     }
-
-    private bool CanSave() => SelectedCustomer is not null;
 }
 ```
+
+> **لاحظ:**
+> - `sealed class` وليس `partial`.
+> - `SetProperty` تعيد `bool` — تُستخدم لاستدعاء `RaiseCanExecuteChanged` يدوياً.
+> - الأوامر تُبنى في المُنشئ (ليس مولّدة تلقائياً).
 
 ### View Binding
 ```xml
@@ -115,7 +167,9 @@ public partial class CustomersViewModel : ObservableObject
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:MyWpfApp.ViewModels"
-        d:DataContext="{d:DesignInstance Type=vm:CustomersViewModel}">
+        d:DataContext="{d:DesignInstance Type=vm:CustomersViewModel}"
+        FlowDirection="RightToLeft"
+        Language="ar-SA">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -125,9 +179,9 @@ public partial class CustomersViewModel : ObservableObject
 
         <ToolBar Grid.Row="0">
             <Button Content="Refresh"
-                    Command="{Binding RefreshCommand}"/>
+                    Command="{Binding RefreshAsyncCommand}"/>
             <Button Content="Save"
-                    Command="{Binding SaveCommand}"/>
+                    Command="{Binding SaveAsyncCommand}"/>
         </ToolBar>
 
         <DataGrid Grid.Row="1"
@@ -322,7 +376,8 @@ private async Task LoadDataAsync()
 |--------------|--------------|-----------------|
 | Logic in code-behind | Hard to test, tight coupling | Use MVVM with ViewModels |
 | Synchronous blocking calls | UI freezes | Use async/await |
-| Manual INotifyPropertyChanged | Boilerplate, error-prone | Use MVVM Toolkit attributes |
+| Manual INotifyPropertyChanged | Boilerplate, error-prone | في FinalLabSystem: استخدم `SetProperty` من `Infrastructure.ViewModelBase` (لا Toolkit attributes) |
+| `[ObservableProperty]` / `[RelayCommand]` in FinalLabSystem | يخالف معايير المشروع | ورث `ViewModelBase`، واستخدم `SetProperty` و `Infrastructure.RelayCommand` مباشرة |
 | Hardcoded colors/sizes | Inconsistent, hard to theme | Use resource dictionaries |
 | Direct Dispatcher.Invoke everywhere | Complex, error-prone | Prefer async/await marshaling |
 | God ViewModel | Unmaintainable | Split into focused ViewModels |
@@ -334,14 +389,35 @@ private async Task LoadDataAsync()
 1. **Use compiled bindings in .NET 5+:**
    - Enable `x:CompileBindings="True"` for performance
 
-2. **Implement INotifyDataErrorInfo for validation:**
+2. **Implement INotifyDataErrorInfo for validation (FinalLabSystem pattern):**
+
+   `Infrastructure.ViewModelBase` already implements `INotifyDataErrorInfo` — use its `AddError` / `ClearErrors` instead of `[NotifyDataErrorInfo]`.
+
    ```csharp
-   [ObservableProperty]
-   [NotifyDataErrorInfo]
-   [Required(ErrorMessage = "Name is required")]
-   [MinLength(2, ErrorMessage = "Name must be at least 2 characters")]
    private string _name = string.Empty;
+   public string Name
+   {
+       get => _name;
+       set
+       {
+           if (SetProperty(ref _name, value))
+           {
+               ValidateName();
+           }
+       }
+   }
+
+   private void ValidateName()
+   {
+       ClearErrors(nameof(Name));
+       if (string.IsNullOrWhiteSpace(_name))
+           AddError(nameof(Name), "الاسم مطلوب");
+       else if (_name.Length < 2)
+           AddError(nameof(Name), "الاسم يجب أن يكون حرفين على الأقل");
+   }
    ```
+
+   > ❌ لا تستخدم `[ObservableProperty]` أو `[NotifyDataErrorInfo]` في ملفات FinalLabSystem — الميزة جاهزة يدوياً في `ViewModelBase`.
 
 3. **Use weak event patterns for long-lived subscriptions:**
    ```csharp
