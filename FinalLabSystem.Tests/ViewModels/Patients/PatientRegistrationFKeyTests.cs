@@ -24,6 +24,8 @@ public class PatientRegistrationFKeyTests
         var mockPricingService = new Mock<IPricingService>();
         var mockBarcodeFactory = new Mock<IBarcodeDialogFactory>();
         var mockReceiptFactory = new Mock<IReceiptDialogFactory>();
+        var mockBarcodeGenerator = new Mock<IBarcodeGenerator>();
+        var mockLabelPrintService = new Mock<ILabelPrintService>();
         var mockLogger = new Mock<ILogger<PatientRegistrationViewModel>>();
 
         var patientInfo = new PatientInfoViewModel(mockPatientService.Object);
@@ -47,6 +49,8 @@ public class PatientRegistrationFKeyTests
             mockDialog.Object,
             mockBarcodeFactory.Object,
             mockReceiptFactory.Object,
+            mockBarcodeGenerator.Object,
+            mockLabelPrintService.Object,
             mockLogger.Object);
     }
 

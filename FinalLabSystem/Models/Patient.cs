@@ -62,6 +62,9 @@ public partial class Patient
     [StringLength(500)]
     public string? PhotoPath { get; set; }
 
+    [StringLength(13)]
+    public string? LabId { get; set; }
+
     public DateTime CreatedAt { get; set; }
 
     public int? CreatedBy { get; set; }

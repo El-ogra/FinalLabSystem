@@ -27,6 +27,8 @@ public class PatientRegistrationViewModelFoundationTests
         var mockPricingService = new Mock<IPricingService>();
         var mockBarcodeFactory = new Mock<IBarcodeDialogFactory>();
         var mockReceiptFactory = new Mock<IReceiptDialogFactory>();
+        var mockBarcodeGenerator = new Mock<IBarcodeGenerator>();
+        var mockLabelPrintService = new Mock<ILabelPrintService>();
         var mockLogger = new Mock<ILogger<PatientRegistrationViewModel>>();
 
         mockSession.Setup(s => s.CurrentUser).Returns(currentUser);
@@ -52,6 +54,8 @@ public class PatientRegistrationViewModelFoundationTests
             mockDialog.Object,
             mockBarcodeFactory.Object,
             mockReceiptFactory.Object,
+            mockBarcodeGenerator.Object,
+            mockLabelPrintService.Object,
             mockLogger.Object);
 
         return (vm, mockSession, mockDialog, mockLogger);
@@ -84,6 +88,8 @@ public class PatientRegistrationViewModelFoundationTests
         var mockPricingService = new Mock<IPricingService>();
         var mockBarcodeFactory = new Mock<IBarcodeDialogFactory>();
         var mockReceiptFactory = new Mock<IReceiptDialogFactory>();
+        var mockBarcodeGenerator = new Mock<IBarcodeGenerator>();
+        var mockLabelPrintService = new Mock<ILabelPrintService>();
         var mockLogger = new Mock<ILogger<PatientRegistrationViewModel>>();
 
         mockPatientService.Setup(s => s.GeneratePatientCodeAsync())
@@ -110,6 +116,8 @@ public class PatientRegistrationViewModelFoundationTests
             mockDialog.Object,
             mockBarcodeFactory.Object,
             mockReceiptFactory.Object,
+            mockBarcodeGenerator.Object,
+            mockLabelPrintService.Object,
             mockLogger.Object);
 
         await vm.InitializeAsync();

@@ -1,7 +1,9 @@
+using FinalLabSystem.Data;
 using FinalLabSystem.Models.Enums;
 using FinalLabSystem.Services.Implementations;
 using FinalLabSystem.Services.Interfaces;
 using FinalLabSystem.ViewModels.Patients;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 
@@ -9,6 +11,14 @@ namespace FinalLabSystem.Tests.Services;
 
 public class BarcodeDialogFactoryTests
 {
+    private static FinalLabDbContext CreateInMemoryDbContext()
+    {
+        var options = new DbContextOptionsBuilder<FinalLabDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+        return new FinalLabDbContext(options);
+    }
+
     [Fact]
     public void Show_ResolvesViewModel_FromServiceProvider()
     {
@@ -18,7 +28,7 @@ public class BarcodeDialogFactoryTests
 
         var factory = new BarcodeDialogFactory(mockServiceProvider.Object);
 
-        Assert.Throws<InvalidOperationException>(() => factory.Show(1));
+        Assert.Throws<InvalidOperationException>(() => factory.Show(1, 1));
     }
 
     [Fact]
@@ -32,7 +42,8 @@ public class BarcodeDialogFactoryTests
             mockSampleTracking.Object,
             Mock.Of<ILabelPrintService>(),
             Mock.Of<IInventoryService>(),
-            Mock.Of<IDialogService>());
+            Mock.Of<IDialogService>(),
+            CreateInMemoryDbContext());
 
         var mockServiceProvider = new Mock<IServiceProvider>();
         mockServiceProvider.Setup(sp => sp.GetService(typeof(BarcodeDialogViewModel)))

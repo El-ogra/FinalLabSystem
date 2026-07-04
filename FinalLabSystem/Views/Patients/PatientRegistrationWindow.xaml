@@ -92,7 +92,7 @@
 
                     <Button Grid.Row="1" Grid.Column="0" Content="الإيصال" Command="{Binding ReceiptCommand}" Style="{StaticResource MainActionButtonStyle}"/>
                     <Button Grid.Row="1" Grid.Column="1" Content="الباركود" Command="{Binding BarcodeCommand}" Style="{StaticResource MainActionButtonStyle}"/>
-                    <Button Grid.Row="1" Grid.Column="2" Content="ورقة العمل" Style="{StaticResource MainActionButtonStyle}"/>
+                    <Button Grid.Row="1" Grid.Column="2" Content="طباعة Lab ID" Command="{Binding PrintLabIdCommand}" Style="{StaticResource MainActionButtonStyle}" Background="#00BCD4"/>
                     <Button Grid.Row="1" Grid.Column="3" Content="الكارنيه" Style="{StaticResource MainActionButtonStyle}"/>
 
                     <Button Grid.Row="2" Grid.Column="0" Content="قائمة المرضى" Command="{Binding LoadTodayPatientsCommand}" Style="{StaticResource MainActionButtonStyle}"/>

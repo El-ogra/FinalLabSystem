@@ -15,11 +15,13 @@ public class SampleTrackingService : ISampleTrackingService
 {
     private readonly FinalLabDbContext _context;
     private readonly ILogger<SampleTrackingService> _logger;
+    private readonly IBarcodeGenerator _barcodeGenerator;
 
-    public SampleTrackingService(FinalLabDbContext context, ILogger<SampleTrackingService> logger)
+    public SampleTrackingService(FinalLabDbContext context, ILogger<SampleTrackingService> logger, IBarcodeGenerator barcodeGenerator)
     {
         _context = context;
         _logger = logger;
+        _barcodeGenerator = barcodeGenerator;
     }
 
     public async Task<List<SampleTube>> GenerateBarcodesForVisitAsync(int visitId, int staffId)
@@ -42,12 +44,59 @@ public class SampleTrackingService : ISampleTrackingService
             return new List<SampleTube>();
 
         var patientCode = visitTests[0].Visit.Patient.PatientCode;
+        var patientId = visitTests[0].Visit.PatientId;
+
+        var caseCode = await _barcodeGenerator.GenerateCaseCodeAsync(visitId);
+        var fileCode = await _barcodeGenerator.GenerateFileCodeAsync(visitId);
+        var labId = await _barcodeGenerator.GetOrCreateLabIdAsync(patientId);
+
+        var branchNumber = (await _context.LabSettings.FirstOrDefaultAsync())?.BranchNumber ?? (byte)1;
+        var ordinal = await _context.PatientBarcodes
+            .CountAsync(pb => pb.PatientId == patientId
+                           && pb.IssueDate.Date == DateTime.Today
+                           && pb.CodeType == BarcodeCodeType.Case) + 1;
+
+        _context.PatientBarcodes.AddRange(
+            new PatientBarcode
+            {
+                PatientId = patientId,
+                VisitId = visitId,
+                CodeType = BarcodeCodeType.Case,
+                BarcodeValue = caseCode,
+                IssueDate = DateTime.Now,
+                SortOrdinal = ordinal,
+                BranchNumber = branchNumber,
+                CreatedBy = staffId
+            },
+            new PatientBarcode
+            {
+                PatientId = patientId,
+                VisitId = visitId,
+                CodeType = BarcodeCodeType.File,
+                BarcodeValue = fileCode,
+                IssueDate = DateTime.Now,
+                SortOrdinal = ordinal,
+                BranchNumber = branchNumber,
+                CreatedBy = staffId
+            },
+            new PatientBarcode
+            {
+                PatientId = patientId,
+                VisitId = null,
+                CodeType = BarcodeCodeType.Lab,
+                BarcodeValue = labId,
+                IssueDate = DateTime.Now,
+                SortOrdinal = 0,
+                BranchNumber = branchNumber,
+                CreatedBy = staffId
+            }
+        );
 
         var groups = visitTests
             .GroupBy(vt => TubeResolver.ResolvePrimaryTubeIdentity(vt.Testtype));
 
         var tubes = new List<SampleTube>();
-        var ordinal = 1;
+        var tubeOrdinal = 1;
 
         foreach (var group in groups)
         {
@@ -56,7 +105,7 @@ public class SampleTrackingService : ISampleTrackingService
                 VisitId = visitId,
                 TubeType = group.Key,
                 TubeColor = null,
-                BarcodeValue = $"{patientCode}-{ordinal:D2}",
+                BarcodeValue = $"{patientCode}-{tubeOrdinal:D2}",
                 PrintedAt = DateTime.UtcNow,
                 PrintedBy = staffId
             };
@@ -69,7 +118,7 @@ public class SampleTrackingService : ISampleTrackingService
             }
 
             tubes.Add(tube);
-            ordinal++;
+            tubeOrdinal++;
         }
 
         await _context.SaveChangesAsync();

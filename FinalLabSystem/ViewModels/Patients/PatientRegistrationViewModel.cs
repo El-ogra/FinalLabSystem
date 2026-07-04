@@ -26,6 +26,8 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
     private readonly IDialogService _dialogService;
     private readonly IBarcodeDialogFactory _barcodeFactory;
     private readonly IReceiptDialogFactory _receiptFactory;
+    private readonly IBarcodeGenerator _barcodeGenerator;
+    private readonly ILabelPrintService _labelPrintService;
     private readonly ILogger<PatientRegistrationViewModel> _logger;
     private int _currentPatientId;
     private int _currentVisitId;
@@ -49,6 +51,8 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
         IDialogService dialogService,
         IBarcodeDialogFactory barcodeFactory,
         IReceiptDialogFactory receiptFactory,
+        IBarcodeGenerator barcodeGenerator,
+        ILabelPrintService labelPrintService,
         ILogger<PatientRegistrationViewModel> logger)
     {
         PatientInfo = patientInfo;
@@ -64,6 +68,8 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
         _dialogService = dialogService;
         _barcodeFactory = barcodeFactory;
         _receiptFactory = receiptFactory;
+        _barcodeGenerator = barcodeGenerator;
+        _labelPrintService = labelPrintService;
         _logger = logger;
         TodayPatients = new ObservableCollection<TodayPatientWithStatusDto>();
 
@@ -87,6 +93,7 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
         NavigateToResultEntryCommand = new RelayCommand(_ => _navigationService.OpenTaskWindow<TestResultsViewModel>());
         NavigateToDeliveryCommand = new RelayCommand(_ => _navigationService.OpenTaskWindow<DeliveryViewModel>());
         NavigateToExternalSamplesCommand = new RelayCommand(_ => _navigationService.OpenTaskWindow<ExternalLabsWindowViewModel>());
+        PrintLabIdCommand = new AsyncRelayCommand(PrintLabIdAsync, () => CurrentPatientId > 0);
     }
 
     public async Task InitializeAsync()
@@ -195,6 +202,7 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
     public ICommand NavigateToResultEntryCommand { get; }
     public ICommand NavigateToDeliveryCommand { get; }
     public ICommand NavigateToExternalSamplesCommand { get; }
+    public ICommand PrintLabIdCommand { get; }
 
     private async Task ClearFormAsync()
     {
@@ -356,13 +364,33 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
             var staffId = _currentUserSession.CurrentUser?.StaffId
                 ?? throw new InvalidOperationException("لا يمكن إنشاء باركود بدون جلسة مستخدم نشطة.");
             await _sampleTrackingService.GenerateBarcodesForVisitAsync(CurrentVisitId, staffId);
-            _barcodeFactory.Show(CurrentVisitId,
+            _barcodeFactory.Show(CurrentVisitId, CurrentPatientId,
                 Application.Current.Windows.OfType<Window>().FirstOrDefault(window => window.IsActive));
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to open BarcodeDialog for visit {VisitId}", CurrentVisitId);
             _dialogService.ShowError("حدث خطأ أثناء فتح نافذة الباركود.");
+        }
+    }
+
+    private async Task PrintLabIdAsync()
+    {
+        try
+        {
+            var labId = await _barcodeGenerator.GetOrCreateLabIdAsync(CurrentPatientId);
+            var labLabel = new BarcodePatientLabel(
+                PatientInfo.FullNameAr ?? string.Empty,
+                "",
+                "كود المعمل (Lab ID)",
+                labId,
+                PatientInfo.PatientCode ?? string.Empty);
+            await _labelPrintService.PrintLabelsAsync(new[] { labLabel.ToBarcodeLabel() });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to print Lab ID for patient {PatientId}", CurrentPatientId);
+            _dialogService.ShowError("حدث خطأ أثناء طباعة كود المعمل.");
         }
     }
 

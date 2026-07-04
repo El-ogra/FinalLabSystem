@@ -15,10 +15,10 @@ public sealed class BarcodeDialogFactory : IBarcodeDialogFactory
         _serviceProvider = serviceProvider;
     }
 
-    public BarcodeDialogResult Show(int visitId, Window? owner = null)
+    public BarcodeDialogResult Show(int visitId, int patientId, Window? owner = null)
     {
         var viewModel = (BarcodeDialogViewModel)_serviceProvider.GetService(typeof(BarcodeDialogViewModel))!;
-        viewModel.LoadTubesAsync(visitId).GetAwaiter().GetResult();
+        viewModel.LoadBarcodesAsync(visitId, patientId).GetAwaiter().GetResult();
         var dialog = new Views.Patients.BarcodeDialog(viewModel)
         {
             Owner = owner ?? Application.Current.MainWindow

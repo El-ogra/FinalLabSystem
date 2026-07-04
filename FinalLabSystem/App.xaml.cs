@@ -164,6 +164,7 @@ public partial class App : Application
         services.AddScoped<IFinancialService, FinancialService>();
         services.AddScoped<ITestCatalogService, TestCatalogService>();
         services.AddScoped<ISampleTrackingService, SampleTrackingService>();
+        services.AddScoped<IBarcodeGenerator, BarcodeGenerator>();
         services.AddScoped<IAuditService, AuditService>();
         services.AddScoped<ITestCatalogSeeder, TestCatalogSeeder>();
         services.AddScoped<IReceiptService, ReceiptService>();

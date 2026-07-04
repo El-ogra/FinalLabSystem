@@ -222,6 +222,8 @@ public partial class FinalLabDbContext : DbContext
 
     public virtual DbSet<DeliveryConfirmation> DeliveryConfirmations { get; set; }
 
+    public virtual DbSet<PatientBarcode> PatientBarcodes { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
     }
@@ -2411,6 +2413,40 @@ public partial class FinalLabDbContext : DbContext
             entity.HasIndex(e => e.VisitId).HasDatabaseName("IX_DeliveryConfirmation_VisitId");
             entity.HasIndex(e => e.StaffId).HasDatabaseName("IX_DeliveryConfirmation_StaffId");
         });
+
+        modelBuilder.Entity<PatientBarcode>(entity =>
+        {
+            entity.ToTable("PatientBarcode");
+            entity.HasKey(e => e.PatientBarcodeId);
+
+            entity.HasIndex(e => e.BarcodeValue)
+                .IsUnique();
+
+            entity.HasIndex(e => new { e.PatientId, e.CodeType })
+                .HasDatabaseName("IX_PatientBarcode_PatientId_CodeType");
+
+            entity.Property(e => e.CodeType)
+                .HasConversion<byte>();
+
+            entity.HasOne(e => e.Patient)
+                .WithMany()
+                .HasForeignKey(e => e.PatientId);
+
+            entity.HasOne(e => e.Visit)
+                .WithMany()
+                .HasForeignKey(e => e.VisitId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasOne(e => e.Staff)
+                .WithMany()
+                .HasForeignKey(e => e.CreatedBy)
+                .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<Patient>()
+            .HasIndex(p => p.LabId)
+            .IsUnique()
+            .HasFilter("[LabId] IS NOT NULL");
 
         OnModelCreatingPartial(modelBuilder);
     }

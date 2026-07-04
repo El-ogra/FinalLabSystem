@@ -1,6 +1,8 @@
+using FinalLabSystem.Data;
 using FinalLabSystem.Models;
 using FinalLabSystem.Services.Interfaces;
 using FinalLabSystem.ViewModels.Patients;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 using Xunit;
 
@@ -8,13 +10,22 @@ namespace FinalLabSystem.Tests.Patients;
 
 public class BarcodeDialogLowStockWarningTests
 {
+    private static FinalLabDbContext CreateInMemoryDbContext()
+    {
+        var options = new DbContextOptionsBuilder<FinalLabDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+        return new FinalLabDbContext(options);
+    }
+
     private static (BarcodeDialogViewModel VM, Mock<ISampleTrackingService> SampleMock, Mock<ILabelPrintService> LabelMock, Mock<IInventoryService> InventoryMock, Mock<IDialogService> DialogMock) CreateVM()
     {
         var sampleMock = new Mock<ISampleTrackingService>();
         var labelMock = new Mock<ILabelPrintService>();
         var inventoryMock = new Mock<IInventoryService>();
         var dialogMock = new Mock<IDialogService>();
-        var vm = new BarcodeDialogViewModel(sampleMock.Object, labelMock.Object, inventoryMock.Object, dialogMock.Object);
+        var dbContext = CreateInMemoryDbContext();
+        var vm = new BarcodeDialogViewModel(sampleMock.Object, labelMock.Object, inventoryMock.Object, dialogMock.Object, dbContext);
         return (vm, sampleMock, labelMock, inventoryMock, dialogMock);
     }
 
