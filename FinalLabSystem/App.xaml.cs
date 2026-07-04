@@ -187,6 +187,9 @@ public partial class App : Application
         services.AddScoped<IBackupService, BackupService>();
         services.AddScoped<IReportLayoutService, ReportLayoutService>();
 
+        // Slice 2 — Culture Entry
+        services.AddScoped<ICultureResultService, CultureResultService>();
+
         services.AddLogging(builder =>
         {
             builder.ClearProviders();

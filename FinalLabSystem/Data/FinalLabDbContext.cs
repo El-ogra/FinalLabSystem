@@ -527,6 +527,14 @@ public partial class FinalLabDbContext : DbContext
             entity.Property(e => e.SpecimenVolumeMl).HasColumnName("specimen_volume_ml");
             entity.Property(e => e.VisitTestId).HasColumnName("visit_test_id");
 
+            entity.Property(e => e.CultureCondition)
+                .HasMaxLength(200)
+                .HasColumnName("culture_condition");
+
+            entity.Property(e => e.ColonyCount)
+                .HasMaxLength(50)
+                .HasColumnName("colony_count");
+
             entity.HasOne(d => d.InoculatedByNavigation).WithMany(p => p.MicrobiologyCultureInoculatedByNavigations)
                 .HasForeignKey(d => d.InoculatedBy)
                 .HasConstraintName("FK_Culture_Inoculated");
@@ -678,8 +686,7 @@ public partial class FinalLabDbContext : DbContext
                 .HasColumnName("mic_value");
             entity.Property(e => e.OrganismId).HasColumnName("organism_id");
             entity.Property(e => e.Sensitivity)
-                .HasMaxLength(1)
-                .IsFixedLength()
+                .HasConversion<byte>()
                 .HasColumnName("sensitivity");
 
             entity.HasOne(d => d.Organism).WithMany(p => p.OrganismAntibiotics)

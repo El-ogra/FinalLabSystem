@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace FinalLabSystem.Models;
 
@@ -18,6 +19,12 @@ public partial class MicrobiologyCulture
     public int? InoculatedBy { get; set; }
 
     public string CultureResult { get; set; } = null!;
+
+    [StringLength(200)]
+    public string? CultureCondition { get; set; }
+
+    [StringLength(50)]
+    public string? ColonyCount { get; set; }
 
     public short? IncubationHours { get; set; }
 

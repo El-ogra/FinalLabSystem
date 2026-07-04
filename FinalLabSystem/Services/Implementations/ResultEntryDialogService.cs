@@ -83,4 +83,59 @@ public sealed class ResultEntryDialogService : IResultEntryDialogService
 
         return tcs.Task;
     }
+
+    public Task<bool> OpenCultureAsync(int visitTestId, int patientId,
+                                       bool isPregnant, int patientAgeDays, string patientGender)
+    {
+        var tcs = new TaskCompletionSource<bool>();
+
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            var cultureService = (ICultureResultService)_serviceProvider.GetService(typeof(ICultureResultService))!;
+            var dialogService = (IDialogService)_serviceProvider.GetService(typeof(IDialogService))!;
+            var context = (Data.FinalLabDbContext)_serviceProvider.GetService(typeof(Data.FinalLabDbContext))!;
+
+            var vm = new CultureEntryViewModel(
+                cultureService,
+                dialogService,
+                context,
+                visitTestId,
+                patientId,
+                isPregnant,
+                patientAgeDays);
+
+            var window = new Views.Patients.CultureEntryWindow
+            {
+                DataContext = vm,
+                Owner = Application.Current.MainWindow
+            };
+
+            vm.RequestClose = () =>
+            {
+                window.Dispatcher.Invoke(() =>
+                {
+                    if (window.IsLoaded)
+                    {
+                        window.DialogResult = tcs.Task.IsCompleted ? null : false;
+                        window.Close();
+                    }
+                });
+            };
+
+            window.Closed += (_, _) =>
+            {
+                if (!tcs.Task.IsCompleted)
+                    tcs.TrySetResult(false);
+            };
+
+            window.Loaded += async (_, _) =>
+            {
+                await vm.LoadAsync();
+            };
+
+            window.ShowDialog();
+        });
+
+        return tcs.Task;
+    }
 }

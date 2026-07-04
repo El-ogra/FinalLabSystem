@@ -290,6 +290,23 @@ public class TestCatalogSeeder : ITestCatalogSeeder
                 }
             }
 
+            // ── Step 7b: Set SpecialType = "CULTURE" for culture-related tests ──
+            var cultureTests = await _context.TestTypes
+                .Where(t => t.TypeNameEn != null &&
+                            (t.TypeNameEn.ToLower().Contains("culture") ||
+                             t.TypeNameEn.ToLower().Contains("c&s") ||
+                             t.TypeNameEn.ToLower().Contains("sensitivity")))
+                .ToListAsync(cancellationToken);
+
+            foreach (var test in cultureTests)
+            {
+                if (test.SpecialType != "CULTURE")
+                {
+                    test.SpecialType = "CULTURE";
+                }
+            }
+            await _context.SaveChangesAsync(cancellationToken);
+
             // ── Step 8: Upsert TestComponent (74 rows) ──
             var distinctComponents = rows
                 .GroupBy(r => new { r.TypeCode, r.ComponentCode })

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FinalLabSystem.Models;
+using FinalLabSystem.Models.Enums;
 
 namespace FinalLabSystem.Services.Interfaces;
 
@@ -9,21 +10,22 @@ public interface ICultureResultService
     /// <summary>
     /// Gets antibiotics considered safe for the supplied patient conditions.
     /// </summary>
-    /// <param name="isPregnant">Whether the patient is pregnant.</param>
-    /// <param name="isChild">Whether the patient is a child.</param>
-    /// <returns>The safe antibiotic catalog entries.</returns>
     Task<List<AntibioticCatalog>> GetSafeAntibioticsAsync(bool isPregnant, bool isChild);
 
     /// <summary>
-    /// Saves a microbiology culture result.
+    /// Loads an existing culture result with its organisms and antibiotics for a given VisitTest.
+    /// Returns null if no culture exists for this VisitTest.
     /// </summary>
-    /// <param name="culture">The culture result to save.</param>
-    Task SaveCultureAsync(MicrobiologyCulture culture);
+    Task<MicrobiologyCulture?> GetByVisitTestIdAsync(int visitTestId);
 
     /// <summary>
-    /// Adds organisms and sensitivity rows to a culture.
+    /// Saves a complete culture result: the culture record, its organisms, and their antibiotic
+    /// sensitivity rows — all within a single SaveChangesAsync call (transaction).
     /// </summary>
-    /// <param name="cultureId">The culture identifier.</param>
-    /// <param name="organisms">The organisms and sensitivities to add.</param>
-    Task AddOrganismsAndSensitivitiesAsync(int cultureId, List<MicrobiologyOrganism> organisms);
+    Task SaveFullCultureAsync(MicrobiologyCulture culture, List<MicrobiologyOrganism> organisms);
+
+    /// <summary>
+    /// Updates a single antibiotic sensitivity value.
+    /// </summary>
+    Task UpdateSensitivityAsync(int antibioticResultId, AntibioticSensitivity value);
 }

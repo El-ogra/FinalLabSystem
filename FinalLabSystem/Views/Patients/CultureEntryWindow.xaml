@@ -1,0 +1,156 @@
+<Window x:Class="FinalLabSystem.Views.Patients.CultureEntryWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:FinalLabSystem.Views.Converters"
+        Title="&#1573;&#1583;&#1582;&#1575;&#1604; &#1606;&#1578;&#1610;&#1580;&#1577; &#1575;&#1604;&#1605;&#1586;&#1585;&#1593;&#1577;" Height="750" Width="1000"
+        WindowStartupLocation="CenterOwner"
+        FlowDirection="RightToLeft">
+    <DockPanel Margin="12">
+        <!-- &#1571;&#1586;&#1608;&#1575;&#1585; &#1575;&#1604;&#1571;&#1587;&#1601;&#1604; -->
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal"
+                    HorizontalAlignment="Left" Margin="0,10,0,0">
+            <Button Content="&#1581;&#1601;&#1592;" Command="{Binding SaveCommand}"
+                    Height="36" Width="100" Margin="0,0,8,0"/>
+            <Button Content="&#1573;&#1604;&#1594;&#1575;&#1594;" Command="{Binding CancelCommand}"
+                    Height="36" Width="100"/>
+        </StackPanel>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <!-- &#1575;&#1604;&#1602;&#1587;&#1605; 1: &#1576;&#1610;&#1575;&#1606;&#1575;&#1578; &#1575;&#1604;&#1593;&#1610;&#1606;&#1577; -->
+                <GroupBox Header="&#1576;&#1610;&#1575;&#1606;&#1575;&#1578; &#1575;&#1604;&#1593;&#1610;&#1606;&#1577;" Margin="0,0,0,10" Padding="8">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="8"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="8"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="&#1605;&#1589;&#1583;&#1585; &#1575;&#1604;&#1593;&#1610;&#1606;&#1577;:"
+                                   VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBox Grid.Row="0" Grid.Column="1"
+                                 Text="{Binding SpecimenSource, UpdateSourceTrigger=PropertyChanged}"/>
+
+                        <TextBlock Grid.Row="0" Grid.Column="2" Text="&#1581;&#1575;&#1604;&#1577; &#1575;&#1604;&#1586;&#1585;&#1575;&#1593;&#1577;:"
+                                   VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBox Grid.Row="0" Grid.Column="3"
+                                 Text="{Binding CultureCondition, UpdateSourceTrigger=PropertyChanged}"
+                                 ToolTip="&#1605;&#1579;&#1575;&#1604;: Aerobic, 37&#176;C, 24h"/>
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="&#1593;&#1583;&#1583; &#1575;&#1604;&#1603;&#1575;&#1574;&#1606;:"
+                                   VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBox Grid.Row="2" Grid.Column="1"
+                                 Text="{Binding ColonyCount, UpdateSourceTrigger=PropertyChanged}"
+                                 ToolTip="&#1605;&#1579;&#1575;&#1604;: 10^5 CFU/mL"/>
+
+                        <TextBlock Grid.Row="2" Grid.Column="2" Text="&#1587;&#1575;&#1593;&#1575;&#1578; &#1575;&#1604;&#1581;&#1590;&#1575;&#1606;&#1577;:"
+                                   VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBox Grid.Row="2" Grid.Column="3"
+                                 Text="{Binding IncubationHours, UpdateSourceTrigger=PropertyChanged}"/>
+
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="&#1606;&#1578;&#1610;&#1580;&#1577; &#1575;&#1604;&#1586;&#1585;&#1575;&#1593;&#1577;:"
+                                   VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBox Grid.Row="4" Grid.Column="1"
+                                 Text="{Binding CultureResult, UpdateSourceTrigger=PropertyChanged}"/>
+
+                        <TextBlock Grid.Row="4" Grid.Column="2" Text="&#1605;&#1604;&#1575;&#1581;&#1592;&#1575;&#1578;:"
+                                   VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBox Grid.Row="4" Grid.Column="3"
+                                 Text="{Binding FinalComment, UpdateSourceTrigger=PropertyChanged}"/>
+                    </Grid>
+                </GroupBox>
+
+                <!-- &#1575;&#1604;&#1602;&#1587;&#1605; 2: &#1575;&#1604;&#1603;&#1575;&#1574;&#1606; &#1575;&#1604;&#1581;&#1610;&#1577; -->
+                <GroupBox Header="&#1575;&#1604;&#1603;&#1575;&#1574;&#1606; &#1575;&#1604;&#1581;&#1610;&#1577; (0 - 3)" Margin="0,0,0,10" Padding="8">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                            <Button Content="&#1573;&#1590;&#1575;&#1601;&#1577; &#1603;&#1575;&#1574;&#1606;" Command="{Binding AddOrganismCommand}"
+                                    Height="30" Width="100" Margin="0,0,8,0"/>
+                            <TextBlock Text="&#1575;&#1604;&#1581;&#1583; &#1575;&#1604;&#1571;&#1602;&#1589;&#1575; 3 &#1603;&#1575;&#1574;&#1606;&#1575;&#1578;"
+                                       VerticalAlignment="Center" Foreground="Gray"/>
+                        </StackPanel>
+
+                        <ItemsControl ItemsSource="{Binding Organisms}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderBrush="#ccc" BorderThickness="1"
+                                            Margin="0,0,0,8" Padding="8">
+                                        <StackPanel>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="4"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+
+                                                <TextBlock Grid.Row="0" Grid.Column="0"
+                                                           Text="&#1575;&#1587;&#1605; &#1575;&#1604;&#1603;&#1575;&#1574;&#1606;:" Margin="0,0,8,0"/>
+                                                <TextBox Grid.Row="0" Grid.Column="1"
+                                                         Text="{Binding OrganismName, UpdateSourceTrigger=PropertyChanged}"/>
+
+                                                <TextBlock Grid.Row="0" Grid.Column="2"
+                                                           Text="&#1589;&#1576;&#1594;&#1577; &#1580;&#1585;&#1575;&#1605;:" Margin="0,0,8,0"/>
+                                                <TextBox Grid.Row="0" Grid.Column="3"
+                                                         Text="{Binding GramStain, UpdateSourceTrigger=PropertyChanged}"/>
+
+                                                <TextBlock Grid.Row="2" Grid.Column="0"
+                                                           Text="&#1593;&#1583;&#1583; &#1575;&#1604;&#1603;&#1575;&#1574;&#1606;:" Margin="0,0,8,0"/>
+                                                <TextBox Grid.Row="2" Grid.Column="1"
+                                                         Text="{Binding ColonyCount, UpdateSourceTrigger=PropertyChanged}"/>
+
+                                                <TextBlock Grid.Row="2" Grid.Column="2"
+                                                           Text="&#1588;&#1603;&#1604; &#1575;&#1604;&#1603;&#1575;&#1574;&#1606;:" Margin="0,0,8,0"/>
+                                                <TextBox Grid.Row="2" Grid.Column="3"
+                                                         Text="{Binding Morphology, UpdateSourceTrigger=PropertyChanged}"/>
+                                            </Grid>
+
+                                            <!-- &#1580;&#1583;&#1608;&#1604; &#1575;&#1604;&#1581;&#1587;&#1575;&#1587;&#1610;&#1577; &#1607;&#1584;&#1575; &#1575;&#1604;&#1603;&#1575;&#1574;&#1606; -->
+                                            <DataGrid ItemsSource="{Binding AntibioticResults}"
+                                                      AutoGenerateColumns="False"
+                                                      IsReadOnly="False"
+                                                      Margin="0,8,0,0"
+                                                      CanUserAddRows="False">
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Header="&#1575;&#1604;&#1605;&#1590;&#1575;&#1583; &#1575;&#1604;&#1581;&#1610;&#1608;&#1610;"
+                                                                        Binding="{Binding AntibioticName}"
+                                                                        IsReadOnly="True"
+                                                                        Width="200"/>
+                                                    <DataGridCheckBoxColumn Header="Highly"
+                                                                            Binding="{Binding Sensitivity, Converter={x:Static local:SensitivityToBoolConverter.Highly}}"
+                                                                            Width="70"/>
+                                                    <DataGridCheckBoxColumn Header="Moderate"
+                                                                            Binding="{Binding Sensitivity, Converter={x:Static local:SensitivityToBoolConverter.Moderate}}"
+                                                                            Width="70"/>
+                                                    <DataGridCheckBoxColumn Header="Low"
+                                                                            Binding="{Binding Sensitivity, Converter={x:Static local:SensitivityToBoolConverter.Low}}"
+                                                                            Width="70"/>
+                                                    <DataGridCheckBoxColumn Header="Resistant"
+                                                                            Binding="{Binding Sensitivity, Converter={x:Static local:SensitivityToBoolConverter.Resistant}}"
+                                                                            Width="80"/>
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </GroupBox>
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+</Window>

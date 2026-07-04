@@ -663,14 +663,28 @@ public sealed class TestResultsViewModel : ViewModelBase
             patientAgeDays = years * 365;
         }
 
-        var saved = await _resultEntryDialogService.OpenAsync(
-            test.VisitTestId,
-            patientId,
-            test.TestTypeName,
-            new ObservableCollection<TestComponentResultDto>(test.ComponentResults),
-            patientAgeDays,
-            CurrentPatientInfo?.Sex ?? "U",
-            CurrentPatientInfo?.IsPregnant ?? false);
+        bool saved;
+
+        if (string.Equals(test.SpecialType, "CULTURE", StringComparison.OrdinalIgnoreCase))
+        {
+            saved = await _resultEntryDialogService.OpenCultureAsync(
+                test.VisitTestId,
+                patientId,
+                CurrentPatientInfo?.IsPregnant ?? false,
+                patientAgeDays,
+                CurrentPatientInfo?.Sex ?? "U");
+        }
+        else
+        {
+            saved = await _resultEntryDialogService.OpenAsync(
+                test.VisitTestId,
+                patientId,
+                test.TestTypeName,
+                new ObservableCollection<TestComponentResultDto>(test.ComponentResults),
+                patientAgeDays,
+                CurrentPatientInfo?.Sex ?? "U",
+                CurrentPatientInfo?.IsPregnant ?? false);
+        }
 
         if (saved && SelectedPatient != null)
             await SelectPatientAsync(SelectedPatient);

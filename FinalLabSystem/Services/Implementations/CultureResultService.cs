@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FinalLabSystem.Data;
 using FinalLabSystem.Models;
+using FinalLabSystem.Models.Enums;
 using FinalLabSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -33,24 +34,68 @@ public class CultureResultService : ICultureResultService
         return await query.OrderBy(a => a.AntibioticName).ToListAsync();
     }
 
-    public async Task SaveCultureAsync(MicrobiologyCulture culture)
+    public async Task<MicrobiologyCulture?> GetByVisitTestIdAsync(int visitTestId)
     {
-        _context.MicrobiologyCultures.Add(culture);
-        await _context.SaveChangesAsync();
+        return await _context.MicrobiologyCultures
+            .Include(c => c.MicrobiologyOrganisms)
+                .ThenInclude(o => o.OrganismAntibiotics)
+            .FirstOrDefaultAsync(c => c.VisitTestId == visitTestId);
     }
 
-    public async Task AddOrganismsAndSensitivitiesAsync(int cultureId, List<MicrobiologyOrganism> organisms)
+    public async Task SaveFullCultureAsync(MicrobiologyCulture culture, List<MicrobiologyOrganism> organisms)
     {
-        var culture = await _context.MicrobiologyCultures
-            .Include(c => c.MicrobiologyOrganisms)
-            .FirstOrDefaultAsync(c => c.CultureId == cultureId);
+        bool isNewCulture = culture.CultureId == 0;
 
         foreach (var organism in organisms)
         {
-            organism.CultureId = cultureId;
-            _context.MicrobiologyOrganisms.Add(organism);
+            bool isNewOrganism = organism.OrganismId == 0;
+
+            if (isNewCulture && isNewOrganism)
+            {
+                if (!culture.MicrobiologyOrganisms.Contains(organism))
+                    culture.MicrobiologyOrganisms.Add(organism);
+            }
+            else if (isNewOrganism)
+            {
+                organism.CultureId = culture.CultureId;
+                _context.MicrobiologyOrganisms.Add(organism);
+            }
+
+            foreach (var antibiotic in organism.OrganismAntibiotics.ToList())
+            {
+                bool isNewAntibiotic = antibiotic.AntibioticResultId == 0;
+
+                if (isNewOrganism && isNewAntibiotic)
+                {
+                    continue;
+                }
+
+                if (isNewAntibiotic)
+                {
+                    antibiotic.OrganismId = organism.OrganismId;
+                    _context.OrganismAntibiotics.Add(antibiotic);
+                }
+                else
+                {
+                    antibiotic.OrganismId = organism.OrganismId;
+                    _context.OrganismAntibiotics.Update(antibiotic);
+                }
+            }
         }
 
+        if (isNewCulture)
+            _context.MicrobiologyCultures.Add(culture);
+
         await _context.SaveChangesAsync();
+    }
+
+    public async Task UpdateSensitivityAsync(int antibioticResultId, AntibioticSensitivity value)
+    {
+        var entity = await _context.OrganismAntibiotics.FindAsync(antibioticResultId);
+        if (entity != null)
+        {
+            entity.Sensitivity = value;
+            await _context.SaveChangesAsync();
+        }
     }
 }

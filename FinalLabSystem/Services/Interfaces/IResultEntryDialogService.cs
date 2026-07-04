@@ -9,4 +9,7 @@ public interface IResultEntryDialogService
     Task<bool> OpenAsync(int visitTestId, int patientId, string testTypeName,
                          ObservableCollection<TestComponentResultDto> components,
                          int patientAgeDays, string patientGender, bool isPregnant);
+
+    Task<bool> OpenCultureAsync(int visitTestId, int patientId,
+                                bool isPregnant, int patientAgeDays, string patientGender);
 }

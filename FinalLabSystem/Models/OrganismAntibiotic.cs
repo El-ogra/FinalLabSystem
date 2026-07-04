@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using FinalLabSystem.Models.Enums;
 
 namespace FinalLabSystem.Models;
 
@@ -13,7 +14,7 @@ public partial class OrganismAntibiotic
 
     public string? AntibioticClass { get; set; }
 
-    public string Sensitivity { get; set; } = null!;
+    public AntibioticSensitivity Sensitivity { get; set; } = AntibioticSensitivity.Resistant;
 
     public string? MicValue { get; set; }
 
