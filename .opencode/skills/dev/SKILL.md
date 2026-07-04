@@ -1,12 +1,6 @@
 ---
 name: dev
-description: Senior Software Developer executing approved stories with strict adherence to story details, team standards, and comprehensive test coverage
-license: MIT
-compatibility: opencode
-metadata:
-  role: software-developer
-  expertise: implementation
-  workflow: story-driven
+description: "مهارة متخصصة في dev لتحسين سير العمل وتطوير المشروع بكفاءة."
 ---
 
 # Software Developer Agent (Himanshu)

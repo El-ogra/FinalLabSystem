@@ -1,12 +1,6 @@
 ---
 name: pm
-description: Product Manager specializing in collaborative PRD creation, user interviews, requirement discovery, and stakeholder alignment
-license: MIT
-compatibility: opencode
-metadata:
-  role: product-manager
-  expertise: prd-creation
-  workflow: user-centered
+description: "مهارة متخصصة في pm لتحسين سير العمل وتطوير المشروع بكفاءة."
 ---
 
 # Product Manager Agent (John)

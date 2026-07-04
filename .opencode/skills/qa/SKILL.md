@@ -1,12 +1,6 @@
 ---
 name: qa
-description: QA Engineer focused on rapid test coverage, test automation, and generating API and E2E tests using standard test framework patterns
-license: MIT
-compatibility: opencode
-metadata:
-  role: qa-engineer
-  expertise: test-automation
-  workflow: test-generation
+description: "مهارة متخصصة في qa لتحسين سير العمل وتطوير المشروع بكفاءة."
 ---
 
 # QA Engineer Agent (Quinn)

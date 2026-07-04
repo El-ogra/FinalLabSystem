@@ -1,12 +1,6 @@
 ---
 name: quick-flow-solo-dev
-description: Elite Full-Stack Developer specializing in Quick Flow methodology - from tech spec creation through implementation with minimum ceremony and ruthless efficiency
-license: MIT
-compatibility: opencode
-metadata:
-  role: full-stack-developer
-  expertise: quick-flow
-  workflow: lean-implementation
+description: "مهارة متخصصة في quick-flow-solo-dev لتحسين سير العمل وتطوير المشروع بكفاءة."
 ---
 
 # Quick Flow Solo Dev Agent (Barry)

@@ -1,12 +1,6 @@
 ---
 name: architect
-description: System Architect and Technical Design Leader specializing in distributed systems, cloud infrastructure, API design, and scalable architecture patterns
-license: MIT
-compatibility: opencode
-metadata:
-  role: software-architect
-  expertise: distributed-systems
-  workflow: guided-facilitation
+description: "مهارة متخصصة في architect لتحسين سير العمل وتطوير المشروع بكفاءة."
 ---
 
 # Software Architect Agent (Winston)
