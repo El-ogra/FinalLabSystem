@@ -92,11 +92,28 @@
                         </StackPanel>
                     </Border>
 
+                    <!-- [القرار 12 - VS-01] استُبدل "العقود" بـ Card و Check و Other. -->
                     <Border Background="#FFF3E0" CornerRadius="4" Padding="12" Margin="0,0,0,12">
                         <StackPanel>
-                            <TextBlock Text="العقود" FontSize="14" FontWeight="Bold" Foreground="#E65100"/>
-                            <TextBlock Text="{Binding Summary.TotalContractReceived, StringFormat=C}"
+                            <TextBlock Text="البطاقات" FontSize="14" FontWeight="Bold" Foreground="#E65100"/>
+                            <TextBlock Text="{Binding Summary.TotalCardReceived, StringFormat=C}"
                                        FontSize="22" FontWeight="Bold" Foreground="#BF360C"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Background="#FFF8E1" CornerRadius="4" Padding="12" Margin="0,0,0,12">
+                        <StackPanel>
+                            <TextBlock Text="الشيكات" FontSize="14" FontWeight="Bold" Foreground="#F57F17"/>
+                            <TextBlock Text="{Binding Summary.TotalCheckReceived, StringFormat=C}"
+                                       FontSize="22" FontWeight="Bold" Foreground="#E65100"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Background="#F5F5F5" CornerRadius="4" Padding="12" Margin="0,0,0,12">
+                        <StackPanel>
+                            <TextBlock Text="أخرى" FontSize="14" FontWeight="Bold" Foreground="#455A64"/>
+                            <TextBlock Text="{Binding Summary.TotalOtherReceived, StringFormat=C}"
+                                       FontSize="22" FontWeight="Bold" Foreground="#263238"/>
                         </StackPanel>
                     </Border>
 

@@ -114,17 +114,22 @@ public class CashDrawerService : ICashDrawerService
 
     private static CashDrawerSummaryDto BuildSummary(DateOnly date, List<Payment> payments)
     {
+        // [القرار 12 - VS-01] تحديث حسابات درج النقدية وفق القيم الجديدة لـ PaymentMethod.
         var cashTotal = payments.Where(p => p.PaymentMethod == PaymentMethod.Cash).Sum(p => p.Amount);
+        var cardTotal = payments.Where(p => p.PaymentMethod == PaymentMethod.Card).Sum(p => p.Amount);
+        var checkTotal = payments.Where(p => p.PaymentMethod == PaymentMethod.Check).Sum(p => p.Amount);
         var insuranceTotal = payments.Where(p => p.PaymentMethod == PaymentMethod.Insurance).Sum(p => p.Amount);
-        var contractTotal = payments.Where(p => p.PaymentMethod == PaymentMethod.Contract).Sum(p => p.Amount);
+        var otherTotal = payments.Where(p => p.PaymentMethod == PaymentMethod.Other).Sum(p => p.Amount);
 
         return new CashDrawerSummaryDto
         {
             Date = date,
             TotalCashReceived = cashTotal,
+            TotalCardReceived = cardTotal,
+            TotalCheckReceived = checkTotal,
             TotalInsuranceReceived = insuranceTotal,
-            TotalContractReceived = contractTotal,
-            GrandTotal = cashTotal + insuranceTotal + contractTotal,
+            TotalOtherReceived = otherTotal,
+            GrandTotal = cashTotal + cardTotal + checkTotal + insuranceTotal + otherTotal,
             PaymentCount = payments.Count,
             Payments = payments.Select(p => new CashDrawerPaymentRow
             {

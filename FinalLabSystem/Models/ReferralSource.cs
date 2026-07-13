@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using FinalLabSystem.Models.Enums;
 
 namespace FinalLabSystem.Models;
 
@@ -8,6 +9,11 @@ public partial class ReferralSource
     public int ReferralId { get; set; }
 
     public string SourceType { get; set; } = null!;
+
+    /// <summary>
+    /// [القرار 12 - VS-01] تصنيف الجهة المُحوِّلة — يستخدم لتقارير العمولات.
+    /// </summary>
+    public ReferringEntityCategory Category { get; set; }
 
     public string? Title { get; set; }
 

@@ -51,10 +51,11 @@ public class CashDrawerServiceTests : IDisposable
         };
         _context.Visits.Add(visit);
 
+        // [القرار 12 - VS-01] القيمة القديمة PaymentMethod.Contract حُذفت وحلّت محلها Card و Check.
         _context.Payments.AddRange(
             new Payment { PaymentId = 1, VisitId = 1, Amount = 50, PaymentMethod = PaymentMethod.Cash, PaymentType = "Full", ReceivedBy = 1, PaymentDate = DateTime.Today.AddHours(10) },
             new Payment { PaymentId = 2, VisitId = 1, Amount = 30, PaymentMethod = PaymentMethod.Insurance, PaymentType = "Full", ReceivedBy = 1, PaymentDate = DateTime.Today.AddHours(11) },
-            new Payment { PaymentId = 3, VisitId = 1, Amount = 20, PaymentMethod = PaymentMethod.Contract, PaymentType = "Full", ReceivedBy = 1, PaymentDate = DateTime.Today.AddHours(12) }
+            new Payment { PaymentId = 3, VisitId = 1, Amount = 20, PaymentMethod = PaymentMethod.Card, PaymentType = "Full", ReceivedBy = 1, PaymentDate = DateTime.Today.AddHours(12) }
         );
 
         await _context.SaveChangesAsync();
@@ -70,7 +71,7 @@ public class CashDrawerServiceTests : IDisposable
 
         Assert.Equal(50, result.TotalCashReceived);
         Assert.Equal(30, result.TotalInsuranceReceived);
-        Assert.Equal(20, result.TotalContractReceived);
+        Assert.Equal(20, result.TotalCardReceived);
         Assert.Equal(100, result.GrandTotal);
         Assert.Equal(3, result.PaymentCount);
     }

@@ -1,5 +1,6 @@
 using FinalLabSystem.Data;
 using FinalLabSystem.Models;
+using FinalLabSystem.Models.Enums;
 using FinalLabSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -33,6 +34,58 @@ public class PricingService : IPricingService
             .FirstOrDefaultAsync(tp => tp.TesttypeId == testTypeId && tp.SchemeId == schemeId);
 
         return price?.Price ?? 0m;
+    }
+
+    /// <summary>
+    /// [القرار 12 - VS-01] يرجع سعر التحليل لزيارة معينة وفق الأولوية:
+    /// 1) SchemeId (إن وجد) ← تجاوز للأسعار الأساسية.
+    /// 2) BillingType على الزيارة:
+    ///    - Individual ⇒ DefaultPrice (سيصبح PatientDefaultPrice في VS-02).
+    ///    - LabToLab   ⇒ DefaultPrice (سيصبح LabToLabDefaultPrice في VS-02).
+    ///    - Free       ⇒ 0.
+    /// </summary>
+    public async Task<decimal> GetPriceForTestAsync(int testTypeId, int visitId)
+    {
+        var visit = await _context.Visits
+            .AsNoTracking()
+            .Where(v => v.VisitId == visitId)
+            .Select(v => new { v.SchemeId, v.BillingType })
+            .FirstOrDefaultAsync();
+
+        if (visit is null)
+        {
+            _logger.LogWarning("GetPriceForTestAsync: Visit {VisitId} not found; falling back to 0.", visitId);
+            return 0m;
+        }
+
+        // 1) الأولوية لـ SchemeId إن وجد.
+        if (visit.SchemeId.HasValue)
+        {
+            var schemedPrice = await _context.TestTypePrices
+                .AsNoTracking()
+                .Where(tp => tp.TesttypeId == testTypeId && tp.SchemeId == visit.SchemeId.Value)
+                .Select(tp => (decimal?)tp.Price)
+                .FirstOrDefaultAsync();
+
+            if (schemedPrice.HasValue)
+                return schemedPrice.Value;
+            // إن لم يوجد سعر مخصّص للتحليل في القائمة نتراجع لأساس BillingType.
+        }
+
+        // 2) وفق BillingType. (في VS-02 سيتم فصل PatientDefaultPrice / LabToLabDefaultPrice.)
+        var defaultPrice = await _context.TestTypes
+            .AsNoTracking()
+            .Where(t => t.TesttypeId == testTypeId)
+            .Select(t => (decimal?)t.DefaultPrice)
+            .FirstOrDefaultAsync() ?? 0m;
+
+        return visit.BillingType switch
+        {
+            BillingType.Individual => defaultPrice,
+            BillingType.LabToLab => defaultPrice,
+            BillingType.Free => 0m,
+            _ => defaultPrice
+        };
     }
 
     public async Task UpdateSchemePricesAsync(int schemeId, List<TestTypePrice> prices)

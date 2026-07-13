@@ -44,9 +44,12 @@ public class CashDrawerSummaryTemplate : DocumentTemplateBase
         headerRow.Cells.Add(CreateCell("البيان", true));
         headerRow.Cells.Add(CreateCell("المبلغ", true));
         summaryGroup.Rows.Add(headerRow);
+        // [القرار 12 - VS-01] عرض وسائل السداد الجديدة (Card / Check) دون القيمة الملغاة Contract.
         summaryGroup.Rows.Add(CreateRow("المدفوعات النقدية", summary.TotalCashReceived.ToString("C")));
+        summaryGroup.Rows.Add(CreateRow("مدفوعات البطاقات", summary.TotalCardReceived.ToString("C")));
+        summaryGroup.Rows.Add(CreateRow("مدفوعات الشيكات", summary.TotalCheckReceived.ToString("C")));
         summaryGroup.Rows.Add(CreateRow("مدفوعات التأمين", summary.TotalInsuranceReceived.ToString("C")));
-        summaryGroup.Rows.Add(CreateRow("مدفوعات العقود", summary.TotalContractReceived.ToString("C")));
+        summaryGroup.Rows.Add(CreateRow("مدفوعات أخرى", summary.TotalOtherReceived.ToString("C")));
         summaryGroup.Rows.Add(CreateRow("الإجمالي", summary.GrandTotal.ToString("C")));
         summaryTable.RowGroups.Add(summaryGroup);
 

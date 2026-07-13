@@ -69,6 +69,12 @@ public partial class Visit
 
     public int? SchemeId { get; set; }
 
+    /// <summary>
+    /// [القرار 12 - VS-01] نوع الفوترة على مستوى الزيارة.
+    /// Individual = فرد | LabToLab = معمل-لمعمل | Free = مجاني.
+    /// </summary>
+    public BillingType BillingType { get; set; }
+
     public decimal Subtotal { get; set; }
 
     public decimal DiscountAmount { get; set; }

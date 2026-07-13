@@ -894,6 +894,13 @@ public partial class FinalLabDbContext : DbContext
             entity.Property(e => e.Title)
                 .HasMaxLength(20)
                 .HasColumnName("title");
+
+            // [القرار 12 - VS-01] تصنيف الجهة المُحوّلة لتقارير العمولات.
+            entity.Property(e => e.Category)
+                .HasConversion(v => v.ToString(), v => (ReferringEntityCategory)Enum.Parse(typeof(ReferringEntityCategory), v ?? "ReferringDoctor", true))
+                .HasMaxLength(40)
+                .HasDefaultValue(ReferringEntityCategory.ReferringDoctor)
+                .HasColumnName("category");
         });
 
         modelBuilder.Entity<ReportCommentTemplate>(entity =>
@@ -1962,6 +1969,13 @@ public partial class FinalLabDbContext : DbContext
                 .HasMaxLength(30)
                 .HasDefaultValue(VisitStatus.Open)
                 .HasColumnName("visit_status");
+
+            // [القرار 12 - VS-01] نوع الفوترة على مستوى الزيارة.
+            entity.Property(e => e.BillingType)
+                .HasConversion(v => v.ToString(), v => (BillingType)Enum.Parse(typeof(BillingType), v ?? "Individual", true))
+                .HasMaxLength(20)
+                .HasDefaultValue(BillingType.Individual)
+                .HasColumnName("billing_type");
 
             entity.HasOne(d => d.Company).WithMany(p => p.Visits)
                 .HasForeignKey(d => d.CompanyId)

@@ -21,6 +21,19 @@ public interface IPricingService
     Task<decimal> GetTestPriceAsync(int testTypeId, int schemeId);
 
     /// <summary>
+    /// [القرار 12 - VS-01] يُحدِّد سعر التحليل لزيارة معينة وفق الترتيب:
+    /// 1) إن كان للزيارة SchemeId ⇒ ابحث في TestTypePrice.
+    /// 2) وإلا: استخدم BillingType على الزيارة:
+    ///    - Individual ⇒ سعر المريض (DefaultPrice حاليًا؛ سيصبح PatientDefaultPrice في VS-02).
+    ///    - LabToLab   ⇒ سعر معمل-لمعمل (DefaultPrice حاليًا؛ سيصبح LabToLabDefaultPrice في VS-02).
+    ///    - Free       ⇒ 0.
+    /// </summary>
+    /// <param name="testTypeId">معرّف نوع التحليل.</param>
+    /// <param name="visitId">معرّف الزيارة.</param>
+    /// <returns>السعر المُطبَّق.</returns>
+    Task<decimal> GetPriceForTestAsync(int testTypeId, int visitId);
+
+    /// <summary>
     /// Updates prices for a pricing scheme.
     /// </summary>
     /// <param name="schemeId">The pricing scheme identifier.</param>

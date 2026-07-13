@@ -7,8 +7,10 @@ public sealed class CashDrawerSummaryDto
 {
     public DateOnly Date { get; set; }
     public decimal TotalCashReceived { get; set; }
+    public decimal TotalCardReceived { get; set; }
+    public decimal TotalCheckReceived { get; set; }
     public decimal TotalInsuranceReceived { get; set; }
-    public decimal TotalContractReceived { get; set; }
+    public decimal TotalOtherReceived { get; set; }
     public decimal GrandTotal { get; set; }
     public int PaymentCount { get; set; }
     public List<CashDrawerPaymentRow> Payments { get; set; } = new();
