@@ -39,6 +39,20 @@ public partial class TestType
     [Range(0, double.MaxValue, ErrorMessage = "السعر يجب أن يكون 0 أو أكثر")]
     public decimal DefaultPrice { get; set; }
 
+    /// <summary>
+    /// [VS-02 - القرار 12] السعر الافتراضي عند البيع للمريض المباشر (BillingType.Individual).
+    /// يُهاجر من DefaultPrice عبر Migration (نسخ 1:1) ثم يصبح المصدر الرئيسي للأسعار الفردية.
+    /// </summary>
+    [Range(0, double.MaxValue, ErrorMessage = "سعر المريض يجب أن يكون 0 أو أكثر")]
+    public decimal PatientDefaultPrice { get; set; }
+
+    /// <summary>
+    /// [VS-02 - القرار 12] السعر الافتراضي عند البيع لجهة معمل-لمعمل (BillingType.LabToLab).
+    /// يُهاجر من DefaultPrice * 0.7 كخصم افتراضي 30% قابل للتعديل يدويًا لاحقًا من شاشة التحاليل.
+    /// </summary>
+    [Range(0, double.MaxValue, ErrorMessage = "سعر المعمل يجب أن يكون 0 أو أكثر")]
+    public decimal LabToLabDefaultPrice { get; set; }
+
     public string? SampleType { get; set; }
 
     public string? DefaultTubeType { get; set; }

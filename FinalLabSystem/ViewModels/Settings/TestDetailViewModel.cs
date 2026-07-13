@@ -348,8 +348,14 @@ public sealed class TestDetailViewModel : ViewModelBase
 
         EditableTest = CloneTest(test);
         SelectedCollectionTypeId = test.CollectionTypeId;
-        PatientPrice = test.TestTypePrices.FirstOrDefault(p => p.Scheme.SchemeName == "Patient Price")?.Price ?? test.DefaultPrice;
-        LabToLabPrice = test.TestTypePrices.FirstOrDefault(p => p.Scheme.SchemeName == "Lab-to-Lab Price")?.Price ?? 0m;
+        // [VS-02] ثنائية التسعير أصبحت مخزَّنة مباشرة في TestType بدلًا من PriceScheme.
+        // إن لم يوجد سعر مخصص (قبل تطبيق Migration) نرجع إلى DefaultPrice للتوافق مع البيانات القديمة.
+        PatientPrice = test.PatientDefaultPrice != 0m
+            ? test.PatientDefaultPrice
+            : (test.TestTypePrices.FirstOrDefault(p => p.Scheme.SchemeName == "Patient Price")?.Price ?? test.DefaultPrice);
+        LabToLabPrice = test.LabToLabDefaultPrice != 0m
+            ? test.LabToLabDefaultPrice
+            : (test.TestTypePrices.FirstOrDefault(p => p.Scheme.SchemeName == "Lab-to-Lab Price")?.Price ?? 0m);
         var tubes = test.TestTypeSampleTubes.OrderBy(t => t.SortOrder).ToList();
         Tube1 = tubes.ElementAtOrDefault(0)?.SampleType ?? string.Empty;
         Tube2 = tubes.ElementAtOrDefault(1)?.SampleType ?? string.Empty;
@@ -423,6 +429,10 @@ public sealed class TestDetailViewModel : ViewModelBase
         EditableTest.PatientQuestion = NullIfWhiteSpace(PatientQuestion);
         EditableTest.ReferenceType = ReferenceType;
         EditableTest.BarcodeName = BarcodeName;
+        // [VS-02] نحدّث ثنائية التسعير الجديدة مباشرة على TestType.
+        EditableTest.PatientDefaultPrice = PatientPrice;
+        EditableTest.LabToLabDefaultPrice = LabToLabPrice;
+        // نبقي DefaultPrice متزامنًا مع PatientDefaultPrice خلال فترة الهجرة (يُهجَّر لاحقًا في شرائح لاحقة).
         EditableTest.DefaultPrice = PatientPrice;
         EditableTest.IsActive = true;
         return EditableTest;
@@ -568,6 +578,8 @@ public sealed class TestDetailViewModel : ViewModelBase
             TypeNameAr = test.TypeNameAr,
             TypeAbbrev = test.TypeAbbrev,
             DefaultPrice = test.DefaultPrice,
+            PatientDefaultPrice = test.PatientDefaultPrice,
+            LabToLabDefaultPrice = test.LabToLabDefaultPrice,
             SampleType = test.SampleType,
             DefaultTubeType = test.DefaultTubeType,
             DefaultTubeColor = test.DefaultTubeColor,

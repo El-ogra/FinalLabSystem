@@ -213,6 +213,9 @@ public class TestCatalogSeeder : ITestCatalogSeeder
                         TypeNameAr = null,
                         TypeAbbrev = row.TypeAbbrev,
                         DefaultPrice = 50m,
+                        // [VS-02] ثنائية التسعير — Patient = DefaultPrice، LabToLab = 70% منها (خصم 30% افتراضي).
+                        PatientDefaultPrice = 50m,
+                        LabToLabDefaultPrice = 35m,
                         SampleType = row.TypeSampleType,
                         DefaultTubeType = row.TypeDefaultTubeType,
                         DefaultTubeColor = row.TypeDefaultTubeColor,
@@ -256,6 +259,9 @@ public class TestCatalogSeeder : ITestCatalogSeeder
                     existing.TypeNameAr = null;
                     existing.TypeAbbrev = row.TypeAbbrev;
                     existing.DefaultPrice = 50m;
+                    // [VS-02] تحديث ثنائية التسعير للسجلات القائمة للتطابق مع الأسعار الافتراضية.
+                    existing.PatientDefaultPrice = 50m;
+                    existing.LabToLabDefaultPrice = 35m;
                     existing.SampleType = row.TypeSampleType;
                     existing.DefaultTubeType = row.TypeDefaultTubeType;
                     existing.DefaultTubeColor = row.TypeDefaultTubeColor;

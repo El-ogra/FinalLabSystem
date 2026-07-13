@@ -1391,6 +1391,15 @@ public partial class FinalLabDbContext : DbContext
             entity.Property(e => e.DefaultPrice)
                 .HasColumnType("decimal(18, 2)")
                 .HasColumnName("default_price");
+            // [VS-02 - القرار 12] ثنائية تسعير TestType.
+            entity.Property(e => e.PatientDefaultPrice)
+                .HasColumnType("decimal(18, 2)")
+                .HasDefaultValue(0m)
+                .HasColumnName("patient_default_price");
+            entity.Property(e => e.LabToLabDefaultPrice)
+                .HasColumnType("decimal(18, 2)")
+                .HasDefaultValue(0m)
+                .HasColumnName("lab_to_lab_default_price");
             entity.Property(e => e.DefaultTubeColor)
                 .HasMaxLength(30)
                 .HasColumnName("default_tube_color");

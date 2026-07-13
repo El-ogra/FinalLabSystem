@@ -37,11 +37,11 @@ public class PricingService : IPricingService
     }
 
     /// <summary>
-    /// [القرار 12 - VS-01] يرجع سعر التحليل لزيارة معينة وفق الأولوية:
-    /// 1) SchemeId (إن وجد) ← تجاوز للأسعار الأساسية.
-    /// 2) BillingType على الزيارة:
-    ///    - Individual ⇒ DefaultPrice (سيصبح PatientDefaultPrice في VS-02).
-    ///    - LabToLab   ⇒ DefaultPrice (سيصبح LabToLabDefaultPrice في VS-02).
+    /// [القرار 12 - VS-01 + VS-02] يرجع سعر التحليل لزيارة معينة وفق الأولوية:
+    /// 1) SchemeId (إن وجد) ← تجاوز للأسعار الأساسية (قائمة أسعار مخصصة لجهة معينة).
+    /// 2) BillingType على الزيارة (ثنائية التسعير على مستوى TestType - VS-02):
+    ///    - Individual ⇒ TestType.PatientDefaultPrice.
+    ///    - LabToLab   ⇒ TestType.LabToLabDefaultPrice.
     ///    - Free       ⇒ 0.
     /// </summary>
     public async Task<decimal> GetPriceForTestAsync(int testTypeId, int visitId)
@@ -58,7 +58,7 @@ public class PricingService : IPricingService
             return 0m;
         }
 
-        // 1) الأولوية لـ SchemeId إن وجد.
+        // 1) الأولوية لـ SchemeId إن وجد (يتجاوز الأسعار الأساسية الثنائية).
         if (visit.SchemeId.HasValue)
         {
             var schemedPrice = await _context.TestTypePrices
@@ -72,19 +72,25 @@ public class PricingService : IPricingService
             // إن لم يوجد سعر مخصّص للتحليل في القائمة نتراجع لأساس BillingType.
         }
 
-        // 2) وفق BillingType. (في VS-02 سيتم فصل PatientDefaultPrice / LabToLabDefaultPrice.)
-        var defaultPrice = await _context.TestTypes
+        // 2) [VS-02] وفق BillingType: يُقرأ السعر المناسب من الثنائية الجديدة في TestType.
+        var prices = await _context.TestTypes
             .AsNoTracking()
             .Where(t => t.TesttypeId == testTypeId)
-            .Select(t => (decimal?)t.DefaultPrice)
-            .FirstOrDefaultAsync() ?? 0m;
+            .Select(t => new { t.PatientDefaultPrice, t.LabToLabDefaultPrice })
+            .FirstOrDefaultAsync();
+
+        if (prices is null)
+        {
+            _logger.LogWarning("GetPriceForTestAsync: TestType {TestTypeId} not found; falling back to 0.", testTypeId);
+            return 0m;
+        }
 
         return visit.BillingType switch
         {
-            BillingType.Individual => defaultPrice,
-            BillingType.LabToLab => defaultPrice,
+            BillingType.Individual => prices.PatientDefaultPrice,
+            BillingType.LabToLab => prices.LabToLabDefaultPrice,
             BillingType.Free => 0m,
-            _ => defaultPrice
+            _ => prices.PatientDefaultPrice
         };
     }
 

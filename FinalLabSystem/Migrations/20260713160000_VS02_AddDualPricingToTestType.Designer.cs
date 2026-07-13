@@ -11,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinalLabSystem.Migrations
 {
     [DbContext(typeof(FinalLabDbContext))]
-    partial class FinalLabDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260713160000_VS02_AddDualPricingToTestType")]
+    partial class VS02_AddDualPricingToTestType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

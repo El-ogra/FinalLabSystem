@@ -73,7 +73,8 @@ public class VisitService : IVisitService
                     {
                         VisitId = visit.VisitId,
                         TesttypeId = testTypeId,
-                        PriceCharged = testType.DefaultPrice,
+                        // [VS-02] تسعير ثنائي وفق BillingType للزيارة.
+                        PriceCharged = ResolveBasePriceForBilling(testType, visit.BillingType),
                         CurrentStage = TestStage.Pending,
                         IsOutsourced = false,
                         AddedAt = DateTime.UtcNow
@@ -148,7 +149,8 @@ public class VisitService : IVisitService
                 .Where(t => uniqueTestIds.Contains(t.TesttypeId))
                 .ToListAsync();
 
-            var subtotal = testTypes.Sum(t => t.DefaultPrice);
+            // [VS-02] Subtotal يحترم ثنائية التسعير وفق BillingType للزيارة.
+            var subtotal = testTypes.Sum(t => ResolveBasePriceForBilling(t, visit.BillingType));
             visit.PatientId = patient.PatientId;
             visit.Subtotal = subtotal;
             visit.DiscountAmount = Math.Clamp(visit.DiscountAmount, 0, subtotal);
@@ -599,17 +601,42 @@ public class VisitService : IVisitService
             .Where(t => toAdd.Contains(t.TesttypeId))
             .ToListAsync();
 
+        // [VS-02] نقرأ BillingType للزيارة لتطبيق السعر المناسب على التحاليل المضافة.
+        var billingType = await _context.Visits
+            .AsNoTracking()
+            .Where(v => v.VisitId == visitId)
+            .Select(v => v.BillingType)
+            .FirstOrDefaultAsync();
+
         foreach (var test in tests)
         {
             _context.VisitTests.Add(new VisitTest
             {
                 VisitId = visitId,
                 TesttypeId = test.TesttypeId,
-                PriceCharged = test.DefaultPrice,
+                PriceCharged = ResolveBasePriceForBilling(test, billingType),
                 CurrentStage = TestStage.Pending,
                 IsOutsourced = false,
                 AddedAt = DateTime.UtcNow
             });
         }
+    }
+
+    /// <summary>
+    /// [VS-02 - القرار 12] يحدّد السعر الأساسي للتحليل وفق BillingType للزيارة.
+    /// - Individual ⇒ PatientDefaultPrice.
+    /// - LabToLab   ⇒ LabToLabDefaultPrice.
+    /// - Free       ⇒ 0.
+    /// تجاوز PriceScheme يتم تطبيقه في PricingService.GetPriceForTestAsync، لذلك يجب أن يبقى دور هذه الدالة محصورًا في الأساس.
+    /// </summary>
+    private static decimal ResolveBasePriceForBilling(TestType testType, BillingType billingType)
+    {
+        return billingType switch
+        {
+            BillingType.Individual => testType.PatientDefaultPrice,
+            BillingType.LabToLab => testType.LabToLabDefaultPrice,
+            BillingType.Free => 0m,
+            _ => testType.PatientDefaultPrice
+        };
     }
 }

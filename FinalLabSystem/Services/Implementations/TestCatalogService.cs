@@ -202,6 +202,9 @@ public class TestCatalogService : ITestCatalogService
         existing.TypeNameAr = entity.TypeNameAr;
         existing.TypeAbbrev = entity.TypeAbbrev;
         existing.DefaultPrice = entity.DefaultPrice;
+        // [VS-02 - القرار 12] ثنائية تسعير TestType (يطبقها PricingService).
+        existing.PatientDefaultPrice = entity.PatientDefaultPrice;
+        existing.LabToLabDefaultPrice = entity.LabToLabDefaultPrice;
         existing.SampleType = entity.SampleType;
         existing.DefaultTubeType = entity.DefaultTubeType;
         existing.DefaultTubeColor = entity.DefaultTubeColor;
