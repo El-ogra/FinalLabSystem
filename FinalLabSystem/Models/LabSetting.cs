@@ -21,8 +21,6 @@ public partial class LabSetting
 
     public virtual Staff? LastUpdatedByNavigation { get; set; }
 
-    public byte BranchNumber { get; set; } = 1;
-
     public bool EnforceStageGating { get; set; } = true;
     public bool EnableServerPrinting { get; set; } = false;
 

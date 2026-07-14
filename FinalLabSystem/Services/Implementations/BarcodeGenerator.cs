@@ -62,32 +62,24 @@ public class BarcodeGenerator : IBarcodeGenerator
 
         var patientId = visit.PatientId;
         var visitDate = visit.VisitDate;
-        var branchNumber = await GetBranchNumberAsync();
         var ordinal = await GetDailyOrdinalAsync(patientId, visitDate);
 
-        return BuildBarcodeValue((byte)codeType, branchNumber, visitDate, ordinal);
+        return BuildBarcodeValue((byte)codeType, visitDate, ordinal);
     }
 
-    private async Task<string> GenerateLabIdAsync(int patientId, DateTime visitDate)
+    private Task<string> GenerateLabIdAsync(int patientId, DateTime visitDate)
     {
-        var branchNumber = await GetBranchNumberAsync();
-        return BuildBarcodeValue((byte)BarcodeCodeType.Lab, branchNumber, visitDate, 0);
+        return Task.FromResult(BuildBarcodeValue((byte)BarcodeCodeType.Lab, visitDate, 0));
     }
 
-    private string BuildBarcodeValue(byte typeDigit, byte branchDigit, DateTime date, int ordinal)
+    private string BuildBarcodeValue(byte typeDigit, DateTime date, int ordinal)
     {
         var datePart = date.ToString("yyMMdd");
         var weekday = (int)date.DayOfWeek + 1;
-        var ordinalPart = ordinal.ToString("D3");
-        var partial = $"{typeDigit}{branchDigit}{datePart}{weekday}{ordinalPart}";
+        var ordinalPart = ordinal.ToString("D4");
+        var partial = $"{typeDigit}{datePart}{weekday}{ordinalPart}";
         var checkDigit = CalculateLuhnCheckDigit(partial);
         return $"{partial}{checkDigit}";
-    }
-
-    private async Task<byte> GetBranchNumberAsync()
-    {
-        var setting = await _context.LabSettings.FirstOrDefaultAsync();
-        return setting?.BranchNumber ?? 1;
     }
 
     private async Task<int> GetDailyOrdinalAsync(int patientId, DateTime date)

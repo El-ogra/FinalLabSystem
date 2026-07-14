@@ -50,7 +50,6 @@ public class SampleTrackingService : ISampleTrackingService
         var fileCode = await _barcodeGenerator.GenerateFileCodeAsync(visitId);
         var labId = await _barcodeGenerator.GetOrCreateLabIdAsync(patientId);
 
-        var branchNumber = (await _context.LabSettings.FirstOrDefaultAsync())?.BranchNumber ?? (byte)1;
         var ordinal = await _context.PatientBarcodes
             .CountAsync(pb => pb.PatientId == patientId
                            && pb.IssueDate.Date == DateTime.Today
@@ -65,7 +64,6 @@ public class SampleTrackingService : ISampleTrackingService
                 BarcodeValue = caseCode,
                 IssueDate = DateTime.Now,
                 SortOrdinal = ordinal,
-                BranchNumber = branchNumber,
                 CreatedBy = staffId
             },
             new PatientBarcode
@@ -76,7 +74,6 @@ public class SampleTrackingService : ISampleTrackingService
                 BarcodeValue = fileCode,
                 IssueDate = DateTime.Now,
                 SortOrdinal = ordinal,
-                BranchNumber = branchNumber,
                 CreatedBy = staffId
             },
             new PatientBarcode
@@ -87,7 +84,6 @@ public class SampleTrackingService : ISampleTrackingService
                 BarcodeValue = labId,
                 IssueDate = DateTime.Now,
                 SortOrdinal = 0,
-                BranchNumber = branchNumber,
                 CreatedBy = staffId
             }
         );

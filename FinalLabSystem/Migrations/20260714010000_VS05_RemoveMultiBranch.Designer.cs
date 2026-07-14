@@ -4,6 +4,7 @@ using FinalLabSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinalLabSystem.Migrations
 {
     [DbContext(typeof(FinalLabDbContext))]
-    partial class FinalLabDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260714010000_VS05_RemoveMultiBranch")]
+    partial class VS05_RemoveMultiBranch
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

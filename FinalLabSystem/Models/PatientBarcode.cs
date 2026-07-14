@@ -12,7 +12,6 @@ public class PatientBarcode
     public string BarcodeValue { get; set; } = string.Empty;
     public DateTime IssueDate { get; set; }
     public int SortOrdinal { get; set; }
-    public byte BranchNumber { get; set; } = 1;
     public int? CreatedBy { get; set; }
 
     public Patient Patient { get; set; } = null!;

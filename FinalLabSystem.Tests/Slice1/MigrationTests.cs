@@ -51,23 +51,16 @@ public class MigrationTests
         {
             PatientId = 1,
             CodeType = BarcodeCodeType.Case,
-            BarcodeValue = "1123070410013",
+            BarcodeValue = "1260714100005",
             IssueDate = DateTime.Now,
-            SortOrdinal = 1,
-            BranchNumber = 1
+            SortOrdinal = 1
         };
         context.PatientBarcodes.Add(barcode);
         await context.SaveChangesAsync();
 
-        var savedBarcode = await context.PatientBarcodes.FirstOrDefaultAsync(b => b.BarcodeValue == "1123070410013");
+        var savedBarcode = await context.PatientBarcodes.FirstOrDefaultAsync(b => b.BarcodeValue == "1260714100005");
         Assert.NotNull(savedBarcode);
         Assert.Equal(BarcodeCodeType.Case, savedBarcode.CodeType);
         Assert.Equal(1, savedBarcode.PatientId);
-
-        labSetting.BranchNumber = 5;
-        await context.SaveChangesAsync();
-        var updatedSetting = await context.LabSettings.FirstOrDefaultAsync();
-        Assert.NotNull(updatedSetting);
-        Assert.Equal((byte)5, updatedSetting.BranchNumber);
     }
 }

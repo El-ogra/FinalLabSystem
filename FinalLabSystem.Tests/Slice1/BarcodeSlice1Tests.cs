@@ -43,7 +43,6 @@ public class BarcodeGeneratorTests
         {
             ctx.Patients.Add(patient);
             ctx.Visits.Add(visit);
-            ctx.LabSettings.Add(new LabSetting { SettingKey = "BranchNumber", BranchNumber = 1 });
             ctx.SaveChanges();
         });
 
@@ -66,7 +65,6 @@ public class BarcodeGeneratorTests
         {
             ctx.Patients.Add(patient);
             ctx.Visits.Add(visit);
-            ctx.LabSettings.Add(new LabSetting { SettingKey = "BranchNumber", BranchNumber = 1 });
             ctx.SaveChanges();
         });
 
@@ -87,7 +85,6 @@ public class BarcodeGeneratorTests
         var context = CreateInMemoryDbContext(ctx =>
         {
             ctx.Patients.Add(patient);
-            ctx.LabSettings.Add(new LabSetting { SettingKey = "BranchNumber", BranchNumber = 1 });
             ctx.SaveChanges();
         });
 
@@ -105,27 +102,26 @@ public class BarcodeGeneratorTests
     [Fact]
     public async Task T04_GetOrCreateLabIdAsync_ExistingPatient_ReturnsSame()
     {
-        var patient = new Patient { PatientId = 1, PatientCode = "P0001", FullNameAr = "أحمد", Sex = "M", LabId = "5123070410012" };
+        var patient = new Patient { PatientId = 1, PatientCode = "P0001", FullNameAr = "أحمد", Sex = "M", LabId = "5260714100005" };
 
         var context = CreateInMemoryDbContext(ctx =>
         {
             ctx.Patients.Add(patient);
-            ctx.LabSettings.Add(new LabSetting { SettingKey = "BranchNumber", BranchNumber = 1 });
             ctx.SaveChanges();
         });
 
         var generator = new BarcodeGenerator(context);
         var labId = await generator.GetOrCreateLabIdAsync(1);
 
-        Assert.Equal("5123070410012", labId);
+        Assert.Equal("5260714100005", labId);
     }
 
     [Fact]
     public void T05_CalculateCheckDigit_ProducesValidLuhn()
     {
-        var code1 = "112307041001";
+        var code1 = "126071410000";
         var digit1 = BarcodeGenerator.CalculateLuhnCheckDigit(code1);
-        Assert.Equal(3, digit1);
+        Assert.Equal(4, digit1);
 
         var fullCode1 = code1 + digit1;
         int sum1 = 0;
@@ -140,9 +136,9 @@ public class BarcodeGeneratorTests
         }
         Assert.Equal(0, sum1 % 10);
 
-        var code2 = "312307041001";
+        var code2 = "326071410000";
         var digit2 = BarcodeGenerator.CalculateLuhnCheckDigit(code2);
-        Assert.Equal(1, digit2);
+        Assert.Equal(2, digit2);
 
         var fullCode2 = code2 + digit2;
         int sum2 = 0;
@@ -178,7 +174,6 @@ public class BarcodeGeneratorTests
             ctx.TestTypes.Add(testType);
             ctx.VisitTests.Add(visitTest);
             ctx.CollectionTypes.Add(collectionType);
-            ctx.LabSettings.Add(new LabSetting { SettingKey = "Main", BranchNumber = 1 });
             ctx.SaveChanges();
         });
 
@@ -225,7 +220,6 @@ public class BarcodeGeneratorTests
             ctx.TestTypes.Add(testType);
             ctx.VisitTests.AddRange(vt1, vt2);
             ctx.CollectionTypes.Add(ct);
-            ctx.LabSettings.Add(new LabSetting { SettingKey = "Main", BranchNumber = 1 });
             ctx.SaveChanges();
         });
 
