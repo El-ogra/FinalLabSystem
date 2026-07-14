@@ -16,12 +16,14 @@ public class FinancialService : IFinancialService
     private readonly FinalLabDbContext _context;
     private readonly ILogger<FinancialService> _logger;
     private readonly IVisitService _visitService;
+    private readonly IAuditService _auditService;
 
-    public FinancialService(FinalLabDbContext context, ILogger<FinancialService> logger, IVisitService visitService)
+    public FinancialService(FinalLabDbContext context, ILogger<FinancialService> logger, IVisitService visitService, IAuditService auditService)
     {
         _context = context;
         _logger = logger;
         _visitService = visitService;
+        _auditService = auditService;
     }
 
     public async Task RecordPatientPaymentAsync(Payment payment)
@@ -58,6 +60,24 @@ public class FinancialService : IFinancialService
         var visit = await _context.Visits.FindAsync(visitId);
         if (visit == null)
             throw new InvalidOperationException($"Visit with ID {visitId} not found.");
+
+        var staff = await _context.Staff.FindAsync(staffId);
+        if (staff == null)
+            throw new InvalidOperationException($"Staff with ID {staffId} not found.");
+
+        // VS-06: التحقق من حد الخصم المسموح للموظف
+        if (!staff.IsAdmin && discount > (decimal)staff.DiscountLimit)
+        {
+            await _auditService.LogActionAsync(
+                tableName: "Visit",
+                recordId: visitId,
+                action: "DISCOUNT_REJECTED",
+                staffId: staffId,
+                notes: $"محاولة خصم {discount}% تجاوزت الحد المسموح {staff.DiscountLimit}% للموظف {staff.DisplayName}");
+
+            throw new InvalidOperationException(
+                $"الخصم {discount}% يتجاوز الحد المسموح {staff.DiscountLimit}%. لا يمكن تطبيق الخصم.");
+        }
 
         visit.DiscountPercent = discount;
         visit.DiscountAmount = visit.Subtotal * discount / 100m;

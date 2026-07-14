@@ -115,6 +115,7 @@ public partial class App : Application
             navigation.RegisterWindow<OutstandingBalanceWindowViewModel, OutstandingBalanceWindow>();
             navigation.RegisterWindow<ReportSettingsWindowViewModel, ReportSettingsWindow>();
             navigation.RegisterWindow<PrintQueueWindowViewModel, PrintQueueWindow>();
+            navigation.RegisterWindow<StaffManagementViewModel, StaffManagementWindow>();
 
             using (var scope = ServiceProvider.CreateScope())
             {
@@ -186,6 +187,7 @@ public partial class App : Application
         services.AddScoped<IOutstandingBalanceReportService, OutstandingBalanceReportService>();
         services.AddScoped<IBackupService, BackupService>();
         services.AddScoped<IReportLayoutService, ReportLayoutService>();
+        services.AddScoped<IStaffService, StaffService>();
 
         // Slice 2 — Culture Entry
         services.AddScoped<ICultureResultService, CultureResultService>();
@@ -304,6 +306,11 @@ public partial class App : Application
 
         services.AddTransient<OutstandingBalanceWindowViewModel>();
         services.AddTransient<OutstandingBalanceWindow>();
+
+        // VS-06 — Staff Management UI
+        services.AddTransient<StaffManagementViewModel>();
+        services.AddTransient<StaffManagementView>();
+        services.AddTransient<StaffManagementWindow>();
 
         // Slice 6.3 — Backup UI
         services.AddTransient<BackupRestoreWindowViewModel>();

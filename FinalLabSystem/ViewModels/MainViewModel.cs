@@ -38,6 +38,7 @@ public sealed class MainViewModel : ViewModelBase
         NavigateToTestDataCommand = new RelayCommand(_ => _navigationService.OpenTaskWindow<TestDataManagementViewModel>());
         NavigateToCategoriesGroupsCommand = new RelayCommand(_ => _navigationService.OpenTaskWindow<CategoriesGroupsViewModel>());
         NavigateToNormalRangesCommand = new RelayCommand(_ => _navigationService.OpenTaskWindow<NormalRangeWindowViewModel>());
+        NavigateToStaffManagementCommand = new RelayCommand(_ => _navigationService.OpenTaskWindow<StaffManagementViewModel>());
     }
 
     public object? CurrentView
@@ -74,6 +75,8 @@ public sealed class MainViewModel : ViewModelBase
 
     public ICommand NavigateToNormalRangesCommand { get; }
 
+    public ICommand NavigateToStaffManagementCommand { get; }
+
     private void ShowPatientsMenu()
     {
         CurrentView = new PatientsMenuViewModel(
@@ -85,6 +88,9 @@ public sealed class MainViewModel : ViewModelBase
 
     private void ShowSystemSettingsMenu()
     {
-        CurrentView = new SystemSettingsMenuViewModel(NavigateToTestDataCommand, NavigateToCategoriesGroupsCommand);
+        CurrentView = new SystemSettingsMenuViewModel(
+            NavigateToTestDataCommand,
+            NavigateToCategoriesGroupsCommand,
+            NavigateToStaffManagementCommand);
     }
 }

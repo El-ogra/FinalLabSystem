@@ -104,6 +104,15 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
             await Referral.InitializeAsync();
             await TestSelection.InitializeAsync();
             await ClearFormAsync();
+
+            // VS-06: تعيين حد الخصم المسموح للموظف الحالي
+            var currentStaff = _currentUserSession.CurrentUser;
+            if (currentStaff is not null)
+            {
+                Financial.SetCurrentStaffInfo(
+                    (decimal)currentStaff.DiscountLimit,
+                    currentStaff.IsAdmin);
+            }
         }
         catch (Exception ex)
         {
@@ -243,10 +252,21 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
 
         try
         {
+            var currentStaff = _currentUserSession.CurrentUser
+                ?? throw new InvalidOperationException("لا يمكن حفظ الزيارة بدون جلسة مستخدم نشطة.");
+            var staffId = currentStaff.StaffId;
+
+            // VS-06: التحقق من حد الخصم المسموح قبل الحفظ
+            if (!currentStaff.IsAdmin && Financial.DiscountPercent > (decimal)currentStaff.DiscountLimit)
+            {
+                _dialogService.ShowWarning(
+                    $"الخصم {Financial.DiscountPercent}% يتجاوز الحد المسموح {currentStaff.DiscountLimit}%. لا يمكن حفظ الزيارة.",
+                    "تجاوز حد الخصم");
+                return;
+            }
+
             var patient = PatientInfo.ToPatient();
             patient.PatientId = CurrentPatientId;
-            var staffId = _currentUserSession.CurrentUser?.StaffId
-                ?? throw new InvalidOperationException("لا يمكن حفظ الزيارة بدون جلسة مستخدم نشطة.");
             patient.CreatedBy = staffId;
 
             var visit = new Visit

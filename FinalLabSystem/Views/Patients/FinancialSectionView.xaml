@@ -107,11 +107,23 @@
                          Text="{Binding DiscountAmount, UpdateSourceTrigger=PropertyChanged}"
                          Background="#F6FDE5"
                          Style="{StaticResource FinanceTextBoxStyle}"/>
-                <Label Grid.Row="1"
-                       Grid.Column="4"
-                       Content="الخصم"
-                       Background="#376FA8"
-                       Style="{StaticResource FinanceLabelStyle}"/>
+                <StackPanel Grid.Row="1"
+                            Grid.Column="4"
+                            Orientation="Vertical">
+                    <Label Content="الخصم"
+                           Background="#376FA8"
+                           Style="{StaticResource FinanceLabelStyle}"/>
+                    <Label Content="{Binding StaffDiscountLimit, StringFormat='الحد: {0}%'}"
+                           Background="#555555"
+                           Foreground="#FFD91A"
+                           FontSize="10"
+                           Height="18"
+                           Margin="3,0"
+                           Padding="4,0"
+                           HorizontalContentAlignment="Center"
+                           VerticalContentAlignment="Center"
+                           FlowDirection="RightToLeft"/>
+                </StackPanel>
 
                 <TextBox Grid.Row="2"
                          Grid.Column="0"

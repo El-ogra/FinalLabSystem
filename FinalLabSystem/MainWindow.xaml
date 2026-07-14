@@ -67,8 +67,8 @@
         <!-- System Settings sub-menu -->
         <DataTemplate DataType="{x:Type svm:SystemSettingsMenuViewModel}">
             <Grid Background="#F5F7FA">
-                <UniformGrid Rows="1" Columns="2"
-                             Width="760" Height="180"
+                <UniformGrid Rows="1" Columns="3"
+                             Width="960" Height="180"
                              HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Button Content="بيانات التحاليل"
                             Command="{Binding NavigateToTestDataCommand}"
@@ -78,6 +78,10 @@
                             Command="{Binding NavigateToCategoriesGroupsCommand}"
                             Margin="12" FontSize="22" FontWeight="SemiBold"
                             Background="#00838F" Foreground="White"/>
+                    <Button Content="إدارة الموظفين"
+                            Command="{Binding NavigateToStaffManagementCommand}"
+                            Margin="12" FontSize="22" FontWeight="SemiBold"
+                            Background="#6A1B9A" Foreground="White"/>
                 </UniformGrid>
             </Grid>
         </DataTemplate>

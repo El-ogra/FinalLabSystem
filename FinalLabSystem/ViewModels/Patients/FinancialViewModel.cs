@@ -21,6 +21,8 @@ public sealed class FinancialViewModel : ViewModelBase
     private bool _isPaymentConfirmed;
     private bool _isClearanceRequested;
     private string _paymentStatus = "PENDING";
+    private decimal _staffDiscountLimit = 100m;
+    private bool _isCurrentUserAdmin;
 
     public FinancialViewModel(IFinancialService financialService, IDialogService dialogService)
     {
@@ -130,6 +132,18 @@ public sealed class FinancialViewModel : ViewModelBase
         set => SetProperty(ref _paymentStatus, string.IsNullOrWhiteSpace(value) ? "PENDING" : value);
     }
 
+    public decimal StaffDiscountLimit
+    {
+        get => _staffDiscountLimit;
+        set => SetProperty(ref _staffDiscountLimit, value);
+    }
+
+    public bool IsCurrentUserAdmin
+    {
+        get => _isCurrentUserAdmin;
+        set => SetProperty(ref _isCurrentUserAdmin, value);
+    }
+
     public ICommand ConfirmPaymentCommand { get; }
 
     public ICommand RevertCommand { get; }
@@ -139,6 +153,19 @@ public sealed class FinancialViewModel : ViewModelBase
     public void SetCurrentVisitId(int visitId)
     {
         CurrentVisitId = visitId;
+    }
+
+    public void SetCurrentStaffInfo(decimal discountLimit, bool isAdmin)
+    {
+        StaffDiscountLimit = discountLimit;
+        IsCurrentUserAdmin = isAdmin;
+        OnPropertyChanged(nameof(StaffDiscountLimit));
+        OnPropertyChanged(nameof(IsCurrentUserAdmin));
+    }
+
+    public bool CanApplyDiscount(decimal discountPercent)
+    {
+        return IsCurrentUserAdmin || discountPercent <= StaffDiscountLimit;
     }
 
     public void RecalculateFromTests(List<decimal> prices)
@@ -214,6 +241,8 @@ public sealed class FinancialViewModel : ViewModelBase
         OnPropertyChanged(nameof(IsPaymentConfirmed));
         OnPropertyChanged(nameof(IsClearanceRequested));
         OnPropertyChanged(nameof(PaymentStatus));
+        OnPropertyChanged(nameof(StaffDiscountLimit));
+        OnPropertyChanged(nameof(IsCurrentUserAdmin));
         CommandManager.InvalidateRequerySuggested();
     }
 
