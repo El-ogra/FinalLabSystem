@@ -16,6 +16,7 @@ public sealed class BackupRowViewModel : INotifyPropertyChanged
         FilePath = dto.FilePath;
         DisplaySize = FormatBytes(dto.FileSizeBytes);
         DisplayCreatedAt = dto.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm");
+        DisplayFormat = dto.FileName.EndsWith(".bak.enc") ? "قديم (JSON)" : dto.SchemaVersion == "2.0" ? "SQL Server" : "غير معروف";
     }
 
     public string FileName { get; }
@@ -25,6 +26,8 @@ public sealed class BackupRowViewModel : INotifyPropertyChanged
     public string DisplaySize { get; }
 
     public string DisplayCreatedAt { get; }
+
+    public string DisplayFormat { get; }
 
     public bool IsSelected
     {

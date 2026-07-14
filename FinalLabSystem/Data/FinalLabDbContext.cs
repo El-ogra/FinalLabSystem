@@ -467,6 +467,7 @@ public partial class FinalLabDbContext : DbContext
             entity.Property(e => e.BackupScheduleHour).HasColumnName("backup_schedule_hour");
             entity.Property(e => e.BackupRetentionDays).HasColumnName("backup_retention_days");
             entity.Property(e => e.BackupOutputFolder).HasColumnName("backup_output_folder");
+            entity.Property(e => e.DefaultBackupPath).HasColumnName("default_backup_path");
 
             // Report Layout Settings
             entity.Property(e => e.ReportLabNameAr).HasColumnName("ReportLabNameAr").HasMaxLength(200);

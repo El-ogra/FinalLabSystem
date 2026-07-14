@@ -187,6 +187,18 @@ public partial class App : Application
         services.AddScoped<ICommissionReportService, CommissionReportService>();
         services.AddScoped<IOutstandingBalanceReportService, OutstandingBalanceReportService>();
         services.AddScoped<IBackupService, BackupService>();
+        services.AddScoped<ISqlServerBackupExecutor>(sp =>
+        {
+            var logger = sp.GetRequiredService<ILogger<SqlServerBackupExecutor>>();
+            return new SqlServerBackupExecutor(connectionString, logger);
+        });
+        services.AddScoped<ISqlServerRestoreExecutor>(sp =>
+        {
+            var logger = sp.GetRequiredService<ILogger<SqlServerRestoreExecutor>>();
+            return new SqlServerRestoreExecutor(connectionString, logger);
+        });
+        services.AddScoped<IBackupFileNameStrategy, BackupFileNameStrategy>();
+        services.AddScoped<IBackupScheduler, BackupScheduler>();
         services.AddScoped<IReportLayoutService, ReportLayoutService>();
         services.AddScoped<IStaffService, StaffService>();
         services.AddScoped<ISensitiveScreenPasswordService, SensitiveScreenPasswordService>();

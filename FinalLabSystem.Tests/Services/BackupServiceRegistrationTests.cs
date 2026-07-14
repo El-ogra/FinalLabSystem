@@ -21,6 +21,9 @@ public class BackupServiceRegistrationTests
         services.AddScoped<IAuditService, AuditService>();
         services.AddScoped<ISensitiveScreenPasswordService>(_ => Mock.Of<ISensitiveScreenPasswordService>());
         services.AddSingleton<ICurrentUserSession, CurrentUserSession>();
+        services.AddScoped<ISqlServerBackupExecutor>(_ => Mock.Of<ISqlServerBackupExecutor>());
+        services.AddScoped<ISqlServerRestoreExecutor>(_ => Mock.Of<ISqlServerRestoreExecutor>());
+        services.AddScoped<IBackupFileNameStrategy, BackupFileNameStrategy>();
         services.AddScoped<IBackupService, BackupService>();
 
         var provider = services.BuildServiceProvider();

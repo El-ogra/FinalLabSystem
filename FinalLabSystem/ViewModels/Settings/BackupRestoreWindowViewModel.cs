@@ -42,8 +42,10 @@ public sealed class BackupRestoreWindowViewModel : ViewModelBase
         Backups = new ObservableCollection<BackupRowViewModel>();
 
         LoadBackupsCommand = new AsyncRelayCommand(LoadBackupsAsync, () => !IsBusy);
-        CreateBackupCommand = new AsyncRelayCommand(CreateBackupAsync, () => !IsBusy);
+        CreateFullBackupCommand = new AsyncRelayCommand(CreateFullBackupAsync, () => !IsBusy);
+        CreateDifferentialBackupCommand = new AsyncRelayCommand(CreateDifferentialBackupAsync, () => !IsBusy);
         RestoreCommand = new AsyncRelayCommand(RestoreAsync, () => !IsBusy);
+        RestoreLegacyCommand = new AsyncRelayCommand(RestoreLegacyAsync, () => !IsBusy);
         BrowseFolderCommand = new AsyncRelayCommand(BrowseFolderAsync);
         OpenFolderCommand = new RelayCommand(_ => OpenFolder());
 
@@ -74,9 +76,13 @@ public sealed class BackupRestoreWindowViewModel : ViewModelBase
 
     public ICommand LoadBackupsCommand { get; }
 
-    public ICommand CreateBackupCommand { get; }
+    public ICommand CreateFullBackupCommand { get; }
+
+    public ICommand CreateDifferentialBackupCommand { get; }
 
     public ICommand RestoreCommand { get; }
+
+    public ICommand RestoreLegacyCommand { get; }
 
     public ICommand BrowseFolderCommand { get; }
 
@@ -123,7 +129,17 @@ public sealed class BackupRestoreWindowViewModel : ViewModelBase
         }
     }
 
-    private async Task CreateBackupAsync()
+    private async Task CreateFullBackupAsync()
+    {
+        await CreateBackupAsync(BackupType.Full);
+    }
+
+    private async Task CreateDifferentialBackupAsync()
+    {
+        await CreateBackupAsync(BackupType.Incremental);
+    }
+
+    private async Task CreateBackupAsync(BackupType backupType)
     {
         if (_currentUserSession.CurrentUser?.IsAdmin != true)
         {
@@ -152,7 +168,7 @@ public sealed class BackupRestoreWindowViewModel : ViewModelBase
                 return;
             }
 
-            await _backupService.CreateBackupAsync(TargetFolder, dialog.EnteredPassword, BackupType.Full);
+            await _backupService.CreateBackupAsync(TargetFolder, dialog.EnteredPassword, backupType);
 
             _dialogService.ShowMessage("تم إنشاء النسخة الاحتياطية بنجاح");
             await LoadBackupsAsync();
@@ -165,9 +181,13 @@ public sealed class BackupRestoreWindowViewModel : ViewModelBase
         {
             _dialogService.ShowError($"خطأ في الكتابة: {ex.Message}");
         }
-        catch (UnauthorizedAccessException)
+        catch (UnauthorizedAccessException ex)
         {
-            _dialogService.ShowError("لا توجد صلاحية كتابة");
+            _dialogService.ShowError(ex.Message);
+        }
+        catch (InvalidOperationException ex)
+        {
+            _dialogService.ShowError(ex.Message);
         }
         catch (Exception ex)
         {
@@ -194,8 +214,14 @@ public sealed class BackupRestoreWindowViewModel : ViewModelBase
             return;
         }
 
+        if (selected.FileName.EndsWith(".bak.enc"))
+        {
+            _dialogService.ShowWarning("هذه نسخة قديمة (مشفرة). يُرجى استخدام زر 'استعادة نسخة قديمة' لاستعادتها.");
+            return;
+        }
+
         if (!_dialogService.ShowConfirmation(
-                "هل أنت متأكد من استعادة هذه النسخة؟ سيتم استبدال جميع البيانات الحالية.",
+                "هل أنت متأكد من استعادة هذه النسخة؟ سيتم استبدال جميع البيانات الحالية.\n\nملاحظة: سيُطلب إعادة تشغيل التطبيق بعد الاستعادة.",
                 "تأكيد الاستعادة"))
             return;
 
@@ -231,7 +257,7 @@ public sealed class BackupRestoreWindowViewModel : ViewModelBase
             }
             else
             {
-                _dialogService.ShowError("كلمة المرور غير صحيحة أو الملف تالف");
+                _dialogService.ShowError("فشلت عملية الاستعادة. تحقق من صلاحيات SQL Server.");
             }
         }
         catch (DirectoryNotFoundException)
@@ -242,9 +268,93 @@ public sealed class BackupRestoreWindowViewModel : ViewModelBase
         {
             _dialogService.ShowError($"خطأ في القراءة: {ex.Message}");
         }
-        catch (UnauthorizedAccessException)
+        catch (UnauthorizedAccessException ex)
         {
-            _dialogService.ShowError("لا توجد صلاحية قراءة");
+            _dialogService.ShowError(ex.Message);
+        }
+        catch (InvalidOperationException ex)
+        {
+            _dialogService.ShowError(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _dialogService.ShowError($"خطأ غير متوقع: {ex.Message}");
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    private async Task RestoreLegacyAsync()
+    {
+        if (_currentUserSession.CurrentUser?.IsAdmin != true)
+        {
+            _dialogService.ShowError("فقط المسؤولون يمكنهم الاستعادة");
+            return;
+        }
+
+        var selected = Backups.FirstOrDefault(b => b.IsSelected);
+        if (selected is null)
+        {
+            _dialogService.ShowWarning("يُرجى تحديد نسخة احتياطية");
+            return;
+        }
+
+        if (!selected.FileName.EndsWith(".bak.enc"))
+        {
+            _dialogService.ShowWarning("هذه نسخة جديدة (SQL Server). يُرجى استخدام زر 'استعادة' العادي.");
+            return;
+        }
+
+        if (!_dialogService.ShowConfirmation(
+                "هذه نسخة احتياطية قديمة (JSON مشفر).\nبعد الاستعادة، يُنصح بإنشاء نسخة احتياطية جديدة بالتنسيق الأصلي.\n\nهل أنت متأكد من الاستعادة؟",
+                "تأكيد استعادة النسخة القديمة"))
+            return;
+
+        try
+        {
+            IsBusy = true;
+
+            var dialog = new BackupPasswordDialog
+            {
+                Owner = Application.Current.MainWindow
+            };
+
+            dialog.TitleText = "أدخل كلمة مرور فك التشفير";
+            dialog.PromptText = "كلمة المرور المستخدمة عند إنشاء النسخة القديمة:";
+
+            if (dialog.ShowDialog() != true || dialog.EnteredPassword is null)
+            {
+                IsBusy = false;
+                return;
+            }
+
+            var success = await _backupService.RestoreLegacyJsonBackupAsync(selected.FilePath, dialog.EnteredPassword);
+
+            if (success)
+            {
+                _dialogService.ShowMessage("تمت استعادة النسخة القديمة بنجاح.\nيُنصح بإنشاء نسخة احتياطية جديدة بالتنسيق الأصلي.\nيُرجى إعادة تشغيل التطبيق.");
+
+                if (_dialogService.ShowConfirmation("هل تريد إغلاق التطبيق الآن؟"))
+                    RequestShutdown?.Invoke();
+            }
+            else
+            {
+                _dialogService.ShowError("كلمة المرور غير صحيحة أو الملف تالف.");
+            }
+        }
+        catch (DirectoryNotFoundException)
+        {
+            _dialogService.ShowError("ملف النسخة الاحتياطية غير موجود");
+        }
+        catch (IOException ex)
+        {
+            _dialogService.ShowError($"خطأ في القراءة: {ex.Message}");
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            _dialogService.ShowError(ex.Message);
         }
         catch (Exception ex)
         {

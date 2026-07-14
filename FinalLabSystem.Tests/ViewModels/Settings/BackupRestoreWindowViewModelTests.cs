@@ -78,7 +78,7 @@ public class BackupRestoreWindowViewModelTests
     {
         var (vm, mockBackup, mockDialog, _, _) = CreateViewModel(CreateNonAdminStaff());
 
-        vm.CreateBackupCommand.Execute(null);
+        vm.CreateFullBackupCommand.Execute(null);
 
         mockDialog.Verify(d => d.ShowError(
             It.Is<string>(s => s.Contains("المسؤولون")),

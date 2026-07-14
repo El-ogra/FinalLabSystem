@@ -32,6 +32,7 @@ public partial class LabSetting
     public int? BackupScheduleHour { get; set; }
     public int? BackupRetentionDays { get; set; }
     public string? BackupOutputFolder { get; set; }
+    public string? DefaultBackupPath { get; set; }
 
     // === Report Layout Settings ===
     public string? ReportLabNameAr { get; set; }

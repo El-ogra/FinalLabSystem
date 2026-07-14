@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +21,9 @@ public class BackupService : IBackupService
     private readonly ICurrentUserSession _currentUserSession;
     private readonly IAuditService _auditService;
     private readonly ISensitiveScreenPasswordService _sensitivePasswordService;
+    private readonly ISqlServerBackupExecutor _backupExecutor;
+    private readonly ISqlServerRestoreExecutor _restoreExecutor;
+    private readonly IBackupFileNameStrategy _fileNameStrategy;
     private readonly ILogger<BackupService> _logger;
 
     private static readonly JsonSerializerOptions JsonOptions = new()
@@ -31,13 +37,24 @@ public class BackupService : IBackupService
         ICurrentUserSession currentUserSession,
         IAuditService auditService,
         ISensitiveScreenPasswordService sensitivePasswordService,
+        ISqlServerBackupExecutor backupExecutor,
+        ISqlServerRestoreExecutor restoreExecutor,
+        IBackupFileNameStrategy fileNameStrategy,
         ILogger<BackupService> logger)
     {
         _context = context;
         _currentUserSession = currentUserSession;
         _auditService = auditService;
         _sensitivePasswordService = sensitivePasswordService;
+        _backupExecutor = backupExecutor;
+        _restoreExecutor = restoreExecutor;
+        _fileNameStrategy = fileNameStrategy;
         _logger = logger;
+    }
+
+    protected virtual string GetDatabaseName()
+    {
+        return _context.Database.GetDbConnection().Database;
     }
 
     public async Task<string> CreateBackupAsync(string targetFolder, string adminPassword, BackupType type)
@@ -56,57 +73,120 @@ public class BackupService : IBackupService
         if (!Directory.Exists(targetFolder))
             Directory.CreateDirectory(targetFolder);
 
-        var entityTypes = _context.Model.GetEntityTypes()
-            .Where(t => t.GetTableName() != null && t.GetViewName() == null)
-            .ToList();
+        var databaseName = GetDatabaseName();
+        var fileName = _fileNameStrategy.GenerateFileName(type);
+        var targetPath = Path.Combine(targetFolder, fileName);
 
-        var backupData = new Dictionary<string, List<Dictionary<string, object?>>>();
+        var stopwatch = Stopwatch.StartNew();
 
-        foreach (var entityType in entityTypes)
+        try
         {
-            var tableName = entityType.GetTableName()!;
-            var setMethod = typeof(DbContext).GetMethod("Set", Type.EmptyTypes)!
-                .MakeGenericMethod(entityType.ClrType);
-            var dbSet = setMethod.Invoke(_context, null) as IEnumerable<object>;
-
-            if (dbSet == null) continue;
-
-            var rows = new List<Dictionary<string, object?>>();
-            foreach (var entity in dbSet)
+            switch (type)
             {
-                var dict = new Dictionary<string, object?>();
-                foreach (var prop in entityType.GetProperties())
-                {
-                    var value = prop.PropertyInfo?.GetValue(entity);
-                    dict[prop.Name] = value;
-                }
-                rows.Add(dict);
+                case BackupType.Full:
+                    await _backupExecutor.FullBackupAsync(databaseName, targetPath);
+                    break;
+                case BackupType.Incremental:
+                    await _backupExecutor.DifferentialBackupAsync(databaseName, targetPath);
+                    break;
+                default:
+                    await _backupExecutor.FullBackupAsync(databaseName, targetPath);
+                    break;
             }
-            backupData[tableName] = rows;
+
+            stopwatch.Stop();
+
+            long fileSize = 0;
+            if (File.Exists(targetPath))
+                fileSize = new FileInfo(targetPath).Length;
+
+            var staffId = _currentUserSession.CurrentUser!.StaffId;
+            await _auditService.LogActionAsync(
+                tableName: "Backup",
+                recordId: 0,
+                action: "B",
+                staffId: staffId,
+                notes: $"SQL Server backup ({type}) created to {targetPath}. Size: {fileSize} bytes. Duration: {stopwatch.Elapsed.TotalSeconds:F1}s.");
+
+            _logger.LogInformation("SQL Server backup created: {FilePath} ({Type})", targetPath, type);
+            return targetPath;
         }
+        catch (Exception ex)
+        {
+            stopwatch.Stop();
+            var staffId = _currentUserSession.CurrentUser!.StaffId;
+            await _auditService.LogActionAsync(
+                tableName: "Backup",
+                recordId: 0,
+                action: "B",
+                staffId: staffId,
+                notes: $"SQL Server backup FAILED ({type}). Error: {ex.Message}. Duration: {stopwatch.Elapsed.TotalSeconds:F1}s.");
 
-        var json = JsonSerializer.Serialize(backupData, JsonOptions);
-        var jsonBytes = System.Text.Encoding.UTF8.GetBytes(json);
-
-        var encryptedBytes = AesEncryptionHelper.Encrypt(jsonBytes, adminPassword);
-
-        var fileName = $"FinalLabSystem_{DateTime.UtcNow:yyyy-MM-dd_HHmmss}.bak.enc";
-        var filePath = Path.Combine(targetFolder, fileName);
-        await File.WriteAllBytesAsync(filePath, encryptedBytes);
-
-        var staffId = _currentUserSession.CurrentUser!.StaffId;
-        await _auditService.LogActionAsync(
-            tableName: "Backup",
-            recordId: 0,
-            action: "B",
-            staffId: staffId,
-            notes: $"Backup created to {filePath}");
-
-        _logger.LogInformation("Backup created: {FilePath}", filePath);
-        return filePath;
+            _logger.LogError(ex, "SQL Server backup failed ({Type})", type);
+            throw;
+        }
     }
 
     public async Task<bool> RestoreBackupAsync(string backupFilePath, string adminPassword)
+    {
+        if (_currentUserSession.CurrentUser?.IsAdmin != true)
+            throw new UnauthorizedAccessException("Only administrators can perform restore operations.");
+
+        var dbPasswordSet = await _sensitivePasswordService.IsPasswordSetAsync("DbMaintenance");
+        if (dbPasswordSet)
+        {
+            var isValid = await _sensitivePasswordService.VerifyAsync("DbMaintenance", adminPassword);
+            if (!isValid)
+                throw new UnauthorizedAccessException("كلمة مرور صيانة قاعدة البيانات غير صحيحة.");
+        }
+
+        if (!File.Exists(backupFilePath))
+            return false;
+
+        var databaseName = GetDatabaseName();
+
+        try
+        {
+            await _restoreExecutor.SetSingleUserAsync(databaseName);
+            await _restoreExecutor.RestoreAsync(databaseName, backupFilePath);
+            await _restoreExecutor.SetMultiUserAsync(databaseName);
+
+            var staffId = _currentUserSession.CurrentUser!.StaffId;
+            await _auditService.LogActionAsync(
+                tableName: "Backup",
+                recordId: 0,
+                action: "R",
+                staffId: staffId,
+                notes: $"SQL Server restore completed from {backupFilePath}");
+
+            _logger.LogInformation("SQL Server restore completed: {BackupFilePath}", backupFilePath);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            try
+            {
+                await _restoreExecutor.SetMultiUserAsync(databaseName);
+            }
+            catch (Exception restoreEx)
+            {
+                _logger.LogError(restoreEx, "Failed to set database back to multi-user mode after restore failure");
+            }
+
+            var staffId = _currentUserSession.CurrentUser!.StaffId;
+            await _auditService.LogActionAsync(
+                tableName: "Backup",
+                recordId: 0,
+                action: "R",
+                staffId: staffId,
+                notes: $"SQL Server restore FAILED from {backupFilePath}. Error: {ex.Message}");
+
+            _logger.LogError(ex, "SQL Server restore failed from {BackupFilePath}", backupFilePath);
+            return false;
+        }
+    }
+
+    public async Task<bool> RestoreLegacyJsonBackupAsync(string backupFilePath, string adminPassword)
     {
         if (_currentUserSession.CurrentUser?.IsAdmin != true)
             throw new UnauthorizedAccessException("Only administrators can perform restore operations.");
@@ -222,20 +302,20 @@ public class BackupService : IBackupService
                     recordId: 0,
                     action: "R",
                     staffId: staffId,
-                    notes: $"Backup restored from {backupFilePath}");
+                    notes: $"Legacy JSON backup restored from {backupFilePath}");
 
-                _logger.LogInformation("Backup restored: {BackupFilePath}", backupFilePath);
+                _logger.LogInformation("Legacy JSON backup restored: {BackupFilePath}", backupFilePath);
                 return true;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to restore backup from {BackupFilePath}", backupFilePath);
+                _logger.LogError(ex, "Failed to restore legacy JSON backup from {BackupFilePath}", backupFilePath);
                 return false;
             }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to restore backup from {BackupFilePath}", backupFilePath);
+            _logger.LogError(ex, "Failed to decrypt/deserialize legacy backup from {BackupFilePath}", backupFilePath);
             return false;
         }
     }
@@ -247,7 +327,9 @@ public class BackupService : IBackupService
         if (!Directory.Exists(folder))
             return Task.FromResult(backups);
 
-        var files = Directory.GetFiles(folder, "*.bak.enc");
+        var files = Directory.GetFiles(folder, "*.bak");
+        files = files.Concat(Directory.GetFiles(folder, "*.bak.enc")).ToArray();
+
         foreach (var file in files)
         {
             var fileInfo = new FileInfo(file);
@@ -257,32 +339,46 @@ public class BackupService : IBackupService
                 FilePath = fileInfo.FullName,
                 CreatedAt = fileInfo.CreationTimeUtc,
                 FileSizeBytes = fileInfo.Length,
-                IsEncrypted = true,
-                SchemaVersion = "1.0"
+                IsEncrypted = fileInfo.Extension == ".enc",
+                SchemaVersion = fileInfo.Extension == ".enc" ? "1.0" : "2.0"
             });
         }
 
         return Task.FromResult(backups);
     }
 
-    public async Task<bool> ValidateBackupFileAsync(string backupFilePath, string adminPassword)
+    public async Task<string> GetBackupOutputFolderAsync()
     {
-        try
-        {
-            if (!File.Exists(backupFilePath))
-                return false;
+        var setting = await _context.LabSettings
+            .FirstOrDefaultAsync(s => s.SettingKey == "DefaultBackupPath");
+        return setting?.SettingValue
+            ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "FinalLabBackups");
+    }
 
-            var encryptedBytes = await File.ReadAllBytesAsync(backupFilePath);
-            var jsonBytes = AesEncryptionHelper.Decrypt(encryptedBytes, adminPassword);
-            var json = System.Text.Encoding.UTF8.GetString(jsonBytes);
-            var backupData = JsonSerializer.Deserialize<Dictionary<string, List<Dictionary<string, object?>>>>(json, JsonOptions);
+    public async Task SaveBackupOutputFolderAsync(string folderPath, int staffId)
+    {
+        var setting = await _context.LabSettings
+            .FirstOrDefaultAsync(s => s.SettingKey == "DefaultBackupPath");
 
-            return backupData != null;
-        }
-        catch
+        if (setting is null)
         {
-            return false;
+            setting = new Models.LabSetting
+            {
+                SettingKey = "DefaultBackupPath",
+                SettingValue = folderPath,
+                LastUpdatedBy = staffId,
+                LastUpdatedAt = DateTime.UtcNow
+            };
+            _context.LabSettings.Add(setting);
         }
+        else
+        {
+            setting.SettingValue = folderPath;
+            setting.LastUpdatedBy = staffId;
+            setting.LastUpdatedAt = DateTime.UtcNow;
+        }
+
+        await _context.SaveChangesAsync();
     }
 
     private List<IEntityType> TopologicalSort(List<IEntityType> entityTypes)
@@ -328,31 +424,5 @@ public class BackupService : IBackupService
         visiting.Remove(clrType);
         visited.Add(clrType);
         sorted.Add(entityType);
-    }
-
-    public async Task<string> GetBackupOutputFolderAsync()
-    {
-        var setting = await _context.LabSettings
-            .FirstOrDefaultAsync(s => s.SettingKey == "BackupOutputFolder");
-        return setting?.SettingValue
-            ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "FinalLabBackups");
-    }
-
-    public async Task SaveBackupOutputFolderAsync(string folderPath, int staffId)
-    {
-        var setting = await _context.LabSettings
-            .FirstOrDefaultAsync(s => s.SettingKey == "BackupOutputFolder");
-
-        if (setting is null)
-        {
-            setting = new Models.LabSetting { SettingKey = "BackupOutputFolder", SettingValue = folderPath };
-            _context.LabSettings.Add(setting);
-        }
-        else
-        {
-            setting.SettingValue = folderPath;
-        }
-
-        await _context.SaveChangesAsync();
     }
 }

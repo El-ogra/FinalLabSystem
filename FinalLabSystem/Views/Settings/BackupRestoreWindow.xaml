@@ -1,8 +1,8 @@
 <Window x:Class="FinalLabSystem.Views.Settings.BackupRestoreWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="النسخ الاحتياطي والاستعادة"
-        Height="600" Width="900"
+        Title="النسخ الاحتياطي والاستعادة (SQL Server)"
+        Height="650" Width="950"
         WindowStartupLocation="CenterOwner"
         FlowDirection="RightToLeft">
     <Window.Resources>
@@ -18,6 +18,7 @@
     <Grid Background="#E3F2FD">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
@@ -25,12 +26,21 @@
         <!-- Toolbar -->
         <Border Grid.Row="0" Background="#1565C0">
             <StackPanel Orientation="Horizontal" Margin="8,6">
-                <Button Content="إنشاء نسخة احتياطية" Command="{Binding CreateBackupCommand}"
+                <Button Content="نسخ كامل (Full)" Command="{Binding CreateFullBackupCommand}"
                         Style="{StaticResource BackupButtonStyle}"
                         Background="#1E88E5" Foreground="White"/>
+                <Button Content="نسخ تفاضيلي (Differential)" Command="{Binding CreateDifferentialBackupCommand}"
+                        Style="{StaticResource BackupButtonStyle}"
+                        Background="#1565C0" Foreground="White"
+                        ToolTip="نسخ احتياطي للبيانات المعدلة منذ آخر نسخة كاملة"/>
+                <Separator Margin="8,0" Background="White"/>
                 <Button Content="استعادة" Command="{Binding RestoreCommand}"
                         Style="{StaticResource BackupButtonStyle}"
                         Background="#E53935" Foreground="White"/>
+                <Button Content="استعادة نسخة قديمة" Command="{Binding RestoreLegacyCommand}"
+                        Style="{StaticResource BackupButtonStyle}"
+                        Background="#C62828" Foreground="White"
+                        ToolTip="استعادة نسخة احتياطية قديمة بتنسيق JSON مشفر (.bak.enc)"/>
                 <Separator Margin="8,0" Background="White"/>
                 <Button Content="تصفح المجلد" Command="{Binding BrowseFolderCommand}"
                         Style="{StaticResource BackupButtonStyle}"
@@ -44,8 +54,20 @@
             </StackPanel>
         </Border>
 
+        <!-- Backup Type Info -->
+        <Border Grid.Row="1" Background="#E8F5E9" Padding="8,6" Margin="8,4,8,0">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="نوع النسخ:" FontWeight="Bold" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                <TextBlock Text="نسخ كامل (SQL Server BACKUP)" Foreground="#2E7D32" VerticalAlignment="Center"/>
+                <TextBlock Text=" | " Foreground="#999" VerticalAlignment="Center" Margin="8,0"/>
+                <TextBlock Text="نسخ تفاضيلي (DIFFERENTIAL)" Foreground="#1565C0" VerticalAlignment="Center"/>
+                <TextBlock Text=" | " Foreground="#999" VerticalAlignment="Center" Margin="8,0"/>
+                <TextBlock Text="تنسيق: .bak (بدون تشفير)" Foreground="#666" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+
         <!-- DataGrid -->
-        <DataGrid Grid.Row="1"
+        <DataGrid Grid.Row="2"
                   ItemsSource="{Binding Backups}"
                   AutoGenerateColumns="False"
                   IsReadOnly="True"
@@ -60,18 +82,27 @@
                 <DataGridTextColumn Header="اسم الملف" Binding="{Binding FileName}" Width="*"/>
                 <DataGridTextColumn Header="الحجم" Binding="{Binding DisplaySize}" Width="100"/>
                 <DataGridTextColumn Header="تاريخ الإنشاء" Binding="{Binding DisplayCreatedAt}" Width="140"/>
+                <DataGridTextColumn Header="التنسيق" Binding="{Binding DisplayFormat}" Width="100"/>
             </DataGrid.Columns>
         </DataGrid>
 
         <!-- Status Bar -->
-        <Border Grid.Row="2" Background="#BBDEFB" Padding="8,6">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="المجلد:" FontWeight="Bold" Margin="0,0,4,0"/>
-                <TextBlock Text="{Binding TargetFolder}" Foreground="#333" Margin="0,0,16,0"/>
-                <TextBlock Text="آخر نسخة:" FontWeight="Bold" Margin="0,0,4,0"/>
-                <TextBlock Text="{Binding LastBackupAt, StringFormat='{}{0:yyyy-MM-dd HH:mm}'}"
-                           Foreground="#333"/>
-            </StackPanel>
+        <Border Grid.Row="3" Background="#BBDEFB" Padding="8,6">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="المجلد:" FontWeight="Bold" Margin="0,0,4,0"/>
+                    <TextBlock Text="{Binding TargetFolder}" Foreground="#333" Margin="0,0,16,0"/>
+                    <TextBlock Text="آخر نسخة:" FontWeight="Bold" Margin="0,0,4,0"/>
+                    <TextBlock Text="{Binding LastBackupAt, StringFormat='{}{0:yyyy-MM-dd HH:mm}'}"
+                               Foreground="#333"/>
+                </StackPanel>
+                <TextBlock Grid.Column="1" Text="SQL Server BACKUP الأصلي"
+                           Foreground="#1565C0" FontWeight="Bold" VerticalAlignment="Center"/>
+            </Grid>
         </Border>
     </Grid>
 </Window>

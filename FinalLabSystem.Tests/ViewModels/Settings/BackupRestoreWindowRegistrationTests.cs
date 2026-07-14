@@ -23,6 +23,9 @@ public class BackupRestoreWindowRegistrationTests
             options.UseInMemoryDatabase(Guid.NewGuid().ToString()));
         services.AddSingleton<ICurrentUserSession, CurrentUserSession>();
         services.AddScoped<IAuditService, AuditService>();
+        services.AddScoped<ISqlServerBackupExecutor>(_ => Mock.Of<ISqlServerBackupExecutor>());
+        services.AddScoped<ISqlServerRestoreExecutor>(_ => Mock.Of<ISqlServerRestoreExecutor>());
+        services.AddScoped<IBackupFileNameStrategy, BackupFileNameStrategy>();
         services.AddScoped<IBackupService, BackupService>();
         services.AddSingleton<IDialogService>(Mock.Of<IDialogService>());
         services.AddSingleton<IProcessService>(Mock.Of<IProcessService>());
