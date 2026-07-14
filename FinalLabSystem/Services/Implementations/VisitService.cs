@@ -115,7 +115,8 @@ public class VisitService : IVisitService
         decimal amountPaid,
         int staffId,
         List<PatientMedicalHistory> medicalHistories,
-        ReferralSource? referralToSave)
+        ReferralSource? referralToSave,
+        List<VisitCharge>? extraCharges = null)
     {
         _context.ChangeTracker.Clear();
         using var transaction = await _context.Database.BeginTransactionAsync();
@@ -188,6 +189,30 @@ public class VisitService : IVisitService
                 history.CreatedBy = staffId;
                 history.IsActive = true;
                 _context.PatientMedicalHistories.Add(history);
+            }
+
+            // VS-07: حفظ الرسوم الإضافية وإعادة حساب الإجمالي
+            if (extraCharges is not null)
+            {
+                var oldCharges = await _context.VisitCharges
+                    .Where(c => c.VisitId == visit.VisitId)
+                    .ToListAsync();
+                _context.VisitCharges.RemoveRange(oldCharges);
+
+                foreach (var charge in extraCharges)
+                {
+                    charge.VisitId = visit.VisitId;
+                    charge.CreatedBy = staffId;
+                    charge.CreatedAt = DateTime.UtcNow;
+                    charge.ChargeId = 0;
+                    _context.VisitCharges.Add(charge);
+                }
+
+                var chargesTotal = extraCharges.Sum(c => c.Amount);
+                visit.Subtotal = subtotal + chargesTotal;
+                visit.DiscountAmount = Math.Clamp(visit.DiscountAmount, 0, visit.Subtotal);
+                visit.TotalAfterDiscount = Math.Max(0, visit.Subtotal - visit.DiscountAmount);
+                visit.BalanceDue = visit.TotalAfterDiscount - visit.TotalPaid;
             }
 
             var oldPayments = await _context.Payments
@@ -622,6 +647,58 @@ public class VisitService : IVisitService
                 AddedAt = DateTime.UtcNow
             });
         }
+    }
+
+    public async Task AddChargeToVisitAsync(int visitId, VisitCharge charge, int staffId)
+    {
+        charge.VisitId = visitId;
+        charge.CreatedBy = staffId;
+        charge.CreatedAt = DateTime.UtcNow;
+        _context.VisitCharges.Add(charge);
+        await _context.SaveChangesAsync();
+
+        var visit = await _context.Visits.FindAsync(visitId);
+        if (visit is not null)
+        {
+            var chargesTotal = await _context.VisitCharges
+                .Where(c => c.VisitId == visitId)
+                .SumAsync(c => c.Amount);
+            visit.Subtotal += charge.Amount;
+            visit.DiscountAmount = visit.Subtotal * visit.DiscountPercent / 100m;
+            visit.TotalAfterDiscount = visit.Subtotal - visit.DiscountAmount;
+            visit.BalanceDue = visit.TotalAfterDiscount - visit.TotalPaid;
+            visit.UpdatedAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+        }
+    }
+
+    public async Task RemoveChargeFromVisitAsync(int chargeId)
+    {
+        var charge = await _context.VisitCharges.FindAsync(chargeId);
+        if (charge is null) return;
+
+        var visitId = charge.VisitId;
+        _context.VisitCharges.Remove(charge);
+        await _context.SaveChangesAsync();
+
+        var visit = await _context.Visits.FindAsync(visitId);
+        if (visit is not null)
+        {
+            visit.Subtotal -= charge.Amount;
+            visit.DiscountAmount = visit.Subtotal * visit.DiscountPercent / 100m;
+            visit.TotalAfterDiscount = visit.Subtotal - visit.DiscountAmount;
+            visit.BalanceDue = visit.TotalAfterDiscount - visit.TotalPaid;
+            visit.UpdatedAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+        }
+    }
+
+    public async Task<List<VisitCharge>> GetVisitChargesAsync(int visitId)
+    {
+        return await _context.VisitCharges
+            .Where(c => c.VisitId == visitId)
+            .OrderBy(c => c.CreatedAt)
+            .ToListAsync();
     }
 
     /// <summary>

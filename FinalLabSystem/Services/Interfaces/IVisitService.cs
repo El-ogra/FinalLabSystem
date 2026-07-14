@@ -18,7 +18,7 @@ public interface IVisitService
     Task<Visit> CreateVisitAsync(Visit visit, List<int> testIds, List<int> profileIds, List<VisitCharge> charges);
 
     /// <summary>
-    /// Saves a patient and visit together with tests, payment, medical history, and referral data.
+    /// Saves a patient and visit together with tests, payment, medical history, referral data, and extra charges.
     /// </summary>
     /// <param name="patient">The patient to create or update.</param>
     /// <param name="visit">The visit to save.</param>
@@ -27,8 +27,9 @@ public interface IVisitService
     /// <param name="staffId">The staff member performing the save.</param>
     /// <param name="medicalHistories">The medical-history records to attach.</param>
     /// <param name="referralToSave">The optional referral source to save or link.</param>
+    /// <param name="extraCharges">Optional additional charges to attach to the visit.</param>
     /// <returns>The saved visit.</returns>
-    Task<Visit> SavePatientVisitAsync(Patient patient, Visit visit, List<int> testTypeIds, decimal amountPaid, int staffId, List<PatientMedicalHistory> medicalHistories, ReferralSource? referralToSave);
+    Task<Visit> SavePatientVisitAsync(Patient patient, Visit visit, List<int> testTypeIds, decimal amountPaid, int staffId, List<PatientMedicalHistory> medicalHistories, ReferralSource? referralToSave, List<VisitCharge>? extraCharges = null);
 
     /// <summary>
     /// Gets the complete visit data needed by visit workflows.
@@ -108,4 +109,23 @@ public interface IVisitService
     /// <param name="visitId">The visit identifier.</param>
     /// <param name="notes">The notes to save.</param>
     Task UpdateVisitNotesAsync(int visitId, string? notes);
+
+    /// <summary>
+    /// Adds an extra charge to a visit and recalculates financial totals.
+    /// </summary>
+    /// <param name="visitId">The visit identifier.</param>
+    /// <param name="charge">The charge to add.</param>
+    /// <param name="staffId">The staff member adding the charge.</param>
+    Task AddChargeToVisitAsync(int visitId, VisitCharge charge, int staffId);
+
+    /// <summary>
+    /// Removes an extra charge from a visit and recalculates financial totals.
+    /// </summary>
+    /// <param name="chargeId">The charge identifier.</param>
+    Task RemoveChargeFromVisitAsync(int chargeId);
+
+    /// <summary>
+    /// Gets all charges for a visit.
+    /// </summary>
+    Task<List<VisitCharge>> GetVisitChargesAsync(int visitId);
 }

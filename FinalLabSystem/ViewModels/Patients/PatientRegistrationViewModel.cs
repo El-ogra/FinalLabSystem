@@ -320,7 +320,8 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
                 Financial.AmountPaid,
                 staffId,
                 MedicalHistory.ToMedicalHistoryList(),
-                referralToSave);
+                referralToSave,
+                Financial.ExtraCharges.ToList());
 
             CurrentPatientId = savedVisit.PatientId;
             CurrentVisitId = savedVisit.VisitId;

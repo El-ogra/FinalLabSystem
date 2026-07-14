@@ -187,6 +187,26 @@
                        Content="المدفوع سابقا"
                        Background="#376FA8"
                        Style="{StaticResource FinanceLabelStyle}"/>
+
+                <!-- VS-07: رسوم إضافية -->
+                <Button Grid.Row="4"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2"
+                        Content="{Binding ExtraChargesCount, StringFormat='خدمة إضافية ({0})'}"
+                        Command="{Binding AddExtraChargeCommand}"
+                        Height="28"
+                        Margin="3"
+                        MinWidth="80"
+                        Background="#9CCC22"
+                        Foreground="White"
+                        FontWeight="Bold"/>
+                <Label Grid.Row="4"
+                       Grid.Column="2"
+                       Content="{Binding ExtraChargesTotal, StringFormat='رسوم إضافية: {0:N2}'}"
+                       Background="#555555"
+                       Foreground="#FFD91A"
+                       FontSize="11"
+                       Style="{StaticResource FinanceLabelStyle}"/>
             </Grid>
         </Border>
     </Border>

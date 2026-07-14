@@ -1,5 +1,9 @@
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 using FinalLabSystem.Infrastructure;
+using FinalLabSystem.Models;
 using FinalLabSystem.Models.DTOs;
 using FinalLabSystem.Services.Interfaces;
 
@@ -11,6 +15,7 @@ public sealed class FinancialViewModel : ViewModelBase
     private readonly IDialogService _dialogService;
     private bool _isUpdating;
     private int _currentVisitId;
+    private decimal _testsBaseSubtotal;
     private decimal _subtotal;
     private decimal _discountAmount;
     private decimal _discountPercent;
@@ -28,10 +33,16 @@ public sealed class FinancialViewModel : ViewModelBase
     {
         _financialService = financialService;
         _dialogService = dialogService;
+        ExtraCharges = new ObservableCollection<VisitCharge>();
+        ExtraCharges.CollectionChanged += (_, _) => RecalculateWithCharges();
         ConfirmPaymentCommand = new AsyncRelayCommand(ConfirmPaymentAsync);
         RevertCommand = new AsyncRelayCommand(RevertAsync, () => !IsPaymentConfirmed);
         ClearanceCommand = new RelayCommand(_ => RequestClearance());
+        AddExtraChargeCommand = new RelayCommand(_ => ShowAddExtraChargeDialog());
+        RemoveExtraChargeCommand = new RelayCommand(param => RemoveExtraCharge(param), _ => !IsPaymentConfirmed);
     }
+
+    public ObservableCollection<VisitCharge> ExtraCharges { get; }
 
     public int CurrentVisitId
     {
@@ -48,6 +59,10 @@ public sealed class FinancialViewModel : ViewModelBase
                 RecalculateTotals();
         }
     }
+
+    public decimal ExtraChargesTotal => ExtraCharges.Sum(c => c.Amount);
+
+    public int ExtraChargesCount => ExtraCharges.Count;
 
     public decimal DiscountAmount
     {
@@ -150,6 +165,10 @@ public sealed class FinancialViewModel : ViewModelBase
 
     public ICommand ClearanceCommand { get; }
 
+    public ICommand AddExtraChargeCommand { get; }
+
+    public ICommand RemoveExtraChargeCommand { get; }
+
     public void SetCurrentVisitId(int visitId)
     {
         CurrentVisitId = visitId;
@@ -171,8 +190,8 @@ public sealed class FinancialViewModel : ViewModelBase
     public void RecalculateFromTests(List<decimal> prices)
     {
         WarnIfConfirmed();
-        Subtotal = prices.Sum();
-        RecalculateTotals();
+        _testsBaseSubtotal = prices.Sum();
+        Subtotal = _testsBaseSubtotal + ExtraChargesTotal;
     }
 
     public void LoadFinancials(decimal subtotal, decimal discountAmount, decimal amountPaid, decimal previouslyPaid)
@@ -195,6 +214,7 @@ public sealed class FinancialViewModel : ViewModelBase
     public void LoadFromDto(VisitFullDto dto)
     {
         CurrentVisitId = dto.VisitId;
+        _testsBaseSubtotal = dto.Subtotal;
         _subtotal = dto.Subtotal;
         _discountAmount = dto.DiscountAmount;
         _discountPercent = dto.DiscountPercent;
@@ -205,6 +225,7 @@ public sealed class FinancialViewModel : ViewModelBase
         _paymentStatus = dto.PaymentStatus;
         _isPaymentConfirmed = string.Equals(dto.PaymentStatus, "PAID", StringComparison.OrdinalIgnoreCase);
         _isClearanceRequested = false;
+        ExtraCharges.Clear();
         OnPropertyChanged(nameof(Subtotal));
         OnPropertyChanged(nameof(DiscountAmount));
         OnPropertyChanged(nameof(DiscountPercent));
@@ -215,12 +236,15 @@ public sealed class FinancialViewModel : ViewModelBase
         OnPropertyChanged(nameof(PaymentStatus));
         OnPropertyChanged(nameof(IsPaymentConfirmed));
         OnPropertyChanged(nameof(IsClearanceRequested));
+        OnPropertyChanged(nameof(ExtraChargesTotal));
+        OnPropertyChanged(nameof(ExtraChargesCount));
         CommandManager.InvalidateRequerySuggested();
     }
 
     public void ClearAllFields()
     {
         CurrentVisitId = 0;
+        _testsBaseSubtotal = 0;
         _subtotal = 0;
         _discountAmount = 0;
         _discountPercent = 0;
@@ -231,6 +255,7 @@ public sealed class FinancialViewModel : ViewModelBase
         _isPaymentConfirmed = false;
         _isClearanceRequested = false;
         _paymentStatus = "PENDING";
+        ExtraCharges.Clear();
         OnPropertyChanged(nameof(Subtotal));
         OnPropertyChanged(nameof(DiscountAmount));
         OnPropertyChanged(nameof(DiscountPercent));
@@ -243,7 +268,40 @@ public sealed class FinancialViewModel : ViewModelBase
         OnPropertyChanged(nameof(PaymentStatus));
         OnPropertyChanged(nameof(StaffDiscountLimit));
         OnPropertyChanged(nameof(IsCurrentUserAdmin));
+        OnPropertyChanged(nameof(ExtraChargesTotal));
+        OnPropertyChanged(nameof(ExtraChargesCount));
         CommandManager.InvalidateRequerySuggested();
+    }
+
+    private void ShowAddExtraChargeDialog()
+    {
+        WarnIfConfirmed();
+        var dialog = new Views.Patients.AddExtraChargeDialog
+        {
+            Owner = Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive)
+        };
+        if (dialog.ShowDialog() == true && dialog.ChargeResult is not null)
+        {
+            ExtraCharges.Add(dialog.ChargeResult);
+            RecalculateWithCharges();
+        }
+    }
+
+    private void RemoveExtraCharge(object? param)
+    {
+        if (param is VisitCharge charge)
+        {
+            WarnIfConfirmed();
+            ExtraCharges.Remove(charge);
+            RecalculateWithCharges();
+        }
+    }
+
+    private void RecalculateWithCharges()
+    {
+        Subtotal = _testsBaseSubtotal + ExtraChargesTotal;
+        OnPropertyChanged(nameof(ExtraChargesTotal));
+        OnPropertyChanged(nameof(ExtraChargesCount));
     }
 
     private async Task ConfirmPaymentAsync()

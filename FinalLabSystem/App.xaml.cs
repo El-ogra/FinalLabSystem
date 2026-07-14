@@ -246,6 +246,8 @@ public partial class App : Application
         services.AddTransient<PrintPreviewWindow>();
         services.AddTransient<TodayPatientsDialogViewModel>();
         services.AddTransient<TodayPatientsDialog>();
+        services.AddTransient<AddExtraChargeDialog>();
+        services.AddTransient<AddExtraChargeViewModel>();
 
         services.AddTransient<TestDataManagementViewModel>();
         services.AddTransient<TestListViewModel>();
