@@ -5,12 +5,17 @@ using FinalLabSystem.Models.Enums;
 
 namespace FinalLabSystem.Views.Converters;
 
+/// <summary>
+/// محوّل واحد لكل قيمة من قيم <see cref="AntibioticSensitivity"/>.
+/// أسماء الحقول الثابتة أُبقيت مطابقة لأسماء قيم الـ enum الجديدة بلاحقة For
+/// (القرار 22 / VS-04) — الاستخدام في XAML عبر {x:Static local:SensitivityToBoolConverter.HighlyFor} ...
+/// </summary>
 public sealed class SensitivityToBoolConverter : IValueConverter
 {
-    public static readonly SensitivityToBoolConverter Highly = new(AntibioticSensitivity.Highly);
-    public static readonly SensitivityToBoolConverter Moderate = new(AntibioticSensitivity.Moderate);
-    public static readonly SensitivityToBoolConverter Low = new(AntibioticSensitivity.Low);
-    public static readonly SensitivityToBoolConverter Resistant = new(AntibioticSensitivity.Resistant);
+    public static readonly SensitivityToBoolConverter HighlyFor = new(AntibioticSensitivity.HighlyFor);
+    public static readonly SensitivityToBoolConverter ModerateFor = new(AntibioticSensitivity.ModerateFor);
+    public static readonly SensitivityToBoolConverter LowFor = new(AntibioticSensitivity.LowFor);
+    public static readonly SensitivityToBoolConverter ResistantFor = new(AntibioticSensitivity.ResistantFor);
 
     private readonly AntibioticSensitivity _targetValue;
 

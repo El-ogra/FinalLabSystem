@@ -129,10 +129,10 @@ public class CultureReportTemplate
                 {
                     var levelName = group.Key switch
                     {
-                        AntibioticSensitivity.Highly => "Highly Sensitive",
-                        AntibioticSensitivity.Moderate => "Moderately Sensitive",
-                        AntibioticSensitivity.Low => "Low Sensitivity",
-                        AntibioticSensitivity.Resistant => "Resistant",
+                        AntibioticSensitivity.HighlyFor => "Highly Sensitive",
+                        AntibioticSensitivity.ModerateFor => "Moderately Sensitive",
+                        AntibioticSensitivity.LowFor => "Low Sensitivity",
+                        AntibioticSensitivity.ResistantFor => "Resistant",
                         _ => group.Key.ToString()
                     };
 

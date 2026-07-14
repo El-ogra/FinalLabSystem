@@ -286,8 +286,8 @@ public class CultureSlice2Tests
                 SortOrder = 1,
                 OrganismAntibiotics = new List<OrganismAntibiotic>
                 {
-                    new OrganismAntibiotic { AntibioticName = "Amoxicillin", Sensitivity = AntibioticSensitivity.Highly },
-                    new OrganismAntibiotic { AntibioticName = "Ciprofloxacin", Sensitivity = AntibioticSensitivity.Resistant }
+                    new OrganismAntibiotic { AntibioticName = "Amoxicillin", Sensitivity = AntibioticSensitivity.HighlyFor },
+                    new OrganismAntibiotic { AntibioticName = "Ciprofloxacin", Sensitivity = AntibioticSensitivity.ResistantFor }
                 }
             }
         };
@@ -308,7 +308,7 @@ public class CultureSlice2Tests
         Assert.Equal(2, org.OrganismAntibiotics.Count);
 
         var amox = org.OrganismAntibiotics.First(a => a.AntibioticName == "Amoxicillin");
-        Assert.Equal(AntibioticSensitivity.Highly, amox.Sensitivity);
+        Assert.Equal(AntibioticSensitivity.HighlyFor, amox.Sensitivity);
     }
 
     // --- Data Migration Test (1 test) ---
@@ -316,10 +316,11 @@ public class CultureSlice2Tests
     [Fact]
     public void T08_DataMigration_SensitivityCharToEnum_MapsCorrectly()
     {
-        Assert.Equal((byte)0, (byte)AntibioticSensitivity.Highly);
-        Assert.Equal((byte)1, (byte)AntibioticSensitivity.Moderate);
-        Assert.Equal((byte)2, (byte)AntibioticSensitivity.Low);
-        Assert.Equal((byte)3, (byte)AntibioticSensitivity.Resistant);
+        // VS-04 / القرار 22: التسميات أُعيدت بلاحقة For — القيم الرقمية ثابتة
+        Assert.Equal((byte)0, (byte)AntibioticSensitivity.HighlyFor);
+        Assert.Equal((byte)1, (byte)AntibioticSensitivity.ModerateFor);
+        Assert.Equal((byte)2, (byte)AntibioticSensitivity.LowFor);
+        Assert.Equal((byte)3, (byte)AntibioticSensitivity.ResistantFor);
     }
 
     // --- Report Tests (2 tests) ---
@@ -388,10 +389,10 @@ public class CultureSlice2Tests
             SortOrder = 1,
             OrganismAntibiotics = new List<OrganismAntibiotic>
             {
-                new OrganismAntibiotic { AntibioticResultId = 1, OrganismId = 1, AntibioticName = "Amoxicillin", Sensitivity = AntibioticSensitivity.Highly },
-                new OrganismAntibiotic { AntibioticResultId = 2, OrganismId = 1, AntibioticName = "Gentamicin", Sensitivity = AntibioticSensitivity.Moderate },
-                new OrganismAntibiotic { AntibioticResultId = 3, OrganismId = 1, AntibioticName = "Tetracycline", Sensitivity = AntibioticSensitivity.Low },
-                new OrganismAntibiotic { AntibioticResultId = 4, OrganismId = 1, AntibioticName = "Ciprofloxacin", Sensitivity = AntibioticSensitivity.Resistant }
+                new OrganismAntibiotic { AntibioticResultId = 1, OrganismId = 1, AntibioticName = "Amoxicillin", Sensitivity = AntibioticSensitivity.HighlyFor },
+                new OrganismAntibiotic { AntibioticResultId = 2, OrganismId = 1, AntibioticName = "Gentamicin", Sensitivity = AntibioticSensitivity.ModerateFor },
+                new OrganismAntibiotic { AntibioticResultId = 3, OrganismId = 1, AntibioticName = "Tetracycline", Sensitivity = AntibioticSensitivity.LowFor },
+                new OrganismAntibiotic { AntibioticResultId = 4, OrganismId = 1, AntibioticName = "Ciprofloxacin", Sensitivity = AntibioticSensitivity.ResistantFor }
             }
         };
 
@@ -453,13 +454,13 @@ public class CultureSlice2Tests
                     {
                         AntibioticResultId = 0,
                         AntibioticName = "Amoxicillin",
-                        Sensitivity = AntibioticSensitivity.Highly
+                        Sensitivity = AntibioticSensitivity.HighlyFor
                     },
                     new OrganismAntibiotic
                     {
                         AntibioticResultId = 0,
                         AntibioticName = "Ciprofloxacin",
-                        Sensitivity = AntibioticSensitivity.Resistant
+                        Sensitivity = AntibioticSensitivity.ResistantFor
                     }
                 }
             }

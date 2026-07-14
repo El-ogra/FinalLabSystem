@@ -212,7 +212,7 @@ public sealed class CultureEntryViewModel : ViewModelBase
             newOrg.AntibioticResults.Add(new AntibioticResultVm
             {
                 AntibioticName = abx.AntibioticName,
-                Sensitivity = AntibioticSensitivity.Resistant,
+                Sensitivity = AntibioticSensitivity.ResistantFor,
                 AntibioticCatalogId = abx.AntibioticId
             });
         }
@@ -356,7 +356,7 @@ public sealed class OrganismInputVm : INotifyPropertyChanged
 
 public sealed class AntibioticResultVm : INotifyPropertyChanged
 {
-    private AntibioticSensitivity _sensitivity = AntibioticSensitivity.Resistant;
+    private AntibioticSensitivity _sensitivity = AntibioticSensitivity.ResistantFor;
 
     public int AntibioticResultId { get; set; }
     public string AntibioticName { get; set; } = string.Empty;

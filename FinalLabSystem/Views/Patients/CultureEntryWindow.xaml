@@ -129,18 +129,18 @@
                                                                         Binding="{Binding AntibioticName}"
                                                                         IsReadOnly="True"
                                                                         Width="200"/>
-                                                    <DataGridCheckBoxColumn Header="Highly"
-                                                                            Binding="{Binding Sensitivity, Converter={x:Static local:SensitivityToBoolConverter.Highly}}"
-                                                                            Width="70"/>
-                                                    <DataGridCheckBoxColumn Header="Moderate"
-                                                                            Binding="{Binding Sensitivity, Converter={x:Static local:SensitivityToBoolConverter.Moderate}}"
-                                                                            Width="70"/>
-                                                    <DataGridCheckBoxColumn Header="Low"
-                                                                            Binding="{Binding Sensitivity, Converter={x:Static local:SensitivityToBoolConverter.Low}}"
-                                                                            Width="70"/>
-                                                    <DataGridCheckBoxColumn Header="Resistant"
-                                                                            Binding="{Binding Sensitivity, Converter={x:Static local:SensitivityToBoolConverter.Resistant}}"
-                                                                            Width="80"/>
+                                                    <DataGridCheckBoxColumn Header="&#1581;&#1587;&#1575;&#1587;&#1610;&#1577; &#1593;&#1575;&#1604;&#1610;&#1577; (HighlyFor)"
+                                                                            Binding="{Binding Sensitivity, Converter={x:Static local:SensitivityToBoolConverter.HighlyFor}}"
+                                                                            Width="120"/>
+                                                    <DataGridCheckBoxColumn Header="&#1581;&#1587;&#1575;&#1587;&#1610;&#1577; &#1605;&#1578;&#1608;&#1587;&#1591;&#1577; (ModerateFor)"
+                                                                            Binding="{Binding Sensitivity, Converter={x:Static local:SensitivityToBoolConverter.ModerateFor}}"
+                                                                            Width="130"/>
+                                                    <DataGridCheckBoxColumn Header="&#1581;&#1587;&#1575;&#1587;&#1610;&#1577; &#1605;&#1606;&#1582;&#1601;&#1590;&#1577; (LowFor)"
+                                                                            Binding="{Binding Sensitivity, Converter={x:Static local:SensitivityToBoolConverter.LowFor}}"
+                                                                            Width="125"/>
+                                                    <DataGridCheckBoxColumn Header="&#1605;&#1602;&#1575;&#1608;&#1605; (ResistantFor)"
+                                                                            Binding="{Binding Sensitivity, Converter={x:Static local:SensitivityToBoolConverter.ResistantFor}}"
+                                                                            Width="115"/>
                                                 </DataGrid.Columns>
                                             </DataGrid>
                                         </StackPanel>

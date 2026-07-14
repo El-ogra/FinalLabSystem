@@ -14,7 +14,7 @@ public partial class OrganismAntibiotic
 
     public string? AntibioticClass { get; set; }
 
-    public AntibioticSensitivity Sensitivity { get; set; } = AntibioticSensitivity.Resistant;
+    public AntibioticSensitivity Sensitivity { get; set; } = AntibioticSensitivity.ResistantFor;
 
     public string? MicValue { get; set; }
 
