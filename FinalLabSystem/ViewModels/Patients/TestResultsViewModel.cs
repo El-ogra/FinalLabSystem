@@ -40,7 +40,7 @@ public sealed class TestResultsViewModel : ViewModelBase
     private ObservableCollection<TodayPatientWithStatusDto> _allPatients = new();
     private TodayPatientWithStatusDto? _selectedPatient;
     private string _searchText = string.Empty;
-    private PatientVisitStatus? _filterMode;
+    private VisitDisplayStatus? _filterMode;
     private VisitFullDto? _currentPatientInfo;
     private ObservableCollection<VisitTestItemDto> _patientTests = new();
     private VisitTestItemDto? _selectedTest;
@@ -165,7 +165,7 @@ public sealed class TestResultsViewModel : ViewModelBase
         }
     }
 
-    public PatientVisitStatus? FilterMode
+    public VisitDisplayStatus? FilterMode
     {
         get => _filterMode;
         set
@@ -461,7 +461,7 @@ public sealed class TestResultsViewModel : ViewModelBase
 
     private void ApplyFilter(object? parameter)
     {
-        if (parameter is string statusStr && Enum.TryParse<PatientVisitStatus>(statusStr, out var status))
+        if (parameter is string statusStr && Enum.TryParse<VisitDisplayStatus>(statusStr, out var status))
             FilterMode = status;
         else
             FilterMode = null;

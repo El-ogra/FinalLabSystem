@@ -86,7 +86,7 @@ public class Phase6CrossSliceTests
             .Returns(Task.CompletedTask);
         var otpGenerator = new OtpGenerator();
         var logger = new Mock<ILogger<DeliveryConfirmationService>>();
-        var service = new DeliveryConfirmationService(ctx, auditService.Object, otpGenerator, logger.Object);
+        var service = new DeliveryConfirmationService(ctx, auditService.Object, otpGenerator, logger.Object, new Mock<IVisitService>().Object);
 
         await service.SaveSignatureAsync(visit.VisitId, new byte[] { 1, 2, 3 }, "المستلم", staff.StaffId);
 
@@ -292,6 +292,6 @@ public class Phase6CrossSliceTests
             .Returns(Task.CompletedTask);
         var otpGenerator = new OtpGenerator();
         var logger = new Mock<ILogger<DeliveryConfirmationService>>();
-        return new DeliveryConfirmationService(ctx, auditService.Object, otpGenerator, logger.Object);
+        return new DeliveryConfirmationService(ctx, auditService.Object, otpGenerator, logger.Object, new Mock<IVisitService>().Object);
     }
 }

@@ -15,11 +15,13 @@ public class FinancialService : IFinancialService
 {
     private readonly FinalLabDbContext _context;
     private readonly ILogger<FinancialService> _logger;
+    private readonly IVisitService _visitService;
 
-    public FinancialService(FinalLabDbContext context, ILogger<FinancialService> logger)
+    public FinancialService(FinalLabDbContext context, ILogger<FinancialService> logger, IVisitService visitService)
     {
         _context = context;
         _logger = logger;
+        _visitService = visitService;
     }
 
     public async Task RecordPatientPaymentAsync(Payment payment)
@@ -36,7 +38,11 @@ public class FinancialService : IFinancialService
 
             var visit = await _context.Visits.FindAsync(payment.VisitId);
             if (visit != null)
+            {
                 await _context.Entry(visit).ReloadAsync();
+                // VS-03: تحديث الأعلام
+                await _visitService.UpdateVisitFlagsAsync(visit.VisitId);
+            }
 
             await transaction.CommitAsync();
         }
@@ -59,6 +65,9 @@ public class FinancialService : IFinancialService
         visit.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
+
+        // VS-03: تحديث الأعلام
+        await _visitService.UpdateVisitFlagsAsync(visitId);
     }
 
     public async Task ApplyFullPaymentAsync(int visitId, int staffId)
@@ -88,6 +97,9 @@ public class FinancialService : IFinancialService
         visit.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
+
+        // VS-03: تحديث الأعلام
+        await _visitService.UpdateVisitFlagsAsync(visitId);
     }
 
     public async Task<bool> ApplyClearancePaymentAsync(int visitId, decimal balanceDue)
@@ -137,6 +149,10 @@ public class FinancialService : IFinancialService
 
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();
+
+            // VS-03: تحديث الأعلام
+            await _visitService.UpdateVisitFlagsAsync(visitId);
+
             return true;
         }
         catch
@@ -178,6 +194,10 @@ public class FinancialService : IFinancialService
 
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();
+
+            // VS-03: تحديث الأعلام
+            await _visitService.UpdateVisitFlagsAsync(visitId);
+
             return true;
         }
         catch
@@ -203,6 +223,9 @@ public class FinancialService : IFinancialService
         visit.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
+
+        // VS-03: تحديث الأعلام
+        await _visitService.UpdateVisitFlagsAsync(visitId);
     }
 
     public async Task<decimal> CalculateSubtotalAsync(List<int> testTypeIds, int? schemeId)

@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using FinalLabSystem.Data;
 using FinalLabSystem.Models.Enums;
 
@@ -125,4 +127,42 @@ public partial class Visit
     public string? DeliveryOtpCode { get; set; }
 
     public virtual ICollection<DeliveryConfirmation> DeliveryConfirmations { get; set; } = new List<DeliveryConfirmation>();
+
+    // VS-03: 5 Boolean Flags
+    public bool IsEntered { get; set; }
+    public bool IsReviewed { get; set; }
+    public bool IsPrinted { get; set; }
+    public bool IsDelivered { get; set; }
+    public bool IsFullyPaid { get; set; }
+
+    [NotMapped]
+    public VisitDisplayStatus VisitDisplayStatus
+    {
+        get
+        {
+            if (!IsEntered && !IsReviewed && !IsPrinted && !IsDelivered)
+            {
+                // S2: Partial Entry
+                bool hasAnyResult = VisitTests != null && VisitTests
+                    .SelectMany(vt => vt.TestResults ?? Enumerable.Empty<TestResult>())
+                    .Any(r => r.ValidationStatus >= ResultValidationStatus.Entered);
+
+                if (hasAnyResult)
+                {
+                    return VisitDisplayStatus.ResultsNotWritten; // S2 📝 (Partial)
+                }
+
+                // S1: New / No Results
+                return VisitDisplayStatus.NewNoResults; // S1 🔴
+            }
+
+            if (IsEntered && !IsReviewed) return VisitDisplayStatus.ResultsNotReviewed; // S3 ↔️
+            if (IsReviewed && !IsPrinted) return VisitDisplayStatus.ResultsNotPrinted; // S4 🖨️
+            if (IsPrinted && !IsDelivered) return VisitDisplayStatus.NotDelivered; // S5 🛒
+            if (IsDelivered && !IsFullyPaid) return VisitDisplayStatus.DeliveredWithBalance; // S6 £
+            if (IsDelivered && IsFullyPaid) return VisitDisplayStatus.FullyComplete; // S7 🎖️
+
+            return VisitDisplayStatus.NewNoResults; // fallback
+        }
+    }
 }

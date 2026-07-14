@@ -24,7 +24,8 @@ public class RoutineResultServiceTests
             context,
             Mock.Of<ILogger<RoutineResultService>>(),
             featureToggleService.Object,
-            Mock.Of<IReportCommentEngine>());
+            Mock.Of<IReportCommentEngine>(),
+            Mock.Of<IVisitService>());
     }
     private static DbContextOptions<FinalLabDbContext> CreateOptions(string dbName)
         => new DbContextOptionsBuilder<FinalLabDbContext>()

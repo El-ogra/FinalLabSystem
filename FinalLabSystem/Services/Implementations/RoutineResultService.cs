@@ -19,17 +19,20 @@ public class RoutineResultService : IRoutineResultService
     private readonly ILogger<RoutineResultService> _logger;
     private readonly IFeatureToggleService _featureToggleService;
     private readonly IReportCommentEngine _commentEngine;
+    private readonly IVisitService _visitService;
 
     public RoutineResultService(
         FinalLabDbContext context,
         ILogger<RoutineResultService> logger,
         IFeatureToggleService featureToggleService,
-        IReportCommentEngine commentEngine)
+        IReportCommentEngine commentEngine,
+        IVisitService visitService)
     {
         _context = context;
         _logger = logger;
         _featureToggleService = featureToggleService;
         _commentEngine = commentEngine;
+        _visitService = visitService;
     }
 
     public async Task SaveNumericOrTextResultsAsync(List<TestResult> results, int patientId, int staffId)
@@ -146,6 +149,11 @@ public class RoutineResultService : IRoutineResultService
         }
 
         await _context.SaveChangesAsync();
+
+        // VS-03: تحديث أعلام الزيارة بعد حفظ النتائج
+        var affectedVisitIds = visitTests.Values.Select(vt => vt.VisitId).Distinct();
+        foreach (var vid in affectedVisitIds)
+            await _visitService.UpdateVisitFlagsAsync(vid);
     }
 
     private static void SyncResultNumeric(TestResult result)
@@ -216,6 +224,10 @@ public class RoutineResultService : IRoutineResultService
         });
 
         await _context.SaveChangesAsync();
+
+        // VS-03: تحديث أعلام الزيارة بعد تبديل حالة الطباعة
+        await _visitService.UpdateVisitFlagsAsync(vt.VisitId);
+
         return vt.IsPrinted;
     }
 
@@ -266,6 +278,15 @@ public class RoutineResultService : IRoutineResultService
             result.ValidationStatus = Models.Enums.ResultValidationStatus.Reviewed;
 
         await _context.SaveChangesAsync();
+
+        // VS-03: تحديث أعلام الزيارة بعد المراجعة
+        var visitId = await _context.VisitTests
+            .Where(vt => vt.VisitTestId == visitTestId)
+            .Select(vt => vt.VisitId)
+            .FirstOrDefaultAsync();
+        if (visitId > 0)
+            await _visitService.UpdateVisitFlagsAsync(visitId);
+
         return true;
     }
 }

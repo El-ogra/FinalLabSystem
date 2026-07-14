@@ -30,7 +30,7 @@ public class DeliveryConfirmationServiceTests
             .Returns(System.Threading.Tasks.Task.CompletedTask);
         var otpGenerator = new OtpGenerator();
         var logger = new Mock<ILogger<DeliveryConfirmationService>>();
-        return new DeliveryConfirmationService(ctx, auditService.Object, otpGenerator, logger.Object);
+        return new DeliveryConfirmationService(ctx, auditService.Object, otpGenerator, logger.Object, new Mock<IVisitService>().Object);
     }
 
     private static async Task<Staff> SeedStaffAsync(FinalLabDbContext ctx)

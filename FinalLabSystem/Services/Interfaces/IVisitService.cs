@@ -97,5 +97,15 @@ public interface IVisitService
     /// </summary>
     /// <param name="visitId">The visit identifier.</param>
     /// <param name="notes">The notes to save.</param>
+    /// <summary>
+    /// Updates the boolean flags (IsEntered, IsReviewed, IsPrinted, IsDelivered, IsFullyPaid) for a visit.
+    /// </summary>
+    Task UpdateVisitFlagsAsync(int visitId);
+
+    /// <summary>
+    /// Updates the notes field of an existing visit.
+    /// </summary>
+    /// <param name="visitId">The visit identifier.</param>
+    /// <param name="notes">The notes to save.</param>
     Task UpdateVisitNotesAsync(int visitId, string? notes);
 }

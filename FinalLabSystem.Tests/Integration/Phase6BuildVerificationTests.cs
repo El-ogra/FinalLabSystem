@@ -66,7 +66,7 @@ public class Phase6BuildVerificationTests
         var otpGenerator = new OtpGenerator();
         var logger = new Mock<ILogger<DeliveryConfirmationService>>();
 
-        var service = new DeliveryConfirmationService(ctx, auditService.Object, otpGenerator, logger.Object);
+        var service = new DeliveryConfirmationService(ctx, auditService.Object, otpGenerator, logger.Object, new Mock<IVisitService>().Object);
         Assert.NotNull(service);
     }
 }

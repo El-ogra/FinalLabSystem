@@ -30,7 +30,8 @@ public class RoutineResultServiceLiveValidationTests
             context,
             Mock.Of<ILogger<RoutineResultService>>(),
             featureToggleService.Object,
-            Mock.Of<IReportCommentEngine>());
+            Mock.Of<IReportCommentEngine>(),
+            Mock.Of<IVisitService>());
     }
 
     private static async Task<(TestComponent Component, NormalRange Range)> SeedRangeAsync(

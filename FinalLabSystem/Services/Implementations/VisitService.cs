@@ -482,7 +482,7 @@ public class VisitService : IVisitService
 
         return orderedVisits.Select((v, index) =>
         {
-            var status = ComputeVisitStatus(v);
+            var status = v.VisitDisplayStatus;
             return new TodayPatientWithStatusDto
             {
                 PatientId = v.PatientId,
@@ -525,62 +525,64 @@ public class VisitService : IVisitService
         }
     }
 
-    private static PatientVisitStatus ComputeVisitStatus(Visit visit)
+    public async Task UpdateVisitFlagsAsync(int visitId)
     {
-        if (visit.VisitStatus == VisitStatus.Closed && visit.BalanceDue <= 0)
-            return PatientVisitStatus.FullyComplete;
+        var visit = await _context.Visits
+            .Include(v => v.VisitTests)
+                .ThenInclude(vt => vt.Testtype)
+                    .ThenInclude(tt => tt.TestComponents)
+            .Include(v => v.VisitTests)
+                .ThenInclude(vt => vt.TestResults)
+            .Include(v => v.DeliveryConfirmations)
+            .FirstOrDefaultAsync(v => v.VisitId == visitId);
 
-        if (visit.VisitStatus == VisitStatus.Closed && visit.BalanceDue > 0)
-            return PatientVisitStatus.CompleteWithBalance;
+        if (visit == null) return;
 
-        var visitTests = visit.VisitTests.ToList();
-        if (visitTests.Count == 0 || visitTests.All(vt => vt.CurrentStage == TestStage.Pending))
-            return PatientVisitStatus.NewNoResults;
+        int totalComponents = visit.VisitTests.Sum(vt => vt.Testtype?.TestComponents.Count ?? 0);
+        int enteredResults = visit.VisitTests.SelectMany(vt => vt.TestResults ?? Enumerable.Empty<TestResult>()).Count(r => r.ResultNumeric.HasValue || !string.IsNullOrWhiteSpace(r.ResultValue));
 
-        var allResults = visitTests
-            .SelectMany(vt => vt.TestResults)
-            .ToList();
+        visit.IsEntered = totalComponents > 0 && enteredResults >= totalComponents;
 
-        if (allResults.Count == 0 || allResults.All(r => r.ValidationStatus == ResultValidationStatus.Entered))
-        {
-            if (visitTests.Any(vt => vt.CurrentStage == TestStage.Pending))
-                return PatientVisitStatus.HasUnwrittenResults;
-            return PatientVisitStatus.HasUnreviewedResults;
-        }
+        bool allEnteredAndReviewed = visit.IsEntered && visit.VisitTests
+            .SelectMany(vt => vt.TestResults ?? Enumerable.Empty<TestResult>())
+            .All(r => r.ValidationStatus >= ResultValidationStatus.Reviewed);
 
-        if (allResults.All(r => r.ValidationStatus >= ResultValidationStatus.Reviewed))
-        {
-            if (visit.VisitStatus == VisitStatus.Open)
-                return PatientVisitStatus.HasUndeliveredResults;
-        }
+        visit.IsReviewed = allEnteredAndReviewed;
 
-        if (allResults.Any(r => r.ValidationStatus == ResultValidationStatus.Entered))
-            return PatientVisitStatus.HasUnreviewedResults;
+        bool allTestsPrinted = visit.VisitTests.Count > 0 && visit.VisitTests.All(vt => vt.IsPrinted);
+        visit.IsPrinted = allTestsPrinted;
 
-        return PatientVisitStatus.HasUnprintedResults;
+        bool isDelivered = visit.DeliveryConfirmations.Count > 0;
+        visit.IsDelivered = isDelivered;
+
+        visit.IsFullyPaid = visit.BalanceDue <= 0;
+
+        await _context.SaveChangesAsync();
     }
 
-    private static string GetStatusIcon(PatientVisitStatus status) => status switch
+
+
+    private static string GetStatusIcon(VisitDisplayStatus status) => status switch
     {
-        PatientVisitStatus.NewNoResults => "\U0001F6D2",
-        PatientVisitStatus.HasUnwrittenResults => "\U0001F6D2",
-        PatientVisitStatus.HasUnreviewedResults => "\U0001F3C5",
-        PatientVisitStatus.HasUnprintedResults => "\U0001F4C4",
-        PatientVisitStatus.HasUndeliveredResults => "\U0001F5A8",
-        PatientVisitStatus.CompleteWithBalance => "\U0001F4B2",
-        PatientVisitStatus.FullyComplete => "\u2705",
+        VisitDisplayStatus.NewNoResults => "\U0001F6D2",
+        VisitDisplayStatus.ResultsNotWritten => "\U0001F6D2",
+        VisitDisplayStatus.ResultsNotReviewed => "\U0001F3C5",
+        VisitDisplayStatus.ResultsNotPrinted => "\U0001F4C4",
+        VisitDisplayStatus.NotDelivered => "\U0001F5A8",
+        VisitDisplayStatus.DeliveredWithBalance => "\U0001F4B2",
+        VisitDisplayStatus.FullyComplete => "\u2705",
         _ => "\U0001F6D2"
     };
 
-    private static string GetStatusColor(PatientVisitStatus status) => status switch
+    private static string GetStatusColor(VisitDisplayStatus status) => status switch
     {
-        PatientVisitStatus.NewNoResults => "#808080",
-        PatientVisitStatus.HasUnwrittenResults => "#FF8C00",
-        PatientVisitStatus.HasUnreviewedResults => "#FFD700",
-        PatientVisitStatus.HasUnprintedResults => "#4FC3F7",
-        PatientVisitStatus.HasUndeliveredResults => "#9C27B0",
-        PatientVisitStatus.CompleteWithBalance => "#F44336",
-        PatientVisitStatus.FullyComplete => "#4CAF50",
+        VisitDisplayStatus.NewNoResults => "#808080",
+        VisitDisplayStatus.ResultsNotWritten => "#FF8C00",
+        VisitDisplayStatus.ResultsNotReviewed => "#FFD700",
+        VisitDisplayStatus.ResultsNotPrinted => "#4FC3F7",
+        VisitDisplayStatus.NotDelivered => "#9C27B0",
+        VisitDisplayStatus.DeliveredWithBalance => "#F44336",
+        VisitDisplayStatus.FullyComplete => "#4CAF50",
         _ => "#808080"
     };
 

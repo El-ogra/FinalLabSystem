@@ -178,7 +178,8 @@ public class AutoCommentEndToEndTests
             context,
             Mock.Of<ILogger<RoutineResultService>>(),
             featureToggleService.Object,
-            commentEngine);
+            commentEngine,
+            Mock.Of<IVisitService>());
 
         var component = await context.TestComponents.FirstAsync();
         var results = new List<TestResult>
@@ -218,7 +219,8 @@ public class AutoCommentEndToEndTests
             context,
             Mock.Of<ILogger<RoutineResultService>>(),
             featureToggleService.Object,
-            commentEngine);
+            commentEngine,
+            Mock.Of<IVisitService>());
 
         var component = await context.TestComponents.FirstAsync();
         var results = new List<TestResult>
@@ -258,7 +260,8 @@ public class AutoCommentEndToEndTests
             context,
             Mock.Of<ILogger<RoutineResultService>>(),
             featureToggleService.Object,
-            commentEngine);
+            commentEngine,
+            Mock.Of<IVisitService>());
 
         var component = await context.TestComponents.FirstAsync();
         var results = new List<TestResult>
@@ -298,7 +301,8 @@ public class AutoCommentEndToEndTests
             context,
             Mock.Of<ILogger<RoutineResultService>>(),
             featureToggleService.Object,
-            commentEngine);
+            commentEngine,
+            Mock.Of<IVisitService>());
 
         var component = await context.TestComponents.FirstAsync();
         var results = new List<TestResult>
@@ -338,7 +342,8 @@ public class AutoCommentEndToEndTests
             context,
             Mock.Of<ILogger<RoutineResultService>>(),
             featureToggleService.Object,
-            commentEngine);
+            commentEngine,
+            Mock.Of<IVisitService>());
 
         var component = await context.TestComponents.FirstAsync();
         var results = new List<TestResult>

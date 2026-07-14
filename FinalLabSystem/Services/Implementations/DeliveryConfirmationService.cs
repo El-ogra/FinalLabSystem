@@ -17,17 +17,20 @@ public sealed class DeliveryConfirmationService : IDeliveryConfirmationService
     private readonly IAuditService _auditService;
     private readonly IOtpGenerator _otpGenerator;
     private readonly ILogger<DeliveryConfirmationService> _logger;
+    private readonly IVisitService _visitService;
 
     public DeliveryConfirmationService(
         FinalLabDbContext context,
         IAuditService auditService,
         IOtpGenerator otpGenerator,
-        ILogger<DeliveryConfirmationService> logger)
+        ILogger<DeliveryConfirmationService> logger,
+        IVisitService visitService)
     {
         _context = context;
         _auditService = auditService;
         _otpGenerator = otpGenerator;
         _logger = logger;
+        _visitService = visitService;
     }
 
     public async Task SaveSignatureAsync(int visitId, byte[] signatureImage, string receivedByName, int staffId)
@@ -50,6 +53,9 @@ public sealed class DeliveryConfirmationService : IDeliveryConfirmationService
 
         await _context.SaveChangesAsync();
         await _auditService.LogActionAsync("DeliverySignatureConfirmed", staffId, "DeliverySignatureConfirmed", staffId, "Signature confirmed");
+
+        // VS-03: تحديث أعلام الزيارة بعد تأكيد التسليم
+        await _visitService.UpdateVisitFlagsAsync(visitId);
 
         _logger.LogInformation("Delivery signature confirmed for visit {VisitId} at {Time}", visitId, DateTime.UtcNow);
     }
@@ -94,6 +100,9 @@ public sealed class DeliveryConfirmationService : IDeliveryConfirmationService
 
         await _context.SaveChangesAsync();
         await _auditService.LogActionAsync("DeliveryOtpConfirmed", staffId, "DeliveryOtpConfirmed", staffId, "OTP confirmed");
+
+        // VS-03: تحديث أعلام الزيارة بعد تأكيد التسليم بـ OTP
+        await _visitService.UpdateVisitFlagsAsync(visitId);
 
         _logger.LogInformation("Delivery OTP confirmed for visit {VisitId} at {Time}", visitId, DateTime.UtcNow);
         return true;

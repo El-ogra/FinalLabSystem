@@ -28,7 +28,7 @@ public sealed class TodayPatientWithStatusDto
 
     public int VisitCount { get; set; }
 
-    public PatientVisitStatus ComputedStatus { get; set; }
+    public VisitDisplayStatus ComputedStatus { get; set; }
 
     public string StatusIcon { get; set; } = string.Empty;
 

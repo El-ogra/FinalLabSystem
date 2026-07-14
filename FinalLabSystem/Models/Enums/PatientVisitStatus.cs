@@ -1,5 +1,8 @@
+using System;
+
 namespace FinalLabSystem.Models.Enums;
 
+[Obsolete("Use the 5 boolean flags on Visit and VisitDisplayStatus instead. (VS-03)")]
 public enum PatientVisitStatus
 {
     NewNoResults = 0,
