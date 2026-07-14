@@ -44,6 +44,7 @@ public class BackupRestoreWindowViewModelTests
 
         var vm = new BackupRestoreWindowViewModel(
             mockBackup.Object,
+            Mock.Of<ISensitiveScreenPasswordService>(),
             mockDialog.Object,
             mockSession.Object,
             mockProcess.Object);
@@ -234,6 +235,7 @@ public class BackupRestoreWindowViewModelTests
 
         var vm = new BackupRestoreWindowViewModel(
             mockBackup.Object,
+            Mock.Of<ISensitiveScreenPasswordService>(),
             Mock.Of<IDialogService>(),
             Mock.Of<ICurrentUserSession>(),
             Mock.Of<IProcessService>());
@@ -252,6 +254,7 @@ public class BackupRestoreWindowViewModelTests
 
         var vm = new BackupRestoreWindowViewModel(
             mockBackup.Object,
+            Mock.Of<ISensitiveScreenPasswordService>(),
             Mock.Of<IDialogService>(),
             Mock.Of<ICurrentUserSession>(),
             Mock.Of<IProcessService>());

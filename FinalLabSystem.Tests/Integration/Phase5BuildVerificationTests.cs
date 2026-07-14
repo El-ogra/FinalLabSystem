@@ -23,6 +23,7 @@ public class Phase5BuildVerificationTests
 
         services.AddScoped<ISettingsService, SettingsService>();
         services.AddScoped<IAttendanceService, AttendanceService>();
+        services.AddScoped<ISensitiveScreenPasswordService>(_ => Mock.Of<ISensitiveScreenPasswordService>());
         services.AddScoped<ICashDrawerService, CashDrawerService>();
         services.AddScoped<IInventoryService, InventoryService>();
         services.AddScoped<ICommissionReportService, CommissionReportService>();

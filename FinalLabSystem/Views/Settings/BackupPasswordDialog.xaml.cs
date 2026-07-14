@@ -11,6 +11,20 @@ public partial class BackupPasswordDialog : Window
         PasswordBox.Focus();
     }
 
+    public string TitleText
+    {
+        set
+        {
+            Title = value;
+            TitleBlock.Text = value;
+        }
+    }
+
+    public string PromptText
+    {
+        set => PromptBlock.Text = value;
+    }
+
     public string? EnteredPassword { get; private set; }
 
     private void OK_Click(object sender, RoutedEventArgs e)

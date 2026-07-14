@@ -59,7 +59,7 @@ public class BackupServiceTests
         var tempDir = Path.Combine(Path.GetTempPath(), "BackupTests_" + Guid.NewGuid().ToString("N")[..8]);
         Directory.CreateDirectory(tempDir);
 
-        var service = new BackupService(context, session.Object, audit.Object, logger);
+        var service = new BackupService(context, session.Object, audit.Object, Mock.Of<ISensitiveScreenPasswordService>(), logger);
         return (service, context, tempDir, audit);
     }
 
@@ -101,7 +101,7 @@ public class BackupServiceTests
         var tempDir = Path.Combine(Path.GetTempPath(), "BackupTests_" + Guid.NewGuid().ToString("N")[..8]);
         Directory.CreateDirectory(tempDir);
 
-        var service = new BackupService(context, session.Object, audit, logger);
+        var service = new BackupService(context, session.Object, audit, Mock.Of<ISensitiveScreenPasswordService>(), logger);
 
         await Assert.ThrowsAsync<UnauthorizedAccessException>(
             () => service.CreateBackupAsync(tempDir, TestPassword, BackupType.Full));

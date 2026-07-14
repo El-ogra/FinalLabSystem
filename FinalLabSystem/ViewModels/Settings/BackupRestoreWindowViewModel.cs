@@ -17,6 +17,7 @@ namespace FinalLabSystem.ViewModels.Settings;
 public sealed class BackupRestoreWindowViewModel : ViewModelBase
 {
     private readonly IBackupService _backupService;
+    private readonly ISensitiveScreenPasswordService _sensitivePasswordService;
     private readonly IDialogService _dialogService;
     private readonly ICurrentUserSession _currentUserSession;
     private readonly IProcessService _processService;
@@ -27,11 +28,13 @@ public sealed class BackupRestoreWindowViewModel : ViewModelBase
 
     public BackupRestoreWindowViewModel(
         IBackupService backupService,
+        ISensitiveScreenPasswordService sensitivePasswordService,
         IDialogService dialogService,
         ICurrentUserSession currentUserSession,
         IProcessService processService)
     {
         _backupService = backupService;
+        _sensitivePasswordService = sensitivePasswordService;
         _dialogService = dialogService;
         _currentUserSession = currentUserSession;
         _processService = processService;
@@ -137,6 +140,12 @@ public sealed class BackupRestoreWindowViewModel : ViewModelBase
                 Owner = Application.Current.MainWindow
             };
 
+            if (await _sensitivePasswordService.IsPasswordSetAsync("DbMaintenance"))
+            {
+                dialog.TitleText = "أدخل كلمة مرور صيانة قاعدة البيانات";
+                dialog.PromptText = "كلمة مرور صيانة قاعدة البيانات:";
+            }
+
             if (dialog.ShowDialog() != true || dialog.EnteredPassword is null)
             {
                 IsBusy = false;
@@ -198,6 +207,12 @@ public sealed class BackupRestoreWindowViewModel : ViewModelBase
             {
                 Owner = Application.Current.MainWindow
             };
+
+            if (await _sensitivePasswordService.IsPasswordSetAsync("DbMaintenance"))
+            {
+                dialog.TitleText = "أدخل كلمة مرور صيانة قاعدة البيانات";
+                dialog.PromptText = "كلمة مرور صيانة قاعدة البيانات:";
+            }
 
             if (dialog.ShowDialog() != true || dialog.EnteredPassword is null)
             {

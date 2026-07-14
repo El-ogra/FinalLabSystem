@@ -33,6 +33,41 @@ public class CashDrawerEndToEndTests
         }
     }
 
+    private class InMemorySensitiveScreenPasswordService : ISensitiveScreenPasswordService
+    {
+        private readonly Dictionary<string, string> _store = new();
+
+        public Task<bool> IsPasswordSetAsync(string screenType)
+        {
+            return Task.FromResult(_store.ContainsKey(screenType));
+        }
+
+        public Task<bool> VerifyAsync(string screenType, string password)
+        {
+            if (_store.TryGetValue(screenType, out var hash))
+                return Task.FromResult(FinalLabSystem.Infrastructure.Security.PasswordHasher.Verify(password, hash));
+            return Task.FromResult(false);
+        }
+
+        public Task SetPasswordAsync(string screenType, string newPassword, int staffId)
+        {
+            var hash = FinalLabSystem.Infrastructure.Security.PasswordHasher.Hash(newPassword);
+            _store[screenType] = hash;
+            return Task.CompletedTask;
+        }
+
+        public Task ChangePasswordAsync(string screenType, string currentPassword, string newPassword, int staffId)
+        {
+            if (!_store.ContainsKey(screenType))
+                throw new InvalidOperationException("لم تُعد كلمة مرور لدرج النقدية بعد.");
+            if (!FinalLabSystem.Infrastructure.Security.PasswordHasher.Verify(currentPassword, _store[screenType]))
+                throw new UnauthorizedAccessException("كلمة المرور الحالية غير صحيحة.");
+            var hash = FinalLabSystem.Infrastructure.Security.PasswordHasher.Hash(newPassword);
+            _store[screenType] = hash;
+            return Task.CompletedTask;
+        }
+    }
+
     private static DbContextOptions<FinalLabDbContext> CreateOptions(string dbName)
         => new DbContextOptionsBuilder<FinalLabDbContext>()
             .UseInMemoryDatabase(dbName)
@@ -42,7 +77,8 @@ public class CashDrawerEndToEndTests
     private static (CashDrawerService service, InMemorySettingsService settings) CreateService(FinalLabDbContext ctx)
     {
         var settings = new InMemorySettingsService();
-        var service = new CashDrawerService(ctx, settings);
+        var sensitivePasswordService = new InMemorySensitiveScreenPasswordService();
+        var service = new CashDrawerService(ctx, settings, sensitivePasswordService);
         return (service, settings);
     }
 

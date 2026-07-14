@@ -17,6 +17,7 @@ public class CashDrawerServiceTests : IDisposable
 {
     private readonly FinalLabDbContext _context;
     private readonly Mock<ISettingsService> _settingsMock;
+    private readonly Mock<ISensitiveScreenPasswordService> _sensitivePasswordMock;
     private readonly CashDrawerService _service;
 
     public CashDrawerServiceTests()
@@ -26,7 +27,8 @@ public class CashDrawerServiceTests : IDisposable
             .Options;
         _context = new FinalLabDbContext(options);
         _settingsMock = new Mock<ISettingsService>();
-        _service = new CashDrawerService(_context, _settingsMock.Object);
+        _sensitivePasswordMock = new Mock<ISensitiveScreenPasswordService>();
+        _service = new CashDrawerService(_context, _settingsMock.Object, _sensitivePasswordMock.Object);
     }
 
     public void Dispose() => _context.Dispose();
@@ -119,8 +121,8 @@ public class CashDrawerServiceTests : IDisposable
     [Fact]
     public async Task IsPasswordSetAsync_NoPassword_ReturnsFalse()
     {
-        _settingsMock.Setup(s => s.GetSettingValueAsync("CashDrawer.PasswordHash"))
-            .ReturnsAsync((string?)null);
+        _sensitivePasswordMock.Setup(s => s.IsPasswordSetAsync("CashDrawer"))
+            .ReturnsAsync(false);
 
         var result = await _service.IsPasswordSetAsync();
 
@@ -130,8 +132,8 @@ public class CashDrawerServiceTests : IDisposable
     [Fact]
     public async Task IsPasswordSetAsync_HasPassword_ReturnsTrue()
     {
-        _settingsMock.Setup(s => s.GetSettingValueAsync("CashDrawer.PasswordHash"))
-            .ReturnsAsync("pbkdf2$100000$abc$def");
+        _sensitivePasswordMock.Setup(s => s.IsPasswordSetAsync("CashDrawer"))
+            .ReturnsAsync(true);
 
         var result = await _service.IsPasswordSetAsync();
 
@@ -141,9 +143,8 @@ public class CashDrawerServiceTests : IDisposable
     [Fact]
     public async Task UnlockAsync_CorrectPassword_ReturnsTrue()
     {
-        var hash = FinalLabSystem.Infrastructure.Security.PasswordHasher.Hash("test123");
-        _settingsMock.Setup(s => s.GetSettingValueAsync("CashDrawer.PasswordHash"))
-            .ReturnsAsync(hash);
+        _sensitivePasswordMock.Setup(s => s.VerifyAsync("CashDrawer", "test123"))
+            .ReturnsAsync(true);
 
         var result = await _service.UnlockAsync("test123");
 
@@ -153,9 +154,8 @@ public class CashDrawerServiceTests : IDisposable
     [Fact]
     public async Task UnlockAsync_WrongPassword_ReturnsFalse()
     {
-        var hash = FinalLabSystem.Infrastructure.Security.PasswordHasher.Hash("test123");
-        _settingsMock.Setup(s => s.GetSettingValueAsync("CashDrawer.PasswordHash"))
-            .ReturnsAsync(hash);
+        _sensitivePasswordMock.Setup(s => s.VerifyAsync("CashDrawer", "wrong"))
+            .ReturnsAsync(false);
 
         var result = await _service.UnlockAsync("wrong");
 
@@ -165,36 +165,36 @@ public class CashDrawerServiceTests : IDisposable
     [Fact]
     public async Task SetPasswordAsync_SavesHashedPassword()
     {
-        _settingsMock.Setup(s => s.UpsertSettingAsync(It.IsAny<LabSetting>(), It.IsAny<int>()))
+        _sensitivePasswordMock.Setup(s => s.SetPasswordAsync("CashDrawer", "newpass", 0))
             .Returns(Task.CompletedTask);
 
         await _service.SetPasswordAsync("newpass");
 
-        _settingsMock.Verify(s => s.UpsertSettingAsync(
-            It.Is<LabSetting>(ls => ls.SettingKey == "CashDrawer.PasswordHash" && !string.IsNullOrEmpty(ls.SettingValue)),
-            It.IsAny<int>()), Times.Once);
+        _sensitivePasswordMock.Verify(s => s.SetPasswordAsync(
+            "CashDrawer", "newpass", 0), Times.Once);
     }
 
     [Fact]
     public async Task ChangePasswordAsync_CorrectCurrent_ChangesSuccessfully()
     {
-        var hash = FinalLabSystem.Infrastructure.Security.PasswordHasher.Hash("oldpass");
-        _settingsMock.Setup(s => s.GetSettingValueAsync("CashDrawer.PasswordHash"))
-            .ReturnsAsync(hash);
-        _settingsMock.Setup(s => s.UpsertSettingAsync(It.IsAny<LabSetting>(), It.IsAny<int>()))
+        _sensitivePasswordMock.Setup(s => s.IsPasswordSetAsync("CashDrawer"))
+            .ReturnsAsync(true);
+        _sensitivePasswordMock.Setup(s => s.ChangePasswordAsync("CashDrawer", "oldpass", "newpass", 0))
             .Returns(Task.CompletedTask);
 
         await _service.ChangePasswordAsync("oldpass", "newpass");
 
-        _settingsMock.Verify(s => s.UpsertSettingAsync(It.IsAny<LabSetting>(), It.IsAny<int>()), Times.Once);
+        _sensitivePasswordMock.Verify(s => s.ChangePasswordAsync(
+            "CashDrawer", "oldpass", "newpass", 0), Times.Once);
     }
 
     [Fact]
     public async Task ChangePasswordAsync_WrongCurrent_ThrowsUnauthorized()
     {
-        var hash = FinalLabSystem.Infrastructure.Security.PasswordHasher.Hash("oldpass");
-        _settingsMock.Setup(s => s.GetSettingValueAsync("CashDrawer.PasswordHash"))
-            .ReturnsAsync(hash);
+        _sensitivePasswordMock.Setup(s => s.IsPasswordSetAsync("CashDrawer"))
+            .ReturnsAsync(true);
+        _sensitivePasswordMock.Setup(s => s.ChangePasswordAsync("CashDrawer", "wrong", "newpass", 0))
+            .ThrowsAsync(new UnauthorizedAccessException());
 
         await Assert.ThrowsAsync<UnauthorizedAccessException>(
             () => _service.ChangePasswordAsync("wrong", "newpass"));
@@ -203,8 +203,8 @@ public class CashDrawerServiceTests : IDisposable
     [Fact]
     public async Task ChangePasswordAsync_NoPasswordSet_ThrowsInvalidOperation()
     {
-        _settingsMock.Setup(s => s.GetSettingValueAsync("CashDrawer.PasswordHash"))
-            .ReturnsAsync((string?)null);
+        _sensitivePasswordMock.Setup(s => s.IsPasswordSetAsync("CashDrawer"))
+            .ReturnsAsync(false);
 
         await Assert.ThrowsAsync<InvalidOperationException>(
             () => _service.ChangePasswordAsync("old", "new"));

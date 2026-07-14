@@ -5,6 +5,7 @@ using FinalLabSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Moq;
 
 namespace FinalLabSystem.Tests.Services;
 
@@ -18,6 +19,7 @@ public class BackupServiceRegistrationTests
         services.AddDbContext<FinalLabDbContext>(options =>
             options.UseInMemoryDatabase(Guid.NewGuid().ToString()));
         services.AddScoped<IAuditService, AuditService>();
+        services.AddScoped<ISensitiveScreenPasswordService>(_ => Mock.Of<ISensitiveScreenPasswordService>());
         services.AddSingleton<ICurrentUserSession, CurrentUserSession>();
         services.AddScoped<IBackupService, BackupService>();
 

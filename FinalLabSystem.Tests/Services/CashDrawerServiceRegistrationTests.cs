@@ -3,6 +3,7 @@ using FinalLabSystem.Services.Implementations;
 using FinalLabSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using Xunit;
 
 namespace FinalLabSystem.Tests.Services;
@@ -16,6 +17,7 @@ public class CashDrawerServiceRegistrationTests
         services.AddDbContext<FinalLabDbContext>(opt => opt.UseInMemoryDatabase("CashDrawerDI_Test"));
         services.AddLogging();
         services.AddScoped<ISettingsService, SettingsService>();
+        services.AddScoped<ISensitiveScreenPasswordService>(_ => Mock.Of<ISensitiveScreenPasswordService>());
         services.AddScoped<ICashDrawerService, CashDrawerService>();
 
         var provider = services.BuildServiceProvider();

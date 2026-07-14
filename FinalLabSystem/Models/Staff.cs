@@ -90,4 +90,6 @@ public partial class Staff
     public virtual ICollection<TestProfile> TestProfiles { get; set; } = new List<TestProfile>();
 
     public virtual ICollection<VisitCharge> VisitCharges { get; set; } = new List<VisitCharge>();
+
+    public virtual ICollection<SensitiveScreenPassword> SensitiveScreenPasswords { get; set; } = new List<SensitiveScreenPassword>();
 }

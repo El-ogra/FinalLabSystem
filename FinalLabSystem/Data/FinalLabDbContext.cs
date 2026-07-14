@@ -223,6 +223,7 @@ public partial class FinalLabDbContext : DbContext
     public virtual DbSet<DeliveryConfirmation> DeliveryConfirmations { get; set; }
 
     public virtual DbSet<PatientBarcode> PatientBarcodes { get; set; }
+    public virtual DbSet<SensitiveScreenPassword> SensitiveScreenPasswords { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -494,6 +495,36 @@ public partial class FinalLabDbContext : DbContext
             entity.HasOne(d => d.LastUpdatedByNavigation).WithMany(p => p.LabSettings)
                 .HasForeignKey(d => d.LastUpdatedBy)
                 .HasConstraintName("FK_LabSettings_Staff");
+        });
+
+        modelBuilder.Entity<SensitiveScreenPassword>(entity =>
+        {
+            entity.HasKey(e => e.SensitiveScreenPasswordId)
+                .HasName("PK__SensitiveScreenPassword");
+
+            entity.ToTable("SensitiveScreenPassword");
+
+            entity.Property(e => e.SensitiveScreenPasswordId).HasColumnName("sensitive_screen_password_id");
+            entity.Property(e => e.ScreenType)
+                .HasMaxLength(50)
+                .IsRequired()
+                .HasColumnName("screen_type");
+            entity.Property(e => e.PasswordHash)
+                .IsRequired()
+                .HasColumnName("password_hash");
+            entity.Property(e => e.LastUpdatedBy).HasColumnName("last_updated_by");
+            entity.Property(e => e.LastUpdatedAt)
+                .HasPrecision(0)
+                .HasColumnName("last_updated_at");
+
+            entity.HasIndex(e => e.ScreenType)
+                .IsUnique()
+                .HasDatabaseName("UQ__SensitiveScreenPassword__ScreenType");
+
+            entity.HasOne(d => d.LastUpdatedByNavigation)
+                .WithMany(p => p.SensitiveScreenPasswords)
+                .HasForeignKey(d => d.LastUpdatedBy)
+                .HasConstraintName("FK_SensitiveScreenPassword_Staff");
         });
 
         modelBuilder.Entity<MicrobiologyCulture>(entity =>

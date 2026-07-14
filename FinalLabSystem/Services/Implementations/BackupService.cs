@@ -17,6 +17,7 @@ public class BackupService : IBackupService
     private readonly FinalLabDbContext _context;
     private readonly ICurrentUserSession _currentUserSession;
     private readonly IAuditService _auditService;
+    private readonly ISensitiveScreenPasswordService _sensitivePasswordService;
     private readonly ILogger<BackupService> _logger;
 
     private static readonly JsonSerializerOptions JsonOptions = new()
@@ -29,11 +30,13 @@ public class BackupService : IBackupService
         FinalLabDbContext context,
         ICurrentUserSession currentUserSession,
         IAuditService auditService,
+        ISensitiveScreenPasswordService sensitivePasswordService,
         ILogger<BackupService> logger)
     {
         _context = context;
         _currentUserSession = currentUserSession;
         _auditService = auditService;
+        _sensitivePasswordService = sensitivePasswordService;
         _logger = logger;
     }
 
@@ -41,6 +44,14 @@ public class BackupService : IBackupService
     {
         if (_currentUserSession.CurrentUser?.IsAdmin != true)
             throw new UnauthorizedAccessException("Only administrators can perform backup operations.");
+
+        var dbPasswordSet = await _sensitivePasswordService.IsPasswordSetAsync("DbMaintenance");
+        if (dbPasswordSet)
+        {
+            var isValid = await _sensitivePasswordService.VerifyAsync("DbMaintenance", adminPassword);
+            if (!isValid)
+                throw new UnauthorizedAccessException("كلمة مرور صيانة قاعدة البيانات غير صحيحة.");
+        }
 
         if (!Directory.Exists(targetFolder))
             Directory.CreateDirectory(targetFolder);
@@ -99,6 +110,14 @@ public class BackupService : IBackupService
     {
         if (_currentUserSession.CurrentUser?.IsAdmin != true)
             throw new UnauthorizedAccessException("Only administrators can perform restore operations.");
+
+        var dbPasswordSet = await _sensitivePasswordService.IsPasswordSetAsync("DbMaintenance");
+        if (dbPasswordSet)
+        {
+            var isValid = await _sensitivePasswordService.VerifyAsync("DbMaintenance", adminPassword);
+            if (!isValid)
+                throw new UnauthorizedAccessException("كلمة مرور صيانة قاعدة البيانات غير صحيحة.");
+        }
 
         if (!File.Exists(backupFilePath))
             return false;

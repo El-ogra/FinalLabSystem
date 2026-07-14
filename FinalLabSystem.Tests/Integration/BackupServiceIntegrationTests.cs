@@ -69,7 +69,7 @@ public class BackupServiceIntegrationTests
         var logger = Mock.Of<ILogger<BackupService>>();
         var tempDir = Path.Combine(Path.GetTempPath(), "E2E_" + Guid.NewGuid().ToString("N")[..8]);
         Directory.CreateDirectory(tempDir);
-        var service = new BackupService(context, session.Object, audit, logger);
+        var service = new BackupService(context, session.Object, audit, Mock.Of<ISensitiveScreenPasswordService>(), logger);
         return (service, context, tempDir);
     }
 
@@ -149,7 +149,7 @@ public class BackupServiceIntegrationTests
 
             using (var context = new FinalLabDbContext(CreateOptions(dbName)))
             {
-                var service = new BackupService(context, session.Object, audit, logger);
+                var service = new BackupService(context, session.Object, audit, Mock.Of<ISensitiveScreenPasswordService>(), logger);
                 var backupPath = await service.CreateBackupAsync(tempDir, password, BackupType.Full);
                 Assert.True(File.Exists(backupPath));
             }

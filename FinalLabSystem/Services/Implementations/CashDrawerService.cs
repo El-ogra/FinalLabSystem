@@ -18,11 +18,16 @@ public class CashDrawerService : ICashDrawerService
 
     private readonly FinalLabDbContext _context;
     private readonly ISettingsService _settingsService;
+    private readonly ISensitiveScreenPasswordService _sensitivePasswordService;
 
-    public CashDrawerService(FinalLabDbContext context, ISettingsService settingsService)
+    public CashDrawerService(
+        FinalLabDbContext context,
+        ISettingsService settingsService,
+        ISensitiveScreenPasswordService sensitivePasswordService)
     {
         _context = context;
         _settingsService = settingsService;
+        _sensitivePasswordService = sensitivePasswordService;
     }
 
     public async Task<CashDrawerSummaryDto> GetDailySummaryAsync(DateOnly date)
@@ -73,43 +78,25 @@ public class CashDrawerService : ICashDrawerService
 
     public async Task<bool> IsPasswordSetAsync()
     {
-        var hash = await _settingsService.GetSettingValueAsync(PasswordKey);
-        return !string.IsNullOrEmpty(hash);
+        return await _sensitivePasswordService.IsPasswordSetAsync("CashDrawer");
     }
 
     public async Task<bool> UnlockAsync(string password)
     {
-        var hash = await _settingsService.GetSettingValueAsync(PasswordKey);
-        if (string.IsNullOrEmpty(hash))
-            return false;
-
-        return PasswordHasher.Verify(password, hash);
+        return await _sensitivePasswordService.VerifyAsync("CashDrawer", password);
     }
 
     public async Task SetPasswordAsync(string newPassword)
     {
-        var hash = PasswordHasher.Hash(newPassword);
-        var setting = new LabSetting
-        {
-            SettingKey = PasswordKey,
-            SettingValue = hash,
-            SettingDescription = "Cash drawer password hash",
-            SettingGroup = "CashDrawer",
-            IsRequired = true
-        };
-        await _settingsService.UpsertSettingAsync(setting, 0);
+        await _sensitivePasswordService.SetPasswordAsync("CashDrawer", newPassword, 0);
     }
 
     public async Task ChangePasswordAsync(string currentPassword, string newPassword)
     {
-        var currentHash = await _settingsService.GetSettingValueAsync(PasswordKey);
-        if (string.IsNullOrEmpty(currentHash))
+        var isSet = await _sensitivePasswordService.IsPasswordSetAsync("CashDrawer");
+        if (!isSet)
             throw new InvalidOperationException("لم تُعد كلمة مرور لدرج النقدية بعد.");
-
-        if (!PasswordHasher.Verify(currentPassword, currentHash))
-            throw new UnauthorizedAccessException("كلمة المرور الحالية غير صحيحة.");
-
-        await SetPasswordAsync(newPassword);
+        await _sensitivePasswordService.ChangePasswordAsync("CashDrawer", currentPassword, newPassword, 0);
     }
 
     private static CashDrawerSummaryDto BuildSummary(DateOnly date, List<Payment> payments)

@@ -67,7 +67,7 @@
         <!-- System Settings sub-menu -->
         <DataTemplate DataType="{x:Type svm:SystemSettingsMenuViewModel}">
             <Grid Background="#F5F7FA">
-                <UniformGrid Rows="1" Columns="3"
+                <UniformGrid Rows="1" Columns="4"
                              Width="960" Height="180"
                              HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Button Content="بيانات التحاليل"
@@ -82,6 +82,10 @@
                             Command="{Binding NavigateToStaffManagementCommand}"
                             Margin="12" FontSize="22" FontWeight="SemiBold"
                             Background="#6A1B9A" Foreground="White"/>
+                    <Button Content="إعدادات الأمان"
+                            Command="{Binding NavigateToSecuritySettingsCommand}"
+                            Margin="12" FontSize="22" FontWeight="SemiBold"
+                            Background="#E65100" Foreground="White"/>
                 </UniformGrid>
             </Grid>
         </DataTemplate>

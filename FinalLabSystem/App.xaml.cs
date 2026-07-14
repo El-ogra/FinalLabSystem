@@ -116,6 +116,7 @@ public partial class App : Application
             navigation.RegisterWindow<ReportSettingsWindowViewModel, ReportSettingsWindow>();
             navigation.RegisterWindow<PrintQueueWindowViewModel, PrintQueueWindow>();
             navigation.RegisterWindow<StaffManagementViewModel, StaffManagementWindow>();
+            navigation.RegisterWindow<SecuritySettingsWindowViewModel, SecuritySettingsWindow>();
 
             using (var scope = ServiceProvider.CreateScope())
             {
@@ -188,6 +189,7 @@ public partial class App : Application
         services.AddScoped<IBackupService, BackupService>();
         services.AddScoped<IReportLayoutService, ReportLayoutService>();
         services.AddScoped<IStaffService, StaffService>();
+        services.AddScoped<ISensitiveScreenPasswordService, SensitiveScreenPasswordService>();
 
         // Slice 2 — Culture Entry
         services.AddScoped<ICultureResultService, CultureResultService>();
@@ -326,6 +328,10 @@ public partial class App : Application
         // Slice 6.5 — Print Queue / Batch Printing
         services.AddTransient<PrintQueueWindowViewModel>();
         services.AddTransient<PrintQueueWindow>();
+
+        // VS-09 — Sensitive Screen Passwords (Separate passwords)
+        services.AddTransient<SecuritySettingsWindowViewModel>();
+        services.AddTransient<SecuritySettingsWindow>();
 
         // Slice 6.6 — Delivery Confirmation (Signature + OTP)
         services.AddScoped<IDeliveryConfirmationService, DeliveryConfirmationService>();

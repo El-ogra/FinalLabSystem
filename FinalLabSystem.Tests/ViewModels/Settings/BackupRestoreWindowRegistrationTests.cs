@@ -26,6 +26,7 @@ public class BackupRestoreWindowRegistrationTests
         services.AddScoped<IBackupService, BackupService>();
         services.AddSingleton<IDialogService>(Mock.Of<IDialogService>());
         services.AddSingleton<IProcessService>(Mock.Of<IProcessService>());
+        services.AddScoped<ISensitiveScreenPasswordService>(_ => Mock.Of<ISensitiveScreenPasswordService>());
         services.AddTransient<BackupRestoreWindowViewModel>();
 
         var provider = services.BuildServiceProvider();
@@ -77,6 +78,7 @@ public class BackupRestoreWindowRegistrationTests
 
         var viewModel = new BackupRestoreWindowViewModel(
             mockBackup.Object,
+            Mock.Of<ISensitiveScreenPasswordService>(),
             mockDialog.Object,
             mockSession.Object,
             mockProcess.Object);
