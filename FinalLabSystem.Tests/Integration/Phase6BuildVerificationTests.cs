@@ -33,6 +33,7 @@ public class Phase6BuildVerificationTests
         services.AddScoped<IAuditService>(sp => new Mock<IAuditService>().Object);
         services.AddScoped<IDeliveryConfirmationService, DeliveryConfirmationService>();
         services.AddSingleton<IOtpGenerator, OtpGenerator>();
+        services.AddScoped<IVisitService>(_ => new Mock<IVisitService>().Object);
 
         return services.BuildServiceProvider();
     }
