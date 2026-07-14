@@ -34,6 +34,7 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
     private bool _isEditMode;
     private bool _hasUnsavedChanges;
     private bool _isFormUnlocked;
+    private bool _hasCalculated;
     private DateTime _entryDate = DateTime.Now;
     private DateTime? _expectedReady = DateTime.Now.AddDays(1);
 
@@ -77,10 +78,23 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
         {
             Financial.RecalculateFromTests(TestSelection.GetSelectedPrices());
             HasUnsavedChanges = true;
+            InvalidateCalculation();
+        };
+
+        // VS-08: إبطال الحساب عند تعديل الخصم أو الرسوم الإضافية
+        Financial.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName is nameof(Financial.DiscountPercent)
+                or nameof(Financial.DiscountAmount)
+                or nameof(Financial.ExtraChargesTotal))
+            {
+                InvalidateCalculation();
+            }
         };
 
         AddNewCommand = new AsyncRelayCommand(AddNewAsync);
-        SaveCommand = new AsyncRelayCommand(SaveAsync);
+        SaveCommand = new AsyncRelayCommand(SaveAsync, () => HasCalculated);
+        CalculateCommand = new AsyncRelayCommand(CalculateAsync);
         EditCommand = new AsyncRelayCommand(EditAsync);
         DeleteCommand = new AsyncRelayCommand(DeleteAsync, () => CurrentVisitId > 0);
         BarcodeCommand = new AsyncRelayCommand(BarcodeAsync, () => CurrentVisitId > 0);
@@ -190,9 +204,21 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
         }
     }
 
+    public bool HasCalculated
+    {
+        get => _hasCalculated;
+        private set
+        {
+            if (SetProperty(ref _hasCalculated, value))
+                CommandManager.InvalidateRequerySuggested();
+        }
+    }
+
     public ICommand AddNewCommand { get; }
 
     public ICommand SaveCommand { get; }
+
+    public ICommand CalculateCommand { get; }
 
     public ICommand EditCommand { get; }
 
@@ -213,6 +239,45 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
     public ICommand NavigateToExternalSamplesCommand { get; }
     public ICommand PrintLabIdCommand { get; }
 
+    private void InvalidateCalculation()
+    {
+        if (HasCalculated)
+        {
+            HasCalculated = false;
+            _dialogService.ShowMessage("تم إلغاء الحساب بسبب تعديل في البيانات. يرجى الضغط على 'احسب' مرة أخرى.", "إعادة حساب");
+        }
+    }
+
+    private Task CalculateAsync()
+    {
+        if (PatientInfo.HasErrors)
+        {
+            _dialogService.ShowWarning("يجب إدخال اسم المريض وتحديد النوع.", "تحقق");
+            return Task.CompletedTask;
+        }
+
+        var selectedTestIds = TestSelection.GetSelectedTestTypeIds();
+        if (selectedTestIds.Count == 0)
+        {
+            _dialogService.ShowWarning("يجب اختيار تحليل واحد على الأقل.", "تحقق");
+            return Task.CompletedTask;
+        }
+
+        // VS-06: التحقق من حد الخصم المسموح
+        var currentStaff = _currentUserSession.CurrentUser;
+        if (currentStaff is not null && !currentStaff.IsAdmin && Financial.DiscountPercent > (decimal)currentStaff.DiscountLimit)
+        {
+            _dialogService.ShowWarning(
+                $"الخصم {Financial.DiscountPercent}% يتجاوز الحد المسموح {currentStaff.DiscountLimit}%. يرجى تصحيح قيمة الخصم.",
+                "تجاوز حد الخصم");
+            return Task.CompletedTask;
+        }
+
+        HasCalculated = true;
+        _dialogService.ShowMessage("تم حساب الفاتورة. يمكنك الآن حفظ البيانات.", "حساب");
+        return Task.CompletedTask;
+    }
+
     private async Task ClearFormAsync()
     {
         CurrentPatientId = 0;
@@ -227,6 +292,7 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
         Financial.ClearAllFields();
         await PatientInfo.GenerateCodeAsync();
         HasUnsavedChanges = false;
+        HasCalculated = false;
     }
 
     private async Task AddNewAsync()
@@ -237,6 +303,13 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
 
     private async Task SaveAsync()
     {
+        // VS-08: يجب الضغط على احسب أولاً
+        if (!HasCalculated)
+        {
+            _dialogService.ShowWarning("يرجى الضغط على 'احسب' أولاً قبل حفظ الفاتورة.", "تنبيه");
+            return;
+        }
+
         if (PatientInfo.HasErrors)
         {
             _dialogService.ShowWarning("يجب إدخال اسم المريض وتحديد النوع.", "تحقق");
@@ -363,6 +436,7 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
         IsEditMode = true;
         HasUnsavedChanges = false;
         IsFormUnlocked = true;
+        HasCalculated = true;
     }
 
     private async Task DeleteAsync()

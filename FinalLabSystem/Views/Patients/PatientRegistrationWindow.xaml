@@ -87,13 +87,13 @@
 
                     <Button Grid.Row="0" Grid.Column="0" Content="إضافة" Command="{Binding AddNewCommand}" Style="{StaticResource MainActionButtonStyle}"/>
                     <Button Grid.Row="0" Grid.Column="1" Content="تعديل" Command="{Binding EditCommand}" Style="{StaticResource MainActionButtonStyle}"/>
-                    <Button Grid.Row="0" Grid.Column="2" Content="حفظ" Command="{Binding SaveCommand}" Style="{StaticResource MainActionButtonStyle}" Background="#8BC34A"/>
+                    <Button Grid.Row="0" Grid.Column="2" Content="احسب" Command="{Binding CalculateCommand}" Style="{StaticResource MainActionButtonStyle}" Background="#FF9800"/>
                     <Button Grid.Row="0" Grid.Column="3" Content="حذف" Command="{Binding DeleteCommand}" Style="{StaticResource MainActionButtonStyle}"/>
 
-                    <Button Grid.Row="1" Grid.Column="0" Content="الإيصال" Command="{Binding ReceiptCommand}" Style="{StaticResource MainActionButtonStyle}"/>
-                    <Button Grid.Row="1" Grid.Column="1" Content="الباركود" Command="{Binding BarcodeCommand}" Style="{StaticResource MainActionButtonStyle}"/>
-                    <Button Grid.Row="1" Grid.Column="2" Content="طباعة Lab ID" Command="{Binding PrintLabIdCommand}" Style="{StaticResource MainActionButtonStyle}" Background="#00BCD4"/>
-                    <Button Grid.Row="1" Grid.Column="3" Content="الكارنيه" Style="{StaticResource MainActionButtonStyle}"/>
+                    <Button Grid.Row="1" Grid.Column="0" Content="احفظ الفاتورة" Command="{Binding SaveCommand}" Style="{StaticResource MainActionButtonStyle}" Background="#8BC34A"/>
+                    <Button Grid.Row="1" Grid.Column="1" Content="الإيصال" Command="{Binding ReceiptCommand}" Style="{StaticResource MainActionButtonStyle}"/>
+                    <Button Grid.Row="1" Grid.Column="2" Content="الباركود" Command="{Binding BarcodeCommand}" Style="{StaticResource MainActionButtonStyle}"/>
+                    <Button Grid.Row="1" Grid.Column="3" Content="طباعة Lab ID" Command="{Binding PrintLabIdCommand}" Style="{StaticResource MainActionButtonStyle}" Background="#00BCD4"/>
 
                     <Button Grid.Row="2" Grid.Column="0" Content="قائمة المرضى" Command="{Binding LoadTodayPatientsCommand}" Style="{StaticResource MainActionButtonStyle}"/>
                     <Button Grid.Row="2" Grid.Column="1" Content="نتائج التحاليل" Style="{StaticResource MainActionButtonStyle}"/>
@@ -169,7 +169,7 @@
         <KeyBinding Key="F6"  Command="{Binding NavigateToDeliveryCommand}"/>
         <KeyBinding Key="F7"  Command="{Binding NavigateToExternalSamplesCommand}"/>
         <KeyBinding Key="F8"  Command="{Binding EditCommand}"/>
-        <KeyBinding Key="F9"  Command="{Binding SaveCommand}"/>
+        <KeyBinding Key="F9"  Command="{Binding CalculateCommand}"/>
         <KeyBinding Key="F10" Command="{Binding DeleteCommand}"/>
         <KeyBinding Key="F11" Command="{Binding BarcodeCommand}"/>
         <KeyBinding Key="F12" Command="{Binding ReceiptCommand}"/>
