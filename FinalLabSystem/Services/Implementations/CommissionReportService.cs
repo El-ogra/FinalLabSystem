@@ -23,20 +23,25 @@ public class CommissionReportService : ICommissionReportService
         return await _context.VReferralCommissionReports
             .AsNoTracking()
             .Where(v => v.VisitDate >= startDate && v.VisitDate <= endDate)
-            .Select(v => new CommissionReportRow
-            {
-                ReferralId = v.ReferralId,
-                ReferralName = v.ReferralName,
-                SourceType = v.SourceType,
-                CommissionRate = v.CommissionRate,
-                VisitId = v.VisitId,
-                VisitCode = v.VisitCode,
-                VisitDate = v.VisitDate,
-                PatientName = v.PatientName,
-                VisitTotal = v.VisitTotal,
-                TotalPaid = v.TotalPaid,
-                CommissionDue = v.CommissionDue
-            })
+            .Join(
+                _context.ReferralSources,
+                v => v.ReferralId,
+                rs => rs.ReferralId,
+                (v, rs) => new CommissionReportRow
+                {
+                    ReferralId = v.ReferralId,
+                    ReferralName = v.ReferralName,
+                    SourceType = v.SourceType,
+                    CommissionRate = v.CommissionRate,
+                    VisitId = v.VisitId,
+                    VisitCode = v.VisitCode,
+                    VisitDate = v.VisitDate,
+                    PatientName = v.PatientName,
+                    VisitTotal = v.VisitTotal,
+                    TotalPaid = v.TotalPaid,
+                    CommissionDue = v.CommissionDue,
+                    Category = rs.Category.ToString()
+                })
             .ToListAsync();
     }
 }

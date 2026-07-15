@@ -15,4 +15,9 @@ public class CommissionReportRow
     public double VisitTotal { get; set; }
     public double TotalPaid { get; set; }
     public double? CommissionDue { get; set; }
+
+    /// <summary>
+    /// [VS-17 - القرار 12] تصنيف الجهة المُحوِّلة: ReferringDoctor / OutsourcedSample / ReferralOrContractEntity
+    /// </summary>
+    public string Category { get; set; } = null!;
 }

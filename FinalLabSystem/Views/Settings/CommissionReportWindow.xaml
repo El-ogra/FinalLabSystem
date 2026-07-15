@@ -37,32 +37,120 @@
                     Background="#2E7D32" Foreground="White"/>
         </StackPanel>
 
-        <DataGrid Grid.Row="2"
-                  ItemsSource="{Binding Rows}"
-                  AutoGenerateColumns="False"
-                  IsReadOnly="True"
-                  Background="White"
-                  FontSize="13"
-                  GridLinesVisibility="Horizontal"
-                  HeadersVisibility="Column"
-                  BorderBrush="#CCCCCC"
-                  BorderThickness="1">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="المحيل" Binding="{Binding ReferralName}" Width="130"/>
-                <DataGridTextColumn Header="النوع" Binding="{Binding SourceType}" Width="80"/>
-                <DataGridTextColumn Header="المريض" Binding="{Binding PatientName}" Width="120"/>
-                <DataGridTextColumn Header="الكود" Binding="{Binding VisitCode}" Width="90"/>
-                <DataGridTextColumn Header="التاريخ" Binding="{Binding VisitDate, StringFormat=yyyy/MM/dd}" Width="90"/>
-                <DataGridTextColumn Header="الإجمالي" Binding="{Binding VisitTotal, StringFormat=N2}" Width="80"/>
-                <DataGridTextColumn Header="المدفوع" Binding="{Binding TotalPaid, StringFormat=N2}" Width="80"/>
-                <DataGridTextColumn Header="العمولة" Binding="{Binding CommissionDue, StringFormat=N2}" Width="80"/>
-            </DataGrid.Columns>
-        </DataGrid>
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+
+                <!-- [VS-17] قسم 1: أطباء محوِّلون -->
+                <Expander IsExpanded="True" Margin="0,0,0,8">
+                    <Expander.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="🩺 أطباء محوِّلون" FontWeight="Bold" FontSize="15" Foreground="#1A4A52"/>
+                            <TextBlock Text="{Binding DoctorRows.Count, StringFormat=' ({0})'}" Foreground="#666" Margin="8,0,0,0"/>
+                            <TextBlock Text="{Binding DoctorTotal, StringFormat='| الإجمالي: {0:N2}'}" Foreground="#1976D2" FontWeight="Bold" Margin="12,0,0,0"/>
+                        </StackPanel>
+                    </Expander.Header>
+                    <DataGrid ItemsSource="{Binding DoctorRows}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              Background="White"
+                              FontSize="13"
+                              GridLinesVisibility="Horizontal"
+                              HeadersVisibility="Column"
+                              BorderBrush="#CCCCCC"
+                              BorderThickness="1"
+                              MaxHeight="300">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="المحيل" Binding="{Binding ReferralName}" Width="130"/>
+                            <DataGridTextColumn Header="النوع" Binding="{Binding SourceType}" Width="80"/>
+                            <DataGridTextColumn Header="المريض" Binding="{Binding PatientName}" Width="120"/>
+                            <DataGridTextColumn Header="الكود" Binding="{Binding VisitCode}" Width="90"/>
+                            <DataGridTextColumn Header="التاريخ" Binding="{Binding VisitDate, StringFormat=yyyy/MM/dd}" Width="90"/>
+                            <DataGridTextColumn Header="الإجمالي" Binding="{Binding VisitTotal, StringFormat=N2}" Width="80"/>
+                            <DataGridTextColumn Header="المدفوع" Binding="{Binding TotalPaid, StringFormat=N2}" Width="80"/>
+                            <DataGridTextColumn Header="العمولة" Binding="{Binding CommissionDue, StringFormat=N2}" Width="80"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Expander>
+
+                <!-- [VS-17] قسم 2: عينات مُستعان بها خارجيًا -->
+                <Expander IsExpanded="True" Margin="0,0,0,8">
+                    <Expander.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="🧪 عينات مُستعان بها خارجيًا" FontWeight="Bold" FontSize="15" Foreground="#1A4A52"/>
+                            <TextBlock Text="{Binding OutsourcedRows.Count, StringFormat=' ({0})'}" Foreground="#666" Margin="8,0,0,0"/>
+                            <TextBlock Text="{Binding OutsourcedTotal, StringFormat='| الإجمالي: {0:N2}'}" Foreground="#1976D2" FontWeight="Bold" Margin="12,0,0,0"/>
+                        </StackPanel>
+                    </Expander.Header>
+                    <DataGrid ItemsSource="{Binding OutsourcedRows}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              Background="White"
+                              FontSize="13"
+                              GridLinesVisibility="Horizontal"
+                              HeadersVisibility="Column"
+                              BorderBrush="#CCCCCC"
+                              BorderThickness="1"
+                              MaxHeight="300">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="المحيل" Binding="{Binding ReferralName}" Width="130"/>
+                            <DataGridTextColumn Header="النوع" Binding="{Binding SourceType}" Width="80"/>
+                            <DataGridTextColumn Header="المريض" Binding="{Binding PatientName}" Width="120"/>
+                            <DataGridTextColumn Header="الكود" Binding="{Binding VisitCode}" Width="90"/>
+                            <DataGridTextColumn Header="التاريخ" Binding="{Binding VisitDate, StringFormat=yyyy/MM/dd}" Width="90"/>
+                            <DataGridTextColumn Header="الإجمالي" Binding="{Binding VisitTotal, StringFormat=N2}" Width="80"/>
+                            <DataGridTextColumn Header="المدفوع" Binding="{Binding TotalPaid, StringFormat=N2}" Width="80"/>
+                            <DataGridTextColumn Header="العمولة" Binding="{Binding CommissionDue, StringFormat=N2}" Width="80"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Expander>
+
+                <!-- [VS-17] قسم 3: جهات إحالة أو تعاقد -->
+                <Expander IsExpanded="True" Margin="0,0,0,8">
+                    <Expander.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="🏢 جهات إحالة أو تعاقد" FontWeight="Bold" FontSize="15" Foreground="#1A4A52"/>
+                            <TextBlock Text="{Binding ContractRows.Count, StringFormat=' ({0})'}" Foreground="#666" Margin="8,0,0,0"/>
+                            <TextBlock Text="{Binding ContractTotal, StringFormat='| الإجمالي: {0:N2}'}" Foreground="#1976D2" FontWeight="Bold" Margin="12,0,0,0"/>
+                        </StackPanel>
+                    </Expander.Header>
+                    <DataGrid ItemsSource="{Binding ContractRows}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              Background="White"
+                              FontSize="13"
+                              GridLinesVisibility="Horizontal"
+                              HeadersVisibility="Column"
+                              BorderBrush="#CCCCCC"
+                              BorderThickness="1"
+                              MaxHeight="300">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="المحيل" Binding="{Binding ReferralName}" Width="130"/>
+                            <DataGridTextColumn Header="النوع" Binding="{Binding SourceType}" Width="80"/>
+                            <DataGridTextColumn Header="المريض" Binding="{Binding PatientName}" Width="120"/>
+                            <DataGridTextColumn Header="الكود" Binding="{Binding VisitCode}" Width="90"/>
+                            <DataGridTextColumn Header="التاريخ" Binding="{Binding VisitDate, StringFormat=yyyy/MM/dd}" Width="90"/>
+                            <DataGridTextColumn Header="الإجمالي" Binding="{Binding VisitTotal, StringFormat=N2}" Width="80"/>
+                            <DataGridTextColumn Header="المدفوع" Binding="{Binding TotalPaid, StringFormat=N2}" Width="80"/>
+                            <DataGridTextColumn Header="العمولة" Binding="{Binding CommissionDue, StringFormat=N2}" Width="80"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Expander>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- [VS-17] الإجمالي الكلي -->
+        <Border Grid.Row="3" Background="#E3F2FD" CornerRadius="4" Padding="12,8" Margin="0,8,0,0">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <TextBlock Text="الإجمالي الكلي للعمولات:" FontWeight="Bold" FontSize="15" Foreground="#1A4A52" Margin="0,0,12,0"/>
+                <TextBlock Text="{Binding GrandTotal, StringFormat=N2}" FontWeight="Bold" FontSize="15" Foreground="#1976D2"/>
+            </StackPanel>
+        </Border>
 
         <TextBlock Grid.Row="3"
                    Text="{Binding StatusMessage}"
                    FontSize="13" Foreground="#666"
                    HorizontalAlignment="Center"
-                   Margin="0,8,0,0"/>
+                   Margin="0,50,0,0"/>
     </Grid>
 </Window>
