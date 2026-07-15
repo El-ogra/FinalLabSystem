@@ -30,6 +30,14 @@ public class StaffService : IStaffService
             .ToListAsync();
     }
 
+    public async Task<List<Staff>> GetActiveStaffAsync()
+    {
+        return await _context.Staff
+            .Where(s => s.IsActive)
+            .OrderBy(s => s.DisplayName)
+            .ToListAsync();
+    }
+
     public async Task<Staff?> GetByIdAsync(int staffId)
     {
         return await _context.Staff.FindAsync(staffId);

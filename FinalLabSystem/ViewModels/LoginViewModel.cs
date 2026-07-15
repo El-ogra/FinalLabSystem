@@ -1,8 +1,10 @@
+using System.Collections.ObjectModel;
 using System.Windows.Input;
 using FinalLabSystem.Infrastructure;
 using FinalLabSystem.Infrastructure.Navigation;
 using FinalLabSystem.Infrastructure.Session;
 using FinalLabSystem.Infrastructure.Settings;
+using FinalLabSystem.Models;
 using FinalLabSystem.Services.Interfaces;
 
 namespace FinalLabSystem.ViewModels;
@@ -13,6 +15,7 @@ public class LoginViewModel : ViewModelBase
     private readonly INavigationService _navigationService;
     private readonly IUserSettingsService _userSettings;
     private readonly ICurrentUserSession _session;
+    private readonly IStaffService _staffService;
 
     private readonly AsyncRelayCommand _loginCommand;
     private readonly RelayCommand _togglePasswordVisibilityCommand;
@@ -23,17 +26,20 @@ public class LoginViewModel : ViewModelBase
     private bool _isPasswordVisible;
     private string? _errorMessage;
     private bool _isBusy;
+    private Staff? _selectedStaff;
 
     public LoginViewModel(
         IAuthService authService,
         INavigationService navigationService,
         IUserSettingsService userSettings,
-        ICurrentUserSession session)
+        ICurrentUserSession session,
+        IStaffService staffService)
     {
         _authService = authService;
         _navigationService = navigationService;
         _userSettings = userSettings;
         _session = session;
+        _staffService = staffService;
 
         var rememberedUsername = _userSettings.RememberedUsername;
         if (!string.IsNullOrWhiteSpace(rememberedUsername))
@@ -46,6 +52,22 @@ public class LoginViewModel : ViewModelBase
         _loginCommand.ErrorOccurred += (_, ex) => ErrorMessage = ex.Message;
 
         _togglePasswordVisibilityCommand = new RelayCommand(_ => IsPasswordVisible = !IsPasswordVisible);
+
+        _ = LoadActiveStaffAsync();
+    }
+
+    public ObservableCollection<Staff> ActiveStaff { get; } = new();
+
+    public Staff? SelectedStaff
+    {
+        get => _selectedStaff;
+        set
+        {
+            if (SetProperty(ref _selectedStaff, value))
+            {
+                Username = value?.Username;
+            }
+        }
     }
 
     public string? Username
@@ -130,6 +152,21 @@ public class LoginViewModel : ViewModelBase
         finally
         {
             IsBusy = false;
+        }
+    }
+
+    private async Task LoadActiveStaffAsync()
+    {
+        try
+        {
+            var staffList = await _staffService.GetActiveStaffAsync();
+            ActiveStaff.Clear();
+            foreach (var staff in staffList)
+                ActiveStaff.Add(staff);
+        }
+        catch
+        {
+            // Silently ignore — ComboBox will be empty, TextBox remains as fallback
         }
     }
 }

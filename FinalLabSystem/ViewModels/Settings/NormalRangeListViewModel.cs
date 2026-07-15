@@ -14,6 +14,7 @@ public sealed class NormalRangeListViewModel : ViewModelBase
     private readonly NormalRangeDetailViewModel _detail;
     private TestComponent? _selectedComponent;
     private NormalRange? _selectedRange;
+    private bool _isUnifiedMode;
 
     public NormalRangeListViewModel(ITestCatalogService testCatalogService, NormalRangeDetailViewModel detail, IDialogService dialogService)
     {
@@ -22,8 +23,9 @@ public sealed class NormalRangeListViewModel : ViewModelBase
         _dialogService = dialogService;
         AddComponentCommand = new RelayCommand(_ => AddComponent());
         DeleteComponentCommand = new AsyncRelayCommand(DeleteComponentAsync, () => SelectedComponent is not null);
-        AddRangeCommand = new RelayCommand(_ => AddRange(), _ => SelectedComponent is not null);
+        AddRangeCommand = new RelayCommand(_ => AddRange(), _ => SelectedComponent is not null && !_isUnifiedMode);
         DeleteRangeCommand = new AsyncRelayCommand(DeleteRangeAsync, () => SelectedRange is not null);
+        ApplyUnifiedRangeCommand = new RelayCommand(_ => ApplyUnifiedRange(), _ => SelectedComponent is not null);
     }
 
     public event EventHandler? RangesChanged;
@@ -31,6 +33,21 @@ public sealed class NormalRangeListViewModel : ViewModelBase
     public ObservableCollection<TestComponent> Components { get; } = new();
 
     public ObservableCollection<NormalRange> RangesForSelectedComponent { get; } = new();
+
+    public bool IsUnifiedMode
+    {
+        get => _isUnifiedMode;
+        private set
+        {
+            if (SetProperty(ref _isUnifiedMode, value))
+            {
+                OnPropertyChanged(nameof(CanAddRange));
+                CommandManager.InvalidateRequerySuggested();
+            }
+        }
+    }
+
+    public bool CanAddRange => !_isUnifiedMode;
 
     public TestComponent? SelectedComponent
     {
@@ -71,6 +88,8 @@ public sealed class NormalRangeListViewModel : ViewModelBase
     public ICommand AddRangeCommand { get; }
 
     public ICommand DeleteRangeCommand { get; }
+
+    public ICommand ApplyUnifiedRangeCommand { get; }
 
     public void LoadComponents(IEnumerable<TestComponent> components)
     {
@@ -201,5 +220,34 @@ public sealed class NormalRangeListViewModel : ViewModelBase
             SortOrder = component.SortOrder,
             IsActive = component.IsActive
         };
+    }
+
+    private void ApplyUnifiedRange()
+    {
+        if (SelectedComponent is null)
+            return;
+
+        RangesForSelectedComponent.Clear();
+
+        var range = new NormalRange
+        {
+            ComponentId = SelectedComponent.ComponentId,
+            Sex = "Both",
+            FastingState = "A",
+            AgeFromDays = 0,
+            AgeToDays = int.MaxValue,
+            ForPregnantOnly = false,
+            NormalRangeText = SelectedComponent.ComponentNameEn
+        };
+
+        RangesForSelectedComponent.Add(range);
+        SelectedRange = range;
+        IsUnifiedMode = true;
+        RangesChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void ExitUnifiedMode()
+    {
+        IsUnifiedMode = false;
     }
 }

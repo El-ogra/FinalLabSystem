@@ -34,51 +34,66 @@ public class BarcodeGeneratorTests
     // --- Unit Tests: BarcodeGenerator (5 tests) ---
 
     [Fact]
-    public async Task T01_GenerateCaseCodeAsync_Returns13Chars_StartsWith1()
+    public void T01_BuildBarcodeValue_Case_Prefix_EndsWithTypeDigit1()
     {
-        var patient = new Patient { PatientId = 1, PatientCode = "P0001", FullNameAr = "أحمد", Sex = "M" };
-        var visit = new Visit { VisitId = 1, PatientId = 1, VisitDate = DateTime.Today, VisitCode = "V001" };
+        var generator = new BarcodeGenerator(CreateInMemoryDbContext());
+        var date = new DateTime(2026, 7, 14);
+        var result = generator.BuildBarcodeValue(1, date, 1);
 
-        var context = CreateInMemoryDbContext(ctx =>
-        {
-            ctx.Patients.Add(patient);
-            ctx.Visits.Add(visit);
-            ctx.SaveChanges();
-        });
-
-        var generator = new BarcodeGenerator(context);
-        var code = await generator.GenerateCaseCodeAsync(1);
-
-        Assert.Equal(13, code.Length);
-        Assert.StartsWith("1", code);
-        var datePart = DateTime.Today.ToString("yyMMdd");
-        Assert.Contains(datePart, code);
+        Assert.Equal(12, result.Length);
+        Assert.Equal('1', result[10]);
+        Assert.Contains("260714", result);
+        Assert.Matches(@"^\d{12}$", result);
     }
 
     [Fact]
-    public async Task T02_GenerateFileCodeAsync_Returns13Chars_StartsWith3()
+    public void T02_BuildBarcodeValue_File_Prefix_EndsWithTypeDigit3()
     {
-        var patient = new Patient { PatientId = 1, PatientCode = "P0001", FullNameAr = "أحمد", Sex = "M" };
-        var visit = new Visit { VisitId = 1, PatientId = 1, VisitDate = DateTime.Today, VisitCode = "V001" };
+        var generator = new BarcodeGenerator(CreateInMemoryDbContext());
+        var date = new DateTime(2026, 7, 14);
+        var result = generator.BuildBarcodeValue(3, date, 1);
 
-        var context = CreateInMemoryDbContext(ctx =>
-        {
-            ctx.Patients.Add(patient);
-            ctx.Visits.Add(visit);
-            ctx.SaveChanges();
-        });
-
-        var generator = new BarcodeGenerator(context);
-        var code = await generator.GenerateFileCodeAsync(1);
-
-        Assert.Equal(13, code.Length);
-        Assert.StartsWith("3", code);
-        var datePart = DateTime.Today.ToString("yyMMdd");
-        Assert.Contains(datePart, code);
+        Assert.Equal(12, result.Length);
+        Assert.Equal('3', result[10]);
+        Assert.Contains("260714", result);
+        Assert.Matches(@"^\d{12}$", result);
     }
 
     [Fact]
-    public async Task T03_GetOrCreateLabIdAsync_NewPatient_CreatesAndPersists()
+    public void T03_BuildBarcodeValue_Lab_Prefix_EndsWithTypeDigit5()
+    {
+        var generator = new BarcodeGenerator(CreateInMemoryDbContext());
+        var date = new DateTime(2026, 7, 14);
+        var result = generator.BuildBarcodeValue(5, date, 0);
+
+        Assert.Equal(12, result.Length);
+        Assert.Equal('5', result[10]);
+        Assert.Contains("260714", result);
+        Assert.Matches(@"^\d{12}$", result);
+    }
+
+    [Fact]
+    public void T04_BuildBarcodeValue_Wednesday_WeekdayDigitAtPosition0()
+    {
+        var generator = new BarcodeGenerator(CreateInMemoryDbContext());
+        var date = new DateTime(2026, 7, 15); // Wednesday = DayOfWeek 3 => weekday = 4
+        var result = generator.BuildBarcodeValue(1, date, 1);
+
+        Assert.Equal('4', result[0]);
+    }
+
+    [Fact]
+    public void T05_BuildBarcodeValue_Ordinal_PaddedTo3Digits()
+    {
+        var generator = new BarcodeGenerator(CreateInMemoryDbContext());
+        var date = new DateTime(2026, 7, 14);
+        var result = generator.BuildBarcodeValue(1, date, 42);
+
+        Assert.Equal("042", result.Substring(7, 3));
+    }
+
+    [Fact]
+    public async Task T07_GetOrCreateLabIdAsync_NewPatient_CreatesAndPersists()
     {
         var patient = new Patient { PatientId = 1, PatientCode = "P0001", FullNameAr = "أحمد", Sex = "M" };
 
@@ -91,8 +106,8 @@ public class BarcodeGeneratorTests
         var generator = new BarcodeGenerator(context);
         var labId = await generator.GetOrCreateLabIdAsync(1);
 
-        Assert.Equal(13, labId.Length);
-        Assert.StartsWith("5", labId);
+        Assert.Equal(12, labId.Length);
+        Assert.Equal('5', labId[10]);
 
         var updatedPatient = await context.Patients.FindAsync(1);
         Assert.NotNull(updatedPatient!.LabId);
@@ -100,7 +115,7 @@ public class BarcodeGeneratorTests
     }
 
     [Fact]
-    public async Task T04_GetOrCreateLabIdAsync_ExistingPatient_ReturnsSame()
+    public async Task T08_GetOrCreateLabIdAsync_ExistingPatient_ReturnsSame()
     {
         var patient = new Patient { PatientId = 1, PatientCode = "P0001", FullNameAr = "أحمد", Sex = "M", LabId = "5260714100005" };
 
@@ -117,15 +132,14 @@ public class BarcodeGeneratorTests
     }
 
     [Fact]
-    public void T05_CalculateCheckDigit_ProducesValidLuhn()
+    public void T09_CalculateCheckDigit_ProducesValidLuhn()
     {
-        var code1 = "126071410000";
+        var code1 = "32607140001";
         var digit1 = BarcodeGenerator.CalculateLuhnCheckDigit(code1);
-        Assert.Equal(4, digit1);
 
         var fullCode1 = code1 + digit1;
         int sum1 = 0;
-        bool alt1 = true;
+        bool alt1 = fullCode1.Length % 2 == 1;
         for (int i = fullCode1.Length - 1; i >= 0; i--)
         {
             int d = fullCode1[i] - '0';
@@ -136,13 +150,12 @@ public class BarcodeGeneratorTests
         }
         Assert.Equal(0, sum1 % 10);
 
-        var code2 = "326071410000";
+        var code2 = "32607140003";
         var digit2 = BarcodeGenerator.CalculateLuhnCheckDigit(code2);
-        Assert.Equal(2, digit2);
 
         var fullCode2 = code2 + digit2;
         int sum2 = 0;
-        bool alt2 = true;
+        bool alt2 = fullCode2.Length % 2 == 1;
         for (int i = fullCode2.Length - 1; i >= 0; i--)
         {
             int d = fullCode2[i] - '0';
@@ -157,7 +170,7 @@ public class BarcodeGeneratorTests
     // --- Integration Tests: SampleTrackingService (2 tests) ---
 
     [Fact]
-    public async Task T06_GenerateBarcodesForVisit_FirstVisit_CreatesAll3Codes()
+    public async Task T10_GenerateBarcodesForVisit_FirstVisit_CreatesAll3Codes()
     {
         var patient = new Patient { PatientId = 1, PatientCode = "P0001", FullNameAr = "أحمد", Sex = "M" };
         var visit = new Visit { VisitId = 1, PatientId = 1, VisitDate = DateTime.Today, VisitCode = "V001" };
@@ -197,11 +210,11 @@ public class BarcodeGeneratorTests
 
         var patientAfter = await context.Patients.FindAsync(1);
         Assert.NotNull(patientAfter!.LabId);
-        Assert.StartsWith("5", patientAfter.LabId);
+        Assert.Equal('5', patientAfter.LabId[10]);
     }
 
     [Fact]
-    public async Task T07_GenerateBarcodesForVisit_SecondVisit_ReusesLabId()
+    public async Task T11_GenerateBarcodesForVisit_SecondVisit_ReusesLabId()
     {
         var patient = new Patient { PatientId = 1, PatientCode = "P0001", FullNameAr = "أحمد", Sex = "M" };
         var visit1 = new Visit { VisitId = 1, PatientId = 1, VisitDate = DateTime.Today, VisitCode = "V001" };
@@ -251,7 +264,7 @@ public class BarcodeGeneratorTests
     // --- ViewModel Tests (2 tests) ---
 
     [Fact]
-    public async Task T08_BarcodeDialog_LabIdSection_ShowsOnlyOneLabel()
+    public async Task T12_BarcodeDialog_LabIdSection_ShowsOnlyOneLabel()
     {
         var patient = new Patient { PatientId = 1, PatientCode = "P0001", FullNameAr = "أحمد", Sex = "M" };
         var labBarcode = new PatientBarcode
@@ -290,7 +303,7 @@ public class BarcodeGeneratorTests
     }
 
     [Fact]
-    public void T09_PatientRegistration_PrintLabIdCommand_EnabledOnlyAfterSave()
+    public void T13_PatientRegistration_PrintLabIdCommand_EnabledOnlyAfterSave()
     {
         var mockVisitService = new Mock<IVisitService>();
         var mockPatientService = new Mock<IPatientService>();

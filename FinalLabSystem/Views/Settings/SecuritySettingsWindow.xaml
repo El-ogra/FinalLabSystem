@@ -7,7 +7,7 @@
         d:DataContext="{d:DesignInstance Type=vm:SecuritySettingsWindowViewModel}"
         mc:Ignorable="d"
         Title="إعدادات الأمان"
-        Height="450" Width="500"
+        MinHeight="450" SizeToContent="WidthAndHeight" MinWidth="500"
         WindowStartupLocation="CenterOwner"
         FlowDirection="RightToLeft"
         ResizeMode="NoResize">

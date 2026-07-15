@@ -2,8 +2,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="معاينة الطباعة"
-        Height="650"
-        Width="780"
+        MinHeight="650"
+        SizeToContent="WidthAndHeight" MinWidth="780"
         WindowStartupLocation="CenterOwner"
         FlowDirection="RightToLeft">
     <DockPanel>

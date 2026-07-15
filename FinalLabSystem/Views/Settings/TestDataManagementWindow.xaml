@@ -2,8 +2,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="بيانات التحاليل"
-        Height="860"
-        Width="1320"
+        MinHeight="860"
+        SizeToContent="WidthAndHeight" MinWidth="1320"
         WindowStartupLocation="CenterScreen"
         FlowDirection="RightToLeft"
         Loaded="Window_Loaded">

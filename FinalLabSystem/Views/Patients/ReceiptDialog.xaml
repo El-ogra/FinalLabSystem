@@ -1,7 +1,7 @@
 <Window x:Class="FinalLabSystem.Views.Patients.ReceiptDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="طباعة الإيصال" Height="620" Width="560"
+        Title="طباعة الإيصال" MinHeight="620" SizeToContent="WidthAndHeight" MinWidth="560"
         WindowStartupLocation="CenterOwner"
         FlowDirection="RightToLeft"
         Background="#F5F5F5">

@@ -1,7 +1,7 @@
 <Window x:Class="FinalLabSystem.Views.Patients.AuditTrailWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="{Binding Title}" Height="500" Width="750"
+        Title="{Binding Title}" MinHeight="500" SizeToContent="WidthAndHeight" MinWidth="750"
         WindowStartupLocation="CenterOwner"
         FlowDirection="RightToLeft"
         Background="#1E2A3A">

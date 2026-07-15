@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="قائمة الطباعة - Print Queue"
-        Height="500" Width="700"
+        MinHeight="500" SizeToContent="WidthAndHeight" MinWidth="700"
         WindowStartupLocation="CenterOwner"
         FlowDirection="RightToLeft"
         Background="#0D2137">

@@ -66,6 +66,10 @@ public sealed class NormalRangeWindowViewModel : ViewModelBase
 
     public ICommand DeleteRangeCommand => List.DeleteRangeCommand;
 
+    public ICommand ApplyUnifiedRangeCommand => List.ApplyUnifiedRangeCommand;
+
+    public bool IsUnifiedMode => List.IsUnifiedMode;
+
     public ICommand SaveCommand => Detail.SaveCommand;
 
     public ICommand CancelCommand => Detail.CancelCommand;

@@ -2,8 +2,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="{Binding Title}"
-        Height="780"
-        Width="1200"
+        MinHeight="780"
+        SizeToContent="WidthAndHeight" MinWidth="1200"
         WindowStartupLocation="CenterOwner">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>
@@ -361,9 +361,29 @@
                         Style="{StaticResource ActionButtonStyle}"/>
                 <Button Content="حفظ" Command="{Binding SaveCommand}"
                         Style="{StaticResource ActionButtonStyle}" Background="#4CAF50"/>
-                <!-- F-32: removed unbound تعديل button -->
-                <Button Content="إضافة مدى" Command="{Binding AddRangeCommand}"
-                        Style="{StaticResource ActionButtonStyle}"/>
+                <Button Content="نطاق موحد لجميع الفئات" Command="{Binding ApplyUnifiedRangeCommand}">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource ActionButtonStyle}">
+                            <Setter Property="Background" Value="#FF9800"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsUnifiedMode}" Value="True">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <Button Content="إضافة مدى" Command="{Binding AddRangeCommand}">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource ActionButtonStyle}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding List.IsUnifiedMode}" Value="True">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
             </StackPanel>
         </Border>
     </Grid>

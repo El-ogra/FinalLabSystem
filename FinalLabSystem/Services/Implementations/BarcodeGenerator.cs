@@ -72,12 +72,12 @@ public class BarcodeGenerator : IBarcodeGenerator
         return Task.FromResult(BuildBarcodeValue((byte)BarcodeCodeType.Lab, visitDate, 0));
     }
 
-    private string BuildBarcodeValue(byte typeDigit, DateTime date, int ordinal)
+    internal string BuildBarcodeValue(byte typeDigit, DateTime date, int ordinal)
     {
         var datePart = date.ToString("yyMMdd");
         var weekday = (int)date.DayOfWeek + 1;
-        var ordinalPart = ordinal.ToString("D4");
-        var partial = $"{typeDigit}{datePart}{weekday}{ordinalPart}";
+        var ordinalPart = ordinal.ToString("D3");
+        var partial = $"{weekday}{datePart}{ordinalPart}{typeDigit}";
         var checkDigit = CalculateLuhnCheckDigit(partial);
         return $"{partial}{checkDigit}";
     }
