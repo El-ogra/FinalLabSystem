@@ -25,7 +25,8 @@ public class ExtraChargeServiceTests
     private static VisitService CreateVisitService(FinalLabDbContext ctx)
     {
         var logger = new Mock<ILogger<VisitService>>();
-        return new VisitService(ctx, logger.Object);
+        var authService = new Mock<IAuthService>();
+        return new VisitService(ctx, logger.Object, authService.Object);
     }
 
     [Fact]

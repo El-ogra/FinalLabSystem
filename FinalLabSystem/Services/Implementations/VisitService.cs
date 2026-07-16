@@ -16,11 +16,13 @@ public class VisitService : IVisitService
 {
     private readonly FinalLabDbContext _context;
     private readonly ILogger<VisitService> _logger;
+    private readonly IAuthService _authService;
 
-    public VisitService(FinalLabDbContext context, ILogger<VisitService> logger)
+    public VisitService(FinalLabDbContext context, ILogger<VisitService> logger, IAuthService authService)
     {
         _context = context;
         _logger = logger;
+        _authService = authService;
     }
 
     public async Task<Visit> CreateVisitAsync(Visit visit, List<int> testIds, List<int> profileIds, List<VisitCharge> charges)
@@ -357,7 +359,8 @@ public class VisitService : IVisitService
 
         return await _context.Visits
             .Include(v => v.Patient)
-            .Where(v => v.VisitDate >= today && v.VisitDate < tomorrow)
+            .Where(v => v.VisitDate >= today && v.VisitDate < tomorrow
+                     && v.VisitStatus != VisitStatus.Cancelled)
             .OrderByDescending(v => v.CreatedAt)
             .ThenByDescending(v => v.VisitId)
             .Select(v => new TodayPatientDto
@@ -370,37 +373,22 @@ public class VisitService : IVisitService
             .ToListAsync();
     }
 
-    public async Task<bool> CancelVisitAsync(int visitId)
+    public async Task<bool> CancelVisitAsync(int visitId, int staffId)
     {
-        using var transaction = await _context.Database.BeginTransactionAsync();
+        var hasPermission = await _authService.HasPermissionAsync(staffId, "VISITS.CANCEL");
+        if (!hasPermission)
+            throw new UnauthorizedAccessException(
+                "ليس لديك صلاحية لإلغاء الزيارة. يُرجى التواصل مع المسؤول.");
 
-        try
-        {
-            var visit = await _context.Visits
-                .Include(v => v.VisitTests)
-                .Include(v => v.Payments)
-                .Include(v => v.SampleTubes)
-                .Include(v => v.VisitCharges)
-                .FirstOrDefaultAsync(v => v.VisitId == visitId);
+        var visit = await _context.Visits.FindAsync(visitId);
+        if (visit is null)
+            return false;
 
-            if (visit is null)
-                return false;
+        visit.VisitStatus = VisitStatus.Cancelled;
+        visit.UpdatedAt = DateTime.UtcNow;
 
-            _context.VisitTests.RemoveRange(visit.VisitTests);
-            _context.Payments.RemoveRange(visit.Payments);
-            _context.SampleTubes.RemoveRange(visit.SampleTubes);
-            _context.VisitCharges.RemoveRange(visit.VisitCharges);
-            _context.Visits.Remove(visit);
-
-            await _context.SaveChangesAsync();
-            await transaction.CommitAsync();
-            return true;
-        }
-        catch
-        {
-            await transaction.RollbackAsync();
-            throw;
-        }
+        await _context.SaveChangesAsync();
+        return true;
     }
 
     public async Task<List<Visit>> GetTodayVisitsWithPatientsAsync()
@@ -414,7 +402,8 @@ public class VisitService : IVisitService
             .Include(v => v.Payments)
             .Include(v => v.VisitTests)
                 .ThenInclude(vt => vt.Testtype)
-            .Where(v => v.VisitDate >= today && v.VisitDate < tomorrow)
+            .Where(v => v.VisitDate >= today && v.VisitDate < tomorrow
+                     && v.VisitStatus != VisitStatus.Cancelled)
             .OrderByDescending(v => v.VisitDate)
             .ToListAsync();
     }
@@ -495,7 +484,8 @@ public class VisitService : IVisitService
                 .ThenInclude(vt => vt.TestResults)
             .Include(v => v.VisitTests)
                 .ThenInclude(vt => vt.TestWorkflows)
-            .Where(v => v.VisitDate >= targetDate && v.VisitDate < nextDay)
+            .Where(v => v.VisitDate >= targetDate && v.VisitDate < nextDay
+                     && v.VisitStatus != VisitStatus.Cancelled)
             .OrderByDescending(v => v.VisitDate)
             .ToListAsync();
 

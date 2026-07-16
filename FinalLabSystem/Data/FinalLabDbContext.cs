@@ -1866,10 +1866,7 @@ public partial class FinalLabDbContext : DbContext
         {
             entity.HasKey(e => e.VisitId).HasName("PK__Visit__375A75E1798EC5C4");
 
-            entity.ToTable("Visit", tb =>
-                {
-                    tb.HasCheckConstraint("CK_Visit_DiscountExclusivity", "NOT (discount_amount > 0 AND discount_percent > 0)");
-                });
+            entity.ToTable("Visit");
 
             entity.HasIndex(e => e.CompanyId, "IX_Visit_Company");
 

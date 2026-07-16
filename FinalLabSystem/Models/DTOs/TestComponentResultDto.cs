@@ -86,8 +86,8 @@ public sealed class TestComponentResultDto : INotifyPropertyChanged
             var val = (double)ResultNumeric.Value;
             var low = SnapLowNormal.Value;
             var high = SnapHighNormal.Value;
-            if (val >= high * 2) return "HH";
-            if (val <= low * 2) return "LL";
+            if (SnapHighCritical.HasValue && val >= SnapHighCritical.Value) return "HH";
+            if (SnapLowCritical.HasValue && val <= SnapLowCritical.Value) return "LL";
             if (val > high) return "H";
             if (val < low) return "L";
             return string.Empty;

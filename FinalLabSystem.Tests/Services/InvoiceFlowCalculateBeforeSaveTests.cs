@@ -41,7 +41,8 @@ public class InvoiceFlowCalculateBeforeSaveTests
         await ctx.SaveChangesAsync();
 
         var logger = new Mock<ILogger<VisitService>>();
-        var visitService = new VisitService(ctx, logger.Object);
+        var authService = new Mock<IAuthService>();
+        var visitService = new VisitService(ctx, logger.Object, authService.Object);
 
         var patient = new Patient
         {
@@ -100,7 +101,8 @@ public class InvoiceFlowCalculateBeforeSaveTests
         await ctx.SaveChangesAsync();
 
         var logger = new Mock<ILogger<VisitService>>();
-        var visitService = new VisitService(ctx, logger.Object);
+        var authService = new Mock<IAuthService>();
+        var visitService = new VisitService(ctx, logger.Object, authService.Object);
 
         var patient = new Patient
         {
@@ -153,7 +155,8 @@ public class InvoiceFlowCalculateBeforeSaveTests
         await ctx.SaveChangesAsync();
 
         var logger = new Mock<ILogger<VisitService>>();
-        var visitService = new VisitService(ctx, logger.Object);
+        var authService = new Mock<IAuthService>();
+        var visitService = new VisitService(ctx, logger.Object, authService.Object);
         var charges = await visitService.GetVisitChargesAsync(visit.VisitId);
 
         Assert.Equal(2, charges.Count);

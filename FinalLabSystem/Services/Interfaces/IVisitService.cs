@@ -49,7 +49,7 @@ public interface IVisitService
     /// </summary>
     /// <param name="visitId">The visit identifier.</param>
     /// <returns><c>true</c> when the visit was cancelled; otherwise, <c>false</c>.</returns>
-    Task<bool> CancelVisitAsync(int visitId);
+    Task<bool> CancelVisitAsync(int visitId, int staffId);
 
     /// <summary>
     /// Gets today's visits including patient information.

@@ -447,7 +447,9 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
         if (!_dialogService.ShowConfirmation("هل تريد حذف الزيارة الحالية؟", "حذف"))
             return;
 
-        var deleted = await _visitService.CancelVisitAsync(CurrentVisitId);
+        var staffId = _currentUserSession.CurrentUser?.StaffId
+            ?? throw new InvalidOperationException("لا يمكن إلغاء الزيارة بدون جلسة مستخدم.");
+        var deleted = await _visitService.CancelVisitAsync(CurrentVisitId, staffId);
         if (deleted)
             await AddNewAsync();
     }

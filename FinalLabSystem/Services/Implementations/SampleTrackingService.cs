@@ -50,12 +50,17 @@ public class SampleTrackingService : ISampleTrackingService
         var fileCode = await _barcodeGenerator.GenerateFileCodeAsync(visitId);
         var labId = await _barcodeGenerator.GetOrCreateLabIdAsync(patientId);
 
+        var hasLabBarcode = await _context.PatientBarcodes
+            .AnyAsync(pb => pb.PatientId == patientId
+                         && pb.CodeType == BarcodeCodeType.Lab);
+
         var ordinal = await _context.PatientBarcodes
             .CountAsync(pb => pb.PatientId == patientId
                            && pb.IssueDate.Date == DateTime.Today
                            && pb.CodeType == BarcodeCodeType.Case) + 1;
 
-        _context.PatientBarcodes.AddRange(
+        var patientBarcodes = new List<PatientBarcode>
+        {
             new PatientBarcode
             {
                 PatientId = patientId,
@@ -75,8 +80,12 @@ public class SampleTrackingService : ISampleTrackingService
                 IssueDate = DateTime.Now,
                 SortOrdinal = ordinal,
                 CreatedBy = staffId
-            },
-            new PatientBarcode
+            }
+        };
+
+        if (!hasLabBarcode)
+        {
+            patientBarcodes.Add(new PatientBarcode
             {
                 PatientId = patientId,
                 VisitId = null,
@@ -85,8 +94,10 @@ public class SampleTrackingService : ISampleTrackingService
                 IssueDate = DateTime.Now,
                 SortOrdinal = 0,
                 CreatedBy = staffId
-            }
-        );
+            });
+        }
+
+        _context.PatientBarcodes.AddRange(patientBarcodes);
 
         var groups = visitTests
             .GroupBy(vt => TubeResolver.ResolvePrimaryTubeIdentity(vt.Testtype));

@@ -103,8 +103,7 @@ public class BarcodeGenerator : IBarcodeGenerator
         var dayStart = date.Date;
         var dayEnd = dayStart.AddDays(1);
         return await _context.PatientBarcodes
-            .Where(pb => pb.PatientId == patientId
-                      && pb.IssueDate >= dayStart
+            .Where(pb => pb.IssueDate >= dayStart
                       && pb.IssueDate < dayEnd
                       && pb.CodeType == BarcodeCodeType.Case)
             .CountAsync() + 1;
