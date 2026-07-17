@@ -293,6 +293,7 @@ public class BarcodeGeneratorTests
             Mock.Of<ILabelPrintService>(),
             Mock.Of<IInventoryService>(),
             Mock.Of<IDialogService>(),
+            Mock.Of<ISettingsService>(),
             context);
 
         await vm.LoadBarcodesAsync(1, 1);

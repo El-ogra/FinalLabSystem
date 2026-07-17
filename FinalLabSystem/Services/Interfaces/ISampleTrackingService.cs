@@ -29,4 +29,14 @@ public interface ISampleTrackingService
     /// <param name="newStage">The new workflow stage.</param>
     /// <param name="staffId">The staff member making the change.</param>
     Task UpdateTestStageAsync(int visitTestId, TestStage newStage, int staffId);
+
+    /// <summary>
+    /// Moves a test from its current tube to a destination tube.
+    /// </summary>
+    Task MoveTestToTubeAsync(int visitTestId, int destinationTubeId);
+
+    /// <summary>
+    /// Removes a test from its current tube (unlinks it).
+    /// </summary>
+    Task RemoveTestFromTubeAsync(int visitTestId);
 }

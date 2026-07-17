@@ -165,4 +165,22 @@ public class SampleTrackingService : ISampleTrackingService
 
         await _context.SaveChangesAsync();
     }
+
+    public async Task MoveTestToTubeAsync(int visitTestId, int destinationTubeId)
+    {
+        var visitTest = await _context.VisitTests.FindAsync(visitTestId);
+        if (visitTest == null) return;
+
+        visitTest.TubeId = destinationTubeId;
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task RemoveTestFromTubeAsync(int visitTestId)
+    {
+        var visitTest = await _context.VisitTests.FindAsync(visitTestId);
+        if (visitTest == null) return;
+
+        visitTest.TubeId = null;
+        await _context.SaveChangesAsync();
+    }
 }

@@ -61,4 +61,8 @@ public partial class LabSetting
     // === Receipt Preferences ===
     public bool AutoPrintReceiptAfterSave { get; set; } = false;
     public bool ShowTestBreakdownInReceipt { get; set; } = true;
+
+    // === Label Print Offsets ===
+    public double LabelPrintOffsetXmm { get; set; } = 0;
+    public double LabelPrintOffsetYmm { get; set; } = 0;
 }

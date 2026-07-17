@@ -43,6 +43,7 @@ public class BarcodeDialogFactoryTests
             Mock.Of<ILabelPrintService>(),
             Mock.Of<IInventoryService>(),
             Mock.Of<IDialogService>(),
+            Mock.Of<ISettingsService>(),
             CreateInMemoryDbContext());
 
         var mockServiceProvider = new Mock<IServiceProvider>();

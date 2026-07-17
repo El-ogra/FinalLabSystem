@@ -37,6 +37,7 @@
 - تم بناء المشروع بنجاح: 0 errors, 0 warnings
 - تم تشغيل الاختبارات: 772 passed, 0 failed
 - **جميع شرائح الوظيفة الأولى (1.1 - 1.8) مكتملة**
+- **جميع شرائح الوظيفة الثانية (2.1 - 2.5) مكتملة** — يتطلب المستخدم تنفيذ Migration يدوياً عبر Package Manager Console: `Add-Migration AddLabelPrintOffsetToLabSettings && Update-Database`
 - ملاحظة: عملية git push تعلّق بسبب عدم وجود بيانات اعتماد مخزنة — يحتاج المستخدم للدفع يدوياً
 
 ## حالة الشرائح — الوظيفة الثانية
@@ -44,13 +45,17 @@
 | الشريحة | العنوان | الحالة | هاش الكوميت |
 |---------|---------|--------|-------------|
 | 2.1 | توحيد BarcodeDialog في شاشة واحدة | ✅ مكتملة | 68393ea |
-| 2.2 | — | ⏳ معلّقة | — |
-| 2.3 | — | ⏳ معلّقة | — |
-| 2.4 | — | ⏳ معلّقة | — |
-| 2.5 | — | ⏳ معلّقة | — |
+| 2.2 | قسم باركود إضافي | ✅ مكتملة | (نفس كوميت 2.1) |
+| 2.3 | دعم السحب والإفلات | ✅ مكتملة | (نفس كوميت 2.1) |
+| 2.4 | منزلقان لإزاحة الطباعة + حفظ | ✅ مكتملة | (نفس كوميت 2.1) |
+| 2.5 | CheckBox طباعة كود المعمل مع الكل | ✅ مكتملة | (نفس كوميت 2.1) |
 
 ## سجل الشرائح المنجزة — الوظيفة الثانية
 
 | رقم الشريحة | الملفات التي تغيّرت | ملاحظة |
 |-------------|---------------------|--------|
 | 2.1 | Views/Patients/BarcodeDialog.xaml، ViewModels/Patients/BarcodeDialogViewModel.cs | استبدال TabControl بـ ScrollViewer عمودي يعرض جميع الملصقات في شاشة واحدة مع زر "طباعة الكل" الذي يطبع جميع الأنواع معاً |
+| 2.2 | ViewModels/Patients/BarcodeDialogViewModel.cs، Views/Patients/BarcodeDialog.xaml | إضافة قسم "باركود إضافي" مع حقلي Header/Description وزر إضافة وحذف وطباعة — مؤقت غير مخزن |
+| 2.3 | Services/Interfaces/ISampleTrackingService.cs، Services/Implementations/SampleTrackingService.cs، ViewModels/Patients/BarcodeDialogViewModel.cs، Views/Patients/BarcodeDialog.xaml، Views/Patients/BarcodeDialog.xaml.cs | دعم السحب والإفلات لنقل التحاليل بين الملصقات مع زر "حذف التحاليل" |
+| 2.4 | Models/LabSetting.cs، ViewModels/Patients/BarcodeDialogViewModel.cs، Views/Patients/BarcodeDialog.xaml | إضافة منزلقين أفقي/رأسي لضبط إزاحة الطباعة مع زر "حفظ الأبعاد" — يتطلب Migration |
+| 2.5 | ViewModels/Patients/BarcodeDialogViewModel.cs، Views/Patients/BarcodeDialog.xaml | إضافة CheckBox "طباعة كود المعمل مع الكل" بجوار زر "طباعة الكل" |

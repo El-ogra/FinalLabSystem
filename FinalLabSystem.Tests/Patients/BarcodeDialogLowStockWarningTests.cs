@@ -25,7 +25,7 @@ public class BarcodeDialogLowStockWarningTests
         var inventoryMock = new Mock<IInventoryService>();
         var dialogMock = new Mock<IDialogService>();
         var dbContext = CreateInMemoryDbContext();
-        var vm = new BarcodeDialogViewModel(sampleMock.Object, labelMock.Object, inventoryMock.Object, dialogMock.Object, dbContext);
+        var vm = new BarcodeDialogViewModel(sampleMock.Object, labelMock.Object, inventoryMock.Object, dialogMock.Object, Mock.Of<ISettingsService>(), dbContext);
         return (vm, sampleMock, labelMock, inventoryMock, dialogMock);
     }
 
