@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using FinalLabSystem.Infrastructure;
+using FinalLabSystem.Infrastructure.Text;
 using FinalLabSystem.Models;
 using FinalLabSystem.Models.DTOs;
 using FinalLabSystem.Models.Enums;
@@ -293,8 +294,8 @@ public sealed class PatientInfoViewModel : ViewModelBase, IAsyncInitializable
         {
             PatientCode = PatientCode,
             NationalId = NationalId,
-            Title = Title,
-            FullNameAr = FullNameAr.Trim(),
+            Title = ArabicTextNormalizer.Normalize(Title ?? ""),
+            FullNameAr = ArabicTextNormalizer.Normalize(FullNameAr),
             Sex = Sex,
             ApproxAge = ApproxAge,
             ApproxAgeUnit = ApproxAgeUnit,
