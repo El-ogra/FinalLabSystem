@@ -18,7 +18,7 @@ public sealed class PatientInfoViewModel : ViewModelBase, IAsyncInitializable
     private string _patientType = "Individual";
     private BillingType _selectedBillingType = BillingType.Individual;
     private bool _isVip;
-    private int? _approxAge;
+    private decimal? _approxAgeValue;
     private string _approxAgeUnit = "Years";
     private string? _phone;
     private string? _phone2;
@@ -145,16 +145,24 @@ public sealed class PatientInfoViewModel : ViewModelBase, IAsyncInitializable
         set => SetProperty(ref _isVip, value);
     }
 
-    public int? ApproxAge
+    public decimal? ApproxAgeValue
     {
-        get => _approxAge;
-        set => SetProperty(ref _approxAge, value);
+        get => _approxAgeValue;
+        set
+        {
+            if (SetProperty(ref _approxAgeValue, value))
+                OnPropertyChanged(nameof(HasErrors));
+        }
     }
 
     public string ApproxAgeUnit
     {
         get => _approxAgeUnit;
-        set => SetProperty(ref _approxAgeUnit, string.IsNullOrWhiteSpace(value) ? "Years" : value);
+        set
+        {
+            if (SetProperty(ref _approxAgeUnit, string.IsNullOrWhiteSpace(value) ? "Years" : value))
+                OnPropertyChanged(nameof(HasErrors));
+        }
     }
 
     public string? Phone
@@ -193,7 +201,47 @@ public sealed class PatientInfoViewModel : ViewModelBase, IAsyncInitializable
         set => SetProperty(ref _notes, value);
     }
 
-    public new bool HasErrors => string.IsNullOrWhiteSpace(FullNameAr) || !new[] { "M", "F", "U" }.Contains(Sex);
+    public new bool HasErrors => string.IsNullOrWhiteSpace(FullNameAr)
+        || !new[] { "M", "F", "U" }.Contains(Sex)
+        || !IsAgeValid();
+
+    private bool IsAgeValid()
+    {
+        if (ApproxAgeValue is null || ApproxAgeValue <= 0)
+            return false;
+
+        return ApproxAgeUnit switch
+        {
+            "Years" => true,
+            "Months" => ApproxAgeValue >= 1 && ApproxAgeValue <= 11,
+            "Days" => ApproxAgeValue >= 1 && ApproxAgeValue <= 29,
+            _ => false
+        };
+    }
+
+    /// <summary>
+    /// يُحوّل قيمة السن إلى صيغة التخزين في قاعدة البيانات.
+    /// إذا الوحدة = Years والقيمة تحتوي كسراً (مثال: 2.5) → يحوّل إلى شهور (30 شهر).
+    /// </summary>
+    public (int? Age, string Unit) NormalizeAgeToStorage()
+    {
+        if (ApproxAgeValue is null || ApproxAgeValue <= 0)
+            return (null, "Years");
+
+        if (ApproxAgeUnit == "Years" && ApproxAgeValue % 1 != 0)
+        {
+            var totalMonths = (int)(ApproxAgeValue * 12);
+            return (totalMonths, "Months");
+        }
+
+        return ApproxAgeUnit switch
+        {
+            "Years" => ((int?)ApproxAgeValue, "Years"),
+            "Months" => ((int?)ApproxAgeValue, "Months"),
+            "Days" => ((int?)ApproxAgeValue, "Days"),
+            _ => ((int?)ApproxAgeValue, "Years")
+        };
+    }
 
     public async Task GenerateCodeAsync()
     {
@@ -240,7 +288,7 @@ public sealed class PatientInfoViewModel : ViewModelBase, IAsyncInitializable
         Sex = string.IsNullOrWhiteSpace(patient.Sex) ? "U" : patient.Sex;
         PatientType = string.IsNullOrWhiteSpace(patient.PatientType) ? "Individual" : patient.PatientType;
         IsVip = patient.IsVip;
-        ApproxAge = patient.ApproxAge;
+        ApproxAgeValue = patient.ApproxAge;
         ApproxAgeUnit = string.IsNullOrWhiteSpace(patient.ApproxAgeUnit) ? "Years" : patient.ApproxAgeUnit;
         Phone = patient.Phone;
         Phone2 = patient.Phone2;
@@ -259,7 +307,7 @@ public sealed class PatientInfoViewModel : ViewModelBase, IAsyncInitializable
         PatientType = string.IsNullOrWhiteSpace(dto.PatientType) ? "Individual" : dto.PatientType;
         SelectedBillingType = dto.BillingType;
         IsVip = dto.IsVip;
-        ApproxAge = dto.ApproxAge;
+        ApproxAgeValue = dto.ApproxAge;
         ApproxAgeUnit = string.IsNullOrWhiteSpace(dto.ApproxAgeUnit) ? "Years" : dto.ApproxAgeUnit;
         Phone = dto.Phone;
         Phone2 = dto.Phone2;
@@ -278,7 +326,7 @@ public sealed class PatientInfoViewModel : ViewModelBase, IAsyncInitializable
         PatientType = "Individual";
         SelectedBillingType = BillingType.Individual;
         IsVip = false;
-        ApproxAge = null;
+        ApproxAgeValue = null;
         ApproxAgeUnit = "Years";
         Phone = null;
         Phone2 = null;
@@ -290,6 +338,7 @@ public sealed class PatientInfoViewModel : ViewModelBase, IAsyncInitializable
 
     public Patient ToPatient()
     {
+        var (storageAge, storageUnit) = NormalizeAgeToStorage();
         return new Patient
         {
             PatientCode = PatientCode,
@@ -297,8 +346,8 @@ public sealed class PatientInfoViewModel : ViewModelBase, IAsyncInitializable
             Title = ArabicTextNormalizer.Normalize(Title ?? ""),
             FullNameAr = ArabicTextNormalizer.Normalize(FullNameAr),
             Sex = Sex,
-            ApproxAge = ApproxAge,
-            ApproxAgeUnit = ApproxAgeUnit,
+            ApproxAge = storageAge,
+            ApproxAgeUnit = storageUnit,
             Phone = Phone,
             Phone2 = Phone2,
             Address = Address,

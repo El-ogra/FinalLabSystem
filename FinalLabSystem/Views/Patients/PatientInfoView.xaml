@@ -81,7 +81,7 @@
                 <ComboBox Grid.Row="1" Grid.Column="4" ItemsSource="{Binding TitleSuggestions}" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" IsEditable="True" Style="{StaticResource InfoComboStyle}"/>
                 <Label Grid.Row="1" Grid.Column="5" Content="اسم المريض" Style="{StaticResource RedLabelStyle}"/>
 
-                <TextBox Grid.Row="2" Grid.Column="0" Text="{Binding ApproxAge, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource InfoInputStyle}"/>
+                <TextBox Grid.Row="2" Grid.Column="0" Text="{Binding ApproxAgeValue, StringFormat=N2, UpdateSourceTrigger=LostFocus}" Style="{StaticResource InfoInputStyle}"/>
                 <ComboBox Grid.Row="2" Grid.Column="1" SelectedValue="{Binding ApproxAgeUnit}" SelectedValuePath="Content" Style="{StaticResource InfoComboStyle}">
                     <ComboBoxItem Content="سنة"/>
                     <ComboBoxItem Content="شهر"/>
