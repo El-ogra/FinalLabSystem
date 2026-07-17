@@ -18,7 +18,7 @@
 | 1.5 | تحقق السن كسر عشري | ✅ مكتملة | 8d2280d |
 | 1.6 | ربط LabId الدائم | ✅ مكتملة | 3dd4096 |
 | 1.7 | تفعيل F1 لعرض بيانات التحليل | ✅ مكتملة | f46f9a5 |
-| 1.8 | إعدادات وصل قابلة للتكوين | ⏳ لم تبدأ | — |
+| 1.8 | إعدادات وصل قابلة للتكوين | ✅ مكتملة | d8491a1 |
 
 ## سجل الشرائح المنجزة
 
@@ -31,8 +31,10 @@
 | 1.5 | ViewModels/Patients/PatientInfoViewModel.cs، Views/Patients/PatientInfoView.xaml | استبدال ApproxAge (int?) بـ ApproxAgeValue (decimal?) مع NormalizeAgeToStorage() لتحويل الكسور إلى شهور |
 | 1.6 | ViewModels/Patients/PatientInfoViewModel.cs، ViewModels/Patients/PatientRegistrationViewModel.cs، Views/Patients/PatientInfoView.xaml، Models/DTOs/VisitFullDto.cs، Services/Interfaces/IPatientService.cs، Services/Implementations/PatientService.cs، Services/Implementations/VisitService.cs | ربط حقل LabId بالواجهة مع بحث تلقائي عند إدخال 12 خانة |
 | 1.7 | ViewModels/Patients/TestSelectionViewModel.cs، Views/Patients/TestSelectionView.xaml، Views/Patients/PatientRegistrationWindow.xaml | نقل AddNewCommand إلى Ctrl+N وربط F1 بـ ShowTestDetailsCommand لعرض تفاصيل التحليل المحدد |
+| 1.8 | Models/LabSetting.cs، Migrations/20260717142101_AddReceiptPreferencesToLabSettings.cs (جديد)، Services/Interfaces/ISettingsService.cs، Services/Implementations/SettingsService.cs، Services/Interfaces/IReceiptService.cs، Services/Implementations/ReceiptService.cs، ViewModels/Patients/PatientRegistrationViewModel.cs، ViewModels/Settings/ReportSettingsWindowViewModel.cs، Views/Settings/ReportSettingsWindow.xaml، FinalLabSystem.Tests/* | إضافة AutoPrintReceiptAfterSave وShowTestBreakdownInReceipt مع Migration وواجهة إعدادات |
 
 ## ملاحظات الوكيل
 - تم بناء المشروع بنجاح: 0 errors, 0 warnings
 - تم تشغيل الاختبارات: 772 passed, 0 failed
+- **جميع شرائح الوظيفة الأولى (1.1 - 1.8) مكتملة**
 - ملاحظة: عملية git push تعلّق بسبب عدم وجود بيانات اعتماد مخزنة — يحتاج المستخدم للدفع يدوياً
