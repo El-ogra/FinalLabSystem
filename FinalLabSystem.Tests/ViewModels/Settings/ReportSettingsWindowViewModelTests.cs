@@ -27,7 +27,7 @@ public class ReportSettingsWindowViewModelTests
         };
         layoutService.Setup(s => s.GetCurrentLayoutAsync()).ReturnsAsync(expected);
 
-        var vm = new ReportSettingsWindowViewModel(layoutService.Object, dialogService.Object, userSession.Object);
+        var vm = new ReportSettingsWindowViewModel(layoutService.Object, new Mock<ISettingsService>().Object, dialogService.Object, userSession.Object);
         vm.LoadCommand.Execute(null);
 
         Assert.Equal("Arial", vm.CurrentLayout.FontFamily);
@@ -44,7 +44,7 @@ public class ReportSettingsWindowViewModelTests
         var staff = new Staff { StaffId = 3, Username = "test" };
         userSession.Setup(s => s.CurrentUser).Returns(staff);
 
-        var vm = new ReportSettingsWindowViewModel(layoutService.Object, dialogService.Object, userSession.Object);
+        var vm = new ReportSettingsWindowViewModel(layoutService.Object, new Mock<ISettingsService>().Object, dialogService.Object, userSession.Object);
         vm.CurrentLayout = new ReportLayoutDto { FontFamily = "Tahoma" };
 
         vm.SaveCommand.Execute(null);
@@ -67,7 +67,7 @@ public class ReportSettingsWindowViewModelTests
         layoutService.Setup(s => s.ResetToDefaultsAsync()).Returns(Task.CompletedTask);
         layoutService.Setup(s => s.GetDefaults()).Returns(defaults);
 
-        var vm = new ReportSettingsWindowViewModel(layoutService.Object, dialogService.Object, userSession.Object);
+        var vm = new ReportSettingsWindowViewModel(layoutService.Object, new Mock<ISettingsService>().Object, dialogService.Object, userSession.Object);
         vm.CurrentLayout = new ReportLayoutDto { FontFamily = "Courier" };
 
         vm.ResetToDefaultsCommand.Execute(null);
@@ -82,7 +82,7 @@ public class ReportSettingsWindowViewModelTests
         var dialogService = new Mock<IDialogService>();
         var userSession = new Mock<ICurrentUserSession>();
 
-        var vm = new ReportSettingsWindowViewModel(layoutService.Object, dialogService.Object, userSession.Object);
+        var vm = new ReportSettingsWindowViewModel(layoutService.Object, new Mock<ISettingsService>().Object, dialogService.Object, userSession.Object);
 
         var ex = Record.Exception(() => vm.BrowseLogoCommand.Execute(null));
         Assert.Null(ex);
@@ -96,7 +96,7 @@ public class ReportSettingsWindowViewModelTests
         var userSession = new Mock<ICurrentUserSession>();
         userSession.Setup(s => s.CurrentUser).Returns((Staff?)null);
 
-        var vm = new ReportSettingsWindowViewModel(layoutService.Object, dialogService.Object, userSession.Object);
+        var vm = new ReportSettingsWindowViewModel(layoutService.Object, new Mock<ISettingsService>().Object, dialogService.Object, userSession.Object);
 
         vm.SaveCommand.Execute(null);
 
@@ -110,7 +110,7 @@ public class ReportSettingsWindowViewModelTests
         var dialogService = new Mock<IDialogService>();
         var userSession = new Mock<ICurrentUserSession>();
 
-        var vm = new ReportSettingsWindowViewModel(layoutService.Object, dialogService.Object, userSession.Object);
+        var vm = new ReportSettingsWindowViewModel(layoutService.Object, new Mock<ISettingsService>().Object, dialogService.Object, userSession.Object);
 
         Assert.False(vm.IsBusy);
     }

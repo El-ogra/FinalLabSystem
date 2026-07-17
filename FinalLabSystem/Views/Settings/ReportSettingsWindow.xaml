@@ -111,6 +111,11 @@
                     <TextBox Text="{Binding CurrentLayout.PaperSize, UpdateSourceTrigger=PropertyChanged}" 
                              Width="80" Padding="6,4" Margin="8,0,0,0"/>
                 </StackPanel>
+
+                <!-- Receipt Preferences -->
+                <TextBlock Text="إعدادات الإيصال" FontSize="14" FontWeight="SemiBold" Foreground="#333" Margin="0,12,0,8"/>
+                <CheckBox IsChecked="{Binding AutoPrintReceiptAfterSave}" Content="طباعة الوصل تلقائياً بعد الحفظ" Margin="0,0,0,8" Foreground="#333"/>
+                <CheckBox IsChecked="{Binding ShowTestBreakdownInReceipt}" Content="إظهار تفصيل التحاليل وأسعارها في الوصل" Margin="0,0,0,8" Foreground="#333"/>
             </StackPanel>
         </ScrollViewer>
 

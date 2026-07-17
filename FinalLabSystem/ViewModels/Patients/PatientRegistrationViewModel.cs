@@ -28,6 +28,7 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
     private readonly IReceiptDialogFactory _receiptFactory;
     private readonly IBarcodeGenerator _barcodeGenerator;
     private readonly ILabelPrintService _labelPrintService;
+    private readonly ISettingsService _settingsService;
     private readonly ILogger<PatientRegistrationViewModel> _logger;
     private int _currentPatientId;
     private int _currentVisitId;
@@ -54,6 +55,7 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
         IReceiptDialogFactory receiptFactory,
         IBarcodeGenerator barcodeGenerator,
         ILabelPrintService labelPrintService,
+        ISettingsService settingsService,
         ILogger<PatientRegistrationViewModel> logger)
     {
         PatientInfo = patientInfo;
@@ -71,6 +73,7 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
         _receiptFactory = receiptFactory;
         _barcodeGenerator = barcodeGenerator;
         _labelPrintService = labelPrintService;
+        _settingsService = settingsService;
         _logger = logger;
         TodayPatients = new ObservableCollection<TodayPatientWithStatusDto>();
 
@@ -414,6 +417,12 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
             IsEditMode = true;
             HasUnsavedChanges = false;
             _dialogService.ShowMessage("تم حفظ بيانات المريض والزيارة.", "حفظ");
+
+            var labSettings = await _settingsService.GetLabSettingAsync();
+            if (labSettings.AutoPrintReceiptAfterSave)
+            {
+                await ReceiptAsync();
+            }
         }
         catch (Exception ex)
         {

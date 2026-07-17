@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using FinalLabSystem.Infrastructure;
 using FinalLabSystem.Infrastructure.Session;
+using FinalLabSystem.Models;
 using FinalLabSystem.Models.DTOs;
 using FinalLabSystem.Services.Interfaces;
 
@@ -11,18 +12,23 @@ namespace FinalLabSystem.ViewModels.Settings;
 public sealed class ReportSettingsWindowViewModel : ViewModelBase
 {
     private readonly IReportLayoutService _reportLayoutService;
+    private readonly ISettingsService _settingsService;
     private readonly IDialogService _dialogService;
     private readonly ICurrentUserSession _currentUserSession;
 
     private ReportLayoutDto _currentLayout = new();
     private bool _isBusy;
+    private bool _autoPrintReceiptAfterSave;
+    private bool _showTestBreakdownInReceipt = true;
 
     public ReportSettingsWindowViewModel(
         IReportLayoutService reportLayoutService,
+        ISettingsService settingsService,
         IDialogService dialogService,
         ICurrentUserSession currentUserSession)
     {
         _reportLayoutService = reportLayoutService;
+        _settingsService = settingsService;
         _dialogService = dialogService;
         _currentUserSession = currentUserSession;
 
@@ -37,6 +43,18 @@ public sealed class ReportSettingsWindowViewModel : ViewModelBase
     {
         get => _currentLayout;
         set { _currentLayout = value; OnPropertyChanged(); }
+    }
+
+    public bool AutoPrintReceiptAfterSave
+    {
+        get => _autoPrintReceiptAfterSave;
+        set { _autoPrintReceiptAfterSave = value; OnPropertyChanged(); }
+    }
+
+    public bool ShowTestBreakdownInReceipt
+    {
+        get => _showTestBreakdownInReceipt;
+        set { _showTestBreakdownInReceipt = value; OnPropertyChanged(); }
     }
 
     public bool IsBusy
@@ -57,6 +75,9 @@ public sealed class ReportSettingsWindowViewModel : ViewModelBase
         try
         {
             CurrentLayout = await _reportLayoutService.GetCurrentLayoutAsync();
+            var labSetting = await _settingsService.GetLabSettingAsync();
+            AutoPrintReceiptAfterSave = labSetting.AutoPrintReceiptAfterSave;
+            ShowTestBreakdownInReceipt = labSetting.ShowTestBreakdownInReceipt;
         }
         finally
         {
@@ -72,6 +93,12 @@ public sealed class ReportSettingsWindowViewModel : ViewModelBase
             var staffId = _currentUserSession.CurrentUser?.StaffId
                 ?? throw new InvalidOperationException("لا يمكن الحفظ بدون جلسة مستخدم نشطة.");
             await _reportLayoutService.SaveLayoutAsync(CurrentLayout, staffId);
+
+            var labSetting = await _settingsService.GetLabSettingAsync();
+            labSetting.AutoPrintReceiptAfterSave = AutoPrintReceiptAfterSave;
+            labSetting.ShowTestBreakdownInReceipt = ShowTestBreakdownInReceipt;
+            await _settingsService.UpsertSettingAsync(labSetting, staffId);
+
             _dialogService.ShowMessage("تم حفظ الإعدادات بنجاح.");
         }
         finally

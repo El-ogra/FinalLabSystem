@@ -21,6 +21,13 @@ public sealed class ReceiptService : IReceiptService
         _logger = logger;
     }
 
+    public async Task<bool> GetShowTestBreakdownInReceiptAsync()
+    {
+        var setting = await _context.LabSettings
+            .FirstOrDefaultAsync(s => s.SettingKey == "ShowTestBreakdownInReceipt");
+        return setting?.SettingValue?.ToLowerInvariant() == "true";
+    }
+
     public async Task<bool> CanPrintReceiptAsync(int visitId, int staffId)
     {
         var staff = await _context.Staff.FindAsync(staffId);

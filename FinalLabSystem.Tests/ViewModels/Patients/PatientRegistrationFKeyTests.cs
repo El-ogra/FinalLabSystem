@@ -51,6 +51,7 @@ public class PatientRegistrationFKeyTests
             mockReceiptFactory.Object,
             mockBarcodeGenerator.Object,
             mockLabelPrintService.Object,
+            new Mock<ISettingsService>().Object,
             mockLogger.Object);
     }
 

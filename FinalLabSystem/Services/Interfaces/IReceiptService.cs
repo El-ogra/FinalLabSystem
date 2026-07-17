@@ -30,6 +30,11 @@ public interface IReceiptService
     /// If only SOME tests are present → individual lines per test.
     /// </summary>
     Task<List<ReceiptGroupedTest>> GetGroupedTestsForReceiptAsync(int visitId);
+
+    /// <summary>
+    /// Gets whether test breakdown should be shown in receipt.
+    /// </summary>
+    Task<bool> GetShowTestBreakdownInReceiptAsync();
 }
 
 public sealed class ReceiptGroupedTest

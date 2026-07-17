@@ -57,4 +57,8 @@ public partial class LabSetting
     public string? ReportFooterText { get; set; }
     public string? ReportPageOrientation { get; set; }
     public string? ReportPaperSize { get; set; }
+
+    // === Receipt Preferences ===
+    public bool AutoPrintReceiptAfterSave { get; set; } = false;
+    public bool ShowTestBreakdownInReceipt { get; set; } = true;
 }

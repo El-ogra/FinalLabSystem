@@ -333,7 +333,7 @@ public class BarcodeGeneratorTests
             mockVisitService.Object, mockPatientService.Object, mockSampleTracking.Object,
             mockNavigation.Object, mockSession.Object, mockDialog.Object,
             mockBarcodeFactory.Object, mockReceiptFactory.Object,
-            mockBarcodeGenerator.Object, mockLabelPrintService.Object, mockLogger.Object);
+            mockBarcodeGenerator.Object, mockLabelPrintService.Object, new Mock<ISettingsService>().Object, mockLogger.Object);
 
         Assert.False(vm.PrintLabIdCommand.CanExecute(null));
     }

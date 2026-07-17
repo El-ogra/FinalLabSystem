@@ -31,6 +31,11 @@ public class CashDrawerEndToEndTests
         {
             return Task.FromResult(_store);
         }
+
+        public Task<LabSetting> GetLabSettingAsync()
+        {
+            return Task.FromResult(new LabSetting());
+        }
     }
 
     private class InMemorySensitiveScreenPasswordService : ISensitiveScreenPasswordService

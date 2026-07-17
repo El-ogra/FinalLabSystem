@@ -26,4 +26,10 @@ public interface ISettingsService
     /// <param name="groupName">The setting group name.</param>
     /// <returns>A dictionary of setting keys and values.</returns>
     Task<Dictionary<string, string>> GetSettingsByGroupAsync(string groupName);
+
+    /// <summary>
+    /// Gets the current lab settings entity (single row).
+    /// </summary>
+    /// <returns>The lab settings, or a new default instance if none exists.</returns>
+    Task<LabSetting> GetLabSettingAsync();
 }

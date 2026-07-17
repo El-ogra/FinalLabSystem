@@ -56,6 +56,7 @@ public class PatientRegistrationViewModelFoundationTests
             mockReceiptFactory.Object,
             mockBarcodeGenerator.Object,
             mockLabelPrintService.Object,
+            new Mock<ISettingsService>().Object,
             mockLogger.Object);
 
         return (vm, mockSession, mockDialog, mockLogger);
@@ -118,6 +119,7 @@ public class PatientRegistrationViewModelFoundationTests
             mockReceiptFactory.Object,
             mockBarcodeGenerator.Object,
             mockLabelPrintService.Object,
+            new Mock<ISettingsService>().Object,
             mockLogger.Object);
 
         await vm.InitializeAsync();

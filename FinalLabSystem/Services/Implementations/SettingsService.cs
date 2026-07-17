@@ -57,4 +57,10 @@ public class SettingsService : ISettingsService
             .Where(s => s.SettingGroup == groupName)
             .ToDictionaryAsync(s => s.SettingKey, s => s.SettingValue ?? string.Empty);
     }
+
+    public async Task<LabSetting> GetLabSettingAsync()
+    {
+        var setting = await _context.LabSettings.FirstOrDefaultAsync();
+        return setting ?? new LabSetting();
+    }
 }
