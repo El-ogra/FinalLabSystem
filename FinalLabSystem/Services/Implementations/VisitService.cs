@@ -302,6 +302,7 @@ public class VisitService : IVisitService
             ReferralTitle = visit.Referral?.Title,
             ReferralName = visit.Referral?.SourceName,
             ReferralAddress = visit.Referral?.Address,
+            BillingType = visit.BillingType,
             IsFasting = visit.IsFasting,
             FastingHours = visit.FastingHours,
             IsPregnant = visit.IsPregnant,

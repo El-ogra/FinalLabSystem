@@ -349,6 +349,7 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
                 PatientId = CurrentPatientId,
                 VisitDate = EntryDate,
                 ExpectedReady = ExpectedReady,
+                BillingType = PatientInfo.SelectedBillingType,
                 IsPregnant = MedicalHistory.IsPregnant,
                 IsFasting = MedicalHistory.IsFasting,
                 FastingHours = MedicalHistory.FastingHours,

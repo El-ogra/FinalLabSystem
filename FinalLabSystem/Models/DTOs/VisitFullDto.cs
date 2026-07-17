@@ -1,5 +1,7 @@
 namespace FinalLabSystem.Models.DTOs;
 
+using FinalLabSystem.Models.Enums;
+
 public sealed class VisitFullDto
 {
     public int PatientId { get; set; }
@@ -49,6 +51,8 @@ public sealed class VisitFullDto
     public string? ReferralName { get; set; }
 
     public string? ReferralAddress { get; set; }
+
+    public BillingType BillingType { get; set; }
 
     public bool IsFasting { get; set; }
 

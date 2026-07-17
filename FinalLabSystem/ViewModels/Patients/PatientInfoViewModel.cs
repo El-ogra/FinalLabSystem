@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using FinalLabSystem.Infrastructure;
 using FinalLabSystem.Models;
 using FinalLabSystem.Models.DTOs;
+using FinalLabSystem.Models.Enums;
 using FinalLabSystem.Services.Interfaces;
 
 namespace FinalLabSystem.ViewModels.Patients;
@@ -14,6 +15,7 @@ public sealed class PatientInfoViewModel : ViewModelBase, IAsyncInitializable
     private string _fullNameAr = string.Empty;
     private string _sex = "U";
     private string _patientType = "Individual";
+    private BillingType _selectedBillingType = BillingType.Individual;
     private bool _isVip;
     private int? _approxAge;
     private string _approxAgeUnit = "Years";
@@ -126,6 +128,15 @@ public sealed class PatientInfoViewModel : ViewModelBase, IAsyncInitializable
         set => SetProperty(ref _patientType, string.IsNullOrWhiteSpace(value) ? "Individual" : value);
     }
 
+    public BillingType SelectedBillingType
+    {
+        get => _selectedBillingType;
+        set => SetProperty(ref _selectedBillingType, value);
+    }
+
+    public ObservableCollection<BillingType> BillingTypes { get; } =
+        new(Enum.GetValues<BillingType>());
+
     public bool IsVip
     {
         get => _isVip;
@@ -212,6 +223,7 @@ public sealed class PatientInfoViewModel : ViewModelBase, IAsyncInitializable
         FullNameAr = dto.FullNameAr;
         Sex = string.IsNullOrWhiteSpace(dto.Sex) ? "U" : dto.Sex;
         PatientType = string.IsNullOrWhiteSpace(dto.PatientType) ? "Individual" : dto.PatientType;
+        SelectedBillingType = dto.BillingType;
         IsVip = dto.IsVip;
         ApproxAge = dto.ApproxAge;
         ApproxAgeUnit = string.IsNullOrWhiteSpace(dto.ApproxAgeUnit) ? "Years" : dto.ApproxAgeUnit;
@@ -230,6 +242,7 @@ public sealed class PatientInfoViewModel : ViewModelBase, IAsyncInitializable
         FullNameAr = string.Empty;
         Sex = "U";
         PatientType = "Individual";
+        SelectedBillingType = BillingType.Individual;
         IsVip = false;
         ApproxAge = null;
         ApproxAgeUnit = "Years";

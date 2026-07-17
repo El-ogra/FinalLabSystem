@@ -55,6 +55,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1.45*"/>
@@ -90,21 +91,28 @@
                 <ComboBox Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="2" ItemsSource="{Binding PatientTypes}" SelectedItem="{Binding PatientType}" Style="{StaticResource InfoComboStyle}"/>
                 <Label Grid.Row="2" Grid.Column="5" Content="نوع الحساب" Style="{StaticResource BlueLabelStyle}"/>
 
-                <TextBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Phone2}" Style="{StaticResource InfoInputStyle}"/>
-                <Label Grid.Row="3" Grid.Column="2" Content="موبايل / تليفون" Style="{StaticResource SmallBlueLabelStyle}"/>
-                <TextBox Grid.Row="3" Grid.Column="3" Grid.ColumnSpan="2" Text="{Binding Phone}" Style="{StaticResource InfoInputStyle}"/>
-                <Label Grid.Row="3" Grid.Column="5" Content="رقم البطاقة" Style="{StaticResource BlueLabelStyle}"/>
+                <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="5" Orientation="Horizontal" FlowDirection="LeftToRight" VerticalAlignment="Center" Margin="3">
+                    <RadioButton Content="Individual" GroupName="BillingType" IsChecked="{Binding SelectedBillingType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Individual}" Foreground="White" Margin="0,0,12,0"/>
+                    <RadioButton Content="Lab to Lab" GroupName="BillingType" IsChecked="{Binding SelectedBillingType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=LabToLab}" Foreground="White" Margin="0,0,12,0"/>
+                    <RadioButton Content="Free" GroupName="BillingType" IsChecked="{Binding SelectedBillingType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Free}" Foreground="White"/>
+                </StackPanel>
+                <Label Grid.Row="3" Grid.Column="5" Content="نوع الفوترة" Style="{StaticResource BlueLabelStyle}"/>
 
-                <TextBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="5" Text="{Binding Address}" Style="{StaticResource InfoInputStyle}"/>
-                <Label Grid.Row="4" Grid.Column="5" Content="عنوان المريض" Style="{StaticResource BlueLabelStyle}"/>
+                <TextBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Phone2}" Style="{StaticResource InfoInputStyle}"/>
+                <Label Grid.Row="4" Grid.Column="2" Content="موبايل / تليفون" Style="{StaticResource SmallBlueLabelStyle}"/>
+                <TextBox Grid.Row="4" Grid.Column="3" Grid.ColumnSpan="2" Text="{Binding Phone}" Style="{StaticResource InfoInputStyle}"/>
+                <Label Grid.Row="4" Grid.Column="5" Content="رقم البطاقة" Style="{StaticResource BlueLabelStyle}"/>
 
-                <TextBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding NationalId}" Style="{StaticResource InfoInputStyle}"/>
-                <Label Grid.Row="5" Grid.Column="2" Content="الرقم القومي" Style="{StaticResource BlueLabelStyle}"/>
-                <TextBox Grid.Row="5" Grid.Column="3" Grid.ColumnSpan="2" Text="{Binding Email}" Style="{StaticResource InfoInputStyle}"/>
-                <Label Grid.Row="5" Grid.Column="5" Content="البريد الإلكتروني" Style="{StaticResource SmallBlueLabelStyle}"/>
+                <TextBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="5" Text="{Binding Address}" Style="{StaticResource InfoInputStyle}"/>
+                <Label Grid.Row="5" Grid.Column="5" Content="عنوان المريض" Style="{StaticResource BlueLabelStyle}"/>
 
-                <TextBox Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="5" Text="{Binding Notes}" TextWrapping="Wrap" AcceptsReturn="True" MinHeight="34" Style="{StaticResource InfoInputStyle}"/>
-                <Label Grid.Row="6" Grid.Column="5" Content="ملاحظات" Style="{StaticResource BlueLabelStyle}"/>
+                <TextBox Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding NationalId}" Style="{StaticResource InfoInputStyle}"/>
+                <Label Grid.Row="6" Grid.Column="2" Content="الرقم القومي" Style="{StaticResource BlueLabelStyle}"/>
+                <TextBox Grid.Row="6" Grid.Column="3" Grid.ColumnSpan="2" Text="{Binding Email}" Style="{StaticResource InfoInputStyle}"/>
+                <Label Grid.Row="6" Grid.Column="5" Content="البريد الإلكتروني" Style="{StaticResource SmallBlueLabelStyle}"/>
+
+                <TextBox Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="5" Text="{Binding Notes}" TextWrapping="Wrap" AcceptsReturn="True" MinHeight="34" Style="{StaticResource InfoInputStyle}"/>
+                <Label Grid.Row="7" Grid.Column="5" Content="ملاحظات" Style="{StaticResource BlueLabelStyle}"/>
             </Grid>
         </Border>
     </Border>
