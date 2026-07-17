@@ -16,7 +16,7 @@
 | 1.3 | بدون جهة الافتراضية | ✅ مكتملة | f45b13c |
 | 1.4 | تطبيع النص العربي | ✅ مكتملة | 57fee2e |
 | 1.5 | تحقق السن كسر عشري | ✅ مكتملة | 8d2280d |
-| 1.6 | ربط LabId الدائم | ⏳ لم تبدأ | — |
+| 1.6 | ربط LabId الدائم | ✅ مكتملة | 3dd4096 |
 | 1.7 | تفعيل F1 لعرض بيانات التحليل | ⏳ لم تبدأ | — |
 | 1.8 | إعدادات وصل قابلة للتكوين | ⏳ لم تبدأ | — |
 
@@ -29,6 +29,7 @@
 | 1.3 | Services/Interfaces/IReferralService.cs، Services/Implementations/ReferralService.cs، Services/Implementations/VisitService.cs | إضافة GetOrCreateDefaultReferralAsync واستدعائها في VisitService عند عدم إدخال جهة إحالة |
 | 1.4 | Infrastructure/Text/ArabicTextNormalizer.cs (جديد)، ViewModels/Patients/PatientInfoViewModel.cs | إنشاء ArabicTextNormalizer لتطبيع الأسماء (إزالة همزات، ة→ه، ى→ي) واستخدامه في ToPatient() |
 | 1.5 | ViewModels/Patients/PatientInfoViewModel.cs، Views/Patients/PatientInfoView.xaml | استبدال ApproxAge (int?) بـ ApproxAgeValue (decimal?) مع NormalizeAgeToStorage() لتحويل الكسور إلى شهور |
+| 1.6 | ViewModels/Patients/PatientInfoViewModel.cs، ViewModels/Patients/PatientRegistrationViewModel.cs، Views/Patients/PatientInfoView.xaml، Models/DTOs/VisitFullDto.cs، Services/Interfaces/IPatientService.cs، Services/Implementations/PatientService.cs، Services/Implementations/VisitService.cs | ربط حقل LabId بالواجهة مع بحث تلقائي عند إدخال 12 خانة |
 
 ## ملاحظات الوكيل
 - تم بناء المشروع بنجاح: 0 errors, 0 warnings
