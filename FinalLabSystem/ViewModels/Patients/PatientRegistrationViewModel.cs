@@ -108,6 +108,17 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
         NavigateToDeliveryCommand = new RelayCommand(_ => _navigationService.OpenTaskWindow<DeliveryViewModel>());
         NavigateToExternalSamplesCommand = new RelayCommand(_ => _navigationService.OpenTaskWindow<ExternalLabsWindowViewModel>());
         PrintLabIdCommand = new AsyncRelayCommand(PrintLabIdAsync, () => CurrentPatientId > 0);
+
+        PatientInfo.PropertyChanged += async (_, e) =>
+        {
+            if (e.PropertyName == nameof(PatientInfoViewModel.LabId)
+                && !string.IsNullOrWhiteSpace(PatientInfo.LabId)
+                && PatientInfo.LabId.Length == 12
+                && CurrentPatientId == 0)
+            {
+                await LoadPatientByLabIdAsync(PatientInfo.LabId);
+            }
+        };
     }
 
     public async Task InitializeAsync()
@@ -517,6 +528,26 @@ public sealed class PatientRegistrationViewModel : ViewModelBase, IAsyncInitiali
         TodayPatients.Clear();
         foreach (var patient in patients)
             TodayPatients.Add(patient);
+    }
+
+    private async Task LoadPatientByLabIdAsync(string labId)
+    {
+        try
+        {
+            var patient = await _patientService.GetByLabIdAsync(labId);
+            if (patient is not null)
+            {
+                PatientInfo.LoadPatient(patient);
+                CurrentPatientId = patient.PatientId;
+                IsEditMode = true;
+                IsFormUnlocked = true;
+                _dialogService.ShowMessage($"تم تحميل بيانات المريض: {patient.FullNameAr}", "بحث بالـ Lab ID");
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to load patient by LabId {LabId}", labId);
+        }
     }
 
     private void ReturnToMain()

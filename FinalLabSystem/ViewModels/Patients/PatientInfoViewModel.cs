@@ -25,6 +25,7 @@ public sealed class PatientInfoViewModel : ViewModelBase, IAsyncInitializable
     private string? _address;
     private string? _email;
     private string? _nationalId;
+    private string? _labId;
     private string? _notes;
 
     public PatientInfoViewModel(IPatientService patientService)
@@ -195,6 +196,12 @@ public sealed class PatientInfoViewModel : ViewModelBase, IAsyncInitializable
         set => SetProperty(ref _nationalId, value);
     }
 
+    public string? LabId
+    {
+        get => _labId;
+        set => SetProperty(ref _labId, value);
+    }
+
     public string? Notes
     {
         get => _notes;
@@ -295,6 +302,7 @@ public sealed class PatientInfoViewModel : ViewModelBase, IAsyncInitializable
         Address = patient.Address;
         Email = patient.Email;
         NationalId = patient.NationalId;
+        LabId = patient.LabId;
         Notes = patient.Notes;
     }
 
@@ -314,6 +322,7 @@ public sealed class PatientInfoViewModel : ViewModelBase, IAsyncInitializable
         Address = dto.Address;
         Email = dto.Email;
         NationalId = dto.NationalId;
+        LabId = dto.LabId;
         Notes = dto.Notes;
     }
 
@@ -333,6 +342,7 @@ public sealed class PatientInfoViewModel : ViewModelBase, IAsyncInitializable
         Address = null;
         Email = null;
         NationalId = null;
+        LabId = null;
         Notes = null;
     }
 

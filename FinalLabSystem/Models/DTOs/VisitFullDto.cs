@@ -38,6 +38,8 @@ public sealed class VisitFullDto
 
     public string? NationalId { get; set; }
 
+    public string? LabId { get; set; }
+
     public string? Notes { get; set; }
 
     public DateTime EntryDate { get; set; }

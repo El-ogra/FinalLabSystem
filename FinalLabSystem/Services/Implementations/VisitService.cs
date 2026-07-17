@@ -315,6 +315,7 @@ public class VisitService : IVisitService
             Address = visit.Patient.Address,
             Email = visit.Patient.Email,
             NationalId = visit.Patient.NationalId,
+            LabId = visit.Patient.LabId,
             Notes = visit.Patient.Notes,
             EntryDate = visit.VisitDate,
             ExpectedReady = visit.ExpectedReady,

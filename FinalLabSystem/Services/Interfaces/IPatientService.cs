@@ -54,6 +54,13 @@ public interface IPatientService
     Task<List<string>> GetPatientTitlesBySexAsync(string sex);
 
     /// <summary>
+    /// Gets a patient by their permanent Lab ID.
+    /// </summary>
+    /// <param name="labId">The Lab ID to search for.</param>
+    /// <returns>The matching patient, or null if not found.</returns>
+    Task<Patient?> GetByLabIdAsync(string labId);
+
+    /// <summary>
     /// Searches patients by name, phone, code, or other supported text fields.
     /// </summary>
     /// <param name="searchTerm">The search text.</param>

@@ -186,4 +186,13 @@ public class PatientService : IPatientService
             .OrderByDescending(h => h.CreatedAt)
             .ToListAsync();
     }
+
+    public async Task<Patient?> GetByLabIdAsync(string labId)
+    {
+        if (string.IsNullOrWhiteSpace(labId))
+            return null;
+
+        return await _context.Patients
+            .FirstOrDefaultAsync(p => p.LabId == labId);
+    }
 }

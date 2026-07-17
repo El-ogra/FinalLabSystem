@@ -68,7 +68,7 @@
 
                 <TextBox Grid.Row="0" Grid.Column="0" Text="{Binding PatientCode, Mode=OneWay}" IsReadOnly="True" Style="{StaticResource InfoInputStyle}"/>
                 <Label Grid.Row="0" Grid.Column="1" Content="كود المريض" Style="{StaticResource RedLabelStyle}"/>
-                <TextBox Grid.Row="0" Grid.Column="2" Text="{Binding DataContext.CurrentVisitId, RelativeSource={RelativeSource AncestorType=Window}, Mode=OneWay}" IsReadOnly="True" Style="{StaticResource InfoInputStyle}"/>
+                <TextBox Grid.Row="0" Grid.Column="2" Text="{Binding LabId, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource InfoInputStyle}"/>
                 <Label Grid.Row="0" Grid.Column="3" Content="Lab. ID" Style="{StaticResource BlueLabelStyle}"/>
                 <CheckBox Grid.Row="0" Grid.Column="4" IsChecked="{Binding IsVip}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="3"/>
                 <Label Grid.Row="0" Grid.Column="5" Content="VIP" Style="{StaticResource BlueLabelStyle}"/>
