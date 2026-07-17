@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -171,9 +171,14 @@ public sealed class TestResultsViewModel : ViewModelBase
         set
         {
             if (SetProperty(ref _filterMode, value))
+            {
+                OnPropertyChanged(nameof(SelectedFilterModeString));
                 PatientsView.Refresh();
+            }
         }
     }
+
+    public string SelectedFilterModeString => FilterMode?.ToString() ?? "None";
 
     public VisitFullDto? CurrentPatientInfo
     {
@@ -438,6 +443,8 @@ public sealed class TestResultsViewModel : ViewModelBase
             if (!patient.PatientCode.Contains(term, StringComparison.OrdinalIgnoreCase) &&
                 !patient.FullNameAr.Contains(term, StringComparison.OrdinalIgnoreCase) &&
                 !(patient.VisitCode?.Contains(term, StringComparison.OrdinalIgnoreCase) == true) &&
+                !(patient.LabId?.Contains(term, StringComparison.OrdinalIgnoreCase) == true) &&
+                !(patient.FileCode?.Contains(term, StringComparison.OrdinalIgnoreCase) == true) &&
                 !(int.TryParse(term, out var attNum) && patient.AttendanceNumber == attNum))
                 return false;
         }
@@ -469,11 +476,16 @@ public sealed class TestResultsViewModel : ViewModelBase
 
     private async Task NavigateDayAsync(object? parameter)
     {
-        if (parameter is int days)
-        {
-            SelectedDate = SelectedDate.AddDays(days);
-            await LoadAsync();
-        }
+        int days;
+        if (parameter is int intParam)
+            days = intParam;
+        else if (parameter is string strParam && int.TryParse(strParam, out var parsed))
+            days = parsed;
+        else
+            return;
+
+        SelectedDate = SelectedDate.AddDays(days);
+        await LoadAsync();
     }
 
     private async Task EnterResultAsync()
@@ -740,7 +752,7 @@ public sealed class TestResultsViewModel : ViewModelBase
     {
         if (CurrentPatientInfo == null) return;
 
-        var input = ShowInputDialog("ملاحظات المريض", CurrentPatientInfo.VisitNotes ?? string.Empty);
+        var input = _dialogService.ShowPatientNotesDialog(CurrentPatientInfo.VisitNotes ?? string.Empty, CurrentPatientInfo.FullNameAr);
         if (input != null)
         {
             CurrentPatientInfo.VisitNotes = input;

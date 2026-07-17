@@ -1,4 +1,4 @@
-using System.Windows;
+﻿using System.Windows;
 using FinalLabSystem.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -38,5 +38,16 @@ public sealed class DialogService : IDialogService
         var dialog = _serviceProvider.GetRequiredService<T>();
         dialog.Owner = Application.Current.MainWindow;
         return dialog.ShowDialog() == true ? dialog : null;
+    }
+
+    public string? ShowPatientNotesDialog(string currentNotes, string patientName)
+    {
+        var vm = new ViewModels.Patients.PatientNotesDialogViewModel(currentNotes);
+        var dialog = new Views.Patients.PatientNotesDialog(vm)
+        {
+            Title = $"ملاحظات المريض - {patientName}",
+            Owner = Application.Current.MainWindow
+        };
+        return dialog.ShowDialog() == true ? vm.Notes : null;
     }
 }

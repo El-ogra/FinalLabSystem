@@ -1,4 +1,4 @@
-namespace FinalLabSystem.Services.Interfaces;
+﻿namespace FinalLabSystem.Services.Interfaces;
 
 public interface IDialogService
 {
@@ -37,4 +37,12 @@ public interface IDialogService
     /// <typeparam name="T">The Window type to show.</typeparam>
     /// <returns>The dialog result, or <c>null</c> when cancelled.</returns>
     T? ShowCustomDialog<T>() where T : System.Windows.Window;
+
+    /// <summary>
+    /// Shows a patient notes dialog and returns the edited text.
+    /// </summary>
+    /// <param name="currentNotes">The current notes text.</param>
+    /// <param name="patientName">The patient name for display.</param>
+    /// <returns>The edited notes, or null if cancelled.</returns>
+    string? ShowPatientNotesDialog(string currentNotes, string patientName);
 }

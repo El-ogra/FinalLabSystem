@@ -1,4 +1,4 @@
-using FinalLabSystem.Models.Enums;
+﻿using FinalLabSystem.Models.Enums;
 
 namespace FinalLabSystem.Models.DTOs;
 
@@ -45,4 +45,8 @@ public sealed class TodayPatientWithStatusDto
     public string PatientType { get; set; } = "Individual";
 
     public int AttendanceNumber { get; set; }
+
+    public string? LabId { get; set; }
+
+    public string? FileCode { get; set; }
 }

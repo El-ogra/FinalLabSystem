@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -515,6 +515,12 @@ public class VisitService : IVisitService
             .GroupBy(v => v.PatientId)
             .ToDictionary(g => g.Key, g => g.Count());
 
+        var patientIds = visits.Select(v => v.PatientId).Distinct().ToList();
+        var fileBarcodes = await _context.PatientBarcodes
+            .Where(pb => patientIds.Contains(pb.PatientId) && pb.CodeType == Models.Enums.BarcodeCodeType.File)
+            .GroupBy(pb => pb.PatientId)
+            .ToDictionaryAsync(g => g.Key, g => g.Select(x => x.BarcodeValue).FirstOrDefault() ?? string.Empty);
+
         var orderedVisits = visits.OrderBy(v => v.VisitDate).ToList();
 
         return orderedVisits.Select((v, index) =>
@@ -542,7 +548,9 @@ public class VisitService : IVisitService
                 PaymentStatus = v.PaymentStatus,
                 VisitNotes = v.Notes,
                 PatientType = v.Patient.PatientType,
-                AttendanceNumber = index + 1
+                AttendanceNumber = index + 1,
+                LabId = v.Patient.LabId,
+                FileCode = fileBarcodes.GetValueOrDefault(v.PatientId)
             };
         }).ToList();
     }

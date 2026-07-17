@@ -1,4 +1,4 @@
-# ملف الذاكرة الحية للوكيل — FinalLabSystem
+﻿# ملف الذاكرة الحية للوكيل — FinalLabSystem
 
 ## معلومات المشروع
 - المستودع: https://github.com/El-ogra/FinalLabSystem.git
@@ -37,8 +37,9 @@
 - تم بناء المشروع بنجاح: 0 errors, 0 warnings
 - تم تشغيل الاختبارات: 772 passed, 0 failed
 - **جميع شرائح الوظيفة الأولى (1.1 - 1.8) مكتملة**
-- **جميع شرائح الوظيفة الثانية (2.1 - 2.5) مكتملة** — يتطلب المستخدم تنفيذ Migration يدوياً عبر Package Manager Console: `Add-Migration AddLabelPrintOffsetToLabSettings && Update-Database`
-- ملاحظة: عملية git push تعلّق بسبب عدم وجود بيانات اعتماد مخزنة — يحتاج المستخدم للدفع يدوياً
+- **جميع شرائح الوظيفة الثانية (2.1 - 2.5) مكتملة** — Migration مطبّقة
+- **جميع شرائح الوظيفة الثالثة (3.1 - 3.5) مكتملة**
+- ملاحظة: عملية git push تحتاج دفع يدوي من المستخدم
 
 ## حالة الشرائح — الوظيفة الثانية
 
@@ -49,6 +50,26 @@
 | 2.3 | دعم السحب والإفلات | ✅ مكتملة | (نفس كوميت 2.1) |
 | 2.4 | منزلقان لإزاحة الطباعة + حفظ | ✅ مكتملة | (نفس كوميت 2.1) |
 | 2.5 | CheckBox طباعة كود المعمل مع الكل | ✅ مكتملة | (نفس كوميت 2.1) |
+
+## حالة الشرائح — الوظيفة الثالثة
+
+| الشريحة | العنوان | الحالة | هاش الكوميت |
+|---------|---------|--------|-------------|
+| 3.1 | فلاتر حالات النتائج كأزرار مرئية | ✅ مكتملة | (معلّق) |
+| 3.2 | أسهم التوسعة للتنقل بين الأيام | ✅ مكتملة | (معلّق) |
+| 3.3 | نافذة ملاحظات منفصلة | ✅ مكتملة | (معلّق) |
+| 3.4 | توسيع البحث ليشمل LabId و FileCode | ✅ مكتملة | (معلّق) |
+| 3.5 | ربط F8/F9/F12 بال审查/تمت/طبع | ✅ مكتملة | (معلّق) |
+
+## سجل الشرائح المنجزة — الوظيفة الثالثة
+
+| رقم الشريحة | الملفات التي تغيّرت | ملاحظة |
+|-------------|---------------------|--------|
+| 3.1 | ViewModels/Patients/TestResultsViewModel.cs، Views/Patients/TestResultsWindow.xaml | إضافة أزرار فلاتر حالة النتائج (غير مكتوبة/غير مراجعة/غير مطبوعة/لم تُسلَّم/له باقي/الكل) |
+| 3.2 | Views/Patients/TestResultsWindow.xaml، ViewModels/Patients/TestResultsViewModel.cs | إضافة أسهم تنقل + DatePicker + تعديل NavigateDayAsync لقبول string |
+| 3.3 | Views/Patients/PatientNotesDialog.xaml (جديد)، Views/Patients/PatientNotesDialog.xaml.cs (جديد)، ViewModels/Patients/PatientNotesDialogViewModel.cs (جديد)، Services/Interfaces/IDialogService.cs، Services/Implementations/DialogService.cs، ViewModels/Patients/TestResultsViewModel.cs، App.xaml.cs | نافذة ملاحظات منفصلة بتصميم موحّد بدلاً من ShowInputDialog |
+| 3.4 | Models/DTOs/TodayPatientWithStatusDto.cs، Services/Implementations/VisitService.cs، ViewModels/Patients/TestResultsViewModel.cs | إضافة LabId و FileCode إلى DTO والبحث والخدمة |
+| 3.5 | Views/Patients/TestResultsWindow.xaml | إعادة ربط F8→Review, F9→Finish, F12→Print, Ctrl+E→Edit Patient |
 
 ## سجل الشرائح المنجزة — الوظيفة الثانية
 

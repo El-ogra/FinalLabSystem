@@ -1,4 +1,4 @@
-using FinalLabSystem.Data;
+﻿using FinalLabSystem.Data;
 using FinalLabSystem.Infrastructure;
 using FinalLabSystem.Infrastructure.Navigation;
 using FinalLabSystem.Infrastructure.Security;
@@ -352,6 +352,8 @@ public partial class App : Application
         services.AddTransient<SignatureConfirmationDialog>();
         services.AddTransient<OtpVerificationDialogViewModel>();
         services.AddTransient<OtpVerificationDialog>();
+        services.AddTransient<PatientNotesDialogViewModel>();
+        services.AddTransient<PatientNotesDialog>();
     }
 
     protected override void OnExit(ExitEventArgs e)
