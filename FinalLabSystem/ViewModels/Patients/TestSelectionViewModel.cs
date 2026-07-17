@@ -18,6 +18,7 @@ public sealed class TestSelectionViewModel : ViewModelBase, IAsyncInitializable
     private string? _searchText;
     private TestDisplayItem? _selectedAvailableTest;
     private SelectedTestItem? _selectedTest;
+    private string? _selectedTestDetails;
     private int? _schemeId;
 
     public TestSelectionViewModel(ITestCatalogService testCatalogService, TestPricingEngine pricingEngine)
@@ -32,6 +33,7 @@ public sealed class TestSelectionViewModel : ViewModelBase, IAsyncInitializable
         RemoveAllCommand = new RelayCommand(_ => RemoveAll());
         SetFilterCommand = new RelayCommand(parameter => ActiveFilter = parameter?.ToString() ?? "RoutineTests");
         ApplyProfileCommand = new AsyncRelayCommand(ApplyProfileAsync);
+        ShowTestDetailsCommand = new RelayCommand(_ => ShowTestDetails());
     }
 
     public int? SchemeId
@@ -161,6 +163,12 @@ public sealed class TestSelectionViewModel : ViewModelBase, IAsyncInitializable
         set => SetProperty(ref _selectedTest, value);
     }
 
+    public string? SelectedTestDetails
+    {
+        get => _selectedTestDetails;
+        set => SetProperty(ref _selectedTestDetails, value);
+    }
+
     public ICommand AddTestCommand { get; }
 
     public ICommand RemoveTestCommand { get; }
@@ -170,6 +178,8 @@ public sealed class TestSelectionViewModel : ViewModelBase, IAsyncInitializable
     public ICommand SetFilterCommand { get; }
 
     public ICommand ApplyProfileCommand { get; }
+
+    public ICommand ShowTestDetailsCommand { get; }
 
     public List<int> GetSelectedTestTypeIds() => SelectedTests.Select(test => test.TestTypeId).Distinct().ToList();
 
@@ -318,6 +328,25 @@ public sealed class TestSelectionViewModel : ViewModelBase, IAsyncInitializable
             MessageBox.Show($"تم إضافة {addedCount} تحليل من البروفايل", "تم", MessageBoxButton.OK, MessageBoxImage.Information);
         else
             MessageBox.Show("جميع تحاليل البروفايل مضافة مسبقاً", "تنبيه", MessageBoxButton.OK, MessageBoxImage.Information);
+    }
+
+    private void ShowTestDetails()
+    {
+        var test = SelectedAvailableTest;
+        if (test is null)
+        {
+            SelectedTestDetails = null;
+            return;
+        }
+
+        SelectedTestDetails =
+            $"كود التحليل: {test.Code}\n" +
+            $"الاسم: {test.Name}\n" +
+            $"الاسم الإنجليزي: {test.NameEn}\n" +
+            $"السعر: {test.Price}\n" +
+            $"نوع العينة: {test.SampleType ?? "غير محدد"}\n" +
+            $"المجموعة: {test.GroupName}\n" +
+            $"الفئة: {test.CategoryName}";
     }
 }
 

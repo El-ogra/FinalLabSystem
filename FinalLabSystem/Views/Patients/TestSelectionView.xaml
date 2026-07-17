@@ -14,6 +14,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <Grid Grid.Row="0" Margin="0,0,0,4">
@@ -210,6 +211,20 @@
                             FontWeight="Bold"/>
                 </Grid>
             </Grid>
+
+            <Border Grid.Row="3"
+                    Background="#0B4F78"
+                    BorderBrush="#0A252C"
+                    BorderThickness="1"
+                    Margin="0,4,0,0"
+                    Padding="6"
+                    Visibility="{Binding SelectedTestDetails, Converter={StaticResource NullToVisConverter}}">
+                <TextBlock Text="{Binding SelectedTestDetails}"
+                           Foreground="#FFF8DC"
+                           FontSize="11"
+                           TextWrapping="Wrap"
+                           FlowDirection="RightToLeft"/>
+            </Border>
         </Grid>
     </Border>
 </UserControl>

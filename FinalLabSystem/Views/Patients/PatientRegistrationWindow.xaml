@@ -161,7 +161,8 @@
     </Grid>
 
     <Window.InputBindings>
-        <KeyBinding Key="F1"  Command="{Binding AddNewCommand}"/>
+        <KeyBinding Key="F1"  Command="{Binding TestSelection.ShowTestDetailsCommand}"/>
+        <KeyBinding Key="N" Modifiers="Ctrl" Command="{Binding AddNewCommand}"/>
         <KeyBinding Key="F2"  Command="{Binding NavigateToPatientDataCommand}"/>
         <KeyBinding Key="F3"  Command="{Binding NavigateToSearchCommand}"/>
         <KeyBinding Key="F4"  Command="{Binding NavigateToResultEntryCommand}"/>
