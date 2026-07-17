@@ -133,6 +133,26 @@ public class VisitService : IVisitService
                 await _context.SaveChangesAsync();
                 visit.ReferralId = referralToSave.ReferralId;
             }
+            else if (visit.ReferralId is null)
+            {
+                const string defaultName = "بدون جهة";
+                var defaultReferral = await _context.ReferralSources
+                    .FirstOrDefaultAsync(r => r.SourceName == defaultName && r.IsActive);
+                if (defaultReferral is null)
+                {
+                    defaultReferral = new ReferralSource
+                    {
+                        SourceType = "Default",
+                        Category = ReferringEntityCategory.ReferralOrContractEntity,
+                        SourceName = defaultName,
+                        IsActive = true,
+                        CreatedAt = DateTime.UtcNow
+                    };
+                    _context.ReferralSources.Add(defaultReferral);
+                    await _context.SaveChangesAsync();
+                }
+                visit.ReferralId = defaultReferral.ReferralId;
+            }
 
             if (patient.PatientId == 0)
             {

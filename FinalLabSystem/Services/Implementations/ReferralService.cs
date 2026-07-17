@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FinalLabSystem.Data;
 using FinalLabSystem.Models;
+using FinalLabSystem.Models.Enums;
 using FinalLabSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -73,5 +74,26 @@ public class ReferralService : IReferralService
             .Distinct()
             .OrderBy(t => t)
             .ToListAsync();
+    }
+
+    public async Task<ReferralSource> GetOrCreateDefaultReferralAsync()
+    {
+        const string defaultName = "بدون جهة";
+        var existing = await _context.ReferralSources
+            .FirstOrDefaultAsync(r => r.SourceName == defaultName && r.IsActive);
+        if (existing is not null)
+            return existing;
+
+        var defaultReferral = new ReferralSource
+        {
+            SourceType = "Default",
+                        Category = ReferringEntityCategory.ReferralOrContractEntity,
+            SourceName = defaultName,
+            IsActive = true,
+            CreatedAt = DateTime.UtcNow
+        };
+        _context.ReferralSources.Add(defaultReferral);
+        await _context.SaveChangesAsync();
+        return defaultReferral;
     }
 }

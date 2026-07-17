@@ -38,4 +38,10 @@ public interface IReferralService
     /// </summary>
     /// <returns>The referral titles.</returns>
     Task<List<string>> GetReferralTitlesAsync();
+
+    /// <summary>
+    /// Gets or creates the default "بدون جهة" referral source.
+    /// </summary>
+    /// <returns>The default referral source.</returns>
+    Task<ReferralSource> GetOrCreateDefaultReferralAsync();
 }
