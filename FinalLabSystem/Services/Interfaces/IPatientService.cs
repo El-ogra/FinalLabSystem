@@ -47,6 +47,13 @@ public interface IPatientService
     Task<List<string>> GetPatientTitlesAsync();
 
     /// <summary>
+    /// Gets patient titles filtered by sex.
+    /// </summary>
+    /// <param name="sex">The sex code (M, F, or U).</param>
+    /// <returns>The available patient titles for the given sex.</returns>
+    Task<List<string>> GetPatientTitlesBySexAsync(string sex);
+
+    /// <summary>
     /// Searches patients by name, phone, code, or other supported text fields.
     /// </summary>
     /// <param name="searchTerm">The search text.</param>

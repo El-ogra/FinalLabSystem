@@ -126,6 +126,21 @@ public class PatientService : IPatientService
             .ToListAsync();
     }
 
+    public async Task<List<string>> GetPatientTitlesBySexAsync(string sex)
+    {
+        var allTitles = await GetPatientTitlesAsync();
+
+        var maleKeywords = new[] { "السيد", "الأستاذ", "الدكتور", "المهندس", "الشيخ", "الطفل", "Mr", "Dr" };
+        var femaleKeywords = new[] { "السيدة", "الأستاذة", "الدكتورة", "المهندسة", "الطفلة", "المتشرفة", "Mrs", "Ms", "Miss" };
+
+        return sex?.ToUpperInvariant() switch
+        {
+            "M" => allTitles.Where(t => maleKeywords.Any(k => t.Contains(k))).ToList(),
+            "F" => allTitles.Where(t => femaleKeywords.Any(k => t.Contains(k))).ToList(),
+            _ => allTitles
+        };
+    }
+
     public async Task<PagedResult<Patient>> SearchPatientsAsync(string searchTerm, int page = 1, int pageSize = 50)
     {
         pageSize = Math.Min(pageSize, 100);

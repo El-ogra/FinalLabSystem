@@ -88,6 +88,7 @@ public sealed class PatientInfoViewModel : ViewModelBase, IAsyncInitializable
                 OnPropertyChanged(nameof(IsMale));
                 OnPropertyChanged(nameof(IsFemale));
                 OnPropertyChanged(nameof(IsUnknownSex));
+                SuggestTitleForSex(_sex);
             }
         }
     }
@@ -196,6 +197,38 @@ public sealed class PatientInfoViewModel : ViewModelBase, IAsyncInitializable
     public async Task GenerateCodeAsync()
     {
         PatientCode = await _patientService.GeneratePatientCodeAsync();
+    }
+
+    private static readonly Dictionary<string, string> DefaultTitlesBySex = new()
+    {
+        ["M"] = "السيد",
+        ["F"] = "السيدة",
+        ["U"] = ""
+    };
+
+    private string _lastAutoTitle = "";
+
+    private async void SuggestTitleForSex(string sex)
+    {
+        var defaultTitle = DefaultTitlesBySex.GetValueOrDefault(sex, "");
+
+        if (string.IsNullOrEmpty(Title) || Title == _lastAutoTitle)
+        {
+            Title = defaultTitle;
+            _lastAutoTitle = defaultTitle;
+        }
+
+        try
+        {
+            var titles = await _patientService.GetPatientTitlesBySexAsync(sex);
+            TitleSuggestions.Clear();
+            foreach (var title in titles)
+                TitleSuggestions.Add(title);
+        }
+        catch
+        {
+            // TODO: _dialogService.ShowError("حدث خطأ أثناء تحميل الألقاب.");
+        }
     }
 
     public void LoadPatient(Patient patient)
