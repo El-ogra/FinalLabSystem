@@ -40,9 +40,6 @@ public sealed class BarcodeDialogViewModel : ViewModelBase
         LabIdLabels = new ObservableCollection<BarcodePatientLabel>();
         PrintBarcodeCommand = new AsyncRelayCommand<BarcodeLabel>(parameter => PrintLabelAsync(parameter));
         PrintAllCommand = new AsyncRelayCommand(_ => PrintAllAsync());
-        PrintCaseLabelsCommand = new AsyncRelayCommand(_ => PrintCaseLabelsAsync());
-        PrintFileLabelsCommand = new AsyncRelayCommand(_ => PrintFileLabelsAsync());
-        PrintLabIdCommand = new AsyncRelayCommand(_ => PrintLabIdAsync());
     }
 
     public ObservableCollection<BarcodeLabel> Labels { get; }
@@ -64,9 +61,6 @@ public sealed class BarcodeDialogViewModel : ViewModelBase
 
     public ICommand PrintBarcodeCommand { get; }
     public ICommand PrintAllCommand { get; }
-    public ICommand PrintCaseLabelsCommand { get; }
-    public ICommand PrintFileLabelsCommand { get; }
-    public ICommand PrintLabIdCommand { get; }
 
     public async Task LoadBarcodesAsync(int visitId, int patientId)
     {
@@ -123,32 +117,16 @@ public sealed class BarcodeDialogViewModel : ViewModelBase
 
     private async Task PrintAllAsync()
     {
-        if (Labels.Count == 0)
+        var allLabels = new List<BarcodeLabel>(Labels);
+        allLabels.AddRange(CaseLabels.Select(l => l.ToBarcodeLabel()));
+        allLabels.AddRange(FileLabels.Select(l => l.ToBarcodeLabel()));
+        allLabels.AddRange(LabIdLabels.Select(l => l.ToBarcodeLabel()));
+
+        if (allLabels.Count == 0)
             return;
 
         await CheckStockAndWarnForAllAsync();
-        await _labelPrintService.PrintLabelsAsync(Labels);
-    }
-
-    private async Task PrintCaseLabelsAsync()
-    {
-        if (CaseLabels.Count == 0) return;
-        var labels = CaseLabels.ToList();
-        await _labelPrintService.PrintLabelsAsync(labels.Select(l => l.ToBarcodeLabel()).ToList());
-    }
-
-    private async Task PrintFileLabelsAsync()
-    {
-        if (FileLabels.Count == 0) return;
-        var labels = FileLabels.ToList();
-        await _labelPrintService.PrintLabelsAsync(labels.Select(l => l.ToBarcodeLabel()).ToList());
-    }
-
-    private async Task PrintLabIdAsync()
-    {
-        if (LabIdLabels.Count == 0) return;
-        var labels = LabIdLabels.ToList();
-        await _labelPrintService.PrintLabelsAsync(labels.Select(l => l.ToBarcodeLabel()).ToList());
+        await _labelPrintService.PrintLabelsAsync(allLabels);
     }
 
     private async Task CheckStockAndWarnAsync(string tubeType)
