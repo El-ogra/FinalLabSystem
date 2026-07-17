@@ -13,7 +13,7 @@
 |---------|---------|--------|-------------|
 | 1.1 | ربط BillingType بالواجهة | ✅ مكتملة | e3b3c2e |
 | 1.2 | اللقب التلقائي حسب الجنس | ✅ مكتملة | 1583618 |
-| 1.3 | بدون جهة الافتراضية | ⏳ لم تبدأ | — |
+| 1.3 | بدون جهة الافتراضية | ✅ مكتملة | f45b13c |
 | 1.4 | تطبيع النص العربي | ⏳ لم تبدأ | — |
 | 1.5 | تحقق السن كسر عشري | ⏳ لم تبدأ | — |
 | 1.6 | ربط LabId الدائم | ⏳ لم تبدأ | — |
@@ -26,8 +26,9 @@
 |-------------|---------------------|--------|
 | 1.1 | Views/Converters/EnumBooleanConverter.cs (جديد)، Views/Shared/SharedConverters.xaml، ViewModels/Patients/PatientInfoViewModel.cs، ViewModels/Patients/PatientRegistrationViewModel.cs، Views/Patients/PatientInfoView.xaml، Models/DTOs/VisitFullDto.cs، Services/Implementations/VisitService.cs | تم إضافة RadioButtons لـ BillingType وربطها بالـ ViewModel والـ Visit |
 | 1.2 | Services/Interfaces/IPatientService.cs، Services/Implementations/PatientService.cs، ViewModels/Patients/PatientInfoViewModel.cs | إضافة دالة GetPatientTitlesBySexAsync وSuggestTitleForSex لتحديث اللقب تلقائياً عند تغيير الجنس |
+| 1.3 | Services/Interfaces/IReferralService.cs، Services/Implementations/ReferralService.cs، Services/Implementations/VisitService.cs | إضافة GetOrCreateDefaultReferralAsync واستدعائها في VisitService عند عدم إدخال جهة إحالة |
 
 ## ملاحظات الوكيل
-- تم بناء المشروع بنجاح: 0 errors, 0 warnings (شريحة 1.1 و 1.2)
+- تم بناء المشروع بنجاح: 0 errors, 0 warnings
 - تم تشغيل الاختبارات: 772 passed, 0 failed
 - ملاحظة: عملية git push تعلّق بسبب عدم وجود بيانات اعتماد مخزنة — يحتاج المستخدم للدفع يدوياً
