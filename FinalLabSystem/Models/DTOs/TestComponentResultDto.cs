@@ -107,4 +107,6 @@ public sealed class TestComponentResultDto : INotifyPropertyChanged
         get => _isSelectedForSave;
         set { _isSelectedForSave = value; OnPropertyChanged(); }
     }
+
+    public bool IsResultLocked { get; set; }
 }

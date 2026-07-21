@@ -8,6 +8,8 @@
         Background="#1E2A3A">
     <Window.Resources>
         <converters:ClinicalStatusToBrushConverter x:Key="ClinicalStatusToBrush"/>
+        <converters:BoolToLockedBrushConverter x:Key="BoolToLockedBrush"/>
+        <converters:BoolToLockedTipConverter x:Key="BoolToLockedTip"/>
     </Window.Resources>
     <DockPanel Margin="8">
         <StackPanel DockPanel.Dock="Top" Margin="0,0,0,8">
@@ -15,7 +17,7 @@
                        Foreground="#FFFFFF" Margin="0,0,0,4"/>
         </StackPanel>
 
-        <!-- Comment section -->
+        <!-- Comment section (Slice 4.1) -->
         <Border DockPanel.Dock="Bottom" Background="#2A3F54" Padding="8" Margin="0,8,0,0"
                 CornerRadius="4" BorderBrush="#555" BorderThickness="1">
             <Grid>
@@ -23,29 +25,86 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="60"/>
                 </Grid.RowDefinitions>
-                <TextBlock Grid.Row="0" Text="Comment:" Foreground="#AAAAAA" FontWeight="SemiBold"
-                           Margin="0,0,0,4"/>
-                <TextBox Grid.Row="1"
-                         Text="{Binding SelectedComponent.Comment, UpdateSourceTrigger=PropertyChanged}"
-                         Background="#1E2A3A" Foreground="#FFFFFF"
-                         BorderBrush="#555" BorderThickness="1"
-                         TextWrapping="Wrap" AcceptsReturn="True"
-                         VerticalScrollBarVisibility="Auto" Padding="4"/>
+                <Grid Grid.Row="0" Margin="0,0,0,4">
+                    <TextBlock Text="Comment:" Foreground="#AAAAAA" FontWeight="SemiBold"
+                               VerticalAlignment="Center"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                        <Button Content="تعليم" Background="#F58220" Foreground="White"
+                                Command="{Binding OpenCommentPickerCommand}"
+                                Width="60" Height="22" FontSize="11" Margin="0,0,6,0"
+                                FontWeight="Bold" BorderThickness="0" Cursor="Hand"/>
+                        <Button Content="تراجع" Background="#78909C" Foreground="White"
+                                Command="{Binding UndoLastCommentCommand}"
+                                Width="60" Height="22" FontSize="11"
+                                FontWeight="Bold" BorderThickness="0" Cursor="Hand"/>
+                    </StackPanel>
+                </Grid>
+                <Grid Grid.Row="1">
+                    <TextBox Text="{Binding SelectedComponent.Comment, UpdateSourceTrigger=PropertyChanged}"
+                             Background="#1E2A3A" Foreground="#FFFFFF"
+                             BorderBrush="#555" BorderThickness="1"
+                             TextWrapping="Wrap" AcceptsReturn="True"
+                             VerticalScrollBarVisibility="Auto" Padding="4"/>
+                    <!-- Comment Templates Popup (Slice 4.1) -->
+                    <Popup IsOpen="{Binding IsCommentPickerOpen}" PlacementTarget="{Binding ElementName=CommentTextBox}"
+                           Placement="Top" StaysOpen="False" MaxHeight="200" Width="350">
+                        <Border Background="#2A3F54" BorderBrush="#555" BorderThickness="1"
+                                CornerRadius="4" Padding="4">
+                            <ListBox ItemsSource="{Binding CommentTemplates}"
+                                     Background="#2A3F54" Foreground="#FFFFFF"
+                                     BorderThickness="0"
+                                     SelectedValuePath="CommentText">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Padding="4,2" Margin="0,1" Cursor="Hand"
+                                                Background="Transparent" CornerRadius="3">
+                                            <Border.InputBindings>
+                                                <MouseBinding MouseAction="LeftClick"
+                                                              Command="{Binding DataContext.PickCommentTemplateCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                              CommandParameter="{Binding}"/>
+                                            </Border.InputBindings>
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="12"/>
+                                                <TextBlock Text="{Binding CommentText}" FontSize="11"
+                                                           Foreground="#AAAAAA" TextTrimming="CharacterEllipsis"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </Border>
+                    </Popup>
+                </Grid>
             </Grid>
         </Border>
 
+        <!-- Action buttons (Slice 4.3) -->
         <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal"
                     HorizontalAlignment="Left" Margin="0,8,0,0">
             <Button Content="حفظ و مراجعة" Command="{Binding SaveAndReviewCommand}" Width="110" Height="32"
                     Background="#2196F3" Foreground="White" FontWeight="Bold"
                     Margin="0,0,8,0"/>
-            <Button Content="حفظ" Command="{Binding SaveCommand}" Width="100" Height="32"
+            <Button Content="حفظ" Command="{Binding SaveCommand}" Width="80" Height="32"
                     Background="#4CAF50" Foreground="White" FontWeight="Bold"
                     Margin="0,0,8,0"/>
-            <Button Content="إلغاء" Command="{Binding CancelCommand}" Width="100" Height="32"
+            <Button Content="طباعة" Command="{Binding PrintCommand}" Width="80" Height="32"
+                    Background="#FF9800" Foreground="White" FontWeight="Bold"
+                    Margin="0,0,8,0"/>
+            <Button Content="معاينة" Command="{Binding PreviewPrintCommand}" Width="80" Height="32"
+                    Background="#42A5F5" Foreground="White" FontWeight="Bold"
+                    Margin="0,0,8,0"/>
+            <Button Content="تاريخ مرضي" Command="{Binding OpenMedicalHistoryCommand}" Width="90" Height="32"
+                    Background="#7E57C2" Foreground="White" FontWeight="Bold"
+                    Margin="0,0,8,0"/>
+            <Button Content="العودة" Command="{Binding ReturnToMainCommand}" Width="80" Height="32"
+                    Background="#78909C" Foreground="White" FontWeight="Bold"
+                    Margin="0,0,8,0"/>
+            <Button Content="إلغاء" Command="{Binding CancelCommand}" Width="80" Height="32"
                     Background="#F44336" Foreground="White" FontWeight="Bold"
                     IsCancel="True"/>
         </StackPanel>
+
+        <!-- DataGrid (Slice 4.2: read-only highlight for locked results) -->
         <DataGrid ItemsSource="{Binding Components}" AutoGenerateColumns="False"
                   IsReadOnly="False" CanUserAddRows="False"
                   SelectedItem="{Binding SelectedComponent}"
@@ -69,8 +128,11 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBox Text="{Binding ResultValue, UpdateSourceTrigger=PropertyChanged}"
-                                     Background="Transparent" Foreground="#FFFFFF"
-                                     BorderBrush="#555" BorderThickness="1" Padding="4,2"/>
+                                     IsReadOnly="{Binding IsResultLocked}"
+                                     Background="{Binding IsResultLocked, Converter={StaticResource BoolToLockedBrush}}"
+                                     Foreground="#FFFFFF"
+                                     BorderBrush="#555" BorderThickness="1" Padding="4,2"
+                                     ToolTip="{Binding IsResultLocked, Converter={StaticResource BoolToLockedTip}}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -142,4 +204,12 @@
                           Margin="0,8,0,0"
                           Visibility="Collapsed"/>
     </DockPanel>
+
+    <!-- Slice 4.4: Keyboard shortcuts -->
+    <Window.InputBindings>
+        <KeyBinding Key="F8" Command="{Binding SaveAndReviewCommand}"/>
+        <KeyBinding Key="F11" Command="{Binding PreviewPrintCommand}"/>
+        <KeyBinding Key="F12" Command="{Binding PrintCommand}"/>
+        <KeyBinding Key="Escape" Command="{Binding CancelCommand}"/>
+    </Window.InputBindings>
 </Window>

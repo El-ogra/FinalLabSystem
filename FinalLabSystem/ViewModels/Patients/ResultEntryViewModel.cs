@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
@@ -6,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using FinalLabSystem.Infrastructure;
+using FinalLabSystem.Infrastructure.Navigation;
 using FinalLabSystem.Infrastructure.Session;
 using FinalLabSystem.Models;
 using FinalLabSystem.Models.DTOs;
@@ -20,14 +22,21 @@ public sealed class ResultEntryViewModel : ViewModelBase
     private readonly IAuditService _auditService;
     private readonly ICurrentUserSession _currentUserSession;
     private readonly IDialogService _dialogService;
+    private readonly IReportCommentTemplateService _commentTemplateService;
+    private readonly IPrintService _printService;
+    private readonly IReportingService _reportingService;
+    private readonly INavigationService _navigationService;
     private readonly int _patientId;
     private readonly int _patientAgeDays;
     private readonly string _patientGender;
     private readonly bool _isPregnant;
+    private readonly Stack<string> _commentHistory = new();
 
     private ObservableCollection<TestComponentResultDto> _components;
     private TestComponentResultDto? _selectedComponent;
     private bool _isSaving;
+    private bool _isCommentPickerOpen;
+    private ObservableCollection<ReportCommentTemplate> _commentTemplates = new();
 
     public ResultEntryViewModel(
         IRoutineResultService routineResultService,
@@ -35,6 +44,10 @@ public sealed class ResultEntryViewModel : ViewModelBase
         IAuditService auditService,
         ICurrentUserSession currentUserSession,
         IDialogService dialogService,
+        IReportCommentTemplateService commentTemplateService,
+        IPrintService printService,
+        IReportingService reportingService,
+        INavigationService navigationService,
         int visitTestId,
         int patientId,
         string testTypeName,
@@ -47,6 +60,10 @@ public sealed class ResultEntryViewModel : ViewModelBase
         _auditService = auditService;
         _currentUserSession = currentUserSession;
         _dialogService = dialogService;
+        _commentTemplateService = commentTemplateService;
+        _printService = printService;
+        _reportingService = reportingService;
+        _navigationService = navigationService;
         _patientId = patientId;
         _patientAgeDays = patientAgeDays;
         _patientGender = patientGender;
@@ -58,6 +75,13 @@ public sealed class ResultEntryViewModel : ViewModelBase
         SaveCommand = new AsyncRelayCommand(async _ => await SaveAsync(), _ => !IsSaving);
         SaveAndReviewCommand = new AsyncRelayCommand(async _ => await SaveAndReviewAsync(), _ => !IsSaving);
         CancelCommand = new RelayCommand(_ => RequestClose?.Invoke(), _ => !IsSaving);
+        OpenCommentPickerCommand = new AsyncRelayCommand(async _ => await LoadCommentTemplatesAsync());
+        PickCommentTemplateCommand = new RelayCommand(param => PickCommentTemplate(param as ReportCommentTemplate));
+        UndoLastCommentCommand = new RelayCommand(_ => UndoLastComment(), _ => _commentHistory.Count > 0);
+        PrintCommand = new AsyncRelayCommand(async _ => await PrintAsync());
+        PreviewPrintCommand = new AsyncRelayCommand(async _ => await PreviewPrintAsync());
+        OpenMedicalHistoryCommand = new AsyncRelayCommand(async _ => await OpenMedicalHistoryAsync());
+        ReturnToMainCommand = new RelayCommand(_ => RequestClose?.Invoke());
 
         foreach (var comp in _components)
         {
@@ -88,9 +112,28 @@ public sealed class ResultEntryViewModel : ViewModelBase
         set => SetProperty(ref _isSaving, value);
     }
 
+    public bool IsCommentPickerOpen
+    {
+        get => _isCommentPickerOpen;
+        set => SetProperty(ref _isCommentPickerOpen, value);
+    }
+
+    public ObservableCollection<ReportCommentTemplate> CommentTemplates
+    {
+        get => _commentTemplates;
+        set => SetProperty(ref _commentTemplates, value);
+    }
+
     public ICommand SaveCommand { get; }
     public ICommand SaveAndReviewCommand { get; }
     public ICommand CancelCommand { get; }
+    public ICommand OpenCommentPickerCommand { get; }
+    public ICommand PickCommentTemplateCommand { get; }
+    public ICommand UndoLastCommentCommand { get; }
+    public ICommand PrintCommand { get; }
+    public ICommand PreviewPrintCommand { get; }
+    public ICommand OpenMedicalHistoryCommand { get; }
+    public ICommand ReturnToMainCommand { get; }
 
     public object? CustomEditorContent { get; }
 
@@ -168,6 +211,54 @@ public sealed class ResultEntryViewModel : ViewModelBase
             "تنبيه: قيم حرجة");
     }
 
+    private async Task LoadCommentTemplatesAsync()
+    {
+        var templates = await _commentTemplateService.GetActiveTemplatesAsync();
+        CommentTemplates = new ObservableCollection<ReportCommentTemplate>(templates);
+        IsCommentPickerOpen = true;
+    }
+
+    private void PickCommentTemplate(ReportCommentTemplate? template)
+    {
+        if (template == null || SelectedComponent == null) return;
+
+        _commentHistory.Push(SelectedComponent.Comment ?? string.Empty);
+        SelectedComponent.Comment = template.CommentText;
+        IsCommentPickerOpen = false;
+    }
+
+    private void UndoLastComment()
+    {
+        if (SelectedComponent == null || _commentHistory.Count == 0) return;
+        SelectedComponent.Comment = _commentHistory.Pop();
+    }
+
+    private async Task PrintAsync()
+    {
+        var staffId = _currentUserSession.CurrentUser?.StaffId ?? 0;
+        if (staffId == 0) return;
+
+        await _printService.PrintAsync("TestResult", new { VisitTestId, PatientId = _patientId, StaffId = staffId });
+    }
+
+    private async Task PreviewPrintAsync()
+    {
+        var staffId = _currentUserSession.CurrentUser?.StaffId ?? 0;
+        if (staffId == 0) return;
+
+        await _printService.PrintAsync("TestResultPreview", new { VisitTestId, PatientId = _patientId, StaffId = staffId });
+    }
+
+    private async Task OpenMedicalHistoryAsync()
+    {
+        var history = await _reportingService.GetHistoricalComparisonsAsync(_patientId, 0);
+        _dialogService.ShowMessage(
+            history.Count > 0
+                ? $"تم العثور على {history.Count} سجل تاريخي."
+                : "لا توجد سجلات تاريخية لهذا المريض.",
+            "التاريخ المرضي");
+    }
+
     private async Task SaveAsync()
     {
         IsSaving = true;
@@ -180,7 +271,7 @@ public sealed class ResultEntryViewModel : ViewModelBase
                 return;
 
             var results = Components
-                .Where(c => c.IsSelectedForSave && !string.IsNullOrWhiteSpace(c.ResultValue))
+                .Where(c => c.IsSelectedForSave && !string.IsNullOrWhiteSpace(c.ResultValue) && !c.IsResultLocked)
                 .Select(c => new TestResult
                 {
                     VisitTestId = VisitTestId,
@@ -216,7 +307,7 @@ public sealed class ResultEntryViewModel : ViewModelBase
                 return;
 
             var results = Components
-                .Where(c => c.IsSelectedForSave && !string.IsNullOrWhiteSpace(c.ResultValue))
+                .Where(c => c.IsSelectedForSave && !string.IsNullOrWhiteSpace(c.ResultValue) && !c.IsResultLocked)
                 .Select(c => new TestResult
                 {
                     VisitTestId = VisitTestId,

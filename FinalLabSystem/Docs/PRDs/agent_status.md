@@ -39,6 +39,7 @@
 - **جميع شرائح الوظيفة الأولى (1.1 - 1.8) مكتملة**
 - **جميع شرائح الوظيفة الثانية (2.1 - 2.5) مكتملة** — Migration مطبّقة
 - **جميع شرائح الوظيفة الثالثة (3.1 - 3.5) مكتملة**
+- **جميع شرائح الوظيفة الرابعة (4.1 - 4.4) مكتملة** — قيد الانتظار للكوميت والدفع
 - ملاحظة: عملية git push تحتاج دفع يدوي من المستخدم
 
 ## حالة الشرائح — الوظيفة الثانية
@@ -80,3 +81,22 @@
 | 2.3 | Services/Interfaces/ISampleTrackingService.cs، Services/Implementations/SampleTrackingService.cs، ViewModels/Patients/BarcodeDialogViewModel.cs، Views/Patients/BarcodeDialog.xaml، Views/Patients/BarcodeDialog.xaml.cs | دعم السحب والإفلات لنقل التحاليل بين الملصقات مع زر "حذف التحاليل" |
 | 2.4 | Models/LabSetting.cs، ViewModels/Patients/BarcodeDialogViewModel.cs، Views/Patients/BarcodeDialog.xaml | إضافة منزلقين أفقي/رأسي لضبط إزاحة الطباعة مع زر "حفظ الأبعاد" — يتطلب Migration |
 | 2.5 | ViewModels/Patients/BarcodeDialogViewModel.cs، Views/Patients/BarcodeDialog.xaml | إضافة CheckBox "طباعة كود المعمل مع الكل" بجوار زر "طباعة الكل" |
+
+## حالة الشرائح — الوظيفة الرابعة
+
+| الشريحة | العنوان | الحالة | هاش الكوميت |
+|---------|---------|--------|-------------|
+| 4.1 | زر اختيار التعليم + نافذة القوالب | ✅ مكتملة | (معلّق) |
+| 4.2 | تمييز النتائج المطبوعة للقراءة فقط | ✅ مكتملة | (معلّق) |
+| 4.3 | أزرار طباعة/معاينة/تاريخ مرضي | ✅ مكتملة | (معلّق) |
+| 4.4 | اختصارات F8/F11/F12 | ✅ مكتملة | (معلّق) |
+
+## سجل الشرائح المنجزة — الوظيفة الرابعة
+
+| رقم الشريحة | الملفات التي تغيّرت | ملاحظة |
+|-------------|---------------------|--------|
+| 4.1 | ViewModels/Patients/ResultEntryViewModel.cs، Views/Patients/ResultEntryWindow.xaml، Services/Implementations/ResultEntryDialogService.cs | إضافة ReportCommentTemplateService/IPrintService/IReportingService/INavigationService إلى الـ ViewModel مع CommentTemplates + OpenCommentPickerCommand + PickCommentTemplateCommand + UndoLastCommentCommand |
+| 4.2 | Models/DTOs/TestComponentResultDto.cs، Views/Converters.cs، Views/Patients/ResultEntryWindow.xaml | إضافة IsResultLocked DTO property + BoolToLockedBrushConverter/BoolToLockedTipConverter + قفل خلية التعليم عند النتيجة المطبوعة |
+| 4.3 | Views/Patients/ResultEntryWindow.xaml، ViewModels/Patients/ResultEntryViewModel.cs | أزرار طباعة/معاينة/تاريخ مرضي/عودة في شريط الأدوات مع PrintCommand/PreviewPrintCommand/OpenMedicalHistoryCommand/ReturnToMainCommand |
+| 4.4 | Views/Patients/ResultEntryWindow.xaml | Window.InputBindings: F8→SaveAndReview, F11→PreviewPrint, F12→Print, Escape→Cancel |
+| 4.1-4.4 | ViewModels/Patients/ResultEntryViewModel.cs، Services/Implementations/ResultEntryDialogService.cs، FinalLabSystem.Tests/ViewModels/ResultEntryViewModelTests.cs، FinalLabSystem.Tests/ViewModels/ResultEntryViewModelLiveValidationTests.cs | تحديث المُنشئ لإضافة services الجديدة + تحديث جميع الاختبارات

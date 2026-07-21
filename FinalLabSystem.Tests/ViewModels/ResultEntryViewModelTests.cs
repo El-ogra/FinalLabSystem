@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using FinalLabSystem.Infrastructure.Navigation;
 using FinalLabSystem.Infrastructure.Session;
 using FinalLabSystem.Models.DTOs;
 using FinalLabSystem.Services.Interfaces;
@@ -18,6 +19,10 @@ public class ResultEntryViewModelTests
         var mockAudit = new Mock<IAuditService>();
         var mockSession = new Mock<ICurrentUserSession>();
         var mockDialog = new Mock<IDialogService>();
+        var mockCommentTemplate = new Mock<IReportCommentTemplateService>();
+        var mockPrint = new Mock<IPrintService>();
+        var mockReporting = new Mock<IReportingService>();
+        var mockNavigation = new Mock<INavigationService>();
 
         var staff = new FinalLabSystem.Models.Staff
         {
@@ -39,6 +44,10 @@ public class ResultEntryViewModelTests
             mockAudit.Object,
             mockSession.Object,
             mockDialog.Object,
+            mockCommentTemplate.Object,
+            mockPrint.Object,
+            mockReporting.Object,
+            mockNavigation.Object,
             visitTestId,
             patientId,
             testTypeName,
@@ -111,6 +120,10 @@ public class ResultEntryViewModelTests
         var mockAudit = new Mock<IAuditService>();
         var mockSession = new Mock<ICurrentUserSession>();
         var mockDialog = new Mock<IDialogService>();
+        var mockCommentTemplate = new Mock<IReportCommentTemplateService>();
+        var mockPrint = new Mock<IPrintService>();
+        var mockReporting = new Mock<IReportingService>();
+        var mockNavigation = new Mock<INavigationService>();
 
         mockSession.Setup(s => s.CurrentUser).Returns((FinalLabSystem.Models.Staff?)null);
 
@@ -121,6 +134,7 @@ public class ResultEntryViewModelTests
 
         var vm = new ResultEntryViewModel(
             mockRoutine.Object, mockVisit.Object, mockAudit.Object, mockSession.Object, mockDialog.Object,
+            mockCommentTemplate.Object, mockPrint.Object, mockReporting.Object, mockNavigation.Object,
             1, 1, "CBC", components, 0, "U", false);
 
         vm.SaveCommand.Execute(null);

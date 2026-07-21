@@ -153,6 +153,39 @@ public sealed class LowStockTextConverter : IValueConverter
     }
 }
 
+public sealed class BoolToLockedBrushConverter : IValueConverter
+{
+    private static readonly SolidColorBrush LockedBrush = new(Color.FromRgb(0x55, 0x55, 0x55));
+    private static readonly SolidColorBrush UnlockedBrush = new(Color.FromRgb(0x1E, 0x2A, 0x3A));
+
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is bool isLocked)
+            return isLocked ? LockedBrush : UnlockedBrush;
+        return UnlockedBrush;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public sealed class BoolToLockedTipConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is bool isLocked)
+            return isLocked ? "Result printed — editing locked" : string.Empty;
+        return string.Empty;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}
+
 public sealed class LowStockBrushConverter : IValueConverter
 {
     private static readonly SolidColorBrush LowBrush = new(Color.FromRgb(0xD3, 0x2F, 0x2F));

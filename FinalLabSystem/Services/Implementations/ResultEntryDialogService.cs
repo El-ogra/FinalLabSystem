@@ -2,6 +2,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows;
+using FinalLabSystem.Infrastructure.Navigation;
 using FinalLabSystem.Infrastructure.Session;
 using FinalLabSystem.Models.DTOs;
 using FinalLabSystem.Services.Interfaces;
@@ -31,6 +32,10 @@ public sealed class ResultEntryDialogService : IResultEntryDialogService
             var auditService = (IAuditService)_serviceProvider.GetService(typeof(IAuditService))!;
             var currentUserSession = (ICurrentUserSession)_serviceProvider.GetService(typeof(ICurrentUserSession))!;
             var dialogService = (IDialogService)_serviceProvider.GetService(typeof(IDialogService))!;
+            var commentTemplateService = (IReportCommentTemplateService)_serviceProvider.GetService(typeof(IReportCommentTemplateService))!;
+            var printService = (IPrintService)_serviceProvider.GetService(typeof(IPrintService))!;
+            var reportingService = (IReportingService)_serviceProvider.GetService(typeof(IReportingService))!;
+            var navigationService = (INavigationService)_serviceProvider.GetService(typeof(INavigationService))!;
 
             var vm = new ResultEntryViewModel(
                 routineResultService,
@@ -38,6 +43,10 @@ public sealed class ResultEntryDialogService : IResultEntryDialogService
                 auditService,
                 currentUserSession,
                 dialogService,
+                commentTemplateService,
+                printService,
+                reportingService,
+                navigationService,
                 visitTestId,
                 patientId,
                 testTypeName,
